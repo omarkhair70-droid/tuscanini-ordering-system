@@ -1,11 +1,20 @@
 export type MenuCategorySlug =
-  | 'crepe'
-  | 'pizza'
+  | 'crepe-meat'
+  | 'crepe-chicken'
+  | 'crepe-mixed'
+  | 'crepe-tuscanini'
+  | 'crepe-sweet'
+  | 'pizza-meat'
+  | 'pizza-chicken'
+  | 'pizza-mixed'
+  | 'pizza-tuscanini'
   | 'pasta'
-  | 'sandwiches'
+  | 'sandwiches-french'
+  | 'sandwiches-kaiser'
   | 'appetizers'
   | 'drinks'
-  | 'offers';
+  | 'waffle'
+  | 'crepe-addons';
 
 export type MenuTag = 'الأكثر طلبًا' | 'جديد' | 'حار';
 
