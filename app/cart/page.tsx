@@ -10,7 +10,13 @@ type ValidationErrors = {
   name?: string;
   phone?: string;
   address?: string;
+  confirmedAccurateDetails?: string;
 };
+
+function isValidEgyptianMobile(rawPhone: string): boolean {
+  const normalized = rawPhone.replace(/\D/g, '');
+  return /^01\d{9}$/.test(normalized);
+}
 
 export default function CartPage() {
   const { items, customer, subtotal, updateItemQuantity, removeItem, clearCart, updateCustomer, isHydrated } = useCart();
@@ -42,10 +48,16 @@ export default function CartPage() {
 
     if (!customer.phone.trim()) {
       nextErrors.phone = 'رقم الهاتف مطلوب لإرسال الطلب.';
+    } else if (!isValidEgyptianMobile(customer.phone)) {
+      nextErrors.phone = 'رقم الهاتف يجب أن يكون رقم موبايل مصري صحيح (11 رقم ويبدأ بـ 01).';
     }
 
     if (customer.orderType === 'delivery' && !customer.address.trim()) {
       nextErrors.address = 'العنوان مطلوب في حالة الدليفري.';
+    }
+
+    if (!customer.confirmedAccurateDetails) {
+      nextErrors.confirmedAccurateDetails = 'لازم تأكيد صحة البيانات قبل إرسال الطلب.';
     }
 
     return nextErrors;
@@ -104,6 +116,14 @@ export default function CartPage() {
             </div>
 
             <p className="mt-3 rounded-xl bg-brand-yellow/40 px-3 py-2 text-sm font-bold text-brand-dark">راجع طلبك قبل الإرسال.</p>
+            <div className="mt-3 space-y-2">
+              <p className="rounded-xl border border-brand-dark/20 bg-brand-white px-3 py-2 text-sm font-bold text-brand-dark">
+                الطلب لا يبدأ تحضيره إلا بعد تأكيد المطعم مع العميل.
+              </p>
+              <p className="rounded-xl border border-brand-dark/20 bg-brand-white px-3 py-2 text-sm font-bold text-brand-dark">
+                لو الطلب دليفري، ابعت اللوكيشن على واتساب بعد إرسال الطلب.
+              </p>
+            </div>
           </section>
 
           <section className="space-y-3 rounded-2xl border-2 border-brand-dark bg-brand-white p-4">
@@ -254,9 +274,32 @@ export default function CartPage() {
                 placeholder="أي ملاحظات إضافية على الطلب"
               />
             </label>
+
+            <label className="flex items-start gap-2 rounded-xl border border-brand-dark/20 p-3">
+              <input
+                type="checkbox"
+                checked={customer.confirmedAccurateDetails}
+                onChange={(event) => {
+                  updateCustomer({ confirmedAccurateDetails: event.target.checked });
+                  if (errors.confirmedAccurateDetails) {
+                    setErrors((current) => ({ ...current, confirmedAccurateDetails: undefined }));
+                  }
+                }}
+                className="mt-1 h-4 w-4 accent-brand-red"
+              />
+              <span className="text-sm font-bold text-brand-dark">
+                أؤكد أن بياناتي صحيحة وأن المطعم قد يتواصل معي لتأكيد الطلب.
+              </span>
+            </label>
+            {errors.confirmedAccurateDetails ? <p className="text-xs font-bold text-red-700">{errors.confirmedAccurateDetails}</p> : null}
           </section>
 
-          <button type="button" onClick={handleSendWhatsapp} className="btn-primary block w-full text-center">
+          <button
+            type="button"
+            onClick={handleSendWhatsapp}
+            className="btn-primary block w-full text-center disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={!customer.confirmedAccurateDetails}
+          >
             إرسال الطلب على واتساب
           </button>
         </>

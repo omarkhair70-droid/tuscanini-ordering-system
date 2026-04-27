@@ -40,6 +40,7 @@ export type CartCustomerForm = {
   address: string;
   orderType: OrderType;
   generalNotes: string;
+  confirmedAccurateDetails: boolean;
 };
 
 export type CartState = {

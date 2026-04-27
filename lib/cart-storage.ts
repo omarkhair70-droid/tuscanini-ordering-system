@@ -10,6 +10,7 @@ export const defaultCartState: CartState = {
     address: '',
     orderType: 'delivery',
     generalNotes: '',
+    confirmedAccurateDetails: false,
   },
 };
 
