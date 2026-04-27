@@ -10,10 +10,10 @@ export default function HomePage() {
     <div className="space-y-8">
       <HeroSection />
       <CategoriesPreview />
+      <ContactCta />
       <FoodFinderCta />
       <OffersPreview />
       <StoryPreview />
-      <ContactCta />
     </div>
   );
 }
