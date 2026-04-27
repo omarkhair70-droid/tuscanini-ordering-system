@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "seed:phase7_2:menu": "psql \"$SUPABASE_DB_URL\" -v ON_ERROR_STOP=1 -f supabase/seeds/phase_7_2_menu_seed.sql",
+    "verify:phase7_2:menu": "tsc --pretty false --target es2020 --module commonjs --esModuleInterop --outDir .tmp/scripts scripts/supabase/verify_menu_seed_parity.ts && node .tmp/scripts/verify_menu_seed_parity.js"
   },
   "dependencies": {
     "next": "16.0.10",
