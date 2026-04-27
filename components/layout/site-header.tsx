@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { publicRoutes } from '@/lib/routes';
 
+const desktopRoutes = publicRoutes.filter((route) => route.href !== '/cart');
+
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b-4 border-brand-yellow bg-brand-red text-brand-white">
@@ -12,12 +14,12 @@ export function SiteHeader() {
           السلة
         </Link>
       </div>
-      <nav className="container-tight hidden gap-2 overflow-x-auto pb-3 md:flex">
-        {publicRoutes.slice(0, 6).map((route) => (
+      <nav className="container-tight hidden gap-2 overflow-x-auto pb-3 md:flex" aria-label="روابط الصفحات">
+        {desktopRoutes.map((route) => (
           <Link
             key={route.href}
             href={route.href}
-            className="rounded-full border border-brand-white/40 px-3 py-1 text-xs font-bold"
+            className="shrink-0 rounded-full border border-brand-white/40 px-3 py-1 text-xs font-bold"
           >
             {route.label}
           </Link>

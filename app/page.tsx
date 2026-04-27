@@ -4,6 +4,7 @@ import { FoodFinderCta } from '@/components/home/food-finder-cta';
 import { HeroSection } from '@/components/home/hero-section';
 import { OffersPreview } from '@/components/home/offers-preview';
 import { StoryPreview } from '@/components/home/story-preview';
+import { TrustFeedbackLinks } from '@/components/home/trust-feedback-links';
 
 export default function HomePage() {
   return (
@@ -14,6 +15,7 @@ export default function HomePage() {
       <FoodFinderCta />
       <OffersPreview />
       <StoryPreview />
+      <TrustFeedbackLinks />
     </div>
   );
 }
