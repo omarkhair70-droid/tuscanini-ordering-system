@@ -42,6 +42,9 @@ export function buildArabicWhatsappMessage(params: {
   lines.push(
     `💰 *الإجمالي الفرعي:* ${subtotal} ج.م`,
     '',
+    '🟡 *حالة الطلب:* في انتظار تأكيد المطعم',
+    'لا يبدأ التحضير إلا بعد تأكيد الطلب مع العميل',
+    '',
     '👤 *بيانات العميل*',
     `- الاسم: ${customer.name || 'غير مذكور'}`,
     `- الهاتف: ${customer.phone || 'غير مذكور'}`,
