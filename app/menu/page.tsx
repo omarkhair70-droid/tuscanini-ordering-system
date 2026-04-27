@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { FloatingCartCta } from '@/components/cart/floating-cart-cta';
 import { CategoryChips } from '@/components/menu/category-chips';
 import { ProductCard } from '@/components/menu/product-card';
 import { ProductCustomizationModal } from '@/components/menu/product-customization-modal';
@@ -21,8 +22,8 @@ export default function MenuPage() {
   }, [activeCategory]);
 
   return (
-    <div className="space-y-6">
-      <PageHero title="المنيو" subtitle="منيو توسكانيني التجريبي - تخصيص وتجربة تصفح أفضل." />
+    <div className="space-y-6 pb-24 md:pb-6">
+      <PageHero title="المنيو" subtitle="منيو توسكانيني - اختياراتك المفضلة بطعم ثابت وجودة ممتازة." />
 
       <section className="rounded-2xl border-2 border-brand-dark bg-brand-yellow/60 py-3">
         <CategoryChips
@@ -57,6 +58,8 @@ export default function MenuPage() {
         isOpen={selectedProduct !== null}
         onClose={() => setSelectedProduct(null)}
       />
+
+      <FloatingCartCta />
     </div>
   );
 }
