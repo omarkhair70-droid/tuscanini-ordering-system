@@ -8,7 +8,7 @@ type CategoryChipsProps = {
 
 export function CategoryChips({ categories, activeCategory, onSelectCategory }: CategoryChipsProps) {
   return (
-    <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-2">
+    <div className="-mx-4 no-scrollbar flex touch-pan-x gap-2 overflow-x-auto px-4 pb-2">
       <button
         type="button"
         onClick={() => onSelectCategory('all')}

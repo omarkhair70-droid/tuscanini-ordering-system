@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FloatingCartCta } from '@/components/cart/floating-cart-cta';
 import { CategoryChips } from '@/components/menu/category-chips';
 import { ProductCard } from '@/components/menu/product-card';
@@ -12,6 +12,23 @@ import type { MenuCategorySlug, MenuItem } from '@/types/menu';
 export default function MenuPage() {
   const [activeCategory, setActiveCategory] = useState<MenuCategorySlug | 'all'>('all');
   const [selectedProduct, setSelectedProduct] = useState<MenuItem | null>(null);
+  const validCategorySlugs = useMemo(() => new Set(menuCategories.map((category) => category.slug)), []);
+
+  useEffect(() => {
+    const categoryFromQuery = new URLSearchParams(window.location.search).get('category');
+
+    if (!categoryFromQuery) {
+      setActiveCategory('all');
+      return;
+    }
+
+    if (validCategorySlugs.has(categoryFromQuery as MenuCategorySlug)) {
+      setActiveCategory(categoryFromQuery as MenuCategorySlug);
+      return;
+    }
+
+    setActiveCategory('all');
+  }, [validCategorySlugs]);
 
   const filteredItems = useMemo(() => {
     if (activeCategory === 'all') {
@@ -22,7 +39,7 @@ export default function MenuPage() {
   }, [activeCategory]);
 
   return (
-    <div className="space-y-6 pb-24 md:pb-6">
+    <div className="space-y-6 pb-40 md:pb-6">
       <PageHero title="المنيو" subtitle="منيو توسكانيني - اختياراتك المفضلة بطعم ثابت وجودة ممتازة." />
 
       <section className="rounded-2xl border-2 border-brand-dark bg-brand-yellow/60 py-3">
