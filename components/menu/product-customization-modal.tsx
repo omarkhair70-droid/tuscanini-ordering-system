@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useCart } from '@/components/cart/cart-provider';
 import type { MenuItem } from '@/types/menu';
 
 type ProductCustomizationModalProps = {
@@ -10,6 +11,7 @@ type ProductCustomizationModalProps = {
 };
 
 export function ProductCustomizationModal({ item, isOpen, onClose }: ProductCustomizationModalProps) {
+  const { addItem } = useCart();
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
   const [quantity, setQuantity] = useState<number>(1);
@@ -26,26 +28,42 @@ export function ProductCustomizationModal({ item, isOpen, onClose }: ProductCust
     setNotes('');
   }, [item]);
 
-  const selectedSizePrice = useMemo(() => {
+  const selectedSizeData = useMemo(() => {
     if (!item) {
-      return 0;
+      return null;
     }
 
     const size = item.sizes?.find((entry) => entry.id === selectedSize);
-    return size?.price ?? item.priceFrom;
+    if (!size) {
+      return null;
+    }
+
+    return {
+      id: size.id,
+      label: size.label,
+      price: size.price,
+    };
   }, [item, selectedSize]);
 
-  const addonsTotal = useMemo(() => {
+  const selectedSizePrice = selectedSizeData?.price ?? item?.priceFrom ?? 0;
+
+  const selectedAddonData = useMemo(() => {
     if (!item?.addons) {
-      return 0;
+      return [];
     }
 
     return item.addons
       .filter((addon) => selectedAddons.includes(addon.id))
-      .reduce((sum, addon) => sum + addon.price, 0);
+      .map((addon) => ({ id: addon.id, label: addon.label, price: addon.price }));
   }, [item, selectedAddons]);
 
-  const total = (selectedSizePrice + addonsTotal) * quantity;
+  const addonsTotal = useMemo(
+    () => selectedAddonData.reduce((sum, addon) => sum + addon.price, 0),
+    [selectedAddonData],
+  );
+
+  const unitPrice = selectedSizePrice + addonsTotal;
+  const total = unitPrice * quantity;
 
   if (!isOpen || !item) {
     return null;
@@ -141,8 +159,23 @@ export function ProductCustomizationModal({ item, isOpen, onClose }: ProductCust
           />
         </section>
 
-        <button type="button" className="btn-primary w-full">
-          إضافة إلى السلة (قريبًا) - {total} ج.م
+        <button
+          type="button"
+          className="btn-primary w-full"
+          onClick={() => {
+            addItem({
+              productId: item.id,
+              productName: item.name,
+              selectedSize: selectedSizeData,
+              selectedAddons: selectedAddonData,
+              quantity,
+              itemNotes: notes.trim(),
+              unitPrice,
+            });
+            onClose();
+          }}
+        >
+          إضافة إلى السلة - {total} ج.م
         </button>
       </div>
     </div>
