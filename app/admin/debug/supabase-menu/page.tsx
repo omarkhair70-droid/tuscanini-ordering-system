@@ -47,7 +47,7 @@ export default async function SupabaseMenuDebugPage() {
     supabase.from('product_sizes').select('id', { head: true, count: 'exact' }),
     supabase.from('product_addons').select('id', { head: true, count: 'exact' }),
     supabase.from('product_addon_links').select('id', { head: true, count: 'exact' }),
-    supabase.from('site_settings').select('id, site_name, support_phone').eq('id', 1).maybeSingle(),
+    supabase.from('site_settings').select('id, is_ordering_open, whatsapp_order_number, phone_primary, phone_secondary, address_ar, facebook_url').eq('id', 1).maybeSingle(),
     supabase
       .from('menu_categories')
       .select('id, name_ar, slug, sort_order')
