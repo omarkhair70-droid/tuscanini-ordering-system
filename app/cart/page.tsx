@@ -1,13 +1,28 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useCart } from '@/components/cart/cart-provider';
 import { PageHero } from '@/components/shared/page-hero';
 import { buildArabicWhatsappMessage, buildWhatsappOrderUrl } from '@/lib/whatsapp';
 
+type ValidationErrors = {
+  name?: string;
+  phone?: string;
+  address?: string;
+};
+
 export default function CartPage() {
   const { items, customer, subtotal, updateItemQuantity, removeItem, clearCart, updateCustomer, isHydrated } = useCart();
+  const [errors, setErrors] = useState<ValidationErrors>({});
+
+  const summary = useMemo(() => {
+    const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+    return {
+      totalItems,
+      totalLines: items.length,
+    };
+  }, [items]);
 
   const whatsappUrl = useMemo(() => {
     if (!items.length) {
@@ -18,6 +33,35 @@ export default function CartPage() {
     return buildWhatsappOrderUrl(message);
   }, [items, customer, subtotal]);
 
+  function validateBeforeSend(): ValidationErrors {
+    const nextErrors: ValidationErrors = {};
+
+    if (!customer.name.trim()) {
+      nextErrors.name = 'الاسم مطلوب لإرسال الطلب.';
+    }
+
+    if (!customer.phone.trim()) {
+      nextErrors.phone = 'رقم الهاتف مطلوب لإرسال الطلب.';
+    }
+
+    if (customer.orderType === 'delivery' && !customer.address.trim()) {
+      nextErrors.address = 'العنوان مطلوب في حالة الدليفري.';
+    }
+
+    return nextErrors;
+  }
+
+  function handleSendWhatsapp() {
+    const nextErrors = validateBeforeSend();
+    setErrors(nextErrors);
+
+    if (Object.keys(nextErrors).length > 0 || !whatsappUrl) {
+      return;
+    }
+
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+  }
+
   return (
     <div className="space-y-6">
       <PageHero title="السلة" subtitle="راجع الطلب واكمله وارسله مباشرة على واتساب." />
@@ -27,8 +71,9 @@ export default function CartPage() {
       ) : null}
 
       {isHydrated && items.length === 0 ? (
-        <section className="space-y-4 rounded-2xl border-2 border-dashed border-brand-dark bg-brand-white p-5 text-center">
-          <p className="font-black text-brand-dark">السلة فارغة حاليًا.</p>
+        <section className="space-y-4 rounded-2xl border-2 border-dashed border-brand-dark bg-brand-white p-6 text-center">
+          <p className="text-lg font-black text-brand-dark">السلة فارغة حاليًا.</p>
+          <p className="text-sm text-brand-charcoal">أضف أصنافك أولًا من المنيو، وبعدها راجع طلبك قبل الإرسال على واتساب.</p>
           <Link href="/menu" className="btn-primary inline-flex items-center">
             ابدأ الطلب من المنيو
           </Link>
@@ -37,6 +82,30 @@ export default function CartPage() {
 
       {isHydrated && items.length > 0 ? (
         <>
+          <section className="rounded-2xl border-2 border-brand-dark bg-brand-white p-4">
+            <div className="mb-3 flex items-center justify-between border-b border-brand-dark/20 pb-3">
+              <h2 className="text-lg font-black text-brand-dark">ملخص الطلب</h2>
+              <span className="rounded-full bg-brand-yellow px-3 py-1 text-xs font-black text-brand-dark">{summary.totalItems} قطعة</span>
+            </div>
+
+            <div className="grid gap-2 text-sm sm:grid-cols-3">
+              <div className="rounded-xl border border-brand-dark/20 p-3">
+                <p className="text-brand-charcoal">عدد الأصناف</p>
+                <p className="text-base font-black">{summary.totalLines}</p>
+              </div>
+              <div className="rounded-xl border border-brand-dark/20 p-3">
+                <p className="text-brand-charcoal">عدد القطع</p>
+                <p className="text-base font-black">{summary.totalItems}</p>
+              </div>
+              <div className="rounded-xl border border-brand-dark/20 p-3">
+                <p className="text-brand-charcoal">الإجمالي الفرعي</p>
+                <p className="text-base font-black text-brand-red">{subtotal} ج.م</p>
+              </div>
+            </div>
+
+            <p className="mt-3 rounded-xl bg-brand-yellow/40 px-3 py-2 text-sm font-bold text-brand-dark">راجع طلبك قبل الإرسال.</p>
+          </section>
+
           <section className="space-y-3 rounded-2xl border-2 border-brand-dark bg-brand-white p-4">
             <h2 className="text-lg font-black text-brand-dark">الأصناف</h2>
 
@@ -101,10 +170,16 @@ export default function CartPage() {
               <input
                 type="text"
                 value={customer.name}
-                onChange={(event) => updateCustomer({ name: event.target.value })}
-                className="w-full rounded-xl border p-3 text-sm focus:border-brand-red focus:outline-none"
+                onChange={(event) => {
+                  updateCustomer({ name: event.target.value });
+                  if (errors.name) {
+                    setErrors((current) => ({ ...current, name: undefined }));
+                  }
+                }}
+                className={`w-full rounded-xl border p-3 text-sm focus:border-brand-red focus:outline-none ${errors.name ? 'border-red-500' : ''}`}
                 placeholder="الاسم الكامل"
               />
+              {errors.name ? <p className="text-xs font-bold text-red-700">{errors.name}</p> : null}
             </label>
 
             <label className="block space-y-1">
@@ -112,10 +187,16 @@ export default function CartPage() {
               <input
                 type="tel"
                 value={customer.phone}
-                onChange={(event) => updateCustomer({ phone: event.target.value })}
-                className="w-full rounded-xl border p-3 text-sm focus:border-brand-red focus:outline-none"
+                onChange={(event) => {
+                  updateCustomer({ phone: event.target.value });
+                  if (errors.phone) {
+                    setErrors((current) => ({ ...current, phone: undefined }));
+                  }
+                }}
+                className={`w-full rounded-xl border p-3 text-sm focus:border-brand-red focus:outline-none ${errors.phone ? 'border-red-500' : ''}`}
                 placeholder="01xxxxxxxxx"
               />
+              {errors.phone ? <p className="text-xs font-bold text-red-700">{errors.phone}</p> : null}
             </label>
 
             <div className="space-y-2">
@@ -132,7 +213,10 @@ export default function CartPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => updateCustomer({ orderType: 'pickup' })}
+                  onClick={() => {
+                    updateCustomer({ orderType: 'pickup' });
+                    setErrors((current) => ({ ...current, address: undefined }));
+                  }}
                   className={`rounded-xl border-2 px-3 py-2 text-sm font-black ${
                     customer.orderType === 'pickup' ? 'border-brand-red text-brand-red' : 'border-brand-dark/30'
                   }`}
@@ -143,15 +227,21 @@ export default function CartPage() {
             </div>
 
             <label className="block space-y-1">
-              <span className="text-sm font-black">العنوان</span>
+              <span className="text-sm font-black">العنوان {customer.orderType === 'delivery' ? '(مطلوب للدليفري)' : '(غير مطلوب للاستلام)'}</span>
               <textarea
                 rows={2}
                 value={customer.address}
-                onChange={(event) => updateCustomer({ address: event.target.value })}
-                className="w-full rounded-xl border p-3 text-sm focus:border-brand-red focus:outline-none"
+                onChange={(event) => {
+                  updateCustomer({ address: event.target.value });
+                  if (errors.address) {
+                    setErrors((current) => ({ ...current, address: undefined }));
+                  }
+                }}
+                className={`w-full rounded-xl border p-3 text-sm focus:border-brand-red focus:outline-none ${errors.address ? 'border-red-500' : ''}`}
                 placeholder="العنوان بالتفصيل"
                 disabled={customer.orderType === 'pickup'}
               />
+              {errors.address ? <p className="text-xs font-bold text-red-700">{errors.address}</p> : null}
             </label>
 
             <label className="block space-y-1">
@@ -166,14 +256,9 @@ export default function CartPage() {
             </label>
           </section>
 
-          <a
-            href={whatsappUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="btn-primary block w-full text-center"
-          >
+          <button type="button" onClick={handleSendWhatsapp} className="btn-primary block w-full text-center">
             إرسال الطلب على واتساب
-          </a>
+          </button>
         </>
       ) : null}
     </div>

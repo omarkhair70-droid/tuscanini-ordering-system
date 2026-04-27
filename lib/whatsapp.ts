@@ -18,9 +18,9 @@ export function buildArabicWhatsappMessage(params: {
 
   const lines: string[] = [
     'مرحبًا توسكانيني 👋',
-    'عايز أطلب الأوردر التالي:',
+    'هذا طلبي، برجاء التأكيد:',
     '',
-    '🧾 *تفاصيل الطلب*',
+    '🧾 *ملخص الطلب*',
   ];
 
   items.forEach((item, index) => {
@@ -29,12 +29,12 @@ export function buildArabicWhatsappMessage(params: {
       : 'بدون إضافات';
 
     lines.push(
-      `${index + 1}) ${item.productName}`,
+      `#${index + 1} ${item.productName}`,
       `- الحجم: ${item.selectedSize?.label ?? 'بدون اختيار'}`,
       `- الإضافات: ${addons}`,
       `- الكمية: ${item.quantity}`,
       `- ملاحظات الصنف: ${item.itemNotes || 'لا يوجد'}`,
-      `- سعر الصنف: ${item.totalItemPrice} ج.م`,
+      `- إجمالي الصنف: ${item.totalItemPrice} ج.م`,
       '',
     );
   });
@@ -48,6 +48,8 @@ export function buildArabicWhatsappMessage(params: {
     `- نوع الطلب: ${customer.orderType === 'delivery' ? 'دليفري' : 'استلام من الفرع'}`,
     `- العنوان: ${customer.orderType === 'delivery' ? customer.address || 'غير مذكور' : 'غير مطلوب (استلام)'}`,
     `- ملاحظات عامة: ${customer.generalNotes || 'لا يوجد'}`,
+    '',
+    'شكرًا لكم 🌹',
   );
 
   return lines.join('\n').trim();
