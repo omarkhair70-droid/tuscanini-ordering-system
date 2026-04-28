@@ -119,6 +119,7 @@ export function isProtectedAdminPath(pathname: string): boolean {
     pathname.startsWith('/admin/kitchen') ||
     pathname.startsWith('/admin/tables') ||
     pathname.startsWith('/admin/settings') ||
+    pathname.startsWith('/admin/offers') ||
     pathname.startsWith('/admin/debug')
   );
 }
