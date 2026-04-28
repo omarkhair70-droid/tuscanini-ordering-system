@@ -20,27 +20,27 @@ body {
   }
 
   .badge-hot {
-    @apply inline-flex items-center rounded-full bg-brand-yellow px-3 py-1 text-xs font-bold text-brand-dark;
+    @apply inline-flex items-center rounded-full border border-brand-yellow/70 bg-brand-yellow/20 px-3 py-1 text-xs font-bold text-brand-dark;
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-xl2 bg-brand-red px-5 py-3 font-extrabold text-brand-white shadow-punch transition hover:opacity-90;
+    @apply inline-flex items-center justify-center rounded-xl2 bg-brand-red px-5 py-3 font-extrabold text-brand-white shadow-[0_10px_24px_rgba(128,0,0,0.25)] transition hover:bg-[#9e0000];
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center rounded-xl2 border border-brand-dark/25 bg-brand-white px-5 py-3 font-bold text-brand-dark transition hover:border-brand-dark hover:bg-brand-dark hover:text-brand-white;
+    @apply inline-flex items-center justify-center rounded-xl2 border border-brand-dark/15 bg-brand-white px-5 py-3 font-bold text-brand-dark transition hover:border-brand-red/30 hover:text-brand-red;
   }
 
   .surface-card {
-    @apply rounded-2xl border border-brand-dark/15 bg-brand-white p-4 shadow-[0_8px_24px_rgba(18,18,18,0.08)];
+    @apply rounded-2xl border border-brand-dark/10 bg-brand-white p-4 shadow-[0_10px_28px_rgba(18,18,18,0.06)];
   }
 
   .surface-card-soft {
-    @apply rounded-2xl border border-brand-dark/10 bg-brand-white p-4 shadow-[0_4px_14px_rgba(18,18,18,0.05)];
+    @apply rounded-2xl border border-brand-dark/10 bg-brand-white p-4 shadow-[0_6px_18px_rgba(18,18,18,0.04)];
   }
 
   .safe-bottom-mobile {
-    @apply pb-36 md:pb-8;
+    @apply pb-40 md:pb-8;
   }
 }
 

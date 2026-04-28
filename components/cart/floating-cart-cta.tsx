@@ -11,14 +11,14 @@ export function FloatingCartCta() {
   }
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-[4.8rem] z-30 px-4 md:hidden">
+    <div className="pointer-events-none fixed inset-x-0 bottom-[5.6rem] z-30 px-4 md:hidden">
       <Link
         href="/cart"
-        className="pointer-events-auto flex items-center justify-between rounded-xl2 bg-brand-red px-4 py-3 text-brand-white shadow-[0_12px_24px_rgba(128,0,0,0.35)]"
+        className="pointer-events-auto flex items-center justify-between rounded-xl2 border border-brand-red/30 bg-brand-white px-4 py-3 text-brand-dark shadow-[0_12px_24px_rgba(18,18,18,0.12)]"
       >
-        <span className="text-sm font-extrabold">عرض السلة</span>
-        <span className="text-xs font-bold">{itemsCount} قطعة</span>
-        <span className="text-sm font-black">{subtotal} ج.م</span>
+        <span className="text-sm font-extrabold text-brand-red">عرض السلة</span>
+        <span className="text-xs font-bold text-brand-charcoal">{itemsCount} قطعة</span>
+        <span className="text-sm font-black text-brand-dark">{subtotal} ج.م</span>
       </Link>
     </div>
   );

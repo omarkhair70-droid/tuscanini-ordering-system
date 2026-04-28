@@ -30,7 +30,7 @@ function QuestionStep<T extends string>({
   onChange: (value: T) => void;
 }) {
   return (
-    <section className="space-y-3 rounded-2xl border border-brand-dark/15 bg-brand-white p-4 shadow-[0_8px_22px_rgba(18,18,18,0.08)]">
+    <section className="space-y-3 rounded-2xl border border-brand-dark/10 bg-brand-white p-4 shadow-[0_8px_20px_rgba(18,18,18,0.06)]">
       <h2 className="text-lg font-black text-brand-dark">{title}</h2>
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
         {options.map((option) => {
@@ -42,8 +42,8 @@ function QuestionStep<T extends string>({
               onClick={() => onChange(option.id)}
               className={`rounded-xl border px-3 py-3 text-sm font-extrabold transition ${
                 isActive
-                  ? 'border-brand-red bg-brand-red text-brand-white'
-                  : 'border-brand-dark/20 bg-brand-yellow/70 text-brand-dark'
+                  ? 'border-brand-red/40 bg-brand-red/10 text-brand-red'
+                  : 'border-brand-dark/15 bg-brand-white text-brand-dark hover:border-brand-red/25'
               }`}
             >
               {option.label}
@@ -82,7 +82,7 @@ export default function FoodFinderPage() {
     <div className="safe-bottom-mobile space-y-6">
       <PageHero title="مش عارف تاكل إيه؟" subtitle="جاوب 3 أسئلة سريعة وهتلاقي ترشيحات مناسبة من منيو توسكانيني." />
 
-      <section className="rounded-2xl border border-brand-dark/15 bg-brand-yellow/80 p-3 text-center font-black text-brand-dark shadow-[0_4px_14px_rgba(18,18,18,0.06)]">
+      <section className="rounded-2xl border border-brand-dark/10 bg-brand-white p-3 text-center font-bold text-brand-charcoal shadow-[0_4px_14px_rgba(18,18,18,0.04)]">
         المرحلة الحالية: <span className="text-brand-red">{currentStepLabel}</span> — اختياراتك بتتقفل تلقائيًا لما تكمّل 3 خطوات.
       </section>
 
@@ -103,18 +103,18 @@ export default function FoodFinderPage() {
 
       {result ? (
         <section className="space-y-3">
-          <div className="rounded-2xl bg-gradient-to-b from-brand-red to-[#8f0000] p-5 text-brand-white shadow-[0_14px_30px_rgba(128,0,0,0.35)]">
-            <h2 className="text-xl font-black">اقتراحاتك الجاهزة 🔥</h2>
-            <p className="mt-1 text-sm font-bold">
+          <div className="rounded-2xl border border-brand-red/20 bg-brand-white p-5 shadow-[0_14px_30px_rgba(18,18,18,0.08)]">
+            <h2 className="text-xl font-black text-brand-dark">اختيارنا ليك</h2>
+            <p className="mt-1 text-sm font-bold text-brand-charcoal">
               {result.mode === 'exact'
-                ? 'دي أقرب اختيارات مطابقة لإجاباتك بشكل مباشر.'
-                : 'مفيش تطابق كامل، فجبنالك أقرب اختيارات مناسبة بنفس الروح.'}
+                ? 'ترشيحات مطابقة لاختياراتك، جاهزة للطلب مباشرة.'
+                : 'مفيش تطابق كامل، فاختارنا لك أقرب توصيات بنفس الطابع اللي طلبته.'}
             </p>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
             {result.recommendations.map(({ item, categoryName, reason }) => (
-              <article key={item.id} className="rounded-2xl border border-brand-dark/15 bg-brand-white p-4 shadow-[0_8px_22px_rgba(18,18,18,0.08)]">
+              <article key={item.id} className="rounded-2xl border border-brand-dark/10 bg-brand-white p-4 shadow-[0_8px_22px_rgba(18,18,18,0.06)]">
                 <h3 className="text-lg font-black text-brand-dark">{item.name}</h3>
                 <p className="mt-1 text-sm font-bold text-brand-charcoal">{categoryName}</p>
                 <p className="mt-2 text-xs font-semibold text-brand-charcoal">يبدأ من</p>
@@ -122,7 +122,7 @@ export default function FoodFinderPage() {
                 <p className="mt-2 text-sm leading-7 font-semibold text-brand-charcoal">{reason}</p>
                 <Link
                   href={`/menu?category=${item.categorySlug}`}
-                  className="mt-4 inline-flex rounded-full border border-brand-dark/25 bg-brand-yellow px-4 py-2.5 text-sm font-black text-brand-dark"
+                  className="mt-4 inline-flex rounded-full border border-brand-dark/15 bg-brand-white px-4 py-2.5 text-sm font-black text-brand-dark transition hover:border-brand-red/30 hover:text-brand-red"
                 >
                   افتح القسم في المنيو
                 </Link>
@@ -135,7 +135,7 @@ export default function FoodFinderPage() {
       <button
         type="button"
         onClick={resetFlow}
-        className="w-full rounded-full border border-brand-dark/20 bg-brand-white px-4 py-3 text-sm font-black text-brand-dark"
+        className="w-full rounded-full border border-brand-dark/15 bg-brand-white px-4 py-3 text-sm font-black text-brand-dark transition hover:border-brand-red/30 hover:text-brand-red"
       >
         ابدأ من جديد
       </button>

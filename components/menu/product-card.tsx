@@ -7,9 +7,9 @@ const availabilityLabel: Record<MenuItem['availability'], string> = {
 };
 
 const availabilityStyle: Record<MenuItem['availability'], string> = {
-  available: 'border border-green-300 bg-green-50 text-green-800',
-  limited: 'border border-amber-300 bg-amber-50 text-amber-800',
-  unavailable: 'border border-gray-300 bg-gray-100 text-gray-700',
+  available: 'border border-emerald-200 bg-emerald-50 text-emerald-700',
+  limited: 'border border-amber-200 bg-amber-50 text-amber-700',
+  unavailable: 'border border-slate-200 bg-slate-100 text-slate-600',
 };
 
 const tagStyle: Record<MenuTag, string> = {
@@ -26,28 +26,28 @@ type ProductCardProps = {
 
 export function ProductCard({ item, categoryName, onCustomize }: ProductCardProps) {
   return (
-    <article className="rounded-2xl border border-brand-dark/15 bg-brand-white p-4 shadow-[0_8px_22px_rgba(18,18,18,0.08)]">
+    <article className="rounded-2xl border border-brand-dark/10 bg-brand-white p-4 shadow-[0_10px_24px_rgba(18,18,18,0.06)]">
       <div className="mb-3 flex flex-wrap items-center gap-2">
         {(item.tags ?? []).map((tag) => (
           <span key={tag} className={`rounded-full px-3 py-1 text-xs font-black ${tagStyle[tag]}`}>
             {tag}
           </span>
         ))}
-        <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${availabilityStyle[item.availability]}`}>
+        <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${availabilityStyle[item.availability]}`}>
           {availabilityLabel[item.availability]}
         </span>
       </div>
 
       <h3 className="text-lg font-black text-brand-dark">{item.name}</h3>
       <p className="mt-1 text-sm leading-6 text-brand-charcoal">{item.description}</p>
-      <p className="mt-2 text-xs font-bold text-brand-charcoal">{categoryName}</p>
-      <p className="mt-3 text-xs font-semibold text-brand-charcoal">تبدأ الأسعار من</p>
-      <p className="text-xl font-black text-brand-red">{item.priceFrom} ج.م</p>
+      <p className="mt-2 text-xs font-bold text-brand-charcoal/80">{categoryName}</p>
+      <p className="mt-3 text-[11px] font-semibold uppercase tracking-wide text-brand-charcoal/70">تبدأ الأسعار من</p>
+      <p className="mt-0.5 text-2xl font-black text-brand-red">{item.priceFrom} ج.م</p>
 
       <button
         type="button"
         onClick={() => onCustomize(item)}
-        className="mt-4 w-full rounded-xl2 border border-brand-dark/15 bg-brand-yellow px-4 py-3 text-sm font-black text-brand-dark transition hover:opacity-90"
+        className="mt-4 w-full rounded-xl2 border border-brand-dark/15 bg-brand-white px-4 py-3 text-sm font-black text-brand-dark transition hover:border-brand-red/35 hover:text-brand-red"
       >
         تخصيص المنتج
       </button>
