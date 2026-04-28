@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { getRuntimePublicSiteSettings } from '@/lib/site-settings-runtime';
 import { siteConfig } from '@/lib/site-config';
 
 const footerLinks = [
@@ -8,14 +9,16 @@ const footerLinks = [
   { href: '/contact', label: 'اتصل بنا' },
 ];
 
-export function SiteFooter() {
+export async function SiteFooter() {
+  const settings = await getRuntimePublicSiteSettings();
+
   return (
     <footer className="mt-12 bg-brand-dark pb-28 pt-8 text-brand-white md:pb-8">
       <div className="container-tight space-y-4 text-sm">
         <p className="text-lg font-black">{siteConfig.nameAr}</p>
-        <p>{siteConfig.addressAr}</p>
+        <p>{settings.addressAr}</p>
         <p>
-          {siteConfig.phonePrimary} - {siteConfig.phoneSecondary}
+          {settings.phonePrimary} - {settings.phoneSecondary}
         </p>
 
         <nav aria-label="روابط مهمة" className="pt-1">
@@ -30,7 +33,7 @@ export function SiteFooter() {
           </ul>
         </nav>
 
-        <Link href={siteConfig.facebook} target="_blank" className="inline-block text-brand-yellow underline">
+        <Link href={settings.facebookUrl} target="_blank" className="inline-block text-brand-yellow underline">
           Facebook
         </Link>
       </div>

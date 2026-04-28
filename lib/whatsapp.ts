@@ -1,4 +1,3 @@
-import { siteConfig } from '@/lib/site-config';
 import type { CartCustomerForm, CartItem } from '@/types/cart';
 
 function normalizeWhatsappNumber(raw: string): string {
@@ -58,8 +57,8 @@ export function buildArabicWhatsappMessage(params: {
   return lines.join('\n').trim();
 }
 
-export function buildWhatsappOrderUrl(message: string): string {
-  const phone = normalizeWhatsappNumber(siteConfig.whatsappOrderNumber);
+export function buildWhatsappOrderUrl(message: string, whatsappOrderNumber: string): string {
+  const phone = normalizeWhatsappNumber(whatsappOrderNumber);
   const text = encodeURIComponent(message);
   return `https://wa.me/${phone}?text=${text}`;
 }

@@ -1,10 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useCart } from '@/components/cart/cart-provider';
 import { PageHero } from '@/components/shared/page-hero';
 import { buildArabicWhatsappMessage, buildWhatsappOrderUrl } from '@/lib/whatsapp';
+import { siteConfig } from '@/lib/site-config';
 
 type ValidationErrors = {
   name?: string;
@@ -20,8 +21,28 @@ type CreateOrderApiSuccess = {
   reference?: string;
 };
 
+
+type RuntimePublicSiteSettings = {
+  isOrderingOpen: boolean;
+  whatsappOrderNumber: string;
+  phonePrimary: string;
+  phoneSecondary: string;
+  addressAr: string;
+  facebookUrl: string;
+};
+
+const fallbackRuntimeSettings: RuntimePublicSiteSettings = {
+  isOrderingOpen: true,
+  whatsappOrderNumber: siteConfig.whatsappOrderNumber,
+  phonePrimary: siteConfig.phonePrimary,
+  phoneSecondary: siteConfig.phoneSecondary,
+  addressAr: siteConfig.addressAr,
+  facebookUrl: siteConfig.facebook,
+};
+
 type CreateOrderApiFailure = {
   ok: false;
+  code?: string;
   error?: string;
 };
 
@@ -35,6 +56,8 @@ export default function CartPage() {
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [persistenceWarning, setPersistenceWarning] = useState('');
+  const [orderingStatusMessage, setOrderingStatusMessage] = useState('');
+  const [runtimeSettings, setRuntimeSettings] = useState<RuntimePublicSiteSettings>(fallbackRuntimeSettings);
 
   const summary = useMemo(() => {
     const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -43,6 +66,36 @@ export default function CartPage() {
       totalLines: items.length,
     };
   }, [items]);
+
+  useEffect(() => {
+    let isActive = true;
+
+    async function loadRuntimeSettings() {
+      try {
+        const response = await fetch('/api/public/site-settings');
+        if (!response.ok) {
+          return;
+        }
+
+        const payload = (await response.json()) as { ok?: boolean; settings?: RuntimePublicSiteSettings };
+        if (!isActive || !payload?.ok || !payload.settings) {
+          return;
+        }
+
+        setRuntimeSettings(payload.settings);
+      } catch {
+        // Keep fallback settings without breaking checkout.
+      }
+    }
+
+    void loadRuntimeSettings();
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
+  const isOrderingClosed = !runtimeSettings.isOrderingOpen;
 
   function validateBeforeSend(): ValidationErrors {
     const nextErrors: ValidationErrors = {};
@@ -76,6 +129,12 @@ export default function CartPage() {
       return;
     }
 
+    if (isOrderingClosed) {
+      setOrderingStatusMessage('الطلبات متوقفة حاليًا. برجاء المحاولة لاحقًا خلال مواعيد التشغيل.');
+      return;
+    }
+
+    setOrderingStatusMessage('');
     setPersistenceWarning('');
     setIsSubmitting(true);
 
@@ -98,6 +157,10 @@ export default function CartPage() {
 
       if (response.ok && payload.ok) {
         orderReference = payload.reference ?? (payload.orderNumber ? `#${payload.orderNumber}` : payload.orderId);
+      } else if (!payload.ok && payload.code === 'ORDERING_CLOSED') {
+        setOrderingStatusMessage(payload.error || 'الطلبات متوقفة حاليًا. برجاء المحاولة لاحقًا خلال مواعيد التشغيل.');
+        setIsSubmitting(false);
+        return;
       } else {
         setPersistenceWarning('تعذر حفظ الطلب داخل النظام الآن، سيتم المتابعة على واتساب بشكل طبيعي.');
       }
@@ -106,7 +169,7 @@ export default function CartPage() {
     }
 
     const message = buildArabicWhatsappMessage({ items, customer, subtotal, orderReference });
-    const whatsappUrl = buildWhatsappOrderUrl(message);
+    const whatsappUrl = buildWhatsappOrderUrl(message, runtimeSettings.whatsappOrderNumber);
     window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
 
     setIsSubmitting(false);
@@ -336,13 +399,17 @@ export default function CartPage() {
             <p className="rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-sm font-bold text-amber-800">{persistenceWarning}</p>
           ) : null}
 
+          {orderingStatusMessage ? (
+            <p className="rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-sm font-bold text-red-800">{orderingStatusMessage}</p>
+          ) : null}
+
           <button
             type="button"
             onClick={handleSendWhatsapp}
             className="btn-primary block w-full text-center disabled:cursor-not-allowed disabled:opacity-60"
-            disabled={!customer.confirmedAccurateDetails || isSubmitting}
+            disabled={!customer.confirmedAccurateDetails || isSubmitting || isOrderingClosed}
           >
-            {isSubmitting ? 'جاري تجهيز طلبك...' : 'إرسال الطلب على واتساب'}
+            {isOrderingClosed ? 'الطلبات متوقفة حاليًا' : isSubmitting ? 'جاري تجهيز طلبك...' : 'إرسال الطلب على واتساب'}
           </button>
         </>
       ) : null}
