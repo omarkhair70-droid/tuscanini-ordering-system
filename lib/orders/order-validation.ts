@@ -2,8 +2,6 @@ import 'server-only';
 
 import type { OrderType } from '@/types/cart';
 
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
 const hasMaxTwoDecimals = (value: number): boolean => Number.isInteger(value * 100);
 
 const parseNumberOrThrow = (value: unknown, fieldLabelAr: string): number => {
@@ -87,12 +85,17 @@ const parseOrderTypeOrThrow = (value: unknown): OrderType => {
   throw new Error('نوع الطلب غير صالح.');
 };
 
-const parseUuidOrThrow = (value: unknown, fieldLabelAr: string): string => {
-  if (typeof value !== 'string' || !UUID_PATTERN.test(value)) {
+const parseIdStringOrThrow = (value: unknown, fieldLabelAr: string): string => {
+  if (typeof value !== 'string') {
     throw new Error(`${fieldLabelAr} غير صالح.`);
   }
 
-  return value;
+  const normalized = value.trim();
+  if (!normalized) {
+    throw new Error(`${fieldLabelAr} غير صالح.`);
+  }
+
+  return normalized;
 };
 
 const roundMoney = (value: number): number => Math.round(value * 100) / 100;
@@ -143,7 +146,7 @@ const parseSelectedSizeOrThrow = (value: unknown): ValidatedOrderItemSize | null
   const payload = assertObjectOrThrow(value, 'بيانات الحجم غير صالحة.');
 
   return {
-    id: parseUuidOrThrow(payload.id, 'معرّف الحجم'),
+    id: parseIdStringOrThrow(payload.id, 'معرّف الحجم'),
     label: parseStringOrThrow(payload.label, 'اسم الحجم'),
     price: parseMoneyOrThrow(payload.price, 'سعر الحجم'),
   };
@@ -162,7 +165,7 @@ const parseSelectedAddonsOrThrow = (value: unknown): ValidatedOrderItemAddon[] =
     const payload = assertObjectOrThrow(addon, `بيانات الإضافة رقم ${index + 1} غير صالحة.`);
 
     return {
-      id: parseUuidOrThrow(payload.id, `معرّف الإضافة رقم ${index + 1}`),
+      id: parseIdStringOrThrow(payload.id, `معرّف الإضافة رقم ${index + 1}`),
       label: parseStringOrThrow(payload.label, `اسم الإضافة رقم ${index + 1}`),
       price: parseMoneyOrThrow(payload.price, `سعر الإضافة رقم ${index + 1}`),
     };
@@ -197,7 +200,7 @@ const parseItemOrThrow = (value: unknown, index: number): ValidatedOrderItem => 
 
   return {
     lineId,
-    productId: parseUuidOrThrow(payload.productId, `معرّف الصنف رقم ${index + 1}`),
+    productId: parseIdStringOrThrow(payload.productId, `معرّف الصنف رقم ${index + 1}`),
     productName: parseStringOrThrow(payload.productName, `اسم الصنف رقم ${index + 1}`),
     selectedSize: parseSelectedSizeOrThrow(payload.selectedSize),
     selectedAddons: parseSelectedAddonsOrThrow(payload.selectedAddons),
