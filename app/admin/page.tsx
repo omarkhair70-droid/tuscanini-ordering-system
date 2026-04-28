@@ -18,6 +18,11 @@ const adminLinks = [
     description: 'متابعة الطلبات وحالاتها التشغيلية.',
   },
   {
+    href: '/admin/kitchen',
+    title: 'شاشة المطبخ',
+    description: 'عرض مباشر للطلبات النشطة مناسب لشاشة المطبخ.',
+  },
+  {
     href: '/admin/settings',
     title: 'إعدادات الموقع',
     description: 'إعدادات عامة (Placeholder حالياً).',
