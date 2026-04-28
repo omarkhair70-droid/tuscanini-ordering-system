@@ -2,6 +2,7 @@ import 'server-only';
 
 import { getSupabaseServerAdminClient } from '@/lib/supabase/server-admin';
 import type { ValidatedOrderPayload } from '@/lib/orders/order-validation';
+import { resolveOrderItemIdsOrThrow } from '@/lib/orders/resolve-order-ids';
 
 type CreateOrderResult = {
   orderId: string;
@@ -37,12 +38,13 @@ export async function createOrderInSupabase(payload: ValidatedOrderPayload): Pro
   }
 
   try {
-    for (const item of payload.items) {
+    for (const [itemIndex, item] of payload.items.entries()) {
+      const resolvedIds = await resolveOrderItemIdsOrThrow(admin, item, itemIndex);
       const { data: orderItemRow, error: orderItemError } = await admin
         .from('order_items')
         .insert({
           order_id: orderRow.id,
-          product_id: item.productId,
+          product_id: resolvedIds.productId,
           product_name_snapshot: item.productName,
           selected_size_label: item.selectedSize?.label ?? null,
           unit_price: item.unitPrice,
@@ -58,9 +60,9 @@ export async function createOrderInSupabase(payload: ValidatedOrderPayload): Pro
       }
 
       if (item.selectedAddons.length > 0) {
-        const addonsRows = item.selectedAddons.map((addon) => ({
+        const addonsRows = item.selectedAddons.map((addon, addonIndex) => ({
           order_item_id: orderItemRow.id,
-          addon_id: addon.id,
+          addon_id: resolvedIds.addonIds[addonIndex],
           addon_label_snapshot: addon.label,
           addon_price: addon.price,
         }));
