@@ -142,6 +142,7 @@ export default function CartPage() {
     setIsSubmitting(true);
 
     let orderReference: string | null = null;
+    let persistedOrderId: string | null = null;
 
     try {
       const response = await fetch('/api/orders', {
@@ -160,6 +161,7 @@ export default function CartPage() {
       const payload = (await response.json()) as CreateOrderApiSuccess | CreateOrderApiFailure;
 
       if (response.ok && payload.ok) {
+        persistedOrderId = payload.orderId;
         orderReference = payload.reference ?? (payload.orderNumber ? `#${payload.orderNumber}` : payload.orderId);
       } else if (!payload.ok && payload.code === 'ORDERING_CLOSED') {
         setOrderingStatusMessage(payload.error || 'الطلبات متوقفة حاليًا. برجاء المحاولة لاحقًا خلال مواعيد التشغيل.');
@@ -176,10 +178,13 @@ export default function CartPage() {
     const whatsappUrl = buildWhatsappOrderUrl(message, runtimeSettings.whatsappOrderNumber);
     window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
 
-    if (orderReference) {
+    if (orderReference && persistedOrderId) {
+      clearCart();
+
       const encodedReference = encodeURIComponent(orderReference);
+      const encodedOrderId = encodeURIComponent(persistedOrderId);
       const tableSuffix = tableReference ? `&table=${encodeURIComponent(tableReference)}` : '';
-      router.push(`/order-success?ref=${encodedReference}${tableSuffix}`);
+      router.push(`/order-success?orderId=${encodedOrderId}&ref=${encodedReference}${tableSuffix}`);
     }
 
     setIsSubmitting(false);
