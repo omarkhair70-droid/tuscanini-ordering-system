@@ -28,6 +28,11 @@ const adminLinks = [
     description: 'إعدادات عامة (Placeholder حالياً).',
   },
   {
+    href: '/admin/offers',
+    title: 'إدارة العروض',
+    description: 'إدارة العروض المعروضة على الموقع وتفعيلها أو إيقافها.',
+  },
+  {
     href: '/admin/tables',
     title: 'روابط طاولات QR',
     description: 'روابط جاهزة لطاولات الصالة (1–20).',

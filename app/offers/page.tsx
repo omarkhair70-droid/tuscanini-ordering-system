@@ -1,7 +1,11 @@
 import { PageHero } from '@/components/shared/page-hero';
+import { getActivePublicOffers } from '@/lib/offers-runtime';
 
-export default function OffersPage() {
-  const confirmedOffers: Array<{ id: string; title: string; description?: string; price?: number }> = [];
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+export default async function OffersPage() {
+  const confirmedOffers = await getActivePublicOffers();
   const hasConfirmedOffers = confirmedOffers.length > 0;
 
   return (
@@ -11,9 +15,10 @@ export default function OffersPage() {
       {hasConfirmedOffers ? (
         confirmedOffers.map((offer) => (
           <div key={offer.id} className="rounded-2xl border-2 border-brand-red p-4">
-            <h2 className="text-xl font-black">{offer.title}</h2>
-            {offer.description ? <p className="text-sm">{offer.description}</p> : null}
-            {offer.price ? <p className="mt-2 font-extrabold text-brand-red">{offer.price} ج.م</p> : null}
+            {offer.badgeAr ? <p className="mb-2 inline-flex rounded-full bg-brand-red/10 px-2 py-1 text-xs font-bold text-brand-red">{offer.badgeAr}</p> : null}
+            <h2 className="text-xl font-black">{offer.titleAr}</h2>
+            {offer.descriptionAr ? <p className="text-sm">{offer.descriptionAr}</p> : null}
+            {offer.priceText ? <p className="mt-2 font-extrabold text-brand-red">{offer.priceText}</p> : null}
           </div>
         ))
       ) : (
