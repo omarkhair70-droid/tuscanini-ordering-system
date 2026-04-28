@@ -7,6 +7,7 @@ import { resolveOrderItemIdsOrThrow } from '@/lib/orders/resolve-order-ids';
 type CreateOrderResult = {
   orderId: string;
   orderNumber: number | null;
+  tableReference: string | null;
 };
 
 const ORDER_SOURCE = 'web_whatsapp';
@@ -29,8 +30,9 @@ export async function createOrderInSupabase(payload: ValidatedOrderPayload): Pro
       discount_amount: 0,
       total_estimate: payload.subtotal,
       source: ORDER_SOURCE,
+      table_reference: payload.tableReference,
     })
-    .select('id, order_number')
+    .select('id, order_number, table_reference')
     .single();
 
   if (orderError || !orderRow) {
@@ -89,6 +91,7 @@ export async function createOrderInSupabase(payload: ValidatedOrderPayload): Pro
     return {
       orderId: orderRow.id,
       orderNumber: typeof orderRow.order_number === 'number' ? orderRow.order_number : null,
+      tableReference: typeof orderRow.table_reference === 'string' ? orderRow.table_reference : null,
     };
   } catch (error) {
     await admin.from('orders').delete().eq('id', orderRow.id);

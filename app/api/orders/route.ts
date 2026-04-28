@@ -28,6 +28,7 @@ export async function POST(request: Request) {
       orderId: result.orderId,
       orderNumber: result.orderNumber,
       reference: result.orderNumber ? `#${result.orderNumber}` : result.orderId,
+      tableReference: result.tableReference,
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'تعذر حفظ الطلب الآن.';

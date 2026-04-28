@@ -5,6 +5,7 @@ import { getRuntimePublicSiteSettings } from '@/lib/site-settings-runtime';
 type OrderSuccessPageProps = {
   searchParams?: Promise<{
     ref?: string;
+    table?: string;
   }>;
 };
 
@@ -19,6 +20,7 @@ function normalizeWhatsappNumber(raw: string): string {
 export default async function OrderSuccessPage({ searchParams }: OrderSuccessPageProps) {
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const orderReference = typeof resolvedSearchParams?.ref === 'string' ? resolvedSearchParams.ref.trim() : '';
+  const tableReference = typeof resolvedSearchParams?.table === 'string' ? resolvedSearchParams.table.trim() : '';
 
   const settings = await getRuntimePublicSiteSettings();
   const normalizedWhatsappNumber = normalizeWhatsappNumber(settings.whatsappOrderNumber);
@@ -39,6 +41,13 @@ export default async function OrderSuccessPage({ searchParams }: OrderSuccessPag
             <div className="rounded-xl border border-brand-dark/20 bg-brand-white px-4 py-3">
               <p className="text-xs font-bold text-brand-charcoal">مرجع الطلب</p>
               <p className="mt-1 text-base font-black text-brand-red sm:text-lg">{orderReference}</p>
+            </div>
+          ) : null}
+
+          {tableReference ? (
+            <div className="rounded-xl border border-brand-dark/20 bg-brand-white px-4 py-3">
+              <p className="text-xs font-bold text-brand-charcoal">مرجع الطاولة</p>
+              <p className="mt-1 text-base font-black text-brand-dark sm:text-lg">{tableReference}</p>
             </div>
           ) : null}
         </div>

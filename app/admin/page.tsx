@@ -27,6 +27,11 @@ const adminLinks = [
     title: 'إعدادات الموقع',
     description: 'إعدادات عامة (Placeholder حالياً).',
   },
+  {
+    href: '/admin/tables',
+    title: 'روابط طاولات QR',
+    description: 'روابط جاهزة لطاولات الصالة (1–20).',
+  },
 ];
 
 function formatMoney(value: number): string {

@@ -16,6 +16,7 @@ type SearchParamsInput = Record<string, string | string[] | undefined>;
 type OrderRow = {
   id: string;
   order_number: number | null;
+  table_reference: string | null;
   customer_name: string | null;
   customer_phone: string;
   customer_address: string | null;
@@ -98,7 +99,7 @@ export async function getAdminOrdersDashboardData(searchParams: SearchParamsInpu
   let query = supabase
     .from('orders')
     .select(
-      'id, order_number, customer_name, customer_phone, customer_address, order_type, total_estimate, status, confirmation_status, general_notes, created_at',
+      'id, order_number, table_reference, customer_name, customer_phone, customer_address, order_type, total_estimate, status, confirmation_status, general_notes, created_at',
     )
     .order('created_at', { ascending: false })
     .limit(MAX_ORDERS);
@@ -196,6 +197,7 @@ export async function getAdminOrdersDashboardData(searchParams: SearchParamsInpu
     id: orderRow.id,
     orderNumber: typeof orderRow.order_number === 'number' ? orderRow.order_number : null,
     reference: buildReference(orderRow),
+    tableReference: orderRow.table_reference,
     customerName: orderRow.customer_name,
     customerPhone: orderRow.customer_phone,
     customerAddress: orderRow.customer_address,

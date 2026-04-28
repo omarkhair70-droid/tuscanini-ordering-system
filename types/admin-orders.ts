@@ -43,6 +43,7 @@ export type AdminOrderSummaryView = {
   id: string;
   orderNumber: number | null;
   reference: string;
+  tableReference: string | null;
   customerName: string | null;
   customerPhone: string;
   customerAddress: string | null;
