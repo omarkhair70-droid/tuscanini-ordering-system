@@ -13,6 +13,18 @@ type ValidationErrors = {
   confirmedAccurateDetails?: string;
 };
 
+type CreateOrderApiSuccess = {
+  ok: true;
+  orderId: string;
+  orderNumber?: number | null;
+  reference?: string;
+};
+
+type CreateOrderApiFailure = {
+  ok: false;
+  error?: string;
+};
+
 function isValidEgyptianMobile(rawPhone: string): boolean {
   const normalized = rawPhone.replace(/\D/g, '');
   return /^01\d{9}$/.test(normalized);
@@ -21,6 +33,8 @@ function isValidEgyptianMobile(rawPhone: string): boolean {
 export default function CartPage() {
   const { items, customer, subtotal, updateItemQuantity, removeItem, clearCart, updateCustomer, isHydrated } = useCart();
   const [errors, setErrors] = useState<ValidationErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [persistenceWarning, setPersistenceWarning] = useState('');
 
   const summary = useMemo(() => {
     const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -29,15 +43,6 @@ export default function CartPage() {
       totalLines: items.length,
     };
   }, [items]);
-
-  const whatsappUrl = useMemo(() => {
-    if (!items.length) {
-      return '';
-    }
-
-    const message = buildArabicWhatsappMessage({ items, customer, subtotal });
-    return buildWhatsappOrderUrl(message);
-  }, [items, customer, subtotal]);
 
   function validateBeforeSend(): ValidationErrors {
     const nextErrors: ValidationErrors = {};
@@ -63,15 +68,48 @@ export default function CartPage() {
     return nextErrors;
   }
 
-  function handleSendWhatsapp() {
+  async function handleSendWhatsapp() {
     const nextErrors = validateBeforeSend();
     setErrors(nextErrors);
 
-    if (Object.keys(nextErrors).length > 0 || !whatsappUrl) {
+    if (Object.keys(nextErrors).length > 0 || items.length === 0) {
       return;
     }
 
+    setPersistenceWarning('');
+    setIsSubmitting(true);
+
+    let orderReference: string | null = null;
+
+    try {
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          customer,
+          items,
+          subtotal,
+        }),
+      });
+
+      const payload = (await response.json()) as CreateOrderApiSuccess | CreateOrderApiFailure;
+
+      if (response.ok && payload.ok) {
+        orderReference = payload.reference ?? (payload.orderNumber ? `#${payload.orderNumber}` : payload.orderId);
+      } else {
+        setPersistenceWarning('تعذر حفظ الطلب داخل النظام الآن، سيتم المتابعة على واتساب بشكل طبيعي.');
+      }
+    } catch {
+      setPersistenceWarning('تعذر حفظ الطلب داخل النظام الآن، سيتم المتابعة على واتساب بشكل طبيعي.');
+    }
+
+    const message = buildArabicWhatsappMessage({ items, customer, subtotal, orderReference });
+    const whatsappUrl = buildWhatsappOrderUrl(message);
     window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+
+    setIsSubmitting(false);
   }
 
   return (
@@ -294,13 +332,17 @@ export default function CartPage() {
             {errors.confirmedAccurateDetails ? <p className="text-xs font-bold text-red-700">{errors.confirmedAccurateDetails}</p> : null}
           </section>
 
+          {persistenceWarning ? (
+            <p className="rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-sm font-bold text-amber-800">{persistenceWarning}</p>
+          ) : null}
+
           <button
             type="button"
             onClick={handleSendWhatsapp}
             className="btn-primary block w-full text-center disabled:cursor-not-allowed disabled:opacity-60"
-            disabled={!customer.confirmedAccurateDetails}
+            disabled={!customer.confirmedAccurateDetails || isSubmitting}
           >
-            إرسال الطلب على واتساب
+            {isSubmitting ? 'جاري تجهيز طلبك...' : 'إرسال الطلب على واتساب'}
           </button>
         </>
       ) : null}
