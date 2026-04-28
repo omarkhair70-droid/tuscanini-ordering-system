@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { PageHero } from '@/components/shared/page-hero';
 import { OrderTrackingCard } from '@/components/order-success/order-tracking-card';
 import { getRuntimePublicSiteSettings } from '@/lib/site-settings-runtime';
+import { buildWhatsappFollowupMessage, buildWhatsappOrderUrl } from '@/lib/whatsapp';
 
 type OrderSuccessPageProps = {
   searchParams?: Promise<{
@@ -11,14 +12,6 @@ type OrderSuccessPageProps = {
   }>;
 };
 
-function normalizeWhatsappNumber(raw: string): string {
-  const digits = raw.replace(/\D/g, '');
-  if (digits.startsWith('0')) {
-    return `20${digits.slice(1)}`;
-  }
-  return digits;
-}
-
 export default async function OrderSuccessPage({ searchParams }: OrderSuccessPageProps) {
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const orderId = typeof resolvedSearchParams?.orderId === 'string' ? resolvedSearchParams.orderId.trim() : '';
@@ -26,8 +19,9 @@ export default async function OrderSuccessPage({ searchParams }: OrderSuccessPag
   const tableReference = typeof resolvedSearchParams?.table === 'string' ? resolvedSearchParams.table.trim() : '';
 
   const settings = await getRuntimePublicSiteSettings();
-  const normalizedWhatsappNumber = normalizeWhatsappNumber(settings.whatsappOrderNumber);
-  const whatsappUrl = normalizedWhatsappNumber ? `https://wa.me/${normalizedWhatsappNumber}` : null;
+  const referenceForFollowup = orderReference || orderId;
+  const followupMessage = referenceForFollowup ? buildWhatsappFollowupMessage(referenceForFollowup, tableReference || null) : '';
+  const whatsappUrl = referenceForFollowup ? buildWhatsappOrderUrl(followupMessage, settings.whatsappOrderNumber) : null;
 
   return (
     <div className="space-y-6">
@@ -75,7 +69,7 @@ export default async function OrderSuccessPage({ searchParams }: OrderSuccessPag
         </Link>
 
         {whatsappUrl ? (
-          <Link href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="btn-secondary w-full bg-brand-white text-center">
+          <Link href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="btn-primary w-full text-center">
             متابعة عبر واتساب
           </Link>
         ) : null}
