@@ -33,6 +33,7 @@ export type KitchenOrderView = {
   id: string;
   orderNumber: number | null;
   reference: string;
+  tableReference: string | null;
   customerName: string | null;
   orderType: 'delivery' | 'pickup';
   status: KitchenActiveStatus;

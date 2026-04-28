@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useCart } from '@/components/cart/cart-provider';
 import { FloatingCartCta } from '@/components/cart/floating-cart-cta';
 import { CategoryChips } from '@/components/menu/category-chips';
 import { ProductCard } from '@/components/menu/product-card';
@@ -11,9 +12,11 @@ import type { MenuCategory, MenuCategorySlug, MenuItem } from '@/types/menu';
 type MenuPageClientProps = {
   categories: MenuCategory[];
   items: MenuItem[];
+  initialTableReference: string | null;
 };
 
-export function MenuPageClient({ categories, items }: MenuPageClientProps) {
+export function MenuPageClient({ categories, items, initialTableReference }: MenuPageClientProps) {
+  const { updateTableReference } = useCart();
   const [activeCategory, setActiveCategory] = useState<MenuCategorySlug | 'all'>('all');
   const [selectedProduct, setSelectedProduct] = useState<MenuItem | null>(null);
   const validCategorySlugs = useMemo(() => new Set(categories.map((category) => category.slug)), [categories]);
@@ -33,6 +36,10 @@ export function MenuPageClient({ categories, items }: MenuPageClientProps) {
 
     setActiveCategory('all');
   }, [validCategorySlugs]);
+
+  useEffect(() => {
+    updateTableReference(initialTableReference);
+  }, [initialTableReference, updateTableReference]);
 
   const filteredItems = useMemo(() => {
     if (activeCategory === 'all') {

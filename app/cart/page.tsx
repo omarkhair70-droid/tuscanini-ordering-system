@@ -20,6 +20,7 @@ type CreateOrderApiSuccess = {
   orderId: string;
   orderNumber?: number | null;
   reference?: string;
+  tableReference?: string | null;
 };
 
 
@@ -54,7 +55,7 @@ function isValidEgyptianMobile(rawPhone: string): boolean {
 
 export default function CartPage() {
   const router = useRouter();
-  const { items, customer, subtotal, updateItemQuantity, removeItem, clearCart, updateCustomer, isHydrated } = useCart();
+  const { items, customer, tableReference, subtotal, updateItemQuantity, removeItem, clearCart, updateCustomer, isHydrated } = useCart();
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [persistenceWarning, setPersistenceWarning] = useState('');
@@ -152,6 +153,7 @@ export default function CartPage() {
           customer,
           items,
           subtotal,
+          tableReference,
         }),
       });
 
@@ -170,13 +172,14 @@ export default function CartPage() {
       setPersistenceWarning('تعذر حفظ الطلب داخل النظام الآن، سيتم المتابعة على واتساب بشكل طبيعي.');
     }
 
-    const message = buildArabicWhatsappMessage({ items, customer, subtotal, orderReference });
+    const message = buildArabicWhatsappMessage({ items, customer, subtotal, orderReference, tableReference });
     const whatsappUrl = buildWhatsappOrderUrl(message, runtimeSettings.whatsappOrderNumber);
     window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
 
     if (orderReference) {
       const encodedReference = encodeURIComponent(orderReference);
-      router.push(`/order-success?ref=${encodedReference}`);
+      const tableSuffix = tableReference ? `&table=${encodeURIComponent(tableReference)}` : '';
+      router.push(`/order-success?ref=${encodedReference}${tableSuffix}`);
     }
 
     setIsSubmitting(false);
@@ -224,6 +227,11 @@ export default function CartPage() {
             </div>
 
             <p className="mt-3 rounded-xl bg-brand-yellow/40 px-3 py-2 text-sm font-bold text-brand-dark">راجع طلبك قبل الإرسال.</p>
+            {tableReference ? (
+              <p className="mt-2 rounded-xl border border-brand-dark/20 bg-brand-white px-3 py-2 text-sm font-bold text-brand-dark">
+                الطلب مرتبط بالطاولة: {tableReference}
+              </p>
+            ) : null}
             <div className="mt-3 space-y-2">
               <p className="rounded-xl border border-brand-dark/20 bg-brand-white px-3 py-2 text-sm font-bold text-brand-dark">
                 الطلب لا يبدأ تحضيره إلا بعد تأكيد المطعم مع العميل.

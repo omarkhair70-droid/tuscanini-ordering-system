@@ -13,13 +13,18 @@ export function buildArabicWhatsappMessage(params: {
   customer: CartCustomerForm;
   subtotal: number;
   orderReference?: string | null;
+  tableReference?: string | null;
 }): string {
-  const { items, customer, subtotal, orderReference } = params;
+  const { items, customer, subtotal, orderReference, tableReference } = params;
 
   const lines: string[] = ['مرحبًا توسكانيني 👋', 'هذا طلبي، برجاء التأكيد:', '', '🧾 *ملخص الطلب*'];
 
   if (orderReference) {
     lines.push(`🔖 *مرجع الطلب:* ${orderReference}`, '');
+  }
+
+  if (tableReference) {
+    lines.push(`🪑 *الطاولة:* ${tableReference}`, '');
   }
 
   items.forEach((item, index) => {

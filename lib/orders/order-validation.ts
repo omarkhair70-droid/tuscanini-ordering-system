@@ -136,6 +136,35 @@ export type ValidatedOrderPayload = {
   customer: ValidatedOrderCustomer;
   items: ValidatedOrderItem[];
   subtotal: number;
+  tableReference: string | null;
+};
+
+const TABLE_REFERENCE_MAX_LENGTH = 40;
+const TABLE_REFERENCE_PATTERN = /^[\p{Script=Arabic}\p{Script=Latin}\p{Number}_\- ]+$/u;
+
+const parseTableReferenceOrThrow = (value: unknown): string | null => {
+  if (value === undefined || value === null) {
+    return null;
+  }
+
+  if (typeof value !== 'string') {
+    throw new Error('مرجع الطاولة غير صالح.');
+  }
+
+  const normalized = value.trim();
+  if (!normalized) {
+    return null;
+  }
+
+  if (normalized.length > TABLE_REFERENCE_MAX_LENGTH) {
+    throw new Error(`مرجع الطاولة يجب ألا يزيد عن ${TABLE_REFERENCE_MAX_LENGTH} حرفًا.`);
+  }
+
+  if (!TABLE_REFERENCE_PATTERN.test(normalized)) {
+    throw new Error('مرجع الطاولة غير صالح. المسموح: عربي/إنجليزي/أرقام/مسافات/-/_.');
+  }
+
+  return normalized;
 };
 
 const parseSelectedSizeOrThrow = (value: unknown): ValidatedOrderItemSize | null => {
@@ -231,6 +260,7 @@ export const parseCreateOrderPayloadOrThrow = (payload: unknown): ValidatedOrder
 
   const items = itemsPayload.map((item, index) => parseItemOrThrow(item, index));
   const providedSubtotal = parseMoneyOrThrow(body.subtotal, 'الإجمالي الفرعي');
+  const tableReference = parseTableReferenceOrThrow(body.tableReference);
 
   const computedSubtotal = roundMoney(items.reduce((sum, item) => sum + item.totalItemPrice, 0));
   if (computedSubtotal !== roundMoney(providedSubtotal)) {
@@ -247,5 +277,6 @@ export const parseCreateOrderPayloadOrThrow = (payload: unknown): ValidatedOrder
     },
     items,
     subtotal: computedSubtotal,
+    tableReference,
   };
 };

@@ -7,6 +7,7 @@ import type { CartCustomerForm, CartDraftItemInput, CartItem, CartState } from '
 type CartContextValue = {
   items: CartItem[];
   customer: CartCustomerForm;
+  tableReference: string | null;
   isHydrated: boolean;
   itemsCount: number;
   subtotal: number;
@@ -15,6 +16,7 @@ type CartContextValue = {
   removeItem: (lineId: string) => void;
   clearCart: () => void;
   updateCustomer: (input: Partial<CartCustomerForm>) => void;
+  updateTableReference: (value: string | null) => void;
 };
 
 const CartContext = createContext<CartContextValue | undefined>(undefined);
@@ -57,6 +59,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const value: CartContextValue = {
     items: state.items,
     customer: state.customer,
+    tableReference: state.tableReference,
     isHydrated,
     itemsCount,
     subtotal,
@@ -97,6 +100,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       setState((current) => ({
         ...current,
         customer: { ...current.customer, ...input },
+      }));
+    },
+    updateTableReference: (value) => {
+      setState((current) => ({
+        ...current,
+        tableReference: value,
       }));
     },
   };

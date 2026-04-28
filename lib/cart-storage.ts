@@ -12,6 +12,7 @@ export const defaultCartState: CartState = {
     generalNotes: '',
     confirmedAccurateDetails: false,
   },
+  tableReference: null,
 };
 
 export function loadCartState(): CartState {
@@ -32,6 +33,7 @@ export function loadCartState(): CartState {
         ...defaultCartState.customer,
         ...(parsed.customer ?? {}),
       },
+      tableReference: typeof parsed.tableReference === 'string' ? parsed.tableReference : null,
     };
   } catch {
     return defaultCartState;

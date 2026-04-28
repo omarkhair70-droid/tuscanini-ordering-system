@@ -13,6 +13,7 @@ import type { AdminOrderStatus } from '@/types/admin-orders';
 type OrderRow = {
   id: string;
   order_number: number | null;
+  table_reference: string | null;
   customer_name: string | null;
   order_type: 'delivery' | 'pickup';
   status: AdminOrderStatus;
@@ -70,7 +71,7 @@ export async function getKitchenOrdersBoardData(): Promise<KitchenOrdersBoardDat
 
   const ordersResult = await supabase
     .from('orders')
-    .select('id, order_number, customer_name, order_type, status, general_notes, created_at')
+    .select('id, order_number, table_reference, customer_name, order_type, status, general_notes, created_at')
     .in('status', [...KITCHEN_ACTIVE_STATUSES])
     .order('created_at', { ascending: true })
     .limit(MAX_ACTIVE_ORDERS);
@@ -149,6 +150,7 @@ export async function getKitchenOrdersBoardData(): Promise<KitchenOrdersBoardDat
     id: orderRow.id,
     orderNumber: typeof orderRow.order_number === 'number' ? orderRow.order_number : null,
     reference: buildReference(orderRow),
+    tableReference: orderRow.table_reference,
     customerName: orderRow.customer_name,
     orderType: orderRow.order_type,
     status: orderRow.status,

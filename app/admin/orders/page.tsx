@@ -103,6 +103,9 @@ function OrderCard({ order, returnTo }: { order: AdminOrderSummaryView; returnTo
             <span className="font-bold text-slate-900">نوع الطلب:</span> {formatOrderType(order.orderType)}
           </p>
           <p>
+            <span className="font-bold text-slate-900">الطاولة:</span> {order.tableReference || '—'}
+          </p>
+          <p>
             <span className="font-bold text-slate-900">الإجمالي التقديري:</span> {formatMoney(order.totalEstimate)}
           </p>
           <p>

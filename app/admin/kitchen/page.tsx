@@ -65,6 +65,9 @@ function OrderCard({ order }: { order: KitchenOrderView }) {
           <p>
             <span className="font-black text-slate-900">نوع الطلب:</span> {formatOrderType(order.orderType)}
           </p>
+          <p>
+            <span className="font-black text-slate-900">الطاولة:</span> {order.tableReference || '—'}
+          </p>
         </div>
       </header>
 

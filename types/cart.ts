@@ -46,4 +46,5 @@ export type CartCustomerForm = {
 export type CartState = {
   items: CartItem[];
   customer: CartCustomerForm;
+  tableReference: string | null;
 };
