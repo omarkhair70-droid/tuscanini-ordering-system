@@ -1,5 +1,8 @@
 import { getSupabaseServerAdminClient } from '@/lib/supabase/server-admin';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 type StatusTone = 'success' | 'error' | 'warning';
 
 type StatusItemProps = {
@@ -13,6 +16,82 @@ const statusStyles: Record<StatusTone, string> = {
   error: 'border-red-300 bg-red-50 text-red-900',
   warning: 'border-amber-300 bg-amber-50 text-amber-900',
 };
+
+type SafeQueryError = {
+  message: string;
+  code?: string;
+  details?: string;
+};
+
+type CategorySampleRow = {
+  id: number;
+  name_ar: string;
+  slug: string;
+  sort_order: number;
+};
+
+type ProductSampleRow = {
+  id: number;
+  name_ar: string;
+  price_from: number;
+  availability: string;
+  sort_order: number;
+};
+
+function getSafeQueryError(error: unknown): SafeQueryError | null {
+  if (!error || typeof error !== 'object' || !('message' in error)) {
+    return null;
+  }
+
+  const message = typeof error.message === 'string' ? error.message : 'Unknown error';
+  const code = 'code' in error && typeof error.code === 'string' ? error.code : undefined;
+  const details = 'details' in error && typeof error.details === 'string' ? error.details : undefined;
+
+  return { message, code, details };
+}
+
+function formatSafeQueryError(error: unknown): string {
+  const safeError = getSafeQueryError(error);
+  if (!safeError) {
+    return 'unknown error';
+  }
+
+  const segments = [`message: ${safeError.message}`];
+
+  if (safeError.code) {
+    segments.push(`code: ${safeError.code}`);
+  }
+
+  if (safeError.details) {
+    segments.push(`details: ${safeError.details}`);
+  }
+
+  return segments.join(' | ');
+}
+
+function getCountStatus(label: string, result: { count: number | null; error: unknown }) {
+  if (result.error) {
+    return {
+      label,
+      tone: 'error' as const,
+      message: `failed | ${formatSafeQueryError(result.error)}`,
+    };
+  }
+
+  if (result.count === null) {
+    return {
+      label,
+      tone: 'warning' as const,
+      message: 'count returned null',
+    };
+  }
+
+  return {
+    label,
+    tone: 'success' as const,
+    message: `count: ${result.count}`,
+  };
+}
 
 function StatusItem({ label, message, tone }: StatusItemProps) {
   return (
@@ -73,6 +152,55 @@ export default async function SupabaseMenuDebugPage() {
 
   const readOk = readErrors.length === 0;
   const siteSettingsMissing = readOk && !siteSettingsResult.data;
+  const categoriesSampleRows = (categoriesSampleResult.data ?? []) as CategorySampleRow[];
+  const productsSampleRows = (productsSampleResult.data ?? []) as ProductSampleRow[];
+
+  const queryStatuses: StatusItemProps[] = [
+    getCountStatus('menu_categories count', menuCategoriesCount),
+    getCountStatus('products count', productsCount),
+    getCountStatus('product_sizes count', productSizesCount),
+    getCountStatus('product_addons count', productAddonsCount),
+    getCountStatus('product_addon_links count', productAddonLinksCount),
+    siteSettingsResult.error
+      ? {
+          label: 'site_settings id=1',
+          tone: 'error',
+          message: `failed | ${formatSafeQueryError(siteSettingsResult.error)}`,
+        }
+      : siteSettingsResult.data
+        ? {
+            label: 'site_settings id=1',
+            tone: 'success',
+            message: 'found row id=1',
+          }
+        : {
+            label: 'site_settings id=1',
+            tone: 'warning',
+            message: 'not found',
+          },
+    categoriesSampleResult.error
+      ? {
+          label: 'first 5 categories',
+          tone: 'error',
+          message: `failed | ${formatSafeQueryError(categoriesSampleResult.error)}`,
+        }
+      : {
+          label: 'first 5 categories',
+          tone: 'success',
+          message: `rows: ${categoriesSampleResult.data?.length ?? 0}`,
+        },
+    productsSampleResult.error
+      ? {
+          label: 'first 5 products',
+          tone: 'error',
+          message: `failed | ${formatSafeQueryError(productsSampleResult.error)}`,
+        }
+      : {
+          label: 'first 5 products',
+          tone: 'success',
+          message: `rows: ${productsSampleResult.data?.length ?? 0}`,
+        },
+  ];
 
   return (
     <div className="space-y-6">
@@ -115,6 +243,15 @@ export default async function SupabaseMenuDebugPage() {
       </section>
 
       <section className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4">
+        <h2 className="text-lg font-bold">حالة كل استعلام</h2>
+        <ul className="space-y-2">
+          {queryStatuses.map((status) => (
+            <StatusItem key={status.label} label={status.label} tone={status.tone} message={status.message} />
+          ))}
+        </ul>
+      </section>
+
+      <section className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4">
         <h2 className="text-lg font-bold">إحصائيات الجداول</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <div className="rounded-xl border border-slate-200 p-3 text-sm">
@@ -142,9 +279,9 @@ export default async function SupabaseMenuDebugPage() {
 
       <section className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4">
         <h2 className="text-lg font-bold">عينة آمنة (أول 5 أقسام)</h2>
-        {categoriesSampleResult.data && categoriesSampleResult.data.length > 0 ? (
+        {categoriesSampleRows.length > 0 ? (
           <ul className="space-y-2 text-sm">
-            {categoriesSampleResult.data.map((category) => (
+            {categoriesSampleRows.map((category) => (
               <li key={category.id} className="rounded-xl border border-slate-200 p-3">
                 <p className="font-bold">{category.name_ar}</p>
                 <p className="text-slate-600">slug: {category.slug}</p>
@@ -158,9 +295,9 @@ export default async function SupabaseMenuDebugPage() {
 
       <section className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4">
         <h2 className="text-lg font-bold">عينة آمنة (أول 5 منتجات)</h2>
-        {productsSampleResult.data && productsSampleResult.data.length > 0 ? (
+        {productsSampleRows.length > 0 ? (
           <ul className="space-y-2 text-sm">
-            {productsSampleResult.data.map((product) => (
+            {productsSampleRows.map((product) => (
               <li key={product.id} className="rounded-xl border border-slate-200 p-3">
                 <p className="font-bold">{product.name_ar}</p>
                 <p className="text-slate-600">
