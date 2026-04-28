@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { defaultCartState, loadCartState, saveCartState } from '@/lib/cart-storage';
 import type { CartCustomerForm, CartDraftItemInput, CartItem, CartState } from '@/types/cart';
 
@@ -56,59 +56,93 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const subtotal = useMemo(() => state.items.reduce((sum, item) => sum + item.totalItemPrice, 0), [state.items]);
   const itemsCount = useMemo(() => state.items.reduce((sum, item) => sum + item.quantity, 0), [state.items]);
 
-  const value: CartContextValue = {
-    items: state.items,
-    customer: state.customer,
-    tableReference: state.tableReference,
-    isHydrated,
-    itemsCount,
-    subtotal,
-    addItem: (input) => {
-      setState((current) => {
-        const newItem = toCartItem(input);
-        return { ...current, items: [...current.items, newItem] };
-      });
-    },
-    updateItemQuantity: (lineId, quantity) => {
-      if (quantity < 1) {
-        return;
+  const addItem = useCallback((input: CartDraftItemInput) => {
+    setState((current) => {
+      const newItem = toCartItem(input);
+      return { ...current, items: [...current.items, newItem] };
+    });
+  }, []);
+
+  const updateItemQuantity = useCallback((lineId: string, quantity: number) => {
+    if (quantity < 1) {
+      return;
+    }
+
+    setState((current) => ({
+      ...current,
+      items: current.items.map((item) =>
+        item.lineId === lineId
+          ? {
+              ...item,
+              quantity,
+              totalItemPrice: item.unitPrice * quantity,
+            }
+          : item,
+      ),
+    }));
+  }, []);
+
+  const removeItem = useCallback((lineId: string) => {
+    setState((current) => ({
+      ...current,
+      items: current.items.filter((item) => item.lineId !== lineId),
+    }));
+  }, []);
+
+  const clearCart = useCallback(() => {
+    setState((current) => ({ ...current, items: [] }));
+  }, []);
+
+  const updateCustomer = useCallback((input: Partial<CartCustomerForm>) => {
+    setState((current) => ({
+      ...current,
+      customer: { ...current.customer, ...input },
+    }));
+  }, []);
+
+  const updateTableReference = useCallback((value: string | null) => {
+    setState((current) => {
+      if (current.tableReference === value) {
+        return current;
       }
 
-      setState((current) => ({
-        ...current,
-        items: current.items.map((item) =>
-          item.lineId === lineId
-            ? {
-                ...item,
-                quantity,
-                totalItemPrice: item.unitPrice * quantity,
-              }
-            : item,
-        ),
-      }));
-    },
-    removeItem: (lineId) => {
-      setState((current) => ({
-        ...current,
-        items: current.items.filter((item) => item.lineId !== lineId),
-      }));
-    },
-    clearCart: () => {
-      setState((current) => ({ ...current, items: [] }));
-    },
-    updateCustomer: (input) => {
-      setState((current) => ({
-        ...current,
-        customer: { ...current.customer, ...input },
-      }));
-    },
-    updateTableReference: (value) => {
-      setState((current) => ({
+      return {
         ...current,
         tableReference: value,
-      }));
-    },
-  };
+      };
+    });
+  }, []);
+
+  const value = useMemo<CartContextValue>(
+    () => ({
+      items: state.items,
+      customer: state.customer,
+      tableReference: state.tableReference,
+      isHydrated,
+      itemsCount,
+      subtotal,
+      addItem,
+      updateItemQuantity,
+      removeItem,
+      clearCart,
+      updateCustomer,
+      updateTableReference,
+    }),
+    [
+      state.items,
+      state.customer,
+      state.tableReference,
+      isHydrated,
+      itemsCount,
+      subtotal,
+      addItem,
+      updateItemQuantity,
+      removeItem,
+      clearCart,
+      updateCustomer,
+      updateTableReference,
+    ],
+  );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
