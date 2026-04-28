@@ -16,7 +16,7 @@ type MenuPageClientProps = {
 };
 
 export function MenuPageClient({ categories, items, initialTableReference }: MenuPageClientProps) {
-  const { updateTableReference } = useCart();
+  const { tableReference, updateTableReference } = useCart();
   const [activeCategory, setActiveCategory] = useState<MenuCategorySlug | 'all'>('all');
   const [selectedProduct, setSelectedProduct] = useState<MenuItem | null>(null);
   const validCategorySlugs = useMemo(() => new Set(categories.map((category) => category.slug)), [categories]);
@@ -38,8 +38,12 @@ export function MenuPageClient({ categories, items, initialTableReference }: Men
   }, [validCategorySlugs]);
 
   useEffect(() => {
+    if (tableReference === initialTableReference) {
+      return;
+    }
+
     updateTableReference(initialTableReference);
-  }, [initialTableReference, updateTableReference]);
+  }, [initialTableReference, tableReference, updateTableReference]);
 
   const filteredItems = useMemo(() => {
     if (activeCategory === 'all') {
