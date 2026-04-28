@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { PageHero } from '@/components/shared/page-hero';
-import { siteConfig } from '@/lib/site-config';
+import { getRuntimePublicSiteSettings } from '@/lib/site-settings-runtime';
 
 function normalizeWhatsappNumber(raw: string): string {
   const digits = raw.replace(/\D/g, '');
@@ -10,8 +10,9 @@ function normalizeWhatsappNumber(raw: string): string {
   return digits;
 }
 
-export default function ContactPage() {
-  const whatsappUrl = `https://wa.me/${normalizeWhatsappNumber(siteConfig.whatsappOrderNumber)}`;
+export default async function ContactPage() {
+  const settings = await getRuntimePublicSiteSettings();
+  const whatsappUrl = `https://wa.me/${normalizeWhatsappNumber(settings.whatsappOrderNumber)}`;
 
   return (
     <div className="space-y-6">
@@ -21,15 +22,15 @@ export default function ContactPage() {
         <h2 className="text-lg font-black">بيانات التواصل</h2>
 
         <p className="mt-3 font-bold">العنوان:</p>
-        <p>{siteConfig.addressAr}</p>
+        <p>{settings.addressAr}</p>
 
         <p className="mt-3 font-bold">أرقام التليفون:</p>
         <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
-          <Link href={`tel:${siteConfig.phonePrimary}`} className="btn-secondary bg-brand-white text-center">
-            اتصال {siteConfig.phonePrimary}
+          <Link href={`tel:${settings.phonePrimary}`} className="btn-secondary bg-brand-white text-center">
+            اتصال {settings.phonePrimary}
           </Link>
-          <Link href={`tel:${siteConfig.phoneSecondary}`} className="btn-secondary bg-brand-white text-center">
-            اتصال {siteConfig.phoneSecondary}
+          <Link href={`tel:${settings.phoneSecondary}`} className="btn-secondary bg-brand-white text-center">
+            اتصال {settings.phoneSecondary}
           </Link>
         </div>
 
@@ -37,7 +38,7 @@ export default function ContactPage() {
           <Link href={whatsappUrl} target="_blank" className="btn-primary text-center">
             اطلب عبر واتساب
           </Link>
-          <Link href={siteConfig.facebook} target="_blank" className="btn-secondary bg-brand-white text-center">
+          <Link href={settings.facebookUrl} target="_blank" className="btn-secondary bg-brand-white text-center">
             صفحة فيسبوك
           </Link>
         </div>

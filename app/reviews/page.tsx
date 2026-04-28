@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { PageHero } from '@/components/shared/page-hero';
-import { siteConfig } from '@/lib/site-config';
+import { getRuntimePublicSiteSettings } from '@/lib/site-settings-runtime';
 
 function normalizeWhatsappNumber(raw: string): string {
   const digits = raw.replace(/\D/g, '');
@@ -10,8 +10,9 @@ function normalizeWhatsappNumber(raw: string): string {
   return digits;
 }
 
-export default function ReviewsPage() {
-  const whatsappUrl = `https://wa.me/${normalizeWhatsappNumber(siteConfig.whatsappOrderNumber)}?text=${encodeURIComponent(
+export default async function ReviewsPage() {
+  const settings = await getRuntimePublicSiteSettings();
+  const whatsappUrl = `https://wa.me/${normalizeWhatsappNumber(settings.whatsappOrderNumber)}?text=${encodeURIComponent(
     'مرحبًا توسكانيني 👋\nحابب أشارك رأيي عن التجربة.',
   )}`;
 

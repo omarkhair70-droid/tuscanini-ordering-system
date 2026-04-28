@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { siteConfig } from '@/lib/site-config';
+import { getRuntimePublicSiteSettings } from '@/lib/site-settings-runtime';
 
 function normalizeWhatsappNumber(raw: string): string {
   const digits = raw.replace(/\D/g, '');
@@ -50,8 +50,9 @@ const ctaButtons = [
   { href: '/reviews', label: 'آراء العملاء' },
 ] as const;
 
-export default function DemoPage() {
-  const whatsappUrl = `https://wa.me/${normalizeWhatsappNumber(siteConfig.whatsappOrderNumber)}?text=${encodeURIComponent(
+export default async function DemoPage() {
+  const settings = await getRuntimePublicSiteSettings();
+  const whatsappUrl = `https://wa.me/${normalizeWhatsappNumber(settings.whatsappOrderNumber)}?text=${encodeURIComponent(
     'مرحبًا توسكانيني 👋\nحابب أعرف تفاصيل التشغيل والتطوير للنظام.',
   )}`;
 

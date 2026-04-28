@@ -1,11 +1,20 @@
 'use client';
 
-import { FormEvent, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { PageHero } from '@/components/shared/page-hero';
 import { siteConfig } from '@/lib/site-config';
 
 type ComplaintType = 'تأخير في الطلب' | 'مشكلة في الجودة' | 'مشكلة في الطلب' | 'سلوك الخدمة' | 'أخرى';
+
+type RuntimePublicSiteSettings = {
+  isOrderingOpen: boolean;
+  whatsappOrderNumber: string;
+  phonePrimary: string;
+  phoneSecondary: string;
+  addressAr: string;
+  facebookUrl: string;
+};
 
 function normalizeWhatsappNumber(raw: string): string {
   const digits = raw.replace(/\D/g, '');
@@ -43,6 +52,39 @@ export default function ComplaintsPage() {
   const [complaintType, setComplaintType] = useState<ComplaintType>('تأخير في الطلب');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [whatsappOrderNumber, setWhatsappOrderNumber] = useState(siteConfig.whatsappOrderNumber);
+
+  useEffect(() => {
+    let isActive = true;
+
+    async function loadRuntimeSettings() {
+      try {
+        const response = await fetch('/api/public/site-settings');
+        if (!response.ok) {
+          return;
+        }
+
+        const payload = (await response.json()) as {
+          ok?: boolean;
+          settings?: RuntimePublicSiteSettings;
+        };
+
+        if (!isActive || !payload.ok || !payload.settings) {
+          return;
+        }
+
+        setWhatsappOrderNumber(payload.settings.whatsappOrderNumber);
+      } catch {
+        // Keep static fallback.
+      }
+    }
+
+    void loadRuntimeSettings();
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
 
   const whatsappUrl = useMemo(() => {
     const text = buildComplaintMessage({
@@ -52,9 +94,9 @@ export default function ComplaintsPage() {
       message: message.trim(),
     });
 
-    const phoneNumber = normalizeWhatsappNumber(siteConfig.whatsappOrderNumber);
+    const phoneNumber = normalizeWhatsappNumber(whatsappOrderNumber);
     return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`;
-  }, [name, phone, complaintType, message]);
+  }, [name, phone, complaintType, message, whatsappOrderNumber]);
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
