@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useCart } from '@/components/cart/cart-provider';
 import { PageHero } from '@/components/shared/page-hero';
 import { buildArabicWhatsappMessage, buildWhatsappOrderUrl } from '@/lib/whatsapp';
@@ -52,6 +53,7 @@ function isValidEgyptianMobile(rawPhone: string): boolean {
 }
 
 export default function CartPage() {
+  const router = useRouter();
   const { items, customer, subtotal, updateItemQuantity, removeItem, clearCart, updateCustomer, isHydrated } = useCart();
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -171,6 +173,11 @@ export default function CartPage() {
     const message = buildArabicWhatsappMessage({ items, customer, subtotal, orderReference });
     const whatsappUrl = buildWhatsappOrderUrl(message, runtimeSettings.whatsappOrderNumber);
     window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+
+    if (orderReference) {
+      const encodedReference = encodeURIComponent(orderReference);
+      router.push(`/order-success?ref=${encodedReference}`);
+    }
 
     setIsSubmitting(false);
   }
