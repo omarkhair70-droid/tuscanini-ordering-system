@@ -2,20 +2,20 @@ import { PageHero } from '@/components/shared/page-hero';
 
 export default function AboutPage() {
   return (
-    <div className="space-y-6">
-      <PageHero title="عن توسكانيني" subtitle="4 أصدقاء بدأوا المشوار بقلب واحد وطعم مختلف." />
+    <div className="safe-bottom-mobile space-y-6">
+      <PageHero title="عن توسكانيني" subtitle="حكاية الأربعة صحاب: شغف بالأكل السريع وتفاصيل تفرق." />
 
-      <section className="rounded-2xl bg-brand-white p-5 text-sm leading-7 shadow-punch">
+      <section className="surface-card text-sm leading-7">
         <p>
-          توسكانيني بدأ من فكرة بسيطة بين أربعة أصحاب: <strong>هادي</strong>، <strong>جوبا</strong>، <strong>فارس</strong>، و
-          <strong> عبد الرحمن</strong>. كانوا عايزين يقدموا أكل سريع يكون طازج، مشبع، وطعمه ثابت كل مرة.
+          <strong>حكاية الأربعة صحاب</strong> بدأت لما <strong>هادي</strong> و<strong>جوبا</strong> و<strong>فارس</strong> و
+          <strong> عبد الرحمن</strong> قرروا يحولوا حبهم للأكل السريع لمكان الناس ترجع له وهي مطمنة.
         </p>
         <p className="mt-3">
-          من أول يوم، الهدف كان واضح: تجربة محترمة، تحضير سريع، ومذاق يخلّي العميل يرجع وهو مطمّن. علشان كده كل وجبة
-          في توسكانيني بتتجهز باهتمام، وبتتقدم بروح فريق شغال كأنه بيجهز الأكل لأصحابه.
+          من أول يوم الهدف كان واضح: طعم ثابت، تحضير سريع، وتفاصيل نظيفة في كل طلب. علشان كده كل وجبة في توسكانيني
+          بتتجهز باهتمام وكأنها متحضرة لدايرة أصحاب.
         </p>
         <p className="mt-3 font-bold">
-          توسكانيني مش مجرد اسم مطعم، دي حكاية صحاب قرروا يحوّلوا شغفهم بالأكل السريع لمكان الناس تحبه وتثق فيه.
+          توسكانيني مش مجرد اسم مطعم، دي قصة أصحاب جمعوا بين الأكل اللي بيحبوه والتجربة اللي يتمنوا يشوفوها كل يوم.
         </p>
       </section>
     </div>

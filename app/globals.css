@@ -28,7 +28,19 @@ body {
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center rounded-xl2 border-2 border-brand-dark px-5 py-3 font-bold text-brand-dark transition hover:bg-brand-dark hover:text-brand-white;
+    @apply inline-flex items-center justify-center rounded-xl2 border border-brand-dark/25 bg-brand-white px-5 py-3 font-bold text-brand-dark transition hover:border-brand-dark hover:bg-brand-dark hover:text-brand-white;
+  }
+
+  .surface-card {
+    @apply rounded-2xl border border-brand-dark/15 bg-brand-white p-4 shadow-[0_8px_24px_rgba(18,18,18,0.08)];
+  }
+
+  .surface-card-soft {
+    @apply rounded-2xl border border-brand-dark/10 bg-brand-white p-4 shadow-[0_4px_14px_rgba(18,18,18,0.05)];
+  }
+
+  .safe-bottom-mobile {
+    @apply pb-36 md:pb-8;
   }
 }
 

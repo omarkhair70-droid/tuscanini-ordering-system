@@ -26,8 +26,9 @@ export function OffersPreview() {
       ) : null}
 
       {!hasConfirmedOffers ? (
-        <div className="rounded-xl2 border border-brand-charcoal/20 bg-brand-white p-3 text-xs font-semibold text-brand-charcoal">
-          لا توجد عروض مؤكدة الآن.
+        <div className="surface-card-soft text-sm text-brand-charcoal">
+          <p className="font-bold text-brand-dark">لا توجد عروض مؤكدة الآن.</p>
+          <p className="mt-1 leading-6">بمجرد اعتماد عرض جديد هنعلنه هنا مباشرة بشكل واضح وسهل.</p>
         </div>
       ) : null}
     </section>

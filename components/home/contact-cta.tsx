@@ -5,7 +5,7 @@ export async function ContactCta() {
   const settings = await getRuntimePublicSiteSettings();
 
   return (
-    <section className="rounded-2xl bg-brand-yellow p-5 text-brand-dark">
+    <section className="rounded-2xl border border-brand-dark/15 bg-brand-yellow/80 p-5 text-brand-dark shadow-[0_8px_20px_rgba(0,0,0,0.08)]">
       <h2 className="text-2xl font-black">جاهز تكمل طلبك؟</h2>
       <p className="mt-1 text-sm">اتصل بينا مباشرة أو ادخل صفحة التواصل واطلب على واتساب.</p>
       <p className="mt-2 text-sm font-bold">

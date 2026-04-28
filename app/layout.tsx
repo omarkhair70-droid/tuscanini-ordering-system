@@ -16,7 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <Providers>
           <SiteHeader />
-          <main className="container-tight pb-24 pt-6">{children}</main>
+          <main className="container-tight pb-32 pt-5 md:pb-16 md:pt-6">{children}</main>
           <SiteFooter />
           <MobileNav />
         </Providers>
