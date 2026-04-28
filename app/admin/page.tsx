@@ -25,6 +25,17 @@ export default function AdminPage() {
     <div className="space-y-6">
       <PageHero title="لوحة الإدارة" subtitle="نسخة مبدئية مع لوحة منيو للعرض فقط." />
 
+      <section className="rounded-2xl border border-slate-200 bg-white p-4">
+        <form action="/admin/logout" method="post" className="flex justify-end">
+          <button
+            type="submit"
+            className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 transition hover:border-brand-red hover:text-brand-red"
+          >
+            تسجيل الخروج
+          </button>
+        </form>
+      </section>
+
       <div className="grid gap-3">
         {adminLinks.map((link) => (
           <Link

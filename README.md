@@ -44,3 +44,26 @@ Arabic-first, RTL-ready Next.js App Router project for a bold fast-food ordering
 npm install
 npm run dev
 ```
+
+## Admin access secret setup (Phase 7.7B)
+A temporary admin login gate is now enabled for protected admin routes and uses an environment-managed shared secret.
+
+### Local development (`.env.local`)
+Add this variable to your `.env.local` file:
+
+```bash
+ADMIN_ACCESS_SECRET=replace-with-a-long-random-secret
+```
+
+### Vercel
+In your Vercel project:
+1. Go to **Project Settings → Environment Variables**.
+2. Add:
+   - **Name:** `ADMIN_ACCESS_SECRET`
+   - **Value:** a strong random secret string
+3. Apply it to **Production** and **Preview** (and **Development** if needed).
+4. Redeploy after adding/updating the value.
+
+### Notes
+- This is a temporary gate and does **not** use Supabase Auth yet.
+- Keep the secret server-side only; never expose it in client code.
