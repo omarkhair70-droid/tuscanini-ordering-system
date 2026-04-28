@@ -9,7 +9,7 @@ export default async function AdminProductsPage() {
     .then((data) => ({ data, error: null as string | null }))
     .catch((error: unknown) => ({
       data: null,
-      error: error instanceof Error ? error.message : 'حدث خطأ غير متوقع أثناء تحميل بيانات المنيو.',
+      error: error instanceof Error ? error.message : 'حدث خطأ غير متوقع أثناء تحميل بيانات لوحة إدارة المنيو.',
     }));
 
   if (result.error || !result.data) {
