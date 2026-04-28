@@ -67,3 +67,13 @@ export function buildWhatsappOrderUrl(message: string, whatsappOrderNumber: stri
   const text = encodeURIComponent(message);
   return `https://wa.me/${phone}?text=${text}`;
 }
+
+export function buildWhatsappFollowupMessage(reference: string, tableReference?: string | null): string {
+  const lines = [`مرحبًا، أريد متابعة الطلب رقم ${reference}`];
+
+  if (tableReference) {
+    lines.push(`مرجع الطاولة: ${tableReference}`);
+  }
+
+  return lines.join('\n');
+}

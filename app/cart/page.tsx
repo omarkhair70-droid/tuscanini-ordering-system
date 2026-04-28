@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/components/cart/cart-provider';
+import { ActiveOrderBanner } from '@/components/shared/active-order-banner';
+import { saveActiveOrder } from '@/lib/active-order-storage';
 import { PageHero } from '@/components/shared/page-hero';
 import { buildArabicWhatsappMessage, buildWhatsappOrderUrl } from '@/lib/whatsapp';
 import { siteConfig } from '@/lib/site-config';
@@ -174,18 +176,26 @@ export default function CartPage() {
       setPersistenceWarning('تعذر حفظ الطلب داخل النظام الآن، سيتم المتابعة على واتساب بشكل طبيعي.');
     }
 
-    const message = buildArabicWhatsappMessage({ items, customer, subtotal, orderReference, tableReference });
-    const whatsappUrl = buildWhatsappOrderUrl(message, runtimeSettings.whatsappOrderNumber);
-    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
-
     if (orderReference && persistedOrderId) {
+      saveActiveOrder({
+        orderId: persistedOrderId,
+        reference: orderReference,
+        tableReference,
+        createdAt: new Date().toISOString(),
+      });
       clearCart();
 
       const encodedReference = encodeURIComponent(orderReference);
       const encodedOrderId = encodeURIComponent(persistedOrderId);
       const tableSuffix = tableReference ? `&table=${encodeURIComponent(tableReference)}` : '';
       router.push(`/order-success?orderId=${encodedOrderId}&ref=${encodedReference}${tableSuffix}`);
+      setIsSubmitting(false);
+      return;
     }
+
+    const message = buildArabicWhatsappMessage({ items, customer, subtotal, orderReference, tableReference });
+    const whatsappUrl = buildWhatsappOrderUrl(message, runtimeSettings.whatsappOrderNumber);
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
 
     setIsSubmitting(false);
   }
@@ -200,6 +210,7 @@ export default function CartPage() {
 
       {isHydrated && items.length === 0 ? (
         <section className="space-y-4 rounded-2xl border-2 border-dashed border-brand-dark bg-brand-white p-6 text-center">
+          <ActiveOrderBanner />
           <p className="text-lg font-black text-brand-dark">السلة فارغة حاليًا.</p>
           <p className="text-sm text-brand-charcoal">أضف أصنافك أولًا من المنيو، وبعدها راجع طلبك قبل الإرسال على واتساب.</p>
           <Link href="/menu" className="btn-primary inline-flex items-center">

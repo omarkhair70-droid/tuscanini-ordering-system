@@ -6,6 +6,7 @@ import { FloatingCartCta } from '@/components/cart/floating-cart-cta';
 import { CategoryChips } from '@/components/menu/category-chips';
 import { ProductCard } from '@/components/menu/product-card';
 import { ProductCustomizationModal } from '@/components/menu/product-customization-modal';
+import { ActiveOrderBanner } from '@/components/shared/active-order-banner';
 import { PageHero } from '@/components/shared/page-hero';
 import type { MenuCategory, MenuCategorySlug, MenuItem } from '@/types/menu';
 
@@ -56,6 +57,7 @@ export function MenuPageClient({ categories, items, initialTableReference }: Men
   return (
     <div className="safe-bottom-mobile space-y-6">
       <PageHero title="المنيو" subtitle="منيو توسكانيني - اختياراتك المفضلة بطعم ثابت وجودة ممتازة." />
+      <ActiveOrderBanner />
 
       <section className="rounded-2xl border border-brand-dark/15 bg-brand-yellow/35 py-3 shadow-[0_6px_16px_rgba(0,0,0,0.06)]">
         <CategoryChips categories={categories} activeCategory={activeCategory} onSelectCategory={setActiveCategory} />
