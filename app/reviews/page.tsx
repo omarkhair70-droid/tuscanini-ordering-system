@@ -17,10 +17,10 @@ export default async function ReviewsPage() {
   )}`;
 
   return (
-    <div className="space-y-6">
-      <PageHero title="آراء العملاء" subtitle="customer love / آراء العملاء قريبًا" />
+    <div className="safe-bottom-mobile space-y-6">
+      <PageHero title="آراء العملاء" subtitle="مساحة مخصصة لآراء العملاء هتظهر هنا بشكل منظم قريبًا." />
 
-      <section className="rounded-2xl bg-brand-white p-5 shadow-punch">
+      <section className="surface-card">
         <h2 className="text-xl font-black">مساحة آراء العملاء قريبًا 💬</h2>
         <p className="mt-3 text-sm leading-7 text-brand-charcoal">
           حاليًا لا يتم عرض أو تخزين أي مراجعات داخل الموقع. بعد الانتهاء من النسخة الرسمية، هنوفر تجربة أوضح لعرض آراء
@@ -37,8 +37,9 @@ export default async function ReviewsPage() {
         </div>
       </section>
 
-      <section className="rounded-2xl border-2 border-dashed border-brand-charcoal/30 bg-brand-white p-4 text-sm text-brand-charcoal">
-        بدون مراجعات معروضة حاليًا — لا توجد تقييمات مفبركة أو منسوخة.
+      <section className="rounded-2xl border border-dashed border-brand-charcoal/35 bg-brand-white p-4 text-sm text-brand-charcoal">
+        <p className="font-semibold text-brand-dark">بدون مراجعات معروضة حاليًا.</p>
+        <p className="mt-1 leading-6">اختيار مقصود — لا تقييمات مفبركة أو منسوخة.</p>
       </section>
     </div>
   );

@@ -13,7 +13,7 @@ export async function SiteFooter() {
   const settings = await getRuntimePublicSiteSettings();
 
   return (
-    <footer className="mt-12 bg-brand-dark pb-28 pt-8 text-brand-white md:pb-8">
+    <footer className="mt-14 border-t border-brand-white/10 bg-brand-dark pb-32 pt-10 text-brand-white md:pb-10">
       <div className="container-tight space-y-4 text-sm">
         <p className="text-lg font-black">{siteConfig.nameAr}</p>
         <p>{settings.addressAr}</p>

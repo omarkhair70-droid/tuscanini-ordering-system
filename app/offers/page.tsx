@@ -5,8 +5,8 @@ export default function OffersPage() {
   const hasConfirmedOffers = confirmedOffers.length > 0;
 
   return (
-    <div className="space-y-6">
-      <PageHero title="العروض" subtitle="هنا هتظهر العروض المؤكدة أول ما يتم اعتمادها." />
+    <div className="safe-bottom-mobile space-y-6">
+      <PageHero title="العروض" subtitle="كل عرض رسمي معتمد هتلاقيه هنا بشكل واضح ومباشر." />
 
       {hasConfirmedOffers ? (
         confirmedOffers.map((offer) => (
@@ -17,8 +17,9 @@ export default function OffersPage() {
           </div>
         ))
       ) : (
-        <div className="rounded-2xl border-2 border-dashed border-brand-charcoal/30 bg-brand-white p-4 text-sm font-bold text-brand-charcoal">
-          العروض قريبًا
+        <div className="surface-card-soft text-sm text-brand-charcoal">
+          <p className="font-bold text-brand-dark">العروض قريبًا.</p>
+          <p className="mt-1 leading-6">نعتمد العروض بعناية لضمان أفضل قيمة. أول عرض جديد هينزل هنا فور اعتماده.</p>
         </div>
       )}
     </div>

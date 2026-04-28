@@ -8,7 +8,7 @@ import { TrustFeedbackLinks } from '@/components/home/trust-feedback-links';
 
 export default function HomePage() {
   return (
-    <div className="space-y-8">
+    <div className="safe-bottom-mobile space-y-10">
       <HeroSection />
       <CategoriesPreview />
       <ContactCta />

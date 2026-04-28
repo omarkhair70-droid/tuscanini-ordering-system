@@ -54,10 +54,10 @@ export function MenuPageClient({ categories, items, initialTableReference }: Men
   }, [activeCategory, items]);
 
   return (
-    <div className="space-y-6 pb-40 md:pb-6">
+    <div className="safe-bottom-mobile space-y-6">
       <PageHero title="المنيو" subtitle="منيو توسكانيني - اختياراتك المفضلة بطعم ثابت وجودة ممتازة." />
 
-      <section className="rounded-2xl border-2 border-brand-dark bg-brand-yellow/60 py-3">
+      <section className="rounded-2xl border border-brand-dark/15 bg-brand-yellow/35 py-3 shadow-[0_6px_16px_rgba(0,0,0,0.06)]">
         <CategoryChips categories={categories} activeCategory={activeCategory} onSelectCategory={setActiveCategory} />
       </section>
 

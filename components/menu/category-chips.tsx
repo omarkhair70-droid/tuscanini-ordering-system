@@ -12,10 +12,10 @@ export function CategoryChips({ categories, activeCategory, onSelectCategory }: 
       <button
         type="button"
         onClick={() => onSelectCategory('all')}
-        className={`whitespace-nowrap rounded-full border-2 px-4 py-2 text-sm font-black transition ${
+        className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm font-black transition ${
           activeCategory === 'all'
             ? 'border-brand-red bg-brand-red text-brand-white'
-            : 'border-brand-dark bg-brand-white text-brand-dark'
+            : 'border-brand-dark/20 bg-brand-white text-brand-dark'
         }`}
       >
         الكل
@@ -25,10 +25,10 @@ export function CategoryChips({ categories, activeCategory, onSelectCategory }: 
           key={category.id}
           type="button"
           onClick={() => onSelectCategory(category.slug)}
-          className={`whitespace-nowrap rounded-full border-2 px-4 py-2 text-sm font-black transition ${
+          className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm font-black transition ${
             activeCategory === category.slug
               ? 'border-brand-red bg-brand-red text-brand-white'
-              : 'border-brand-dark bg-brand-yellow text-brand-dark'
+              : 'border-brand-dark/20 bg-brand-yellow/80 text-brand-dark'
           }`}
         >
           {category.name}
