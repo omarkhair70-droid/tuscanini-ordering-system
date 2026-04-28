@@ -47,6 +47,31 @@ export type KitchenOrdersBoardData = {
   grouped: Record<KitchenActiveStatus, KitchenOrderView[]>;
 };
 
+export type KitchenUrgencyLevel = 'normal' | 'warning' | 'danger';
+
+const KITCHEN_WARNING_MINUTES_BY_STATUS: Record<KitchenActiveStatus, number> = {
+  جديد: 10,
+  'جاري التحضير': 20,
+  'جاهز للاستلام': 10,
+  'خرج للدليفري': 30,
+};
+
+export function getKitchenUrgencyLevel(status: KitchenActiveStatus, elapsedMinutes: number): KitchenUrgencyLevel {
+  if (!Number.isFinite(elapsedMinutes) || elapsedMinutes < 0) {
+    return 'normal';
+  }
+
+  if (status === 'جاري التحضير' && elapsedMinutes > KITCHEN_WARNING_MINUTES_BY_STATUS[status]) {
+    return 'danger';
+  }
+
+  if (elapsedMinutes > KITCHEN_WARNING_MINUTES_BY_STATUS[status]) {
+    return 'warning';
+  }
+
+  return 'normal';
+}
+
 export function isKitchenActiveStatus(value: AdminOrderStatus): value is KitchenActiveStatus {
   return (KITCHEN_ACTIVE_STATUSES as readonly string[]).includes(value);
 }

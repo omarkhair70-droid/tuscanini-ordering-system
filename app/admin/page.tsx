@@ -20,7 +20,7 @@ const adminLinks = [
   {
     href: '/admin/kitchen',
     title: 'شاشة المطبخ',
-    description: 'عرض مباشر للطلبات النشطة مناسب لشاشة المطبخ.',
+    description: 'وضع مطبخ احترافي مباشر للطلبات النشطة مناسب للشاشات الكبيرة.',
   },
   {
     href: '/admin/settings',
