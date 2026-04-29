@@ -6,6 +6,7 @@ import type {
   MenuCategory,
   MenuCategorySlug,
   MenuItem,
+  ProductBadgeVariant,
   ProductAddon,
   ProductSize,
 } from '@/types/menu';
@@ -29,6 +30,8 @@ type ProductRow = {
   price_from: number | string;
   base_price: number | string | null;
   availability: string;
+  product_badge_ar: string | null;
+  product_badge_variant: string | null;
   sort_order: number;
   is_active: boolean;
 };
@@ -105,6 +108,22 @@ function toCategorySlug(value: string): MenuCategorySlug | null {
   return VALID_CATEGORY_SLUGS.has(value as MenuCategorySlug) ? (value as MenuCategorySlug) : null;
 }
 
+function toProductBadgeVariant(value: string | null): ProductBadgeVariant | null {
+  if (
+    value === 'default' ||
+    value === 'new' ||
+    value === 'popular' ||
+    value === 'recommended' ||
+    value === 'spicy' ||
+    value === 'offer' ||
+    value === 'limited'
+  ) {
+    return value;
+  }
+
+  return null;
+}
+
 function toStableId(primaryId: string, legacyId: string | null): string {
   return legacyId && legacyId.length > 0 ? legacyId : primaryId;
 }
@@ -120,7 +139,9 @@ export async function getSupabaseAdaptedMenu(): Promise<SupabaseAdaptedMenu> {
       .order('sort_order', { ascending: true }),
     supabase
       .from('products')
-      .select('id, legacy_id, category_id, name_ar, description_ar, price_from, base_price, availability, sort_order, is_active')
+      .select(
+        'id, legacy_id, category_id, name_ar, description_ar, price_from, base_price, availability, product_badge_ar, product_badge_variant, sort_order, is_active',
+      )
       .eq('is_active', true)
       .order('sort_order', { ascending: true }),
     supabase
@@ -247,6 +268,12 @@ export async function getSupabaseAdaptedMenu(): Promise<SupabaseAdaptedMenu> {
       sizes: sizeByProductId.get(row.id) ?? [],
       addons: productAddons,
     };
+
+    const productBadgeAr = row.product_badge_ar?.trim() ?? '';
+    if (productBadgeAr.length > 0) {
+      menuItem.productBadgeAr = productBadgeAr;
+      menuItem.productBadgeVariant = toProductBadgeVariant(row.product_badge_variant) ?? 'default';
+    }
 
     if (basePrice !== null) {
       menuItem.basePrice = basePrice;

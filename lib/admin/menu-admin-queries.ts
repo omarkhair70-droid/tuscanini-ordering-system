@@ -23,6 +23,8 @@ type ProductRow = {
   category_id: string;
   availability: string;
   price_from: number | string;
+  product_badge_ar: string | null;
+  product_badge_variant: string | null;
   is_active: boolean;
   updated_at: string;
 };
@@ -62,7 +64,7 @@ export async function getAdminMenuDashboardData(): Promise<AdminMenuDashboardDat
       .order('sort_order', { ascending: true }),
     supabase
       .from('products')
-      .select('id, name_ar, category_id, availability, price_from, is_active, updated_at')
+      .select('id, name_ar, category_id, availability, price_from, product_badge_ar, product_badge_variant, is_active, updated_at')
       .order('sort_order', { ascending: true }),
     supabase
       .from('product_sizes')
@@ -120,6 +122,8 @@ export async function getAdminMenuDashboardData(): Promise<AdminMenuDashboardDat
     categoryNameAr: categoryNameById.get(row.category_id) ?? 'غير معروف',
     availability: row.availability,
     priceFrom: toNumber(row.price_from),
+    productBadgeAr: row.product_badge_ar,
+    productBadgeVariant: row.product_badge_variant,
     isActive: row.is_active,
     updatedAt: row.updated_at,
   }));

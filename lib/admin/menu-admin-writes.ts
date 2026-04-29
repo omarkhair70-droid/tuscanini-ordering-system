@@ -60,6 +60,64 @@ export async function updateProductIsActiveById(id: string, isActive: boolean): 
   }
 }
 
+export async function updateProductBadgeTextById(id: string, productBadgeAr: string | null): Promise<void> {
+  const supabase = getSupabaseServerAdminClient();
+
+  const { data, error } = await supabase
+    .from('products')
+    .update({ product_badge_ar: productBadgeAr })
+    .eq('id', id)
+    .select('id')
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`تعذر تحديث نص الشارة: ${error.message}`);
+  }
+
+  if (!data) {
+    throw new Error('المنتج المطلوب غير موجود.');
+  }
+}
+
+export async function updateProductBadgeVariantById(id: string, productBadgeVariant: string | null): Promise<void> {
+  const supabase = getSupabaseServerAdminClient();
+
+  if (productBadgeVariant !== null) {
+    const { data: currentRow, error: currentRowError } = await supabase
+      .from('products')
+      .select('product_badge_ar')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (currentRowError) {
+      throw new Error(`تعذر التحقق من نص الشارة الحالي: ${currentRowError.message}`);
+    }
+
+    if (!currentRow) {
+      throw new Error('المنتج المطلوب غير موجود.');
+    }
+
+    if (typeof currentRow.product_badge_ar !== 'string' || currentRow.product_badge_ar.trim().length === 0) {
+      throw new Error('لا يمكن تحديد نوع الشارة بدون نص الشارة.');
+    }
+  }
+
+  const { data, error } = await supabase
+    .from('products')
+    .update({ product_badge_variant: productBadgeVariant })
+    .eq('id', id)
+    .select('id')
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`تعذر تحديث نوع الشارة: ${error.message}`);
+  }
+
+  if (!data) {
+    throw new Error('المنتج المطلوب غير موجود.');
+  }
+}
+
 export async function updateProductSizePriceById(id: string, price: number): Promise<void> {
   const supabase = getSupabaseServerAdminClient();
 
