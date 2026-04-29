@@ -5,10 +5,10 @@ export async function ContactCta() {
   const settings = await getRuntimePublicSiteSettings();
 
   return (
-    <section className="rounded-2xl border border-brand-dark/15 bg-brand-yellow/80 p-5 text-brand-dark shadow-[0_8px_20px_rgba(0,0,0,0.08)]">
+    <section className="rounded-2xl border border-brand-dark/10 bg-brand-yellow/75 p-5 text-brand-dark shadow-[0_8px_18px_rgba(0,0,0,0.06)]">
       <h2 className="text-2xl font-black">جاهز تكمل طلبك؟</h2>
-      <p className="mt-1 text-sm">اتصل بينا مباشرة أو ادخل صفحة التواصل واطلب على واتساب.</p>
-      <p className="mt-2 text-sm font-bold">
+      <p className="mt-1 text-sm leading-6">اتصل بينا مباشرة أو ادخل صفحة التواصل واطلب على واتساب.</p>
+      <p className="mt-2 text-sm font-extrabold">
         {settings.phonePrimary} - {settings.phoneSecondary}
       </p>
       <p className="mt-1 text-xs">{settings.addressAr}</p>
