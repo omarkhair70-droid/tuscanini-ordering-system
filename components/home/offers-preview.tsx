@@ -10,7 +10,7 @@ export async function OffersPreview() {
     <section className="space-y-3">
       <div className="flex items-center justify-between">
         <h2 className="section-title">العروض</h2>
-        <Link href="/offers" className="text-sm font-bold text-brand-red underline">
+        <Link href="/offers" className="text-sm font-extrabold text-brand-red underline decoration-2 underline-offset-4">
           صفحة العروض
         </Link>
       </div>
@@ -18,8 +18,8 @@ export async function OffersPreview() {
       {hasConfirmedOffers ? (
         <div className="space-y-3">
           {confirmedOffers.map((offer) => (
-            <article key={offer.id} className="rounded-2xl bg-brand-white p-4 shadow-punch">
-              {offer.badgeAr ? <p className="mb-2 inline-flex rounded-full bg-brand-red/10 px-2 py-1 text-xs font-bold text-brand-red">{offer.badgeAr}</p> : null}
+            <article key={offer.id} className="rounded-2xl border border-brand-dark/10 bg-brand-white p-4 shadow-[0_10px_22px_rgba(18,18,18,0.05)]">
+              {offer.badgeAr ? <p className="mb-2 inline-flex rounded-full bg-brand-red/10 px-2.5 py-1 text-xs font-bold text-brand-red">{offer.badgeAr}</p> : null}
               <h3 className="text-lg font-black">{offer.titleAr}</h3>
               {offer.descriptionAr ? <p className="text-sm text-brand-charcoal">{offer.descriptionAr}</p> : null}
               {offer.priceText ? <p className="mt-2 font-extrabold text-brand-red">{offer.priceText}</p> : null}

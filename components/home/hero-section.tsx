@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export function HeroSection() {
   return (
-    <section className="rounded-2xl border border-brand-dark/10 bg-brand-white p-6 text-brand-dark shadow-[0_14px_34px_rgba(18,18,18,0.08)]">
+    <section className="rounded-2xl border border-brand-dark/10 bg-brand-white p-5 text-brand-dark shadow-[0_12px_28px_rgba(18,18,18,0.06)] sm:p-6">
       <span className="badge-hot">جاهزين لاستقبال طلبك الآن</span>
       <h1 className="mt-4 text-3xl font-black leading-tight sm:text-4xl">
         طلبك من توسكانيني أسرع وأسهل من أي وقت
@@ -15,7 +15,7 @@ export function HeroSection() {
         تخصيص واضح، مراجعة سريعة، وتأكيد مباشر.
       </p>
 
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+      <div className="mt-5 flex flex-col gap-2.5 sm:mt-6 sm:flex-row sm:gap-3">
         <Link href="/menu" className="btn-primary w-full sm:w-auto">
           ابدأ الطلب من المنيو
         </Link>
