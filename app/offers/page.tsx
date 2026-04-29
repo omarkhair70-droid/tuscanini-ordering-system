@@ -15,10 +15,10 @@ export default async function OffersPage() {
 
       {hasConfirmedOffers ? (
         confirmedOffers.map((offer) => (
-          <div key={offer.id} className="rounded-2xl border-2 border-brand-red p-4">
-            {offer.badgeAr ? <p className="mb-2 inline-flex rounded-full bg-brand-red/10 px-2 py-1 text-xs font-bold text-brand-red">{offer.badgeAr}</p> : null}
-            <h2 className="text-xl font-black">{offer.titleAr}</h2>
-            {offer.descriptionAr ? <p className="text-sm">{offer.descriptionAr}</p> : null}
+          <div key={offer.id} className="rounded-2xl border border-brand-dark/10 bg-brand-white p-5 shadow-[0_10px_24px_rgba(18,18,18,0.05)]">
+            {offer.badgeAr ? <p className="mb-3 inline-flex rounded-full border border-brand-red/20 bg-brand-red/10 px-2.5 py-1 text-xs font-bold text-brand-red">{offer.badgeAr}</p> : null}
+            <h2 className="text-xl font-black text-brand-dark">{offer.titleAr}</h2>
+            {offer.descriptionAr ? <p className="text-sm leading-7 text-brand-charcoal">{offer.descriptionAr}</p> : null}
             {offer.priceText ? <p className="mt-2 font-extrabold text-brand-red">{offer.priceText}</p> : null}
             {typeof offer.offerPrice === 'number' ? <AddOfferButton offerId={offer.id} offerTitle={offer.titleAr} offerPrice={offer.offerPrice} /> : null}
           </div>

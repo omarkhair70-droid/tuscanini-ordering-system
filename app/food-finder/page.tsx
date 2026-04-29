@@ -30,7 +30,7 @@ function QuestionStep<T extends string>({
   onChange: (value: T) => void;
 }) {
   return (
-    <section className="space-y-3 rounded-2xl border border-brand-dark/10 bg-brand-white p-4 shadow-[0_8px_20px_rgba(18,18,18,0.06)]">
+    <section className="space-y-3 rounded-2xl border border-brand-dark/10 bg-brand-white p-4 shadow-[0_6px_16px_rgba(18,18,18,0.04)]">
       <h2 className="text-lg font-black text-brand-dark">{title}</h2>
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
         {options.map((option) => {
@@ -40,9 +40,9 @@ function QuestionStep<T extends string>({
               key={option.id}
               type="button"
               onClick={() => onChange(option.id)}
-              className={`rounded-xl border px-3 py-3 text-sm font-extrabold transition ${
+              className={`rounded-xl border px-3 py-3 text-sm font-bold transition ${
                 isActive
-                  ? 'border-brand-red/40 bg-brand-red/10 text-brand-red'
+                  ? 'border-brand-red/30 bg-brand-red/5 text-brand-red'
                   : 'border-brand-dark/15 bg-brand-white text-brand-dark hover:border-brand-red/25'
               }`}
             >
@@ -103,7 +103,7 @@ export default function FoodFinderPage() {
 
       {result ? (
         <section className="space-y-3">
-          <div className="rounded-2xl border border-brand-red/20 bg-brand-white p-5 shadow-[0_14px_30px_rgba(18,18,18,0.08)]">
+          <div className="rounded-2xl border border-brand-dark/10 bg-brand-white p-5 shadow-[0_10px_24px_rgba(18,18,18,0.05)]">
             <h2 className="text-xl font-black text-brand-dark">اختيارنا ليك</h2>
             <p className="mt-1 text-sm font-bold text-brand-charcoal">
               {result.mode === 'exact'

@@ -5,7 +5,7 @@ export default function AboutPage() {
     <div className="safe-bottom-mobile space-y-6">
       <PageHero title="عن توسكانيني" subtitle="حكاية الأربعة صحاب: شغف بالأكل السريع وتفاصيل تفرق." />
 
-      <section className="surface-card text-sm leading-7">
+      <section className="surface-card text-sm leading-8">
         <p>
           <strong>حكاية الأربعة صحاب</strong> بدأت لما <strong>هادي</strong> و<strong>جوبا</strong> و<strong>فارس</strong> و
           <strong> عبد الرحمن</strong> قرروا يحولوا حبهم للأكل السريع لمكان الناس ترجع له وهي مطمنة.

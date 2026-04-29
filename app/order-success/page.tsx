@@ -30,7 +30,7 @@ export default async function OrderSuccessPage({ searchParams }: OrderSuccessPag
       {orderId ? (
         <OrderTrackingCard orderId={orderId} fallbackReference={orderReference} fallbackTableReference={tableReference} />
       ) : (
-        <section className="rounded-3xl border-2 border-brand-dark bg-brand-white p-5 shadow-punch sm:p-6">
+        <section className="rounded-3xl border border-brand-dark/10 bg-brand-white p-5 shadow-[0_10px_24px_rgba(18,18,18,0.05)] sm:p-6">
           <div className="space-y-3">
             <p className="text-lg font-black text-brand-dark sm:text-xl">تم استلام طلبك</p>
             <p className="rounded-xl border border-brand-dark/20 bg-brand-yellow/30 px-3 py-2 text-sm font-bold text-brand-dark sm:text-base">
@@ -54,7 +54,7 @@ export default async function OrderSuccessPage({ searchParams }: OrderSuccessPag
         </section>
       )}
 
-      <section className="rounded-2xl border border-brand-dark/20 bg-brand-white p-4 sm:p-5">
+      <section className="rounded-2xl border border-brand-dark/10 bg-brand-white p-4 shadow-[0_8px_20px_rgba(18,18,18,0.04)] sm:p-5">
         <h2 className="text-base font-black text-brand-dark sm:text-lg">الخطوات التالية</h2>
         <ul className="mt-3 list-inside list-disc space-y-2 text-sm font-bold text-brand-charcoal sm:text-base">
           <li>سيتم التواصل معك لتأكيد تفاصيل الطلب.</li>
@@ -64,12 +64,12 @@ export default async function OrderSuccessPage({ searchParams }: OrderSuccessPag
       </section>
 
       <section className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-        <Link href="/menu" className="btn-primary w-full text-center">
+        <Link href="/menu" className="btn-primary min-h-11 w-full text-center">
           العودة إلى المنيو
         </Link>
 
         {whatsappUrl ? (
-          <Link href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="btn-primary w-full text-center">
+          <Link href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="btn-primary min-h-11 w-full text-center">
             متابعة عبر واتساب
           </Link>
         ) : null}
