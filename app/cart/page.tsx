@@ -201,7 +201,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="safe-bottom-mobile space-y-6">
       <PageHero title="السلة" subtitle="راجع الطلب واكمله وارسله مباشرة على واتساب." />
 
       {!isHydrated ? (
@@ -209,7 +209,7 @@ export default function CartPage() {
       ) : null}
 
       {isHydrated && items.length === 0 ? (
-        <section className="space-y-4 rounded-2xl border-2 border-dashed border-brand-dark bg-brand-white p-6 text-center">
+        <section className="space-y-4 rounded-2xl border border-dashed border-brand-dark/25 bg-brand-white p-7 text-center shadow-[0_8px_20px_rgba(18,18,18,0.04)]">
           <ActiveOrderBanner />
           <p className="text-lg font-black text-brand-dark">السلة فارغة حاليًا.</p>
           <p className="text-sm text-brand-charcoal">أضف أصنافك أولًا من المنيو، وبعدها راجع طلبك قبل الإرسال على واتساب.</p>
@@ -221,7 +221,7 @@ export default function CartPage() {
 
       {isHydrated && items.length > 0 ? (
         <>
-          <section className="rounded-2xl border-2 border-brand-dark bg-brand-white p-4">
+          <section className="rounded-2xl border border-brand-dark/10 bg-brand-white p-4 shadow-[0_8px_20px_rgba(18,18,18,0.04)]">
             <div className="mb-3 flex items-center justify-between border-b border-brand-dark/20 pb-3">
               <h2 className="text-lg font-black text-brand-dark">ملخص الطلب</h2>
               <span className="rounded-full bg-brand-yellow px-3 py-1 text-xs font-black text-brand-dark">{summary.totalItems} قطعة</span>
@@ -258,11 +258,11 @@ export default function CartPage() {
             </div>
           </section>
 
-          <section className="space-y-3 rounded-2xl border-2 border-brand-dark bg-brand-white p-4">
+          <section className="space-y-3 rounded-2xl border border-brand-dark/10 bg-brand-white p-4 shadow-[0_8px_20px_rgba(18,18,18,0.04)]">
             <h2 className="text-lg font-black text-brand-dark">الأصناف</h2>
 
             {items.map((item) => (
-              <article key={item.lineId} className="rounded-xl border-2 border-brand-dark/20 p-3">
+              <article key={item.lineId} className="rounded-xl border border-brand-dark/15 bg-brand-white p-3">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <h3 className="font-black text-brand-dark">{item.kind === 'offer' ? `عرض: ${item.offerTitle}` : item.productName}</h3>
@@ -279,17 +279,17 @@ export default function CartPage() {
 
                   <button
                     type="button"
-                    className="rounded-lg border border-red-400 px-2 py-1 text-xs font-bold text-red-700"
+                    className="rounded-lg border border-red-300 px-2.5 py-1 text-xs font-bold text-red-700 hover:bg-red-50"
                     onClick={() => removeItem(item.lineId)}
                   >
                     حذف
                   </button>
                 </div>
 
-                <div className="mt-3 inline-flex items-center gap-2 rounded-lg border border-brand-dark/30 p-1">
+                <div className="mt-3 inline-flex min-h-10 items-center gap-2 rounded-lg border border-brand-dark/20 p-1">
                   <button
                     type="button"
-                    className="rounded px-2 py-1 font-black"
+                    className="rounded px-2.5 py-1 font-black text-brand-dark"
                     onClick={() => updateItemQuantity(item.lineId, Math.max(1, item.quantity - 1))}
                   >
                     -
@@ -297,7 +297,7 @@ export default function CartPage() {
                   <span className="min-w-8 text-center font-black">{item.quantity}</span>
                   <button
                     type="button"
-                    className="rounded px-2 py-1 font-black"
+                    className="rounded px-2.5 py-1 font-black text-brand-dark"
                     onClick={() => updateItemQuantity(item.lineId, item.quantity + 1)}
                   >
                     +
@@ -311,12 +311,12 @@ export default function CartPage() {
               <p className="text-lg font-black text-brand-red">{subtotal} ج.م</p>
             </div>
 
-            <button type="button" onClick={clearCart} className="w-full rounded-xl border-2 border-brand-dark px-3 py-2 text-sm font-black">
+            <button type="button" onClick={clearCart} className="w-full rounded-xl border border-brand-dark/20 px-3 py-2.5 text-sm font-black text-brand-charcoal transition hover:border-brand-red/30 hover:text-brand-red">
               تفريغ السلة
             </button>
           </section>
 
-          <section className="space-y-3 rounded-2xl border-2 border-brand-dark bg-brand-white p-4">
+          <section className="space-y-3 rounded-2xl border border-brand-dark/10 bg-brand-white p-4 shadow-[0_8px_20px_rgba(18,18,18,0.04)]">
             <h2 className="text-lg font-black text-brand-dark">بيانات العميل</h2>
 
             <label className="block space-y-1">
@@ -439,7 +439,7 @@ export default function CartPage() {
           <button
             type="button"
             onClick={handleSendWhatsapp}
-            className="btn-primary block w-full text-center disabled:cursor-not-allowed disabled:opacity-60"
+            className="btn-primary block min-h-12 w-full text-center text-base disabled:cursor-not-allowed disabled:opacity-60"
             disabled={!customer.confirmedAccurateDetails || isSubmitting || isOrderingClosed}
           >
             {isOrderingClosed ? 'الطلبات متوقفة حاليًا' : isSubmitting ? 'جاري تجهيز طلبك...' : 'إرسال الطلب على واتساب'}

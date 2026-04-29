@@ -55,15 +55,15 @@ export function MenuPageClient({ categories, items, initialTableReference }: Men
   }, [activeCategory, items]);
 
   return (
-    <div className="safe-bottom-mobile space-y-6">
+    <div className="safe-bottom-mobile space-y-7">
       <PageHero title="المنيو" subtitle="منيو توسكانيني - اختياراتك المفضلة بطعم ثابت وجودة ممتازة." />
       <ActiveOrderBanner />
 
-      <section className="rounded-2xl border border-brand-dark/15 bg-brand-yellow/35 py-3 shadow-[0_6px_16px_rgba(0,0,0,0.06)]">
+      <section className="rounded-2xl border border-brand-dark/10 bg-brand-white py-3 shadow-[0_8px_18px_rgba(18,18,18,0.04)]">
         <CategoryChips categories={categories} activeCategory={activeCategory} onSelectCategory={setActiveCategory} />
       </section>
 
-      <section className="grid gap-4 sm:grid-cols-2">
+      <section className="grid gap-4 sm:grid-cols-2 lg:gap-5">
         {filteredItems.map((item) => {
           const category = categories.find((entry) => entry.slug === item.categorySlug);
           return (
@@ -78,8 +78,9 @@ export function MenuPageClient({ categories, items, initialTableReference }: Men
       </section>
 
       {filteredItems.length === 0 ? (
-        <div className="rounded-2xl border-2 border-dashed border-brand-dark bg-brand-white p-6 text-center">
-          <p className="font-black">لا توجد عناصر في هذا القسم حاليًا.</p>
+        <div className="rounded-2xl border border-dashed border-brand-dark/25 bg-brand-white p-7 text-center">
+          <p className="text-base font-black text-brand-dark">لا توجد عناصر في هذا القسم حاليًا.</p>
+          <p className="mt-2 text-sm text-brand-charcoal">اختر قسمًا آخر أو ارجع لاحقًا للاطلاع على الأصناف المتاحة.</p>
         </div>
       ) : null}
 

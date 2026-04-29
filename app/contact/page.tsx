@@ -18,7 +18,7 @@ export default async function ContactPage() {
     <div className="safe-bottom-mobile space-y-6">
       <PageHero title="اتصل بنا" subtitle="اطلب الآن أو تواصل معنا مباشرة." />
 
-      <section className="surface-card text-sm">
+      <section className="surface-card space-y-1 text-sm">
         <h2 className="text-lg font-black">بيانات التواصل</h2>
 
         <p className="mt-3 font-bold">العنوان:</p>
@@ -44,12 +44,12 @@ export default async function ContactPage() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border-dashed border-brand-charcoal/35 bg-brand-white p-4 text-sm shadow-[0_4px_14px_rgba(18,18,18,0.05)]">
+      <section className="rounded-2xl border border-brand-dark/10 bg-brand-white p-4 text-sm shadow-[0_8px_20px_rgba(18,18,18,0.04)]">
         <h2 className="text-lg font-black">الخريطة</h2>
         <p className="mt-2 leading-7 text-brand-charcoal">جارٍ تجهيز الخريطة الدقيقة للفرع. بمجرد اعتماد اللوكيشن النهائي هتظهر هنا مباشرة.</p>
       </section>
 
-      <section className="rounded-2xl border border-dashed border-brand-charcoal/35 bg-brand-white p-4 text-sm shadow-[0_4px_14px_rgba(18,18,18,0.05)]">
+      <section className="rounded-2xl border border-brand-dark/10 bg-brand-white p-4 text-sm shadow-[0_8px_20px_rgba(18,18,18,0.04)]">
         <h2 className="text-lg font-black">معلومات إضافية</h2>
         <p className="mt-2 text-brand-charcoal">ساعات العمل هتتضاف بعد التأكيد.</p>
         <p className="mt-1 text-brand-charcoal">سياسة التوصيل هتتضاف بعد التأكيد.</p>

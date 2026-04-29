@@ -146,7 +146,7 @@ export function OrderTrackingCard({ orderId, fallbackReference, fallbackTableRef
   const currentIndex = currentStage ? TIMELINE.findIndex((item) => item.key === currentStage) : -1;
 
   return (
-    <section className="rounded-3xl border-2 border-brand-dark bg-brand-white p-5 shadow-punch sm:p-6">
+    <section className="rounded-3xl border border-brand-dark/10 bg-brand-white p-5 shadow-[0_10px_24px_rgba(18,18,18,0.05)] sm:p-6">
       <div className="space-y-3">
         <p className="text-lg font-black text-brand-dark sm:text-xl">تم استلام طلبك</p>
 
@@ -177,7 +177,7 @@ export function OrderTrackingCard({ orderId, fallbackReference, fallbackTableRef
         </div>
       </div>
 
-      <div className="mt-4 rounded-2xl border border-brand-dark/20 bg-brand-white p-4">
+      <div className="mt-4 rounded-2xl border border-brand-dark/15 bg-brand-white p-4">
         <p className="text-sm font-black text-brand-dark">تتبع حالة الطلب</p>
         <ol className="mt-3 space-y-2">
           {TIMELINE.map((item, index) => {
@@ -192,8 +192,8 @@ export function OrderTrackingCard({ orderId, fallbackReference, fallbackTableRef
                     isCurrent
                       ? 'border-brand-red bg-brand-red text-brand-white'
                       : isComplete
-                        ? 'border-brand-dark bg-brand-dark text-brand-white'
-                        : 'border-brand-dark/30 bg-brand-white text-brand-charcoal'
+                        ? 'border-emerald-500 bg-emerald-500 text-white'
+                        : 'border-brand-dark/20 bg-brand-white text-brand-charcoal'
                   }`}
                 >
                   {index + 1}
