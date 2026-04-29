@@ -27,6 +27,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       title_ar: form.get('title_ar'),
       description_ar: form.get('description_ar'),
       badge_ar: form.get('badge_ar'),
+      offer_price: form.get('offer_price'),
       price_text: form.get('price_text'),
       starts_at: form.get('starts_at'),
       ends_at: form.get('ends_at'),
