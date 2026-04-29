@@ -103,6 +103,12 @@ export function MenuAdminDashboard({ data }: MenuAdminDashboardProps) {
   const [sizePriceById, setSizePriceById] = useState<Record<string, string>>(
     Object.fromEntries(data.sizes.map((row) => [row.id, row.price.toFixed(2)])),
   );
+  const [productBadgeTextById, setProductBadgeTextById] = useState<Record<string, string>>(
+    Object.fromEntries(data.products.map((row) => [row.id, row.productBadgeAr ?? ''])),
+  );
+  const [productBadgeVariantById, setProductBadgeVariantById] = useState<Record<string, string>>(
+    Object.fromEntries(data.products.map((row) => [row.id, row.productBadgeVariant ?? 'default'])),
+  );
   const [pendingKey, setPendingKey] = useState<string | null>(null);
   const [flashByKey, setFlashByKey] = useState<Record<string, FlashMessage>>({});
 
@@ -199,11 +205,76 @@ export function MenuAdminDashboard({ data }: MenuAdminDashboardProps) {
     }
   };
 
+  const handleProductBadgeTextSave = async (productId: string) => {
+    const key = `product-badge-text-${productId}`;
+    if (!window.confirm('تأكيد تعديل نص الشارة لهذا المنتج؟')) {
+      return;
+    }
+
+    clearFlash(key);
+    setPendingKey(key);
+
+    try {
+      await patchJson(`/admin/products/api/products/${productId}`, { product_badge_ar: productBadgeTextById[productId] });
+      setFlash(key, { type: 'success', text: 'تم تحديث نص الشارة بنجاح.' });
+    } catch (error: unknown) {
+      setFlash(key, { type: 'error', text: error instanceof Error ? error.message : 'تعذر تحديث نص الشارة.' });
+    } finally {
+      setPendingKey(null);
+    }
+  };
+
+  const handleProductBadgeVariantSave = async (productId: string) => {
+    const key = `product-badge-variant-${productId}`;
+    if (!window.confirm('تأكيد تعديل نوع الشارة لهذا المنتج؟')) {
+      return;
+    }
+
+    clearFlash(key);
+    setPendingKey(key);
+
+    try {
+      const nextVariant = productBadgeVariantById[productId];
+      await patchJson(`/admin/products/api/products/${productId}`, {
+        product_badge_variant: nextVariant === '' ? null : nextVariant,
+      });
+      setFlash(key, { type: 'success', text: 'تم تحديث نوع الشارة بنجاح.' });
+    } catch (error: unknown) {
+      setFlash(key, { type: 'error', text: error instanceof Error ? error.message : 'تعذر تحديث نوع الشارة.' });
+    } finally {
+      setPendingKey(null);
+    }
+  };
+
+  const handleClearBadge = async (productId: string) => {
+    const key = `product-badge-clear-${productId}`;
+    if (!window.confirm('تأكيد مسح الشارة لهذا المنتج؟')) {
+      return;
+    }
+
+    clearFlash(key);
+    setPendingKey(key);
+
+    try {
+      await patchJson(`/admin/products/api/products/${productId}`, { product_badge_variant: null });
+      await patchJson(`/admin/products/api/products/${productId}`, { product_badge_ar: null });
+      setProductBadgeTextById((previous) => ({ ...previous, [productId]: '' }));
+      setProductBadgeVariantById((previous) => ({ ...previous, [productId]: 'default' }));
+      setFlash(key, { type: 'success', text: 'تم مسح الشارة بنجاح.' });
+    } catch (error: unknown) {
+      setFlash(key, { type: 'error', text: error instanceof Error ? error.message : 'تعذر مسح الشارة.' });
+    } finally {
+      setPendingKey(null);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <header className="space-y-2">
         <h1 className="text-2xl font-black text-slate-900">لوحة إدارة المنيو (تعديل آمن محدود)</h1>
-        <p className="text-sm text-slate-700">التعديلات المتاحة: التوفر، السعر يبدأ من، حالة التفعيل، وسعر الحجم فقط.</p>
+        <p className="text-sm text-slate-700">
+          التعديلات المتاحة: التوفر، الشارة المرئية، السعر يبدأ من، حالة التفعيل، وسعر الحجم فقط.
+        </p>
       </header>
 
       <SectionCard title="التصنيفات" count={data.categories.length}>
@@ -249,6 +320,9 @@ export function MenuAdminDashboard({ data }: MenuAdminDashboardProps) {
             <tbody>
               {data.products.map((row) => {
                 const availabilityKey = `product-availability-${row.id}`;
+                const productBadgeTextKey = `product-badge-text-${row.id}`;
+                const productBadgeVariantKey = `product-badge-variant-${row.id}`;
+                const productBadgeClearKey = `product-badge-clear-${row.id}`;
                 const productPriceKey = `product-price-${row.id}`;
                 const productActiveKey = `product-active-${row.id}`;
 
@@ -292,6 +366,97 @@ export function MenuAdminDashboard({ data }: MenuAdminDashboardProps) {
                             {flashByKey[availabilityKey].text}
                           </p>
                         ) : null}
+                        <div className="mt-3 border-t border-slate-200 pt-3">
+                          <label className="mb-1 block text-xs font-bold text-slate-700">نص الشارة</label>
+                          <input
+                            type="text"
+                            maxLength={40}
+                            value={productBadgeTextById[row.id] ?? ''}
+                            onChange={(event) =>
+                              setProductBadgeTextById((previous) => ({ ...previous, [row.id]: event.target.value }))
+                            }
+                            className="w-full rounded-lg border border-slate-300 px-2 py-1 text-sm"
+                            placeholder="مثال: الأكثر طلبًا"
+                          />
+                          <p className="mt-1 text-[11px] text-slate-600">
+                            أمثلة: الأكثر طلبًا / جديد / اختيارنا / حار / عرض خاص / محدود
+                          </p>
+                          <div className="mt-2 flex items-center justify-end gap-2">
+                            <button
+                              type="button"
+                              onClick={() => void handleProductBadgeTextSave(row.id)}
+                              disabled={pendingKey === productBadgeTextKey}
+                              className="rounded-lg border border-slate-300 px-2 py-1 text-xs font-bold transition hover:border-brand-red hover:text-brand-red disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                              {pendingKey === productBadgeTextKey ? 'جارٍ الحفظ...' : 'حفظ نص الشارة'}
+                            </button>
+                          </div>
+                          {flashByKey[productBadgeTextKey] ? (
+                            <p
+                              className={`mt-1 text-xs font-semibold ${
+                                flashByKey[productBadgeTextKey].type === 'success' ? 'text-emerald-700' : 'text-red-700'
+                              }`}
+                            >
+                              {flashByKey[productBadgeTextKey].text}
+                            </p>
+                          ) : null}
+                          <label className="mb-1 mt-3 block text-xs font-bold text-slate-700">نوع الشارة</label>
+                          <div className="flex items-center justify-end gap-2">
+                            <select
+                              value={productBadgeVariantById[row.id] ?? 'default'}
+                              onChange={(event) =>
+                                setProductBadgeVariantById((previous) => ({ ...previous, [row.id]: event.target.value }))
+                              }
+                              className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-sm"
+                            >
+                              <option value="default">افتراضي</option>
+                              <option value="popular">الأكثر طلبًا</option>
+                              <option value="new">جديد</option>
+                              <option value="recommended">اختيارنا</option>
+                              <option value="spicy">حار</option>
+                              <option value="offer">عرض خاص</option>
+                              <option value="limited">محدود</option>
+                            </select>
+                            <button
+                              type="button"
+                              onClick={() => void handleProductBadgeVariantSave(row.id)}
+                              disabled={pendingKey === productBadgeVariantKey}
+                              className="rounded-lg border border-slate-300 px-2 py-1 text-xs font-bold transition hover:border-brand-red hover:text-brand-red disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                              {pendingKey === productBadgeVariantKey ? 'جارٍ الحفظ...' : 'حفظ نوع الشارة'}
+                            </button>
+                          </div>
+                          {flashByKey[productBadgeVariantKey] ? (
+                            <p
+                              className={`mt-1 text-xs font-semibold ${
+                                flashByKey[productBadgeVariantKey].type === 'success'
+                                  ? 'text-emerald-700'
+                                  : 'text-red-700'
+                              }`}
+                            >
+                              {flashByKey[productBadgeVariantKey].text}
+                            </p>
+                          ) : null}
+                          <div className="mt-2 flex items-center justify-end">
+                            <button
+                              type="button"
+                              onClick={() => void handleClearBadge(row.id)}
+                              disabled={pendingKey === productBadgeClearKey}
+                              className="rounded-lg border border-slate-300 px-2 py-1 text-xs font-bold transition hover:border-red-500 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                              {pendingKey === productBadgeClearKey ? 'جارٍ الحفظ...' : 'مسح الشارة'}
+                            </button>
+                          </div>
+                          {flashByKey[productBadgeClearKey] ? (
+                            <p
+                              className={`mt-1 text-xs font-semibold ${
+                                flashByKey[productBadgeClearKey].type === 'success' ? 'text-emerald-700' : 'text-red-700'
+                              }`}
+                            >
+                              {flashByKey[productBadgeClearKey].text}
+                            </p>
+                          ) : null}
+                        </div>
                       </div>
                     </td>
                     <td className="px-3 py-2">

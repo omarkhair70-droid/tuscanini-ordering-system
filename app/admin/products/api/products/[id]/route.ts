@@ -6,6 +6,8 @@ import {
 } from '@/lib/admin/menu-admin-validation';
 import {
   updateProductAvailabilityById,
+  updateProductBadgeTextById,
+  updateProductBadgeVariantById,
   updateProductIsActiveById,
   updateProductPriceFromById,
 } from '@/lib/admin/menu-admin-writes';
@@ -22,6 +24,10 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
       await updateProductAvailabilityById(id, payload.value);
     } else if (payload.field === 'price_from') {
       await updateProductPriceFromById(id, payload.value);
+    } else if (payload.field === 'product_badge_ar') {
+      await updateProductBadgeTextById(id, payload.value);
+    } else if (payload.field === 'product_badge_variant') {
+      await updateProductBadgeVariantById(id, payload.value);
     } else {
       await updateProductIsActiveById(id, payload.value);
     }

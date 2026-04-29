@@ -1,4 +1,4 @@
-import type { MenuItem, MenuTag } from '@/types/menu';
+import type { MenuItem, MenuTag, ProductBadgeVariant } from '@/types/menu';
 
 const availabilityLabel: Record<MenuItem['availability'], string> = {
   available: 'متاح الآن',
@@ -18,6 +18,16 @@ const tagStyle: Record<MenuTag, string> = {
   حار: 'bg-orange-500 text-brand-white',
 };
 
+const productBadgeVariantStyle: Record<ProductBadgeVariant, string> = {
+  default: 'bg-slate-700 text-white',
+  new: 'bg-brand-red text-brand-white',
+  popular: 'bg-brand-yellow text-brand-dark',
+  recommended: 'bg-indigo-600 text-white',
+  spicy: 'bg-orange-500 text-brand-white',
+  offer: 'bg-fuchsia-600 text-white',
+  limited: 'bg-amber-600 text-white',
+};
+
 type ProductCardProps = {
   item: MenuItem;
   categoryName: string;
@@ -28,6 +38,15 @@ export function ProductCard({ item, categoryName, onCustomize }: ProductCardProp
   return (
     <article className="rounded-2xl border border-brand-dark/10 bg-brand-white p-4 shadow-[0_10px_24px_rgba(18,18,18,0.06)]">
       <div className="mb-3 flex flex-wrap items-center gap-2">
+        {item.productBadgeAr ? (
+          <span
+            className={`rounded-full px-3 py-1 text-xs font-black ${
+              productBadgeVariantStyle[item.productBadgeVariant ?? 'default']
+            }`}
+          >
+            {item.productBadgeAr}
+          </span>
+        ) : null}
         {(item.tags ?? []).map((tag) => (
           <span key={tag} className={`rounded-full px-3 py-1 text-xs font-black ${tagStyle[tag]}`}>
             {tag}

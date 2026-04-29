@@ -19,6 +19,7 @@ export type MenuCategorySlug =
 export type MenuTag = 'الأكثر طلبًا' | 'جديد' | 'حار';
 
 export type AvailabilityStatus = 'available' | 'limited' | 'unavailable';
+export type ProductBadgeVariant = 'default' | 'new' | 'popular' | 'recommended' | 'spicy' | 'offer' | 'limited';
 
 export type ProductSize = {
   id: string;
@@ -47,6 +48,8 @@ export type MenuItem = {
   priceFrom: number;
   basePrice?: number;
   tags?: MenuTag[];
+  productBadgeAr?: string;
+  productBadgeVariant?: ProductBadgeVariant;
   availability: AvailabilityStatus;
   sizes?: ProductSize[];
   addons?: ProductAddon[];

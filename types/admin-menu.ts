@@ -12,6 +12,8 @@ export type AdminMenuProductRow = {
   categoryNameAr: string;
   availability: 'available' | 'limited' | 'unavailable' | string;
   priceFrom: number;
+  productBadgeAr: string | null;
+  productBadgeVariant: 'default' | 'new' | 'popular' | 'recommended' | 'spicy' | 'offer' | 'limited' | null | string;
   isActive: boolean;
   updatedAt: string;
 };
