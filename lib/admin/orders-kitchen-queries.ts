@@ -28,6 +28,7 @@ type OrderItemRow = {
   selected_size_label: string | null;
   quantity: number;
   item_notes: string | null;
+  line_type?: 'product' | 'offer';
 };
 
 type OrderItemAddonRow = {
@@ -162,6 +163,7 @@ export async function getKitchenOrdersBoardData(): Promise<KitchenOrdersBoardDat
       selectedSizeLabel: itemRow.selected_size_label,
       quantity: itemRow.quantity,
       itemNotes: itemRow.item_notes,
+      lineType: itemRow.line_type ?? 'product',
       addons: (addonsByItemId.get(itemRow.id) ?? []).map((addonRow) => ({
         id: addonRow.id,
         labelSnapshot: addonRow.addon_label_snapshot,

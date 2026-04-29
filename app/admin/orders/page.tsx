@@ -133,7 +133,7 @@ function OrderCard({ order, returnTo }: { order: AdminOrderSummaryView; returnTo
             order.items.map((item, index) => (
               <div key={item.id} className="space-y-2 rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-700">
                 <p className="font-bold text-slate-900">
-                  {index + 1}. {item.productNameSnapshot}
+                  {index + 1}. {item.lineType === 'offer' ? `عرض: ${item.productNameSnapshot.replace(/^عرض:\s*/, '')}` : item.productNameSnapshot}
                 </p>
                 <div className="grid gap-2 sm:grid-cols-2">
                   <p>

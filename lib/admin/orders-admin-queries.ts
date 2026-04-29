@@ -36,6 +36,7 @@ type OrderItemRow = {
   quantity: number;
   item_notes: string | null;
   line_total: number | string;
+  line_type?: 'product' | 'offer';
 };
 
 type OrderItemAddonRow = {
@@ -144,7 +145,7 @@ export async function getAdminOrdersDashboardData(searchParams: SearchParamsInpu
 
   const orderItemsResult = await supabase
     .from('order_items')
-    .select('id, order_id, product_name_snapshot, selected_size_label, quantity, item_notes, line_total')
+    .select('id, order_id, product_name_snapshot, selected_size_label, quantity, item_notes, line_total, line_type')
     .in('order_id', orderIds)
     .order('created_at', { ascending: true });
 
@@ -213,6 +214,7 @@ export async function getAdminOrdersDashboardData(searchParams: SearchParamsInpu
       selectedSizeLabel: itemRow.selected_size_label,
       quantity: itemRow.quantity,
       itemNotes: itemRow.item_notes,
+      lineType: itemRow.line_type ?? 'product',
       lineTotal: toNumber(itemRow.line_total),
       addons: (addonsByItemId.get(itemRow.id) ?? []).map((addonRow) => ({
         id: addonRow.id,

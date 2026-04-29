@@ -10,8 +10,9 @@ export type CartItemSize = {
   price: number;
 };
 
-export type CartItem = {
+export type ProductCartItem = {
   lineId: string;
+  kind: 'product';
   productId: string;
   productName: string;
   selectedSize: CartItemSize | null;
@@ -22,6 +23,19 @@ export type CartItem = {
   totalItemPrice: number;
 };
 
+export type OfferCartItem = {
+  lineId: string;
+  kind: 'offer';
+  offerId: string;
+  offerTitle: string;
+  quantity: number;
+  unitPrice: number;
+  totalItemPrice: number;
+  itemNotes: string;
+};
+
+export type CartItem = ProductCartItem | OfferCartItem;
+
 export type CartDraftItemInput = {
   productId: string;
   productName: string;
@@ -30,6 +44,14 @@ export type CartDraftItemInput = {
   quantity: number;
   itemNotes: string;
   unitPrice: number;
+};
+
+export type CartDraftOfferItemInput = {
+  offerId: string;
+  offerTitle: string;
+  quantity?: number;
+  unitPrice: number;
+  itemNotes?: string;
 };
 
 export type OrderType = 'delivery' | 'pickup';

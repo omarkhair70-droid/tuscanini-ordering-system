@@ -40,6 +40,7 @@ export default async function AdminOffersPage({ searchParams }: { searchParams: 
           <input name="title_ar" placeholder="عنوان العرض" required className="rounded-xl border border-slate-300 px-3 py-2" />
           <input name="badge_ar" placeholder="شارة العرض (اختياري)" className="rounded-xl border border-slate-300 px-3 py-2" />
           <input name="price_text" placeholder="نص السعر (اختياري)" className="rounded-xl border border-slate-300 px-3 py-2" />
+          <input name="offer_price" type="number" step="0.01" min="0" placeholder="سعر العرض (رقمي)" className="rounded-xl border border-slate-300 px-3 py-2" />
           <input name="sort_order" type="number" defaultValue={0} className="rounded-xl border border-slate-300 px-3 py-2" />
           <input name="starts_at" type="datetime-local" className="rounded-xl border border-slate-300 px-3 py-2" />
           <input name="ends_at" type="datetime-local" className="rounded-xl border border-slate-300 px-3 py-2" />
@@ -56,11 +57,13 @@ export default async function AdminOffersPage({ searchParams }: { searchParams: 
         {result.data.length === 0 ? <p className="surface-card-soft">لا توجد عروض بعد.</p> : null}
         {result.data.map((offer) => (
           <article key={offer.id} className="rounded-2xl border border-slate-200 bg-white p-4">
+            <p className="mb-2 text-xs font-bold text-slate-600">مباع اليوم: {offer.soldToday ?? 0} | مبيعات اليوم: {offer.salesToday ?? 0} ج.م | إجمالي مباع: {offer.totalSold ?? 0}</p>
             <form action={`/admin/offers/api/offers/${offer.id}`} method="post" className="grid gap-3 md:grid-cols-2">
               <input name="intent" type="hidden" value="update" />
               <input name="title_ar" defaultValue={offer.titleAr} required className="rounded-xl border border-slate-300 px-3 py-2" />
               <input name="badge_ar" defaultValue={offer.badgeAr ?? ''} className="rounded-xl border border-slate-300 px-3 py-2" />
               <input name="price_text" defaultValue={offer.priceText ?? ''} className="rounded-xl border border-slate-300 px-3 py-2" />
+              <input name="offer_price" type="number" step="0.01" min="0" defaultValue={offer.offerPrice ?? ''} className="rounded-xl border border-slate-300 px-3 py-2" />
               <input name="sort_order" type="number" defaultValue={offer.sortOrder} className="rounded-xl border border-slate-300 px-3 py-2" />
               <input name="starts_at" type="datetime-local" defaultValue={toDatetimeLocal(offer.startsAt)} className="rounded-xl border border-slate-300 px-3 py-2" />
               <input name="ends_at" type="datetime-local" defaultValue={toDatetimeLocal(offer.endsAt)} className="rounded-xl border border-slate-300 px-3 py-2" />

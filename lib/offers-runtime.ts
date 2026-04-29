@@ -9,8 +9,15 @@ type OfferRow = {
   description_ar: string | null;
   badge_ar: string | null;
   price_text: string | null;
+  offer_price: number | string | null;
   starts_at: string | null;
   ends_at: string | null;
+};
+
+const toNumber = (value: number | string | null): number | null => {
+  if (value === null) return null;
+  const parsed = typeof value === 'number' ? value : Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
 };
 
 function mapOffer(row: OfferRow): PublicOffer {
@@ -20,6 +27,7 @@ function mapOffer(row: OfferRow): PublicOffer {
     descriptionAr: row.description_ar,
     badgeAr: row.badge_ar,
     priceText: row.price_text,
+    offerPrice: toNumber(row.offer_price),
   };
 }
 
@@ -37,7 +45,7 @@ export async function getActivePublicOffers(limit?: number): Promise<PublicOffer
   const supabase = getSupabaseServerAdminClient();
   const { data, error } = await supabase
     .from('offers')
-    .select('id, title_ar, description_ar, badge_ar, price_text, starts_at, ends_at')
+    .select('id, title_ar, description_ar, badge_ar, price_text, offer_price, starts_at, ends_at')
     .eq('is_active', true)
     .order('sort_order', { ascending: true })
     .order('created_at', { ascending: false });

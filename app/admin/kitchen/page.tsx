@@ -120,7 +120,7 @@ function OrderCard({ order }: { order: KitchenOrderView }) {
           order.items.map((item, index) => (
             <div key={item.id} className="space-y-2 rounded-xl border border-slate-300 bg-white p-3">
               <p className="text-lg font-black text-slate-900">
-                {index + 1}. {item.productNameSnapshot}
+                {index + 1}. {item.lineType === 'offer' ? `عرض: ${item.productNameSnapshot.replace(/^عرض:\s*/, '')}` : item.productNameSnapshot}
               </p>
 
               <div className="grid gap-2 text-sm text-slate-700 md:grid-cols-2">

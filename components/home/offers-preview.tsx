@@ -23,6 +23,7 @@ export async function OffersPreview() {
               <h3 className="text-lg font-black">{offer.titleAr}</h3>
               {offer.descriptionAr ? <p className="text-sm text-brand-charcoal">{offer.descriptionAr}</p> : null}
               {offer.priceText ? <p className="mt-2 font-extrabold text-brand-red">{offer.priceText}</p> : null}
+              {typeof offer.offerPrice === 'number' ? <p className="mt-2 text-xs font-bold text-emerald-700">العرض متاح للطلب من صفحة العروض</p> : null}
             </article>
           ))}
         </div>
