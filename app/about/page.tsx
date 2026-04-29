@@ -7,7 +7,7 @@ export default function AboutPage() {
 
       <section className="surface-card text-sm leading-8">
         <p>
-          <strong>حكاية الأربعة صحاب</strong> بدأت لما <strong>هادي</strong> و<strong>جوبا</strong> و<strong>فارس</strong> و
+          <strong>حكاية الأربعة صحاب</strong> بدأت لما <strong>فارس</strong> و<strong>هادي</strong> و<strong>جوبا</strong> و
           <strong> عبد الرحمن</strong> قرروا يحولوا حبهم للأكل السريع لمكان الناس ترجع له وهي مطمنة.
         </p>
         <p className="mt-3">
