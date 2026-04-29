@@ -1,5 +1,6 @@
 import { PageHero } from '@/components/shared/page-hero';
 import { getActivePublicOffers } from '@/lib/offers-runtime';
+import { AddOfferButton } from '@/components/offers/add-offer-button';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -19,6 +20,7 @@ export default async function OffersPage() {
             <h2 className="text-xl font-black">{offer.titleAr}</h2>
             {offer.descriptionAr ? <p className="text-sm">{offer.descriptionAr}</p> : null}
             {offer.priceText ? <p className="mt-2 font-extrabold text-brand-red">{offer.priceText}</p> : null}
+            {typeof offer.offerPrice === 'number' ? <AddOfferButton offerId={offer.id} offerTitle={offer.titleAr} offerPrice={offer.offerPrice} /> : null}
           </div>
         ))
       ) : (

@@ -22,6 +22,7 @@ export type KitchenOrderItemAddonView = {
 
 export type KitchenOrderItemView = {
   id: string;
+  lineType?: 'product' | 'offer';
   productNameSnapshot: string;
   selectedSizeLabel: string | null;
   quantity: number;

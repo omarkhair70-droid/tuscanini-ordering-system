@@ -31,6 +31,7 @@ export type AdminOrderItemAddonView = {
 
 export type AdminOrderItemView = {
   id: string;
+  lineType?: 'product' | 'offer';
   productNameSnapshot: string;
   selectedSizeLabel: string | null;
   quantity: number;

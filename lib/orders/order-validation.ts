@@ -112,8 +112,9 @@ export type ValidatedOrderItemSize = {
   price: number;
 };
 
-export type ValidatedOrderItem = {
+export type ValidatedProductOrderItem = {
   lineId: string;
+  kind: 'product';
   productId: string;
   productName: string;
   selectedSize: ValidatedOrderItemSize | null;
@@ -123,6 +124,19 @@ export type ValidatedOrderItem = {
   unitPrice: number;
   totalItemPrice: number;
 };
+
+export type ValidatedOfferOrderItem = {
+  lineId: string;
+  kind: 'offer';
+  offerId: string;
+  offerTitle: string;
+  quantity: number;
+  itemNotes: string;
+  unitPrice: number;
+  totalItemPrice: number;
+};
+
+export type ValidatedOrderItem = ValidatedProductOrderItem | ValidatedOfferOrderItem;
 
 export type ValidatedOrderCustomer = {
   name: string;
@@ -227,8 +241,24 @@ const parseItemOrThrow = (value: unknown, index: number): ValidatedOrderItem => 
     throw new Error(`إجمالي الصنف رقم ${index + 1} غير متطابق مع السعر والكمية.`);
   }
 
+
+  const kind = payload.kind === 'offer' ? 'offer' : 'product';
+  if (kind === 'offer') {
+    return {
+      lineId,
+      kind: 'offer',
+      offerId: parseIdStringOrThrow(payload.offerId, `معرّف العرض رقم ${index + 1}`),
+      offerTitle: parseStringOrThrow(payload.offerTitle, `عنوان العرض رقم ${index + 1}`),
+      quantity,
+      itemNotes: parseOptionalString(payload.itemNotes),
+      unitPrice,
+      totalItemPrice,
+    };
+  }
+
   return {
     lineId,
+    kind: 'product',
     productId: parseIdStringOrThrow(payload.productId, `معرّف الصنف رقم ${index + 1}`),
     productName: parseStringOrThrow(payload.productName, `اسم الصنف رقم ${index + 1}`),
     selectedSize: parseSelectedSizeOrThrow(payload.selectedSize),

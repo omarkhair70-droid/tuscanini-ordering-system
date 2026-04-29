@@ -28,6 +28,10 @@ export function buildArabicWhatsappMessage(params: {
   }
 
   items.forEach((item, index) => {
+    if (item.kind === 'offer') {
+      lines.push(`#${index + 1} عرض: ${item.offerTitle}`, `- الكمية: ${item.quantity}`, `- ملاحظات الصنف: ${item.itemNotes || 'لا يوجد'}`, `- إجمالي الصنف: ${item.totalItemPrice} ج.م`, '');
+      return;
+    }
     const addons = item.selectedAddons.length
       ? item.selectedAddons.map((addon) => addon.label).join('، ')
       : 'بدون إضافات';

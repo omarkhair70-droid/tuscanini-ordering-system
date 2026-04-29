@@ -9,6 +9,7 @@ export type OfferMutationPayload = {
   description_ar: string | null;
   badge_ar: string | null;
   price_text: string | null;
+  offer_price: number | null;
   starts_at: string | null;
   ends_at: string | null;
   is_active: boolean;
@@ -65,6 +66,15 @@ function parseSortOrder(value: unknown): number {
   return n;
 }
 
+function parseOptionalMoney(value: unknown): number | null {
+  if (value === undefined || value === null) return null;
+  if (typeof value === 'string' && !value.trim()) return null;
+  const n = typeof value === 'number' ? value : Number(value);
+  if (!Number.isFinite(n) || n < 0) throw new Error('سعر العرض غير صالح.');
+  if (!Number.isInteger(n * 100)) throw new Error('سعر العرض يجب ألا يحتوي أكثر من منزلتين عشريتين.');
+  return n;
+}
+
 function parseOptionalDate(value: unknown, field: string): string | null {
   if (value === undefined || value === null) return null;
   if (typeof value !== 'string') throw new Error(`${field} غير صالح.`);
@@ -81,6 +91,7 @@ export function parseOfferMutationPayloadOrThrow(payload: unknown): OfferMutatio
   const descriptionAr = parseOptionalString(body.description_ar, 'وصف العرض', MAX_DESCRIPTION_LENGTH);
   const badgeAr = parseOptionalString(body.badge_ar, 'شارة العرض', MAX_BADGE_LENGTH);
   const priceText = parseOptionalString(body.price_text, 'نص السعر', MAX_PRICE_TEXT_LENGTH);
+  const offerPrice = parseOptionalMoney(body.offer_price);
   const startsAt = parseOptionalDate(body.starts_at, 'تاريخ البداية');
   const endsAt = parseOptionalDate(body.ends_at, 'تاريخ النهاية');
 
@@ -93,6 +104,7 @@ export function parseOfferMutationPayloadOrThrow(payload: unknown): OfferMutatio
     description_ar: descriptionAr,
     badge_ar: badgeAr,
     price_text: priceText,
+    offer_price: offerPrice,
     starts_at: startsAt,
     ends_at: endsAt,
     is_active: parseBoolean(body.is_active),

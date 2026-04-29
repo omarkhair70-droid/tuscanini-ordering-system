@@ -265,12 +265,14 @@ export default function CartPage() {
               <article key={item.lineId} className="rounded-xl border-2 border-brand-dark/20 p-3">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h3 className="font-black text-brand-dark">{item.productName}</h3>
+                    <h3 className="font-black text-brand-dark">{item.kind === 'offer' ? `عرض: ${item.offerTitle}` : item.productName}</h3>
+                    {item.kind === 'product' ? (<>
                     <p className="text-xs text-brand-charcoal">الحجم: {item.selectedSize?.label ?? 'بدون اختيار'}</p>
                     <p className="text-xs text-brand-charcoal">
                       الإضافات:{' '}
                       {item.selectedAddons.length ? item.selectedAddons.map((addon) => addon.label).join('، ') : 'بدون إضافات'}
                     </p>
+                    </>) : null}
                     <p className="text-xs text-brand-charcoal">ملاحظات: {item.itemNotes || 'لا يوجد'}</p>
                     <p className="mt-1 text-sm font-black text-brand-red">{item.totalItemPrice} ج.م</p>
                   </div>

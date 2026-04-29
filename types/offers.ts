@@ -11,6 +11,7 @@ export type PublicOffer = {
   descriptionAr: string | null;
   badgeAr: string | null;
   priceText: string | null;
+  offerPrice: number | null;
 };
 
 export type AdminOffer = PublicOffer & {
@@ -20,4 +21,7 @@ export type AdminOffer = PublicOffer & {
   sortOrder: number;
   createdAt: string;
   updatedAt: string;
+  soldToday?: number;
+  salesToday?: number;
+  totalSold?: number;
 };
