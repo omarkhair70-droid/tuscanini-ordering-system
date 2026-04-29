@@ -57,14 +57,10 @@ body {
 
 @layer components {
   .hero-brand-lockup {
-    @apply mb-5 flex flex-col items-center justify-center gap-3 rounded-xl2 border border-brand-dark/10 bg-brand-white/70 p-3 sm:flex-row sm:gap-4;
+    @apply mb-5 flex items-center justify-center rounded-2xl border border-brand-dark/10 bg-[#fff8f8] p-2 shadow-[0_8px_20px_rgba(128,0,0,0.12)] sm:mb-4 sm:p-3;
   }
 
   .hero-brand-logo {
-    @apply h-auto w-auto max-h-16 rounded-lg object-contain;
-  }
-
-  .hero-brand-divider {
-    @apply h-px w-20 bg-brand-dark/15 sm:h-10 sm:w-px;
+    @apply h-auto w-full max-w-[240px] rounded-xl object-contain sm:max-w-[280px];
   }
 }
