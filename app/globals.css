@@ -54,3 +54,17 @@ body {
     scrollbar-width: none;
   }
 }
+
+@layer components {
+  .hero-brand-lockup {
+    @apply mb-5 flex flex-col items-center justify-center gap-3 rounded-xl2 border border-brand-dark/10 bg-brand-white/70 p-3 sm:flex-row sm:gap-4;
+  }
+
+  .hero-brand-logo {
+    @apply h-auto w-auto max-h-16 rounded-lg object-contain;
+  }
+
+  .hero-brand-divider {
+    @apply h-px w-20 bg-brand-dark/15 sm:h-10 sm:w-px;
+  }
+}
