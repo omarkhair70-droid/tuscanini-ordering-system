@@ -1,11 +1,11 @@
-const CACHE_NAME = 'tuscanini-pwa-v1';
+const CACHE_NAME = 'tuscanini-pwa-v2';
 const OFFLINE_URL = '/offline';
 const STATIC_ASSETS = [
   OFFLINE_URL,
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
-  '/icons/icon-maskable-512.png',
-  '/icons/apple-touch-icon.png',
+  '/images/brand/icons/icon-192.png',
+  '/images/brand/icons/icon-512.png',
+  '/images/brand/icons/icon-maskable-512.png',
+  '/images/brand/icons/apple-touch-icon.png',
 ];
 
 self.addEventListener('install', (event) => {
@@ -49,7 +49,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  const isIconAsset = url.pathname.startsWith('/icons/');
+  const isIconAsset = url.pathname.startsWith('/images/brand/icons/');
   const isBrandImage = url.pathname.startsWith('/images/brand/');
 
   if (!isIconAsset && !isBrandImage) {
