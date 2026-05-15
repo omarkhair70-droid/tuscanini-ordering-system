@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PwaInstallIosHint } from '@/components/shared/pwa-install-ios-hint';
 
 type BeforeInstallPromptEvent = Event & {
@@ -10,17 +10,39 @@ type BeforeInstallPromptEvent = Event & {
 
 const DISMISS_KEY = 'tuscanini:pwa-install-dismissed';
 
+const readInstallEnvironment = () => {
+  if (typeof window === 'undefined') {
+    return {
+      isDismissed: false,
+      isMobileBrowser: false,
+      isStandalone: false,
+      isIosSafari: false,
+    };
+  }
+
+  const userAgent = window.navigator.userAgent;
+  const isIos = /iPad|iPhone|iPod/.test(userAgent);
+  const isSafari = /Safari/.test(userAgent) && !/CriOS|FxiOS/.test(userAgent);
+  const isStandalone =
+    window.matchMedia('(display-mode: standalone)').matches ||
+    (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
+
+  return {
+    isDismissed: localStorage.getItem(DISMISS_KEY) === '1',
+    isMobileBrowser: window.matchMedia('(pointer: coarse)').matches || /Android|iPhone|iPad|iPod|Mobile/i.test(userAgent),
+    isStandalone,
+    isIosSafari: isIos && isSafari,
+  };
+};
+
 export function PwaInstallCta() {
   const [installEvent, setInstallEvent] = useState<BeforeInstallPromptEvent | null>(null);
-  const [isDismissed, setIsDismissed] = useState(true);
+  const [isDismissed, setIsDismissed] = useState(() => readInstallEnvironment().isDismissed);
+  const [isMobileBrowser] = useState(() => readInstallEnvironment().isMobileBrowser);
+  const [isStandalone] = useState(() => readInstallEnvironment().isStandalone);
+  const [isIosSafari] = useState(() => readInstallEnvironment().isIosSafari);
 
   useEffect(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    setIsDismissed(localStorage.getItem(DISMISS_KEY) === '1');
-
     const handleBeforeInstallPrompt = (event: Event) => {
       event.preventDefault();
       setInstallEvent(event as BeforeInstallPromptEvent);
@@ -33,21 +55,8 @@ export function PwaInstallCta() {
     };
   }, []);
 
-  const isIosSafari = useMemo(() => {
-    if (typeof window === 'undefined') {
-      return false;
-    }
-
-    const userAgent = window.navigator.userAgent;
-    const isIos = /iPad|iPhone|iPod/.test(userAgent);
-    const isSafari = /Safari/.test(userAgent) && !/CriOS|FxiOS/.test(userAgent);
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
-
-    return isIos && isSafari && !isStandalone;
-  }, []);
-
   const canShowChromiumInstall = Boolean(installEvent);
-  const shouldShow = !isDismissed && (canShowChromiumInstall || isIosSafari);
+  const shouldShow = isMobileBrowser && !isStandalone && !isDismissed;
 
   const dismiss = () => {
     setIsDismissed(true);
@@ -77,6 +86,11 @@ export function PwaInstallCta() {
           <h2 className="text-sm font-black text-brand-dark">ثبت تطبيق توسكانيني على موبايلك</h2>
           <p className="mt-1 text-sm text-brand-charcoal">اطلب أسرع وارجع لمتابعة طلبك بسهولة</p>
           {isIosSafari ? <PwaInstallIosHint /> : null}
+          {!isIosSafari && !canShowChromiumInstall ? (
+            <p className="mt-2 text-xs text-brand-charcoal/80">
+              يمكنك تثبيت التطبيق من قائمة المتصفح وإضافته إلى الشاشة الرئيسية.
+            </p>
+          ) : null}
         </div>
         <button onClick={dismiss} className="text-xs font-bold text-brand-charcoal/70" aria-label="إغلاق">
           إغلاق
