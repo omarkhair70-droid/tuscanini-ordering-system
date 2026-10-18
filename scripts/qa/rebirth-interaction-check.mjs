@@ -141,6 +141,13 @@ try {
       `${width}px original old-price menu is transparently source-labelled`);
     await check(await page.locator('.t-menu-product').count()===20,
       `${width}px 113-item original menu is populated and paginated, not an unavailable dummy`);
+    const artworkItems=await page.locator('.t-menu-product__identity .t-product-art').evaluateAll(elements=>({
+      count:elements.length,
+      unique:new Set(elements.map(el=>el.getAttribute('data-product-id'))).size,
+      graphic:elements.every(el=>el.dataset.kind==='original-graphic' && el.querySelector('svg')),
+    }));
+    await check(artworkItems.count===20&&artworkItems.unique===20&&artworkItems.graphic,
+      `${width}px twenty different SKU-labeled art prints — no fictional named food photo`);
     await page.getByRole('searchbox',{name:/دور على أكلك/}).fill('تشيكن فاير');
     const duplicateFlavors=await page.locator('.t-menu-product h3').allInnerTexts();
     await check(duplicateFlavors.length>=2 &&
@@ -150,6 +157,8 @@ try {
       `${width}px identical flavor names have explicitly distinguishable food-family actions`);
     await page.getByRole('button',{name:'اختيار تفاصيل كريب توسكانيني — تشيكن فاير'}).click();
     await page.locator('.t-product-dialog[open]').waitFor({timeout:4000});
+    await check(await page.locator('.t-product-dialog__identity .t-product-art[data-kind="original-graphic"]').count()===1,
+      `${width}px unique product print travels into modifier sheet; no fake recipe photo`);
     await check(await page.locator('.t-product-dialog').getByText(/أسعار منيو توسكانيني السابق/).count()===1,
       `${width}px size/addon picker states where its historical prices came from`);
     await check(await page.locator('.t-product-dialog__options label').count()>1,
@@ -157,9 +166,25 @@ try {
     await page.locator('.t-product-dialog__close').click();
     await page.getByRole('searchbox',{name:/دور على أكلك/}).fill('');
     await page.getByRole('button',{name:'كريب لحوم',exact:true}).click();
+    await check(await page.locator('.t-menu-family-context img').count()===1&&
+      await page.locator('.t-menu-family-context').getByText(/مش صورة أي صنف معين/).count()===1,
+      `${width}px verified original CREPE image is shown only as a family context photo`);
     await check(await page.locator('.t-menu-product').count()>0,
       `${width}px category chips filter legacy catalog and deep link correctly`);
     await page.getByRole('button',{name:'كل الأصناف',exact:true}).click();
+    if(width===390){
+      for(let batch=0;batch<5;batch++){
+        await page.getByRole('button',{name:/اعرض أصناف أكتر/}).click();
+      }
+      const all=await page.locator('.t-menu-product__identity .t-product-art').evaluateAll(arts=>({
+        total:arts.length,
+        unique:new Set(arts.map(art=>art.getAttribute('data-product-id'))).size,
+        allAbstract:arts.every(art=>art.dataset.kind==='original-graphic'),
+      }));
+      await check(all.total===113&&all.unique===113&&all.allAbstract,
+        '390px every one of 113 original recorded products has a distinct source-aware graphic mark');
+      await page.getByRole('button',{name:'كل الأصناف',exact:true}).click();
+    }
     await page.getByRole('button',{name:/اعرض أصناف أكتر/}).click();
     await check(await page.locator('.t-menu-product').count()===40,
       `${width}px full 113-record catalog supports progressive 20-to-40 loading without losing prices`);
