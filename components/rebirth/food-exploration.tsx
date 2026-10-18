@@ -107,11 +107,11 @@ export function FoodExploration() {
 
       <section className="t-photo-archive t-shell" aria-labelledby="t-photo-archive-title">
         <div className="t-photo-archive__header">
-          <div><span className="t-index">03 — REAL RESTAURANT / EDITORIAL MATERIAL</span><h2 id="t-photo-archive-title">مش صور <em>ستوك.</em></h2></div>
+          <div><span className="t-index">03 — REAL RESTAURANT / EDITORIAL MATERIAL</span><h2 id="t-photo-archive-title">من قلب <em>توسكانيني.</em></h2></div>
           <button type="button" onClick={openGallery} aria-haspopup="dialog">شوف صور المطعم <span aria-hidden="true">↗</span></button>
         </div>
         <div className="t-photo-archive__samples">
-          {['TSC-02','TSC-10','TSC-08'].map((id) => (
+          {['TSC-01','TSC-04','TSC-10'].map((id) => (
             <button key={id} type="button" onClick={openGallery} aria-label="افتح معرض صور توسكانيني">
               <FoodPhoto id={id} />
               <span aria-hidden="true">{id}</span>
