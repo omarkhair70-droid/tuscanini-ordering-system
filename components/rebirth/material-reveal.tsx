@@ -15,11 +15,11 @@ export function MaterialReveal() {
     <section className="t-material" aria-labelledby="t-material-heading" id="t-material">
       <div className="t-material__masthead t-shell" data-t-story-step>
         <div className="t-material__eyebrow">
-          <span className="t-index">03 / SEE THE ACTUAL FOOD</span>
+          <span className="t-index">03 / A CLOSER LOOK</span>
           <span lang="en">ONE REAL PHOTO · TWO WAYS TO LOOK</span>
         </div>
-        <h2 id="t-material-heading">من بعيد.<br/><em>من جوه.</em></h2>
-        <p>شايف الكريب كله؟ قرّب شوية. اسحب بين اللقطة الكاملة والتفاصيل اللي جواها، وشوفها من زاويتين.</p>
+        <h2 id="t-material-heading">قرّب<br/><em>بنفسك.</em></h2>
+        <p>اسحب بإيدك: نفس الصورة، مرة كاملة ومرة أقرب للتفاصيل.</p>
       </div>
       <div className="t-material__composition t-shell" data-t-story-step>
         <div className="t-material__type-rail" aria-hidden="true" lang="en">
@@ -50,15 +50,9 @@ export function MaterialReveal() {
           <span>اسحب أو استخدم الأسهم في الكيبورد</span>
         </div>
       </div>
-      <div className="t-material__after t-shell" data-t-story-step>
-        <div>
-          <span className="t-index">DON'T JUST LOOK / MAKE YOUR CHOICE</span>
-          <h3>شايف اللي<br/><em>بيفرق؟</em></h3>
-        </div>
-        <div>
-          <p>المشهد يساعدك تشوف التفاصيل، لكن الاختيار الصح محتاج منيو وأحجام وإضافات موثوقة. عشان كده تقدر تروح للمنيو مباشرة، من غير ما تضطر تكمل أي حركة.</p>
-          <Link href="/menu" className="t-material__order">المنيو قدامك <span aria-hidden="true">↗</span></Link>
-        </div>
+      <div className="t-material__bridge t-shell">
+        <span>شوفتها عن قرب؟ اختارها على مزاجك.</span>
+        <Link href="/menu">روح للمنيو <span aria-hidden="true">↗</span></Link>
       </div>
     </section>
   );
