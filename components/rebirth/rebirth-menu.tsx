@@ -2,6 +2,7 @@
 
 import { ExperienceFooter } from '@/components/rebirth/experience-footer';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
 import { useCart } from '@/components/cart/cart-provider';
 import { FloatingCartCta } from '@/components/cart/floating-cart-cta';
@@ -65,8 +66,22 @@ export function RebirthMenu({ categories, items, initialTableReference, sourceVe
         <header className="t-menu-intro t-shell">
           <div className="t-menu-intro__label"><span>THE REAL MENU / TUSCANINI</span><span>اختياراتك من توسكانيني — بني سويف</span></div>
           <div className="t-menu-intro__headline">
-            <div><span className="t-index">FIND THE FOOD / THE ORDER IS YOURS</span><h1>كل اللي<br/><em>نفسك فيه.</em></h1></div>
-            <p>عارف طلبك؟ دوّر عليه بالاسم. لسه بتختار؟ ابدأ من قسم الأكل اللي على مزاجك.</p>
+            <div className="t-menu-intro__copy">
+              <span className="t-index">FIND YOUR FOOD / TUSCANINI</span>
+              <h1>كل اللي<br/><em>نفسك فيه.</em></h1>
+              <p>عارف طلبك؟ دوّر عليه بالاسم. لسه بتختار؟ ابدأ من قسم الأكل اللي على مزاجك.</p>
+            </div>
+            <div className="t-menu-intro__photo-pair" aria-label="صور حقيقية عامة من المطعم، وليست صور أصناف محددة في المنيو">
+              <figure className="t-menu-intro__photo t-menu-intro__photo--main">
+                <Image src="/images/rebirth/food-07.jpg" alt="ثلاثة كريبات حقيقية ظاهرة الحشو من توسكانيني" fill priority sizes="(max-width: 720px) 57vw, 30vw" />
+                <figcaption lang="en">01 / THE INSIDE</figcaption>
+              </figure>
+              <figure className="t-menu-intro__photo t-menu-intro__photo--accent">
+                <Image src="/images/rebirth/food-03.jpg" alt="بيتزا حقيقية داخل علبة توسكانيني المطبوعة" fill sizes="(max-width: 720px) 36vw, 19vw" />
+                <figcaption lang="en">02 / THE BOX</figcaption>
+              </figure>
+              <span className="t-menu-intro__photo-note">من صور المطعم — مش صور مرتبطة بصنف معين</span>
+            </div>
           </div>
           <div className="t-menu-intro__bottom"><span>منيو متصل بالنظام الفعلي — بدون أسعار مختلقة</span><Link href="/food-finder">مش عارف تختار؟ <span aria-hidden>↗</span></Link></div>
         </header>
