@@ -97,8 +97,28 @@ try {
 
     await check(await page.getByRole('searchbox', { name: /دور على أكلك/ }).count() === 1, `${width}px direct menu search exposed`);
     await check(await page.getByRole('button', { name: 'كل الأصناف' }).count() === 1, `${width}px food filter exposed`);
-    const noLiveData = await page.getByText('المنيو مش متاحة حاليًا.').count();
-    await check(noLiveData === 1, `${width}px no fabricated historical product prices without live Supabase`);
+    await check(await page.locator('.t-menu-categories__scroller button').count()===17,
+      `${width}px historical Tuscanini menu has 16 original category filters plus All`);
+    await check(await page.getByText(/منيو توسكانيني السابق بأسعاره/).count()>=1,
+      `${width}px original old-price menu is transparently source-labelled`);
+    await check(await page.locator('.t-menu-product').count()===20,
+      `${width}px 113-item original menu is populated and paginated, not an unavailable dummy`);
+    await page.getByRole('searchbox',{name:/دور على أكلك/}).fill('تشيكن فاير');
+    await check(await page.locator('.t-menu-product h3').count()===1 &&
+      await page.locator('.t-menu-product h3').innerText()==='تشيكن فاير',
+      `${width}px old restaurant product exact-name search filters correctly`);
+    await page.getByRole('button',{name:'اختيار تفاصيل تشيكن فاير'}).click();
+    await page.locator('.t-product-dialog[open]').waitFor({timeout:4000});
+    await check(await page.locator('.t-product-dialog').getByText(/أسعار منيو توسكانيني السابق/).count()===1,
+      `${width}px size/addon picker states where its historical prices came from`);
+    await check(await page.locator('.t-product-dialog__options label').count()>1,
+      `${width}px old crepe is populated with real original size and addon controls`);
+    await page.locator('.t-product-dialog__close').click();
+    await page.getByRole('searchbox',{name:/دور على أكلك/}).fill('');
+    await page.getByRole('button',{name:'كريب لحوم',exact:true}).click();
+    await check(await page.locator('.t-menu-product').count()>0,
+      `${width}px category chips filter legacy catalog and deep link correctly`);
+    await page.getByRole('button',{name:'كل الأصناف',exact:true}).click();
     const menuOverflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     await check(menuOverflow <= 3, `${width}px Menu no significant horizontal overflow (${menuOverflow}px)`);
     await page.goto(baseUrl + '/offers', { waitUntil: 'networkidle', timeout:30000 });
@@ -124,11 +144,15 @@ try {
     const finderHeroHeight=await page.locator('.t-finder-hero').evaluate(el=>el.getBoundingClientRect().height);
     await check(finderHeroHeight<=620,
       `${width}px Finder first-scene priority is bounded (${Math.round(finderHeroHeight)}px)`);
-    await check(await page.getByRole('heading',{name:/الاختيارات مش.*ظاهرة دلوقتي/}).count()===1,
-      `${width}px unavailable menu is truthfully marked without fallback products`);
-    await check(await page.locator('.t-finder-unavailable a[href="/menu"]').count()===1 &&
-      await page.locator('.t-finder-unavailable a[href="/contact"]').count()===1,
-      `${width}px Finder unavailable state retains direct menu and restaurant contact`);
+    await check(await page.locator('.t-finder-progress').getByText('2 STEPS / YOUR FOOD').count()===1,
+      `${width}px Finder uses two actual recorded-data questions rather than unsupported tags`);
+    await page.getByRole('button',{name:'كريب',exact:true}).click();
+    await page.getByRole('button',{name:'لحد 150 ج.م',exact:true}).click();
+    await check(await page.getByRole('heading',{name:'لقيّنا إيه؟'}).count()===1 &&
+      await page.locator('.t-finder-results__grid article').count()===8,
+      `${width}px real previous-price menu returns eight affordable crepe results`);
+    await check(await page.locator('.t-finder-results__grid a[href^="/menu?category="]').count()===8,
+      `${width}px Finder results link to their own exact category without inventing products`);
     const finderOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
     await check(finderOverflow<=3,`${width}px Finder no significant horizontal overflow (${finderOverflow}px)`);
     await page.goto(baseUrl + '/about', { waitUntil: 'networkidle', timeout:30000 });
@@ -210,6 +234,30 @@ try {
     const complaintsOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
     await check(complaintsOverflow<=3,
       `${width}px Complaints no significant horizontal overflow (${complaintsOverflow}px)`);
+    // Isolated REAL previous-price product/size/addon/cart journey.
+    // Do not send any order: the CI database is deliberately non-production.
+    const catalogContext=await browser.newContext({viewport:{width,height:844},reducedMotion:'reduce'});
+    const shopPage=await catalogContext.newPage();
+    await shopPage.goto(baseUrl+'/menu',{waitUntil:'networkidle',timeout:30000});
+    await shopPage.getByRole('searchbox',{name:/دور على أكلك/}).fill('تشيكن فاير');
+    await shopPage.getByRole('button',{name:'اختيار تفاصيل تشيكن فاير'}).click();
+    await shopPage.locator('.t-product-dialog[open]').waitFor({timeout:4000});
+    await shopPage.locator('.t-product-dialog__options input[type="checkbox"]').first().check();
+    await shopPage.getByRole('group',{name:'اختر الكمية'}).getByRole('button',{name:'زيادة الكمية'}).click();
+    await shopPage.getByRole('button',{name:/ضيف للسلة/}).click();
+    const selectedLegacy=await shopPage.evaluate(()=>{
+      const cart=JSON.parse(localStorage.getItem('tuscanini-cart-v1')||'{}');
+      return cart.items?.[0] ?? null;
+    });
+    await check(Boolean(selectedLegacy && selectedLegacy.productName==='تشيكن فاير' &&
+      selectedLegacy.unitPrice===145 && selectedLegacy.quantity===2),
+      `${width}px actual recorded 125 + 20 addon, quantity 2, is stored as 290 EGP cart`);
+    await shopPage.goto(baseUrl+'/cart',{waitUntil:'networkidle',timeout:30000});
+    await check(await shopPage.getByRole('heading',{name:/تشيكن فاير/}).count()===1,
+      `${width}px previous menu item survives into authored populated checkout`);
+    await check(await shopPage.getByRole('button',{name:/سجّل الطلب للمطعم/}).isDisabled(),
+      `${width}px historic menu doesn't bypass store-open/live-order validation`);
+    await catalogContext.close();
     await page.goto(baseUrl + '/cart', { waitUntil: 'networkidle', timeout:30000 });
     await check(await page.getByRole('heading', { name:/على.*مزاجك/ }).count()===1, `${width}px Checkout authored header renders`);
     await check(await page.getByRole('heading', { name:/لسه مفيش/ }).count()===1, `${width}px empty cart is honest and non-orderable`);
