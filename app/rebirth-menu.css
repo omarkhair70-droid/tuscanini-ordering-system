@@ -142,6 +142,18 @@
   font:650 12px/1.7 "IBM Plex Sans Arabic",Tahoma,sans-serif
 }
 .t-menu-page .t-menu-intro__bottom{margin-top:clamp(15px,2.5vw,36px)}
+.t-menu-page .t-menu-intro__jump{
+  display:inline-flex;
+  align-items:center;
+  gap:16px;
+  color:var(--yellow);
+  border-bottom:2px solid var(--yellow);
+  padding:8px 0;
+  margin-top:14px;
+  font:800 14px/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif
+}
+.t-menu-page .t-menu-search{scroll-margin-top:95px}
+
 @media(hover:hover) and (prefers-reduced-motion:no-preference){
   .t-menu-intro__photo-pair:hover .t-menu-intro__photo--main img{transform:scale(1.035)}
   .t-menu-intro__photo-pair:hover .t-menu-intro__photo--accent img{transform:scale(1.035)}
@@ -162,7 +174,7 @@
   .t-menu-page .t-menu-intro__bottom{margin-top:20px;gap:13px}
 }
 @media(max-width:370px){
-  .t-menu-page .t-menu-intro__copy h1{font-size:56px}
+  .t-menu-page .t-menu-intro__copy h1{font-size:49px}
   .t-menu-intro__photo-pair{height:210px}
   .t-menu-intro__photo{border-width:4px}
   .t-menu-page .t-menu-intro__bottom{flex-wrap:wrap}
