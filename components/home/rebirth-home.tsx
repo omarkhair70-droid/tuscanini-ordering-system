@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { primaryExperienceNavigation, customerUtilityNavigation } from '@/lib/rebirth/site-map';
+import { ExperienceHeader } from '@/components/rebirth/experience-header';
 
 const foodFamilies = [
   {
@@ -34,37 +34,7 @@ export function RebirthHome({ activeOrderSlot }: { activeOrderSlot?: ReactNode }
     <div className="t-page" dir="rtl">
       <a className="t-skip" href="#t-main-story">تخطَّ المقدمة وانتقل للمحتوى</a>
 
-      <header className="t-header">
-        <div className="t-header__inner">
-          <Link href="/" className="t-logo" aria-label="توسكانيني - الرئيسية">
-            <span className="t-logo__latin" lang="en">Tuscanini<span aria-hidden="true">.</span></span>
-            <span className="t-logo__arabic">توسكانيني</span>
-          </Link>
-
-          <nav aria-label="التنقل الرئيسي" className="t-header__links">
-            <a href="#t-main-story">اكتشف</a>
-            {primaryExperienceNavigation.filter((link) => link.href !== '/').map((link) => (
-              <Link key={link.href} href={link.href}>{link.label}</Link>
-            ))}
-            <Link href="/cart" aria-label="فتح السلة">السلة</Link>
-          </nav>
-
-          <Link className="t-header__order" href="/menu">اطلب دلوقتي <span aria-hidden="true">↗</span></Link>
-          <details className="t-mobile-menu">
-            <summary aria-label="افتح قائمة التنقل"><span>القائمة</span><span aria-hidden="true">☰</span></summary>
-            <nav aria-label="التنقل على الهاتف" className="t-mobile-menu__panel">
-              <a href="#t-main-story">اكتشف</a>
-              {primaryExperienceNavigation.filter((link) => link.href !== '/').map((link) => (
-                <Link key={link.href} href={link.href}>{link.label}</Link>
-              ))}
-              <Link href="/cart">السلة</Link>
-              {customerUtilityNavigation.map((link) => (
-                <Link key={link.href} href={link.href}>{link.label}</Link>
-              ))}
-            </nav>
-          </details>
-        </div>
-      </header>
+      <ExperienceHeader />
       <div className="t-active-order-slot">{activeOrderSlot}</div>
 
       <section className="t-hero" aria-labelledby="t-hero-title">
