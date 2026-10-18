@@ -33,8 +33,8 @@ export function RebirthHome({ activeOrderSlot }: { activeOrderSlot?: ReactNode }
             <div className="t-hero__backplate"><FoodPhoto id="TSC-06" priority /></div>
             <FoodPhoto id="TSC-09" priority className="t-hero__photo" />
             <div className="t-hero__stamp" lang="en" aria-hidden="true"><span>REAL FOOD.</span><span>REAL CRAVING.</span></div>
-            <span className="t-hero__photo-label" lang="en">REAL / NOT RENDERED</span>
-            <span className="t-hero__photo-facts">صور حقيقية من توسكانيني</span>
+            <span className="t-hero__photo-label" lang="en">FROM BENI SUEF</span>
+            <span className="t-hero__photo-facts">توسكانيني / بني سويف</span>
             <span className="t-hero__visualnote">01 / FOOD IN FOCUS</span>
           </div>
         </div>
