@@ -207,3 +207,71 @@
 .t-page .t-logo__arabic{font-size:11px;letter-spacing:0;}
 .t-page .t-footer__word{font-family:"Anton",Impact,sans-serif;letter-spacing:.015em;text-decoration:none;}
 @media(max-width:720px){.t-page .t-logo__latin{font-size:23px}.t-page .t-logo__arabic{font-size:9px}}
+
+/* P15 Material navigation / source-led graphic R&D
+ * Physical folds, cross-sections and packaging contours form a custom
+ * NON-OFFICIAL experimental icon grammar. Distinct from emoji/Lucide clones.
+ * SVGs are decorative; the same Arabic labels remain semantic. */
+.t-mobile-menu__scrim{display:none}
+@media(max-width:1050px){
+ .t-mobile-menu{position:relative}
+ .t-mobile-menu__scrim{display:block;position:fixed;inset:78px 0 0 0;z-index:69;width:100%;border:0;background:#171511a6;cursor:pointer}
+ .t-mobile-menu__panel{
+   z-index:70;top:54px;left:0;right:auto;
+   display:flex;flex-direction:column;
+   width:min(89vw,445px);max-height:calc(100dvh - 98px);
+   border:3px solid var(--ink);padding:0;
+   box-shadow:0 24px 55px #0007;
+   overflow:auto;overscroll-behavior:contain;
+   background:var(--paper);color:var(--ink)
+ }
+ .t-mobile-menu__masthead{background:var(--red);color:var(--paper);padding:21px;display:flex;align-items:center;gap:18px;border-bottom:4px solid var(--ink)}
+ .t-mobile-menu__masthead svg{flex-shrink:0;transform:rotate(-10deg);color:var(--yellow)}
+ .t-mobile-menu__masthead div{display:flex;flex-direction:column;gap:6px;min-width:0}
+ .t-mobile-menu__masthead span{font:13px/1.2 "Anton",Impact,sans-serif;letter-spacing:.04em;direction:ltr;text-align:right}
+ .t-mobile-menu__masthead strong{font:800 clamp(23px,3.5vw,36px)/1.3 "Changa",Tahoma,sans-serif}
+ .t-mobile-menu__group{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:8px;gap:6px}
+ .t-mobile-menu__panel .t-mobile-menu__group a{
+   display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;
+   padding:16px 12px;gap:12px;min-height:122px;
+   background:var(--cream);border:1px solid #d3c5ae;
+   text-align:right;font:800 17px/1.3 "Changa",Tahoma,sans-serif
+ }
+ .t-mobile-menu__group a svg{align-self:flex-start}
+ .t-mobile-menu__group a small{align-self:flex-end;font:12px "Anton",Impact,sans-serif;direction:ltr;color:var(--red)}
+ .t-mobile-menu__panel .t-mobile-menu__group a[aria-current=page]{background:var(--yellow);border-color:var(--ink)}
+ .t-mobile-menu__panel .t-mobile-menu__group a:hover{background:var(--yellow);border-color:var(--ink)}
+ .t-mobile-menu__utility{display:grid;padding:0 12px 12px}
+ .t-mobile-menu__panel .t-mobile-menu__utility a{
+   display:flex;align-items:center;gap:13px;
+   padding:13px 7px;min-height:49px;
+   border:0;border-bottom:1px solid #b9ad9a;font-size:14px
+ }
+ .t-mobile-menu__panel .t-mobile-menu__utility a svg{flex-shrink:0}
+ .t-mobile-menu__footer{direction:ltr;text-align:left;padding:10px 16px;background:var(--ink);color:var(--yellow);font:12px "Anton",Impact,sans-serif;letter-spacing:.06em}
+ .t-mobile-menu__toggle-glyph{transition:transform .25s ease}
+ .t-mobile-menu__toggle[aria-expanded=true]{background:var(--ink);color:var(--yellow)}
+ .t-mobile-menu__toggle[aria-expanded=true] svg{transform:rotate(45deg)}
+}
+@media(max-width:720px){
+ .t-mobile-menu__scrim{top:69px}
+ .t-mobile-menu__panel{top:50px;width:min(92vw,430px);max-height:calc(100dvh - 74px)}
+ .t-mobile-menu__masthead{padding:17px}
+ .t-mobile-menu__masthead svg{width:62px;height:62px}
+}
+@media(max-width:370px){
+ .t-mobile-menu__panel .t-mobile-menu__group a{min-height:105px;padding:12px 10px;font-size:15px}
+ .t-mobile-menu__masthead strong{font-size:21px}
+}
+@media(prefers-reduced-motion:no-preference){
+ @keyframes t-material-nav-unfold{
+   from{opacity:0;transform:translate3d(0,-12px,0) scale(.985)}
+   to{opacity:1;transform:none}
+ }
+ .t-mobile-menu__panel{animation:t-material-nav-unfold .28s cubic-bezier(.16,1,.3,1) both;transform-origin:top left}
+ .t-mobile-menu__group a svg{transition:transform .2s ease}
+ .t-mobile-menu__group a:is(:hover,:focus-visible) svg{transform:rotate(-9deg) scale(1.09)}
+}
+@media(prefers-reduced-motion:reduce){
+ .t-mobile-menu__panel,.t-mobile-menu__toggle-glyph,.t-mobile-menu__group a svg{transition:none!important;animation:none!important}
+}
