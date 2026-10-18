@@ -6,7 +6,7 @@ const count = 12;
 const missing = [];
 const present = [];
 for (let index = 1; index <= count; index += 1) {
-  const name = `food-${String(index).padStart(2, '0')}.webp`;
+  const name = `food-${String(index).padStart(2, '0')}.jpg`;
   const full = resolve(process.cwd(), 'public/images/rebirth', name);
   if (!existsSync(full) || statSync(full).size === 0) missing.push(name);
   else present.push({ name, bytes: statSync(full).size });
