@@ -55,3 +55,11 @@
 - GSAP ScrollTrigger documentation: https://gsap.com/docs/v3/Plugins/ScrollTrigger/
 
 **Release gate remains CLOSED; old Main untouched.**
+
+## Post-review mobile composition refinement — final green run
+- GitHub run: https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39141410291 — **success** (TypeScript/build, Chromium captures, four-viewport interactions, real-photo gate).
+- Reviewed **actual captured 320px and 390px Hero screenshots**, not merely status icons.
+- At 390px the header already exposes `اطلب دلوقتي`: removed the duplicate full-width sticky mobile order strip that obscured the food photograph; the food collage is now visible to its bottom edge.
+- At 320px the header deliberately hides its order CTA due to width constraints: retained a **compact fixed order button** instead of a full-width bar; real product imagery remains mostly visible and fast ordering never requires scrolling through the chapter.
+- Confirmed 768px and 1440px still use the authored photo-overlap and extra-wide Arabic composition; no meaningful horizontal overflow in scripted tests.
+- **This is a tested exploratory creative slice** inside the real Next site, not an approved final Homepage. Next design checkpoint still needed before a full creative-system lock.
