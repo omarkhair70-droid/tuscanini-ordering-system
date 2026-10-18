@@ -176,3 +176,28 @@
 .t-page h1,.t-page h2,.t-page h3,.t-logo__arabic,.t-button,.t-header__links{font-family:'Changa','IBM Plex Sans Arabic',Tahoma,sans-serif}
 .t-logo__latin,.t-footer__word,.t-quick__art,.t-ticker,.t-index,.t-food-card__index,.t-hero__visualnote{font-family:'Anton',Impact,Arial,sans-serif}
 .t-page p,.t-page input,.t-page summary{font-family:'IBM Plex Sans Arabic',Tahoma,Arial,sans-serif}
+
+/* Unified public-site navigation: cart always reachable, one primary ordering CTA. */
+.t-header__actions{display:flex;align-items:center;gap:12px;margin-inline-start:auto}
+.t-header__cart{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:8px 10px;font-weight:800;font-size:13px;white-space:nowrap}
+.t-header__cart-count{display:inline-flex;min-width:22px;height:22px;padding-inline:5px;align-items:center;justify-content:center;border-radius:50%;background:var(--yellow);font-family:'Anton',sans-serif;font-size:12px}
+.t-header__links a[aria-current=page]{border-color:var(--red)}
+.t-mobile-menu__toggle{border:1px solid var(--line);background:transparent;color:var(--ink);height:42px;min-width:43px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:23px;line-height:1}
+.t-mobile-menu__toggle:focus-visible{outline:3px solid #267fe2;outline-offset:3px}
+.t-mobile-menu__panel a[aria-current=page]{background:var(--yellow)}
+@media(max-width:1050px){
+  .t-header__links{display:none}
+  .t-mobile-menu{display:block}
+  .t-mobile-menu__panel{position:absolute;z-index:70;top:50px;left:0;background:var(--paper);width:min(83vw,330px);max-height:min(72vh,620px);overflow-y:auto;box-shadow:0 18px 30px #0002;border:1px solid var(--line);display:flex;flex-direction:column;padding:8px}
+  .t-mobile-menu__panel a{font-size:16px;font-weight:800;padding:12px;border-bottom:1px solid var(--line)}
+}
+@media(max-width:720px){
+  .t-header__inner{gap:7px}
+  .t-logo{min-width:115px}
+  .t-logo__latin{font-size:23px}
+  .t-logo__arabic{font-size:9px}
+  .t-header__actions{gap:5px}
+  .t-header__cart{font-size:11px;padding-inline:4px;min-height:40px}
+  .t-header__order{min-height:41px;gap:8px;font-size:11px;padding:9px 11px}
+}
+@media(max-width:370px){.t-header__order{display:none}}
