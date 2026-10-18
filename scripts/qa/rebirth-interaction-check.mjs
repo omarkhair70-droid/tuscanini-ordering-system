@@ -103,7 +103,7 @@ try {
     await check(await page.locator('.t-ticker__track').evaluate(el=>getComputedStyle(el).animationName)==='none', `${width}px marquee respects reduced-motion setting`);
     await check(await page.locator('.t-photo-archive__samples button:nth-child(2) .t-real-food-photo__img').evaluate(el=>getComputedStyle(el).animationName)==='none', `${width}px documentary scroll drift fully stops under reduced motion`);
     await check(await page.getByRole('img',{name:/ساندوتشات توسكانيني بجانب العلب الحمراء/}).count()===1, `${width}px real branded packaging scene present`);
-    const packagingLoaded = await page.locator('.t-packaging__photo-img').evaluate(img=>img.complete && img.naturalWidth>0);
+    const packagingLoaded = await page.locator('.t-packaging__photo-img--package').evaluate(img=>img.complete && img.naturalWidth>0);
     await check(packagingLoaded, `${width}px genuine packaging photograph pixels loaded (not just img element)`);
     await check(await page.getByRole('heading',{name:/العلبة.*ليها شكل/}).count()===1, `${width}px separate red packaging chapter renders`);
     await check(await page.getByRole('heading',{name:/تلاقينا.*في بني.*سويف/}).count()===1, `${width}px local yellow place chapter renders`);
