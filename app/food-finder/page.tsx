@@ -1,23 +1,18 @@
 import type { Metadata } from 'next';
 import { RebirthFoodFinder } from '@/components/rebirth/rebirth-food-finder';
-import { getSupabaseAdaptedMenu } from '@/lib/supabase/menu-adapter';
-import type { MenuCategory, MenuItem } from '@/types/menu';
+import { getRebirthMenuCatalog } from '@/lib/rebirth/previous-menu-catalog';
 import '../rebirth-home.css';
 import '../rebirth-finder.css';
+
 export const dynamic='force-dynamic';
 export const revalidate=0;
-export const metadata: Metadata={title:'اختار أكلك | توسكانيني',description:'اكتشف أصنافًا من المنيو المتاحة، حسب النوع والعلامة والسعر الابتدائي.'};
-export default async function FoodFinderPage(){
-  let categories:MenuCategory[]=[];
-  let items:MenuItem[]=[];
-  let live=false;
-  try{
-    const result=await getSupabaseAdaptedMenu();
-    categories=result.categories;
-    items=result.items;
-    live=categories.length>0&&items.length>0;
-  }catch{
-    // Fail closed. Historical mock menu must never be presented as recommendations.
-  }
-  return <RebirthFoodFinder categories={categories} items={items} live={live}/>;
+export const metadata: Metadata={
+  title:'اختار أكلك | توسكانيني',
+  description:'ساعد نفسك تختار من أصناف وأسعار منيو توسكانيني السابق بالنوع والميزانية.',
+};
+
+export default function FoodFinderPage(){
+  // Identical source and prices to /menu; do not invent spicy/new badges.
+  const {categories,items,source}=getRebirthMenuCatalog();
+  return <RebirthFoodFinder categories={categories} items={items} catalogReady={items.length>0} priceNote={source.note}/>;
 }
