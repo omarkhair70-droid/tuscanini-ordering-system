@@ -45,7 +45,7 @@
 .t-photo{background-color:#9b3023;background-position:center;background-size:cover;overflow:hidden}
 .t-photo::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(145deg,rgba(0,0,0,.02),rgba(21,4,0,.18));}
 .t-photo__fallback{position:absolute;bottom:20px;left:22px;font-size:clamp(26px,5vw,73px);line-height:.8;font-weight:1000;letter-spacing:-.07em;color:#fff;opacity:.16;text-align:left;direction:ltr}
-.t-photo--hero{background-image:linear-gradient(20deg,#751f17,#ca4823 55%,#dda44a),url('/images/rebirth/food-01.webp')}
+.t-photo--hero{background-image:linear-gradient(20deg,rgba(83,24,16,.47),rgba(215,130,61,.07)),url('/images/rebirth/food-01.webp')}
 .t-hero__stamp{position:absolute;left:-26px;bottom:14%;z-index:1;width:144px;height:144px;border:1px solid #f8e4c5;border-radius:50%;background:var(--red);color:#fff;transform:rotate(-13deg);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;font-weight:1000;line-height:1.8;letter-spacing:.08em;direction:ltr}
 .t-hero__visualnote{position:absolute;right:0;bottom:9px;font-size:10px;letter-spacing:.09em;font-weight:800;direction:ltr}
 .t-hero__bottom{display:flex;justify-content:space-between;align-items:center;padding:14px clamp(22px,4.7vw,80px);border-top:1px solid var(--line);font-size:11px;font-weight:900;letter-spacing:.08em}
@@ -61,9 +61,9 @@
 .t-food-card:hover{transform:translateY(-7px)}
 .t-food-card__photopanel{height:320px;display:flex;align-items:flex-end;padding:21px;position:relative}
 .t-food-card__photopanel span{position:relative;z-index:2;direction:ltr;font-size:12px;letter-spacing:.15em;font-weight:900;color:#fff}
-.t-card--crepe .t-food-card__photopanel{background-image:linear-gradient(18deg,#411507,#ba4521 55%,#e1a14a),url('/images/rebirth/food-09.webp')}
-.t-card--pizza .t-food-card__photopanel{background-image:linear-gradient(18deg,#52140c,#b02f20 60%,#dfab54),url('/images/rebirth/food-10.webp')}
-.t-card--sandwich .t-food-card__photopanel{background-image:linear-gradient(20deg,#2c1a11,#934521 64%,#d5a552),url('/images/rebirth/food-08.webp')}
+.t-card--crepe .t-food-card__photopanel{background-image:linear-gradient(18deg,rgba(55,15,7,.42),rgba(225,161,74,.03)),url('/images/rebirth/food-09.webp')}
+.t-card--pizza .t-food-card__photopanel{background-image:linear-gradient(18deg,rgba(82,20,12,.36),rgba(223,171,84,.03)),url('/images/rebirth/food-10.webp')}
+.t-card--sandwich .t-food-card__photopanel{background-image:linear-gradient(20deg,rgba(44,26,17,.38),rgba(213,165,82,.03)),url('/images/rebirth/food-08.webp')}
 .t-food-card__info{flex:1;padding:25px 6px 8px;border-top:5px solid var(--ink);position:relative}
 .t-food-card__index{font-size:11px;letter-spacing:.07em;font-weight:800}
 .t-food-card h3{font-size:clamp(33px,3.8vw,57px);font-weight:1000;line-height:1.25;letter-spacing:-.04em;margin:13px 0 8px}
@@ -71,7 +71,7 @@
 .t-food-card__arrow{position:absolute;left:2px;bottom:8px;font-size:24px;transition:transform .2s}
 .t-food-card:hover .t-food-card__arrow{transform:translate(-4px,-4px)}
 .t-detail{display:grid;grid-template-columns:1fr 1fr;min-height:670px;background:#e0d7c6}
-.t-detail__visual{background-image:linear-gradient(45deg,#653324,#c58d50),url('/images/rebirth/food-02.webp');position:relative;min-height:590px}
+.t-detail__visual{background-image:linear-gradient(45deg,rgba(101,51,36,.38),rgba(197,141,80,.04)),url('/images/rebirth/food-02.webp');position:relative;min-height:590px}
 .t-detail__visual span{position:absolute;z-index:2;bottom:26px;right:32px;color:white;font-size:12px;direction:ltr;font-weight:900;letter-spacing:.08em}
 .t-detail__content{padding:clamp(40px,8vw,130px) clamp(24px,7vw,110px);align-self:center}
 .t-detail h2{margin:34px 0}
@@ -167,3 +167,6 @@
 @media(prefers-reduced-motion:reduce){
 .t-page *, .t-page *::before, .t-page *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
+
+.t-active-order-slot{max-width:1400px;margin-inline:auto;padding-inline:clamp(22px,4.7vw,80px)}
+.t-active-order-slot:empty{display:none}
