@@ -32,6 +32,7 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<string>('all');
   const [limit, setLimit] = useState(PAGE_SIZE);
+  const [viewMode, setViewMode] = useState<'fast'|'art'>('fast');
   const [selectedProduct, setSelectedProduct] = useState<MenuItem | null>(null);
 
   useEffect(() => {
@@ -116,6 +117,11 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
               <div><span className="t-index">02 — CHOOSE WITH CLARITY</span><h2 id="t-menu-items-title">{category === 'all' ? 'الاختيارات' : categories.find(x=>x.slug===category)?.name}</h2></div>
               <span role="status" aria-live="polite">{filtered.length} صنف مطابق</span>
             </div>
+            {catalogPresent && <div className="t-menu-view-switch" role="group" aria-label="طريقة عرض المنيو">
+              <div><button type="button" aria-pressed={viewMode==='fast'} onClick={()=>setViewMode('fast')}>المنيو السريع</button>
+              <button type="button" aria-pressed={viewMode==='art'} onClick={()=>setViewMode('art')}>عرض الرسومات</button></div>
+              <p>الرسومات لكل صنف تعبيرية، وليست صور الوجبات. صور الأصناف الأصلية هتظهر لما تتوثّق باسمها.</p>
+            </div>}
             {catalogPresent && contextPhoto && (
               <figure className="t-menu-family-context">
                 <div className="t-menu-family-context__photo"><Image src={contextPhoto.src} alt={contextPhoto.alt} fill
@@ -137,7 +143,7 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
               </div>
             ) : (
               <>
-                <div className="t-menu-items__grid" key={category}>
+                <div className={`t-menu-items__grid t-menu-items__grid--${viewMode}`} key={category+'-'+viewMode}>
                   {displayed.map((item,index) => {
                     const available = item.availability !== 'unavailable';
                     const familyName = categories.find(c=>c.slug===item.categorySlug)?.name;
