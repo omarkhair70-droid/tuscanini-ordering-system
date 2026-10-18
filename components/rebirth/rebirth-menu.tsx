@@ -84,7 +84,7 @@ export function RebirthMenu({ categories, items, initialTableReference, sourceVe
               <span className="t-menu-intro__photo-note">من صور المطعم — مش صور مرتبطة بصنف معين</span>
             </div>
           </div>
-          <div className="t-menu-intro__bottom"><span>منيو متصل بالنظام الفعلي — بدون أسعار مختلقة</span><Link href="/food-finder">مش عارف تختار؟ <span aria-hidden>↗</span></Link></div>
+          <div className="t-menu-intro__bottom"><span>{sourceVerified ? 'الأسعار والتوافر حسب المنيو الحالي' : 'بنظهر المنيو لما البيانات الحالية تتوفر'}</span><Link href="/food-finder">مش عارف تختار؟ <span aria-hidden>↗</span></Link></div>
         </header>
         <div className="t-shell t-menu-content">
           <ActiveOrderBanner />
