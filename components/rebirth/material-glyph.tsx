@@ -14,7 +14,7 @@ export type MaterialGlyphName =
   | 'fold' | 'cut' | 'box' | 'hand' | 'place'
   | 'crepe' | 'pizza' | 'sandwich' | 'pasta'
   | 'sweet' | 'drink' | 'sides' | 'all'
-  | 'menu' | 'offer' | 'story' | 'cart';
+  | 'menu' | 'offer' | 'story' | 'cart' | 'feedback' | 'help';
 
 type Props = {
   name: MaterialGlyphName;
@@ -57,6 +57,10 @@ function Drawing({ name }: {name: MaterialGlyphName}) {
       return <><path d="M40 70S17 45 17 30a23 23 0 1 1 46 0C63 45 40 70 40 70Z"/><circle cx="40" cy="30" r="8"/></>;
     case 'cart':
       return <><path d="M9 18h10l9 36h34l7-27H24"/><circle cx="33" cy="66" r="3"/><circle cx="58" cy="66" r="3"/><path d="M32 41h28"/></>;
+    case 'feedback':
+      return <><path d="M12 15h56v37H38L22 65V52H12V15Z"/><path d="M22 29h35M22 38h25"/></>;
+    case 'help':
+      return <><path d="M40 9 67 21v27L40 71 13 48V21L40 9Z"/><path d="M40 25v20M40 54h.01"/></>;
   }
 }
 
@@ -86,6 +90,8 @@ export function routeMaterialGlyph(path:string):MaterialGlyphName {
     case '/about':return 'story';
     case '/contact':return 'place';
     case '/cart':return 'cart';
+    case '/reviews':return 'feedback';
+    case '/complaints':return 'help';
     default:return 'fold';
   }
 }
