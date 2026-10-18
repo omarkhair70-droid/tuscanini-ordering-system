@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useCart } from '@/components/cart/cart-provider';
 import type { MenuItem } from '@/types/menu';
+import { ProductArtwork } from '@/components/rebirth/product-artwork';
 
 type Props = {
   item: MenuItem | null;
@@ -82,8 +83,13 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous' }
           <button type="button" className="t-product-dialog__close" onClick={onClose} aria-label="إغلاق تفاصيل المنتج">×</button>
         </header>
         <div className="t-product-dialog__body">
-          <p id="t-product-summary">{item.description || 'اختار التفاصيل المناسبة لطلبك.'}</p>
-          {priceSource === 'previous' && <p className="t-product-dialog__price-notice">الأسعار المعروضة هي أسعار منيو توسكانيني السابق. إجمالي الأصناف هنا محسوب منها؛ تأكيد الطلب الفعلي والتوافر بيرجعوا للمطعم.</p>}
+          <div className="t-product-dialog__identity">
+            <ProductArtwork item={item} size="large"/>
+            <div className="t-product-dialog__identity-copy">
+              <p id="t-product-summary">{item.description || 'اختار التفاصيل المناسبة لطلبك.'}</p>
+              {priceSource === 'previous' && <p className="t-product-dialog__price-notice">الرسمة للتعبير عن الصنف، مش صورته الفعلية. الأسعار هي أسعار منيو توسكانيني السابق؛ التوافر وتأكيد الطلب بيرجعوا للمطعم.</p>}
+            </div>
+          </div>
           {item.sizes && item.sizes.length > 0 && (
             <fieldset className="t-product-dialog__section">
               <legend>01 — الحجم</legend>
