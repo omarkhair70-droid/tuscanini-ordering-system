@@ -1,6 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Changa:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap');
 /* Tuscanini / Rebirth home. Route-scoped CSS: legacy commerce routes are unaffected. */
 .tuscanini-rebirth-main{width:100%;margin:0;padding:0;max-width:none}
-.t-page{--ink:#181613;--paper:#f1eee5;--red:#bc291f;--yellow:#eebc52;--line:#ccc5ba;color:var(--ink);background:var(--paper);min-height:100vh;overflow:clip;font-family:Tahoma,"Noto Sans Arabic",Arial,sans-serif}
+.t-page{--ink:#171511;--paper:#fff8e8;--cream:#f4e9d4;--red:#d92e24;--yellow:#f5cd4e;--line:#d6caba;color:var(--ink);background:var(--paper);min-height:100vh;overflow:clip;font-family:"IBM Plex Sans Arabic",Tahoma,Arial,sans-serif}
 .t-page *{box-sizing:border-box}
 .t-page a{color:inherit;text-decoration:none}
 .t-page button,.t-page a,.t-page summary{-webkit-tap-highlight-color:transparent}
@@ -10,7 +11,7 @@
 .t-shell{max-width:1450px;margin-inline:auto;padding-inline:clamp(22px,4.7vw,80px)}
 .t-skip{position:absolute;z-index:90;top:-100px;right:16px;background:#fff;color:#000;padding:10px 20px}
 .t-skip:focus{top:16px}
-.t-header{z-index:60;position:sticky;top:0;background:#eeebe3;border-bottom:1px solid var(--line)}
+.t-header{z-index:60;position:sticky;top:0;background:var(--cream);border-bottom:1px solid var(--line)}
 .t-header__inner{max-width:1600px;margin:auto;padding:13px clamp(22px,4.7vw,80px);min-height:78px;display:flex;align-items:center;justify-content:space-between;gap:36px}
 .t-logo{display:flex;flex-direction:column;min-width:150px;line-height:1}
 .t-logo__latin{font-size:clamp(23px,2.15vw,31px);font-weight:1000;letter-spacing:-.075em}
@@ -22,7 +23,7 @@
 .t-header__order{min-height:48px;background:var(--ink);color:#fff!important;padding:13px 22px;display:flex;align-items:center;gap:34px;font-weight:900;font-size:14px;transition:background .2s}
 .t-header__order:hover{background:var(--red)}
 .t-mobile-menu{display:none;position:relative}
-.t-hero{background:#ece8df;min-height:min(870px,calc(100svh - 78px));position:relative;display:flex;flex-direction:column}
+.t-hero{background:var(--cream);min-height:min(870px,calc(100svh - 78px));position:relative;display:flex;flex-direction:column}
 .t-hero__headerline{display:flex;justify-content:space-between;padding:20px clamp(22px,4.7vw,80px) 17px;border-bottom:1px solid #cec6b9;font:700 11px/1.4 Tahoma,Arial,sans-serif;letter-spacing:.07em}
 .t-hero__grid{width:100%;max-width:1600px;margin:auto;display:grid;grid-template-columns:1.07fr 1fr;align-items:center;gap:clamp(24px,4vw,70px);padding:clamp(28px,3vw,60px) clamp(22px,4.7vw,80px) 55px;flex:1}
 .t-hero__words{position:relative;z-index:2;min-width:0}
@@ -114,7 +115,7 @@
 .t-mobile-menu{display:block}
 .t-mobile-menu summary{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;font-weight:900;list-style:none}
 .t-mobile-menu summary::-webkit-details-marker{display:none}
-.t-mobile-menu__panel{position:absolute;z-index:70;top:42px;left:0;background:#f7f2e9;width:min(78vw,300px);box-shadow:0 18px 30px #0002;border:1px solid var(--line);display:flex;flex-direction:column;padding:8px}
+.t-mobile-menu__panel{position:absolute;z-index:70;top:42px;left:0;background:var(--paper);width:min(78vw,300px);box-shadow:0 18px 30px #0002;border:1px solid var(--line);display:flex;flex-direction:column;padding:8px}
 .t-mobile-menu__panel a{font-size:17px;font-weight:900;padding:12px;border-bottom:1px solid var(--line)}
 .t-hero__headerline{padding:11px 20px;gap:12px;font-size:9px}
 .t-hero__grid{display:flex;flex-direction:column;align-items:stretch;padding:50px 20px 54px;gap:26px}
@@ -170,3 +171,8 @@
 
 .t-active-order-slot{max-width:1400px;margin-inline:auto;padding-inline:clamp(22px,4.7vw,80px)}
 .t-active-order-slot:empty{display:none}
+
+/* Shared V01 authored type scale; drawn from the stronger HTML experience, not the legacy UI. */
+.t-page h1,.t-page h2,.t-page h3,.t-logo__arabic,.t-button,.t-header__links{font-family:'Changa','IBM Plex Sans Arabic',Tahoma,sans-serif}
+.t-logo__latin,.t-footer__word,.t-quick__art,.t-ticker,.t-index,.t-food-card__index,.t-hero__visualnote{font-family:'Anton',Impact,Arial,sans-serif}
+.t-page p,.t-page input,.t-page summary{font-family:'IBM Plex Sans Arabic',Tahoma,Arial,sans-serif}
