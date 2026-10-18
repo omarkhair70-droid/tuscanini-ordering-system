@@ -80,12 +80,29 @@ try {
     await check(overflow <= 3, `${width}px Home no significant horizontal overflow (${overflow}px)`);
     await check(runtimeErrors.length === 0, `${width}px Home no uncaught JavaScript errors: ${runtimeErrors.join(' / ') || 'none'}`);
     await page.goto(baseUrl + '/menu', { waitUntil: 'networkidle', timeout:30000 });
+    const menuDocumentaryPhotos = await page.locator('.t-menu-intro__photo img').evaluateAll(images =>
+      images.map(img => img.complete && img.naturalWidth > 0)
+    );
+    await check(menuDocumentaryPhotos.length === 2 && menuDocumentaryPhotos.every(Boolean), `${width}px Menu authentic source photos decoded`);
+    await check(await page.getByText('من صور المطعم — مش صور مرتبطة بصنف معين').count()===1,
+      `${width}px Menu photo context does not imply named products`);
+
     await check(await page.getByRole('searchbox', { name: /دور على أكلك/ }).count() === 1, `${width}px direct menu search exposed`);
     await check(await page.getByRole('button', { name: 'كل الأصناف' }).count() === 1, `${width}px food filter exposed`);
     const noLiveData = await page.getByText('المنيو مش متاحة حاليًا.').count();
     await check(noLiveData === 1, `${width}px no fabricated historical product prices without live Supabase`);
     const menuOverflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     await check(menuOverflow <= 3, `${width}px Menu no significant horizontal overflow (${menuOverflow}px)`);
+    await page.goto(baseUrl + '/offers', { waitUntil: 'networkidle', timeout:30000 });
+    const offersDocumentaryPhotoLoaded = await page.locator('.t-offers-hero__photo img').evaluate(img => img.complete && img.naturalWidth > 0);
+    await check(offersDocumentaryPhotoLoaded, `${width}px Offers real non-offer-specific photograph decoded`);
+    await check(await page.getByText('صورة من المطعم — مش صورة عرض محدد').count()===1,
+      `${width}px Offers photograph is not misrepresented as a live discount`);
+    await check(await page.locator('.t-offers-hero__foot a[href="/menu"]').count()===1,
+      `${width}px Offers immediate menu escape remains available`);
+    const offersOverflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    await check(offersOverflow <= 3, `${width}px Offers no significant horizontal overflow (${offersOverflow}px)`);
+
     await page.goto(baseUrl + '/cart', { waitUntil: 'networkidle', timeout:30000 });
     await check(await page.getByRole('heading', { name:/على.*مزاجك/ }).count()===1, `${width}px Checkout authored header renders`);
     await check(await page.getByRole('heading', { name:/لسه مفيش/ }).count()===1, `${width}px empty cart is honest and non-orderable`);
