@@ -9,7 +9,7 @@ export function PackagingChapter() {
         <Image
           src="/images/rebirth/food-08.jpg"
           alt="ساندوتشات توسكانيني بجانب العلب الحمراء وورق التغليف المطبوع الحقيقي"
-          fill sizes="(max-width: 760px) 100vw, 50vw"
+          fill loading="eager" sizes="(max-width: 760px) 100vw, 50vw"
           className="t-packaging__photo-img"
         />
         <span className="t-packaging__photo-label" lang="en">TSC-08 / ACTUAL TUSCANINI PACKAGING</span>
