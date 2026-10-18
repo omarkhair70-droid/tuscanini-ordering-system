@@ -62,3 +62,23 @@
 @media(max-width:980px){.t-checkout-grid{grid-template-columns:1fr}.t-checkout-summary{position:static;order:0}.t-checkout-column{order:1}.t-checkout-grid{display:flex;flex-direction:column}.t-checkout-grid>*{width:100%}}
 @media(max-width:720px){.t-checkout-hero__headline{grid-template-columns:1fr;gap:18px}.t-checkout-hero__headline h1{font-size:clamp(66px,16vw,110px)}.t-checkout-hero__headline p{max-width:330px}.t-checkout-content{padding-top:30px}.t-checkout-hero__overline{font-size:10px}.t-checkout-item{grid-template-columns:30px 1fr}.t-checkout-summary{padding:25px}.t-checkout-type>div{grid-template-columns:1fr 1fr}}
 @media(max-width:370px){.t-checkout-type>div{grid-template-columns:1fr}.t-checkout-hero__overline span:last-child{display:none}}
+
+
+/* Pass 12 populated-cart visual proof:
+ * Former phone CSS reversed accessible DOM order with order:0 on summary,
+ * placing totals/submit BEFORE food and customer fields.
+ * Preserve actual decision path: review food -> contact -> final total. */
+@media(max-width:980px){
+  .t-checkout-grid{display:flex;flex-direction:column}
+  .t-checkout-column{order:0;width:100%}
+  .t-checkout-summary{order:1;width:100%;position:static}
+}
+@media(max-width:720px){
+  .t-checkout-hero{padding-block:14px 29px}
+  .t-checkout-hero__headline{padding-block:18px;gap:12px}
+  .t-checkout-hero__headline h1{font-size:clamp(47px,11.5vw,70px);line-height:1.12}
+  .t-checkout-hero__headline p{font-size:14px;line-height:1.8;margin-top:5px}
+  .t-checkout-content{padding-top:26px}
+  .t-checkout-column{gap:42px}
+  .t-checkout-section__head h2{font-size:clamp(36px,8vw,54px)}
+}
