@@ -1,28 +1,23 @@
-import { CategoriesPreview } from '@/components/home/categories-preview';
-import { ContactCta } from '@/components/home/contact-cta';
-import { FoodFinderCta } from '@/components/home/food-finder-cta';
-import { HeroSection } from '@/components/home/hero-section';
-import { OffersPreview } from '@/components/home/offers-preview';
-import { StoryPreview } from '@/components/home/story-preview';
-import { TrustFeedbackLinks } from '@/components/home/trust-feedback-links';
+import type { Metadata } from 'next';
+import { RebirthHome } from '@/components/home/rebirth-home';
 import { ActiveOrderBanner } from '@/components/shared/active-order-banner';
-import { PwaInstallCta } from '@/components/shared/pwa-install-cta';
+import './rebirth-home.css';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
+export const metadata: Metadata = {
+  title: 'توسكانيني | بص جوا',
+  description: 'توسكانيني بني سويف — كريب وبيتزا وساندوتشات. اكتشف الأكل وادخل على المنيو مباشرة.',
+};
+
 export default function HomePage() {
   return (
-    <div className="safe-bottom-mobile space-y-10">
-      <HeroSection />
-      <ActiveOrderBanner />
-      <PwaInstallCta />
-      <CategoriesPreview />
-      <ContactCta />
-      <FoodFinderCta />
-      <OffersPreview />
-      <StoryPreview />
-      <TrustFeedbackLinks />
-    </div>
+    <>
+      <RebirthHome />
+      <div className="t-rebirth-order-tracking" aria-live="polite">
+        <ActiveOrderBanner />
+      </div>
+    </>
   );
 }
