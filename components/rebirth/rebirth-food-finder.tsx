@@ -1,5 +1,6 @@
 'use client';
 
+import { ExperienceFooter } from '@/components/rebirth/experience-footer';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { ExperienceHeader } from '@/components/rebirth/experience-header';
@@ -80,6 +81,7 @@ export function RebirthFoodFinder({categories,items,live}:Props) {
           )}
         </div>
       </main>
+      <ExperienceFooter />
     </div>
   );
 }
