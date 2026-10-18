@@ -59,3 +59,26 @@ P6 / whole-site QA: direct customer task + editorial exploration; compare refere
 
 ## Stop condition / how to declare closure
 **Not now.** A final public-art-direction gate requires: truthful populated states, role-specific distinctive composition, verified restaurant-source brand grammar, screen-for-screen mobile and desktop comparison, useful motion proof where it adds meaning, image decode/photo quality and contrast/perf inspection. Production/admin/integrity remain necessary separate gates but do not substitute for creative closure.
+
+## Measured Pass 10 / actual implementation from this re-benchmark
+**Target:** Food Finder's duplicate Cart-scale giant black hero and a second disproportionately large unavailable-menu headline. Role = choice tool, not theatrical billboard or developer error dump.
+
+Actual edits:
+- `components/rebirth/rebirth-food-finder.tsx`: new direct question “تختار إزاي؟”; concise current-menu contract; fail-closed unavailable state with smaller heading and BOTH actions (/menu and /contact); removes English developer label “LIVE MENU NEEDED”.
+- `app/rebirth-finder.css`: more compact hero on phones and desktop, two-column functional unavailable state on desktop, single-column on narrow widths. It remains in Tuscanini's established color/type system but no longer duplicates Cart's chapter scale.
+- `scripts/qa/rebirth-interaction-check.mjs`: all four widths now assert distinct user task, bounded first scene, honest unavailable state, no horizontal overflow and links.
+- Code check: https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39171657557 — **SUCCESS** on Next/TS build, warmed-scroll 38 screenshot artifact and Chromium interaction suite **zero failures**.
+
+Actual 390px full-page visual comparison (not a simulation):
+- **BEFORE:** 1413 pixels high
+- **AFTER:** 1126 pixels high, a reduction of 287px (~20.3%).
+- 1440px: 1642px → 1195px (-447px, ~27.2%).
+- First hero browser geometry: **320px:385px; 390px:369px; 768px:308px; 1440px:459px**.
+- At 320,390,768,1440 both fallback actions and no overflow passed. This is only a **bounded design fix**, NOT evidence of the populated 3-question results lane, which still needs truthful live-data/fixture QA.
+
+## Screenshot pipeline integrity fix
+The old Playwright CLI --full-page captures did not necessarily scroll through lazy media before painting. The 390px mobile Home screenshot therefore falsely displayed a huge blank red packaging area although its authenticated restaurant image decoded during the on-scroll interaction smoke.
+We introduced `scripts/qa/rebirth-visual-capture.mjs`: it visits every scroll offset, waits for fonts and images to decode, fails on broken main images, then captures a stable full-page baseline with animations disabled. The new green capture in run #39171155536 shows the authentic TSC-08 packaging photograph correctly on mobile, at the SAME 5694px document height; the previous alleged image omission was a **capture artifact**, not proof of broken production UX.
+This is evidence of why screenshots and audits must be reviewed adversarially, not just generated.
+
+**Creative closure remains OPEN.** The remaining major design gates are real brand graphic fingerprint (source-confirmed), populated menu/offer and choice states, purposeful motion and product-style connected page choreography, Arabic 320/390 refinements and coherent full-site QA. Do NOT pivot to order idempotency as the next creative milestone.
