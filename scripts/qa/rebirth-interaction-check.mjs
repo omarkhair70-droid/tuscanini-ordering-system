@@ -121,6 +121,10 @@ try {
     await page.goto(baseUrl + '/about', { waitUntil: 'networkidle', timeout:30000 });
     await check(await page.getByRole('heading', { name: /ناس، أكل/ }).count()===1,
       `${width}px About uses verified people and place story`);
+    await check(await page.locator('body header').count()===1 &&
+      await page.locator('body main').count()===1 &&
+      await page.locator('body footer').count()===1,
+      `${width}px About renders exactly one authored header/main/footer without legacy shell`);
     await check(await page.getByText(/حكاية الأربعة صحاب/).count()===0,
       `${width}px About does not publish unconfirmed four-founder legend`);
     const aboutPhotos = await page.locator('.t-about-hero__photograph img, .t-about-observed__scene img')
