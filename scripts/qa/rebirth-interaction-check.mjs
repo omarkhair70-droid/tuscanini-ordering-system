@@ -44,8 +44,10 @@ try {
     await check((await lens.getAttribute('aria-valuetext'))?.includes('0٪')===true, `${width}px image detail reveal resets to full-photo side`);
     const sourcePair = await page.locator('.t-material__image img').evaluateAll(images => images.map(img => new URL(img.currentSrc || img.src).searchParams.get('url') || (img.currentSrc||img.src)));
     await check(sourcePair.length===2 && sourcePair[0]===sourcePair[1], `${width}px detail comparison uses identical real source pixels`);
+    await check(await page.locator('main#t-main-story > section').count()===5, `${width}px exactly five purposeful Home chapters after editorial cut`);
     await check(await page.locator('.t-ticker__set').count()===2, `${width}px ticker has two seamless repeating sets`);
     await check(await page.locator('.t-ticker__track').evaluate(el=>getComputedStyle(el).animationName)==='none', `${width}px marquee respects reduced-motion setting`);
+    await check(await page.locator('.t-photo-archive__samples button:nth-child(2) .t-real-food-photo__img').evaluate(el=>getComputedStyle(el).animationName)==='none', `${width}px documentary scroll drift fully stops under reduced motion`);
     await check(await page.getByRole('img',{name:/ساندوتشات توسكانيني بجانب العلب الحمراء/}).count()===1, `${width}px real branded packaging scene present`);
     const packagingLoaded = await page.locator('.t-packaging__photo-img').evaluate(img=>img.complete && img.naturalWidth>0);
     await check(packagingLoaded, `${width}px genuine packaging photograph pixels loaded (not just img element)`);
@@ -59,6 +61,12 @@ try {
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     await check(overflow <= 3, `${width}px Home no significant horizontal overflow (${overflow}px)`);
     await check(runtimeErrors.length === 0, `${width}px Home no uncaught JavaScript errors: ${runtimeErrors.join(' / ') || 'none'}`);
+    if ([390, 1440].includes(width)) {
+      await page.locator('.t-material__stage').scrollIntoViewIfNeeded();
+      await page.screenshot({ path: `artifacts/screenshots/home-material-focus-${width}.png` });
+      await page.locator('.t-packaging__content').scrollIntoViewIfNeeded();
+      await page.screenshot({ path: `artifacts/screenshots/home-packaging-focus-${width}.png` });
+    }
     await page.goto(baseUrl + '/menu', { waitUntil: 'networkidle', timeout:30000 });
     await check(await page.getByRole('searchbox', { name: /دور على أكلك/ }).count() === 1, `${width}px direct menu search exposed`);
     await check(await page.getByRole('button', { name: 'كل الأصناف' }).count() === 1, `${width}px food filter exposed`);
@@ -83,6 +91,13 @@ try {
       await motionPage.goto(baseUrl+'/',{waitUntil:'networkidle',timeout:30000});
       const name=await motionPage.locator('.t-ticker__track').evaluate(el=>getComputedStyle(el).animationName);
       await check(name==='t-marquee-continuous', '390px default-motion marquee actually animates');
+      const nativeViewTimeline = await motionPage.evaluate(() => CSS.supports('animation-timeline: view()'));
+      if (nativeViewTimeline) {
+        const archiveMotion = await motionPage.locator('.t-photo-archive__samples button:nth-child(2) .t-real-food-photo__img').evaluate(el=>getComputedStyle(el).animationName);
+        await check(archiveMotion==='t-documentary-photo-drift', '390px scroll-driven real-photo drift engages only where supported');
+      } else {
+        console.log('INFO — browser has no CSS view timeline; archive remains static by design');
+      }
       await motionContext.close();
     }
     const fixtureContext=await browser.newContext({ viewport:{width,height:844},reducedMotion:'reduce' });
