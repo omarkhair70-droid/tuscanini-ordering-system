@@ -145,11 +145,11 @@ try {
       `${width}px Contact has exactly one authored header/main/footer`);
     const contactPhones = await page.locator('.t-contact-method__links a[href^="tel:"]').evaluateAll(links =>
       links.map(a => ({visible: a.getBoundingClientRect().width > 0, href:a.getAttribute('href')})));
-    await check(contactPhones.length===2 && contactPhones.every(a=>a.visible && /^tel:\\d{7,15}$/.test(a.href)),
+    await check(contactPhones.length===2 && contactPhones.every(a=>a.visible && /^tel:\d{7,15}$/.test(a.href)),
       `${width}px two directly callable configured restaurant phone numbers`);
     const whatsappLinks = await page.locator('.t-contact-method__links a[href^="https://wa.me/"]').evaluateAll(links =>
       links.map(a => ({href:a.getAttribute('href'),rel:a.getAttribute('rel')||''})));
-    await check(whatsappLinks.length===1 && /^https:\/\/wa.me\/\\d{10,15}$/.test(whatsappLinks[0].href) &&
+    await check(whatsappLinks.length===1 && /^https:\/\/wa.me\/\d{10,15}$/.test(whatsappLinks[0].href) &&
       whatsappLinks[0].rel.includes('noopener'),
       `${width}px WhatsApp direct contact is sanitized and opens safely`);
     await check(await page.locator('.t-contact-method__links a[href^="https://www.facebook.com/"]').count()===1,
