@@ -32,3 +32,10 @@
 .t-product-dialog__close:focus-visible,.t-product-dialog button:focus-visible,.t-product-dialog input:focus-visible,.t-product-dialog textarea:focus-visible{outline:3px solid #2978ee;outline-offset:3px}
 @media(max-width:720px){.t-product-dialog{inset:auto 0 0 0;margin:auto 0 0;width:100vw;height:min(94dvh,960px);max-height:94dvh;box-shadow:0 -14px 70px #0008}.t-product-dialog__header{padding:20px 20px 19px}.t-product-dialog__body{padding:24px 20px 35px}.t-product-dialog__footer{padding-bottom:max(18px,env(safe-area-inset-bottom))}.t-product-dialog__options label{min-height:57px}.t-product-dialog__header h2{font-size:clamp(34px,9vw,51px)}}
 @media(prefers-reduced-motion:reduce){.t-product-dialog__options label{transition:none}}
+
+/* Only source-proven prices appear; server can refuse an older record. */
+.t-product-dialog__price-notice{
+  margin-top:17px!important;padding:12px 15px;
+  border-right:4px solid #d92e24;background:#f4e9d4;
+  font:750 12px/1.9 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+}
