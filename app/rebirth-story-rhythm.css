@@ -120,3 +120,73 @@
     }
   }
 }
+
+/* Pass 15 / MATERIAL AS INTERACTION. Two REAL, DIFFERENT photographs:
+   brand wrappers (TSC-08) vs cut food (TSC-07).
+   A deliberate user-controlled, reversible photographic edit.
+   It must never imply these are two views of the same SKU. */
+.t-packaging__photo-img{transition:opacity .46s cubic-bezier(.2,.7,.25,1),transform .65s cubic-bezier(.2,.7,.25,1);will-change:opacity}
+.t-packaging__photo-img[data-current=false]{opacity:0;pointer-events:none;transform:scale(1.045)}
+.t-packaging__photo-img[data-current=true]{opacity:1;transform:scale(1)}
+.t-packaging__photo-label{z-index:3}
+.t-packaging__view-caption{
+ position:absolute;z-index:3;top:clamp(15px,3vw,33px);right:clamp(15px,3vw,33px);
+ max-width:min(59%,320px);
+ border-right:4px solid var(--yellow);
+ background:var(--ink);color:var(--paper);padding:9px 12px;
+ font:700 clamp(11px,1.1vw,14px)/1.8 "IBM Plex Sans Arabic",Tahoma,sans-serif
+}
+.t-packaging__photo-mark{
+ position:absolute;z-index:3;left:clamp(18px,3vw,38px);top:clamp(19px,3vw,37px);
+ width:clamp(55px,7vw,92px);height:clamp(55px,7vw,92px);
+ display:grid;place-items:center;border-radius:50%;
+ background:var(--yellow);color:var(--ink);border:2px solid var(--ink)
+}
+.t-packaging__photo-mark svg{width:72%;height:72%}
+.t-packaging__chooser{
+ display:flex;gap:8px;position:relative;z-index:2;
+ align-items:stretch;max-width:620px;margin-top:-5px
+}
+.t-packaging__chooser button{
+ position:relative;cursor:pointer;
+ display:flex;align-items:center;justify-content:space-between;gap:12px;
+ border:2px solid var(--paper);background:transparent;color:var(--paper);
+ min-width:0;flex:1;min-height:86px;
+ padding:13px 15px;
+ text-align:right;
+ font:800 clamp(13px,1.25vw,17px)/1.45 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+ transition:background .25s ease,color .25s ease
+}
+.t-packaging__chooser button svg{flex-shrink:0;max-width:30%;height:auto}
+.t-packaging__chooser button small{align-self:flex-end;direction:ltr;font:14px "Anton",Impact,sans-serif}
+.t-packaging__chooser button[aria-pressed=true]{background:var(--yellow);color:var(--ink);border-color:var(--yellow)}
+.t-packaging__chooser button:hover:not([aria-pressed=true]){background:#fff2;color:var(--paper)}
+.t-packaging__chooser button:focus-visible{outline:3px solid var(--yellow);outline-offset:4px}
+.t-packaging__ghost-glyph{
+ position:absolute;z-index:0;bottom:-17%;left:-5%;
+ width:clamp(190px,24vw,370px);height:auto;
+ color:#fff;opacity:.09;transform:rotate(-14deg);pointer-events:none
+}
+.t-packaging h2,.t-packaging__eyebrow,.t-packaging__bottom{position:relative;z-index:1}
+@media(max-width:900px){
+ .t-packaging__chooser button{padding:9px 10px;min-height:77px;font-size:13px;gap:7px}
+ .t-packaging__chooser button svg{width:28px}
+}
+@media(max-width:720px){
+ .t-packaging__chooser{margin-top:0;gap:8px}
+ .t-packaging__chooser button{min-height:75px;padding:10px 9px;gap:7px;font-size:13px}
+ .t-packaging__chooser button small{font-size:11px}
+ .t-packaging__view-caption{max-width:63%;font-size:11px;padding:7px 9px}
+ .t-packaging__photo-mark{width:58px;height:58px;top:17px;left:15px}
+ .t-packaging__photo-label{font-size:11px;padding:8px 10px}
+ .t-packaging__ghost-glyph{width:230px;bottom:-11%}
+}
+@media(max-width:370px){
+ .t-packaging__chooser button{font-size:11px}
+ .t-packaging__photo-label{font-size:9px}
+ .t-packaging__view-caption{font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){
+ .t-packaging__photo-img,.t-packaging__chooser button{transition:none!important;will-change:auto}
+ .t-packaging__photo-img[data-current=false]{transform:none}
+}
