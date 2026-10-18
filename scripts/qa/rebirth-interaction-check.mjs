@@ -24,6 +24,22 @@ try {
     await page.locator('.t-hero__photo img').waitFor({ state:'visible', timeout:15000 });
     const heroLoaded = await page.locator('.t-hero__photo img').evaluate(img => img.complete && img.naturalWidth > 0);
     await check(heroLoaded, `${width}px original restaurant hero image loaded`);
+    // Route-scale illustrated navigation must work on mobile/tablet, not just
+    // look correct in an isolated screenshot.
+    if(width<=1050){
+      const navToggle=page.getByRole('button',{name:'افتح القائمة'});
+      await navToggle.click();
+      const mobilePanel=page.getByRole('navigation',{name:'قائمة الموبايل'});
+      await check(await mobilePanel.isVisible() &&
+        await mobilePanel.locator('.t-mobile-menu__group a svg').count()===5,
+        `${width}px mobile menu is a five-route illustrated material grid`);
+      if(width===390 || width===768) await page.screenshot({
+        path:`artifacts/screenshots/mobile-material-navigation-${width}.png`,animations:'disabled'
+      });
+      await page.keyboard.press('Escape');
+      await check(await mobilePanel.count()===0 && await page.getByRole('button',{name:'افتح القائمة'}).count()===1,
+        `${width}px mobile illustrated menu dismisses with Escape and restores its toggle`);
+    }
     const tab = page.getByRole('tab', { name: /البيتزا/ });
     await tab.click();
     await check(await tab.getAttribute('aria-selected') === 'true', `${width}px food category tab interaction`);
@@ -40,6 +56,26 @@ try {
       await page.locator('.t-packaging__content').scrollIntoViewIfNeeded();
       await page.screenshot({ path: `artifacts/screenshots/home-packaging-focus-${width}.png` });
     }
+    const materialChoice=page.getByRole('group',{name:'تغيير مشهد الصور الحقيقية'});
+    await check(await materialChoice.getByRole('button',{name:/العلبة والورق/}).getAttribute('aria-pressed')==='true',
+      `${width}px original real-packaging photograph is default`);
+    const insideChoice=materialChoice.getByRole('button',{name:/الأكل من جوا/});
+    await insideChoice.click();
+    await check(await insideChoice.getAttribute('aria-pressed')==='true' &&
+      await page.locator('.t-packaging__photo-img--inside[data-current="true"]').count()===1,
+      `${width}px physical material study changes to distinct genuine opened food photograph`);
+    await check(await page.locator('.t-packaging__photo-img').evaluateAll(images =>
+      images.length===2 && images.every(img=>img.complete&&img.naturalWidth>0)),
+      `${width}px both package and interior photographs decode without fabricated product mapping`);
+    await check(await page.getByText(/مش لنفس الساندوتشات/).count()===1,
+      `${width}px user-controlled inside/out view openly distinguishes two photographed products`);
+    if(width===390 || width===1440){
+      await page.locator('.t-packaging__photo').scrollIntoViewIfNeeded();
+      await page.screenshot({path:`artifacts/screenshots/home-packaging-open-${width}.png`,animations:'disabled'});
+    }
+    await materialChoice.getByRole('button',{name:/العلبة والورق/}).click();
+    await check(await page.locator('.t-packaging__photo-img--package[data-current="true"]').count()===1,
+      `${width}px physical photo study is reversible via real button`);
     const lens = page.getByRole('slider', {name:/حرّك للمقارنة/});
     await check(await lens.count()===1, `${width}px one accessible genuine-photo comparison control`);
     const before = await lens.getAttribute('aria-valuetext');
@@ -97,6 +133,8 @@ try {
 
     await check(await page.getByRole('searchbox', { name: /دور على أكلك/ }).count() === 1, `${width}px direct menu search exposed`);
     await check(await page.getByRole('button', { name: 'كل الأصناف' }).count() === 1, `${width}px food filter exposed`);
+    await check(await page.locator('.t-menu-categories__scroller button .t-menu-category-glyph').count()===17,
+      `${width}px all sixteen authentic categories and All carry drawn SVG family pictograms`);
     await check(await page.locator('.t-menu-categories__scroller button').count()===17,
       `${width}px historical Tuscanini menu has 16 original category filters plus All`);
     await check(await page.getByText(/منيو توسكانيني السابق بأسعاره/).count()>=1,
@@ -150,6 +188,8 @@ try {
     const finderHeroHeight=await page.locator('.t-finder-hero').evaluate(el=>el.getBoundingClientRect().height);
     await check(finderHeroHeight<=620,
       `${width}px Finder first-scene priority is bounded (${Math.round(finderHeroHeight)}px)`);
+    await check(await page.locator('.t-finder-form-glyph').count()===8,
+      `${width}px Finder family choices use visual sketches instead of emoji/text-only chips`);
     await check(await page.locator('.t-finder-progress').getByText('2 STEPS / YOUR FOOD').count()===1,
       `${width}px Finder uses two actual recorded-data questions rather than unsupported tags`);
     await page.getByRole('button',{name:'كريب',exact:true}).click();
