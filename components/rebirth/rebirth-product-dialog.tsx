@@ -7,14 +7,17 @@ import type { MenuItem } from '@/types/menu';
 type Props = {
   item: MenuItem | null;
   onClose: () => void;
+  priceSource?: 'previous' | 'live';
 };
 
 /**
  * Native top-layer <dialog> supplies modal focus containment, Esc handling and
  * focus restoration without a JS-powered fake overlay. No unverified product photo.
- * Uses the real CartProvider contract and live prices received from the menu route.
+ * Uses the real CartProvider contract. Previously recorded prices are passed
+ * unchanged when the owner-directed historical menu is selected; the
+ * restaurant server independently checks current database records on submit.
  */
-export function RebirthProductDialog({ item, onClose }: Props) {
+export function RebirthProductDialog({ item, onClose, priceSource = 'previous' }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const { addItem } = useCart();
   const [sizeId, setSizeId] = useState('');
@@ -80,6 +83,7 @@ export function RebirthProductDialog({ item, onClose }: Props) {
         </header>
         <div className="t-product-dialog__body">
           <p id="t-product-summary">{item.description || 'اختار التفاصيل المناسبة لطلبك.'}</p>
+          {priceSource === 'previous' && <p className="t-product-dialog__price-notice">الأسعار المعروضة هي أسعار منيو توسكانيني السابق. إجمالي الأصناف هنا محسوب منها؛ تأكيد الطلب الفعلي والتوافر بيرجعوا للمطعم.</p>}
           {item.sizes && item.sizes.length > 0 && (
             <fieldset className="t-product-dialog__section">
               <legend>01 — الحجم</legend>
