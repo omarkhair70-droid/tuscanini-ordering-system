@@ -40,7 +40,8 @@ export const restaurantOperationsRoutes = [
 export const experiencePrinciples = {
   fastOrderIsNeverGatedByEditorial: true,
   useOnlyRealFoodPhotography: true,
-  useLivePricesNotHistoricalFallbackClaims: true,
+  presentOwnerDirectedPreviousMenuWithProvenance: true,
+  realOrderPricesMustBeCheckedAgainstLiveDatabase: true,
   preserveAccessibleReducedMotion: true,
   brandVisualsDoNotLeakIntoAdminDataLogic: true,
 } as const;
