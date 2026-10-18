@@ -4,7 +4,7 @@ import Link from 'next/link';
 export function ExperienceFooter() {
   return <footer className="t-footer">
     <div className="t-shell t-footer__inner">
-      <Link href="/" className="t-footer__word" lang="en" aria-label="توسكانيني — الرئيسية">TUSCANINI.</Link>
+      <Link href="/" className="t-footer__word" lang="en" dir="ltr" aria-label="توسكانيني — الرئيسية">TUSCANINI.</Link>
       <div>
         <span>توسكانيني / شارع البحر — سور نادي توليب — بني سويف</span>
         <nav aria-label="روابط تذييل الموقع">
