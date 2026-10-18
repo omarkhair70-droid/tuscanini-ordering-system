@@ -98,3 +98,25 @@
 @media(prefers-reduced-motion:reduce){
 .t-home-page .t-ticker__track{animation:none!important;will-change:auto}
 }
+
+
+/*
+ * Motion R&D / one real-photo proof, not a site-wide reveal effect.
+ * The middle documentary photograph drifts by just 16px while passing
+ * through the viewport. It remains fully visible and true to its source.
+ * Unsupported browsers keep the existing static composition; reduced
+ * motion keeps every photo still. No scroll-jacking, no GSAP dependency.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    @keyframes t-documentary-photo-drift {
+      from { transform: translate3d(0, -8px, 0) scale(1.06); }
+      to { transform: translate3d(0, 8px, 0) scale(1.06); }
+    }
+    .t-home-page .t-photo-archive__samples button:nth-child(2) .t-real-food-photo__img {
+      animation: t-documentary-photo-drift 1s linear both;
+      animation-timeline: view(block);
+      animation-range: entry 0% exit 100%;
+    }
+  }
+}
