@@ -1,191 +1,48 @@
-'use client';
-
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
-import { PageHero } from '@/components/shared/page-hero';
-import { siteConfig } from '@/lib/site-config';
+import { ExperienceHeader } from '@/components/rebirth/experience-header';
+import { ExperienceFooter } from '@/components/rebirth/experience-footer';
+import { RebirthComplaintsForm } from '@/components/rebirth/rebirth-complaints-form';
+import { getRuntimePublicSiteSettings } from '@/lib/site-settings-runtime';
+import '../rebirth-home.css';
+import '../rebirth-complaints.css';
 
-type ComplaintType = 'تأخير في الطلب' | 'مشكلة في الجودة' | 'مشكلة في الطلب' | 'سلوك الخدمة' | 'أخرى';
-
-type RuntimePublicSiteSettings = {
-  isOrderingOpen: boolean;
-  whatsappOrderNumber: string;
-  phonePrimary: string;
-  phoneSecondary: string;
-  addressAr: string;
-  facebookUrl: string;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const metadata: Metadata = {
+  title: 'مساعدة وشكاوى | توسكانيني — بني سويف',
+  description: 'تواصل مع توسكانيني بخصوص مشكلة في الطلب أو الخدمة عن طريق تجهيز رسالة واتساب مباشرة.',
 };
 
-function normalizeWhatsappNumber(raw: string): string {
-  const digits = raw.replace(/\D/g, '');
-  if (digits.startsWith('0')) {
-    return `20${digits.slice(1)}`;
-  }
-  return digits;
-}
-
-function buildComplaintMessage(params: {
-  name: string;
-  phone: string;
-  complaintType: ComplaintType;
-  message: string;
-}) {
-  const { name, phone, complaintType, message } = params;
-
-  return [
-    'مرحبًا توسكانيني 👋',
-    'هذه شكوى من عميل، برجاء المتابعة:',
-    '',
-    '📌 *بيانات الشكوى*',
-    `- الاسم: ${name || 'غير مذكور'}`,
-    `- الهاتف: ${phone || 'غير مذكور'}`,
-    `- نوع الشكوى: ${complaintType}`,
-    `- التفاصيل: ${message}`,
-    '',
-    'شكرًا لتعاونكم.',
-  ].join('\n');
-}
-
-export default function ComplaintsPage() {
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [complaintType, setComplaintType] = useState<ComplaintType>('تأخير في الطلب');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
-  const [whatsappOrderNumber, setWhatsappOrderNumber] = useState(siteConfig.whatsappOrderNumber);
-
-  useEffect(() => {
-    let isActive = true;
-
-    async function loadRuntimeSettings() {
-      try {
-        const response = await fetch('/api/public/site-settings');
-        if (!response.ok) {
-          return;
-        }
-
-        const payload = (await response.json()) as {
-          ok?: boolean;
-          settings?: RuntimePublicSiteSettings;
-        };
-
-        if (!isActive || !payload.ok || !payload.settings) {
-          return;
-        }
-
-        setWhatsappOrderNumber(payload.settings.whatsappOrderNumber);
-      } catch {
-        // Keep static fallback.
-      }
-    }
-
-    void loadRuntimeSettings();
-
-    return () => {
-      isActive = false;
-    };
-  }, []);
-
-  const whatsappUrl = useMemo(() => {
-    const text = buildComplaintMessage({
-      name: name.trim(),
-      phone: phone.trim(),
-      complaintType,
-      message: message.trim(),
-    });
-
-    const phoneNumber = normalizeWhatsappNumber(whatsappOrderNumber);
-    return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`;
-  }, [name, phone, complaintType, message, whatsappOrderNumber]);
-
-  function onSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    if (!message.trim()) {
-      setError('من فضلك اكتب تفاصيل الشكوى قبل الإرسال.');
-      return;
-    }
-
-    setError('');
-    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
-  }
-
-  return (
-    <div className="space-y-6">
-      <PageHero title="الشكاوى" subtitle="اكتب شكوتك وسيتم إرسالها مباشرة عبر واتساب للمتابعة." />
-
-      <form onSubmit={onSubmit} className="space-y-4 rounded-2xl bg-brand-white p-5 shadow-punch">
-        <div>
-          <label htmlFor="complaint-name" className="mb-1 block text-sm font-bold">
-            الاسم
-          </label>
-          <input
-            id="complaint-name"
-            type="text"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            placeholder="اكتب اسمك"
-            className="w-full rounded-xl border border-brand-charcoal/30 px-3 py-2 text-sm outline-none focus:border-brand-red"
-          />
+export default async function ComplaintsPage() {
+  const settings = await getRuntimePublicSiteSettings();
+  return <div className="t-page t-complaints-page" dir="rtl">
+    <a className="t-skip" href="#t-complaints-form">انتقل لنموذج الشكوى</a>
+    <ExperienceHeader />
+    <main>
+      <header className="t-complaints-hero t-shell">
+        <div className="t-complaints-hero__meta"><span>توسكانيني / مساعدة وشكاوى</span><span lang="en">HELP / NOT A PROMISE OF RESOLUTION</span></div>
+        <div className="t-complaints-hero__grid">
+          <div><span className="t-index">01 — TELL US WHAT HAPPENED</span><h1>حصلت<br/><em>مشكلة؟</em></h1></div>
+          <div className="t-complaints-hero__aside">
+            <p>قولنا إيه اللي حصل في الطلب أو الخدمة. هنجهزلك رسالة فيها التفاصيل علشان تبعتها للمطعم بنفسك على واتساب.</p>
+            <a href="#t-complaints-form">اكتب التفاصيل <span aria-hidden="true">↓</span></a>
+          </div>
         </div>
-
-        <div>
-          <label htmlFor="complaint-phone" className="mb-1 block text-sm font-bold">
-            الهاتف
-          </label>
-          <input
-            id="complaint-phone"
-            type="tel"
-            value={phone}
-            onChange={(event) => setPhone(event.target.value)}
-            placeholder="اكتب رقم الهاتف"
-            className="w-full rounded-xl border border-brand-charcoal/30 px-3 py-2 text-sm outline-none focus:border-brand-red"
-          />
+      </header>
+      <section className="t-complaints-body t-shell" aria-labelledby="t-complaints-form-title">
+        <div className="t-complaints-body__info">
+          <span className="t-index" lang="en">02 — YOUR MESSAGE</span>
+          <h2 id="t-complaints-form-title">كل التفاصيل<br/><em>تفرق.</em></h2>
+          <p>مش هنقول إن الشكوى اتسجلت في نظام المطعم لمجرد إنك كتبتها هنا. الإرسال الفعلي بيتم من واتساب بعد ما تراجع الرسالة.</p>
+          <div className="t-complaints-body__side-links">
+            <Link href="/contact">عايز تتصل بالمطعم؟ <span aria-hidden="true">↗</span></Link>
+            <Link href="/reviews">شارك رأيك عن التجربة <span aria-hidden="true">↗</span></Link>
+          </div>
         </div>
-
-        <div>
-          <label htmlFor="complaint-type" className="mb-1 block text-sm font-bold">
-            نوع الشكوى
-          </label>
-          <select
-            id="complaint-type"
-            value={complaintType}
-            onChange={(event) => setComplaintType(event.target.value as ComplaintType)}
-            className="w-full rounded-xl border border-brand-charcoal/30 bg-brand-white px-3 py-2 text-sm outline-none focus:border-brand-red"
-          >
-            <option>تأخير في الطلب</option>
-            <option>مشكلة في الجودة</option>
-            <option>مشكلة في الطلب</option>
-            <option>سلوك الخدمة</option>
-            <option>أخرى</option>
-          </select>
-        </div>
-
-        <div>
-          <label htmlFor="complaint-message" className="mb-1 block text-sm font-bold">
-            تفاصيل الشكوى
-          </label>
-          <textarea
-            id="complaint-message"
-            value={message}
-            onChange={(event) => setMessage(event.target.value)}
-            placeholder="اكتب تفاصيل الشكوى"
-            rows={5}
-            className="w-full rounded-xl border border-brand-charcoal/30 px-3 py-2 text-sm outline-none focus:border-brand-red"
-          />
-        </div>
-
-        {error ? <p className="text-sm font-bold text-brand-red">{error}</p> : null}
-
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <button type="submit" className="btn-primary w-full sm:w-auto">
-            إرسال الشكوى عبر واتساب
-          </button>
-          <Link href={whatsappUrl} target="_blank" className="btn-secondary w-full bg-brand-white sm:w-auto">
-            معاينة رسالة واتساب
-          </Link>
-        </div>
-      </form>
-    </div>
-  );
+        <RebirthComplaintsForm whatsappNumber={settings.whatsappOrderNumber} />
+      </section>
+    </main>
+    <ExperienceFooter />
+  </div>;
 }
