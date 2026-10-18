@@ -49,6 +49,8 @@ jobs:
         run: node scripts/qa/rebirth-visual-capture.mjs
       - name: Populated previous-menu product/cart/finder visual proof (no order POST)
         run: node scripts/qa/rebirth-populated-menu-visuals.mjs
+      - name: Real optional-motion films of mobile navigation and physical food views
+        run: node scripts/qa/rebirth-motion-film.mjs
       - name: Browser interactions and mobile layout smoke
         run: node scripts/qa/rebirth-interaction-check.mjs
       - name: Print media gate result
