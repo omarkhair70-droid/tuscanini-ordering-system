@@ -182,3 +182,44 @@
 @media(prefers-reduced-motion:reduce){
   .t-menu-intro__photo img{transition:none!important;transform:none!important}
 }
+
+
+/* Owner-directed old menu / Pass 11. Exact historical recorded prices,
+   not a fictional live catalog or an item-photo mapping. These thin strokes
+   deliberately evoke the restaurant's printed take-away labelling while
+   keeping menu/product selection fully legible and utility-first. */
+.t-menu-source-note{
+  display:flex;align-items:start;gap:14px;
+  margin-top:clamp(16px,3vw,28px);
+  padding:15px 18px 16px 20px;
+  border-right:5px solid var(--red);
+  background:var(--cream);
+  font:750 13px/1.85 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  color:var(--ink)
+}
+.t-menu-source-note:before{
+  content:"MENU / PREVIOUS";
+  display:inline-block;align-self:center;flex-shrink:0;
+  padding:7px 9px;background:var(--ink);color:var(--paper);
+  font:12px/1.2 "Anton",Impact,sans-serif;
+  letter-spacing:.055em;direction:ltr
+}
+.t-menu-items__heading:after{content:"";height:5px;width:clamp(30px,5vw,75px);background:var(--yellow);align-self:end}
+.t-menu-product{border-top-color:var(--ink);transition:background .16s ease}
+.t-menu-product:nth-child(6n+2),.t-menu-product:nth-child(6n+5){border-top-color:var(--red)}
+.t-menu-product__top span:first-child{
+  min-width:36px;display:inline-grid;place-items:center;
+  background:var(--ink);color:var(--paper);
+  padding:6px 7px;font:14px/1 "Anton",Impact,sans-serif
+}
+.t-menu-product__price strong{font-variant-numeric:tabular-nums}
+@media(hover:hover){
+  .t-menu-product:hover{background:var(--yellow)}
+}
+@media(max-width:720px){
+  .t-menu-source-note{flex-direction:column;gap:9px;font-size:12px;padding:12px 14px}
+  .t-menu-source-note:before{align-self:start;font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  .t-menu-product{transition:none}
+}
