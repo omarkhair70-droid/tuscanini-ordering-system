@@ -136,6 +136,30 @@ try {
       `${width}px About offers direct verified contact and menu paths`);
     const aboutOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
     await check(aboutOverflow<=3, `${width}px About no significant horizontal overflow (${aboutOverflow}px)`);
+    await page.goto(baseUrl + '/contact', { waitUntil: 'networkidle', timeout:30000 });
+    await check(await page.getByRole('heading', { name:/تعالى.*لحد عندنا/ }).count() === 1,
+      `${width}px Contact has dedicated wayfinding identity`);
+    await check(await page.locator('body header').count() === 1 &&
+      await page.locator('body main').count() === 1 &&
+      await page.locator('body footer').count() === 1,
+      `${width}px Contact has exactly one authored header/main/footer`);
+    const contactPhones = await page.locator('.t-contact-method__links a[href^="tel:"]').evaluateAll(links =>
+      links.map(a => ({visible: a.getBoundingClientRect().width > 0, href:a.getAttribute('href')})));
+    await check(contactPhones.length===2 && contactPhones.every(a=>a.visible && /^tel:\\d{7,15}$/.test(a.href)),
+      `${width}px two directly callable configured restaurant phone numbers`);
+    const whatsappLinks = await page.locator('.t-contact-method__links a[href^="https://wa.me/"]').evaluateAll(links =>
+      links.map(a => ({href:a.getAttribute('href'),rel:a.getAttribute('rel')||''})));
+    await check(whatsappLinks.length===1 && /^https:\/\/wa.me\/\\d{10,15}$/.test(whatsappLinks[0].href) &&
+      whatsappLinks[0].rel.includes('noopener'),
+      `${width}px WhatsApp direct contact is sanitized and opens safely`);
+    await check(await page.locator('.t-contact-method__links a[href^="https://www.facebook.com/"]').count()===1,
+      `${width}px external Facebook contact uses configured official link`);
+    await check(await page.getByText(/دبوس الخريطة الدقيق لسه محتاجين تأكيد/).count()===1,
+      `${width}px unverified exact map pin and hours are not fabricated`);
+    await check(await page.locator('.t-contact-unknown__links a[href="/complaints"]').count()===1,
+      `${width}px Contact exposes real complaints escalation path`);
+    const contactOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+    await check(contactOverflow<=3,`${width}px Contact no significant horizontal overflow (${contactOverflow}px)`);
     await page.goto(baseUrl + '/cart', { waitUntil: 'networkidle', timeout:30000 });
     await check(await page.getByRole('heading', { name:/على.*مزاجك/ }).count()===1, `${width}px Checkout authored header renders`);
     await check(await page.getByRole('heading', { name:/لسه مفيش/ }).count()===1, `${width}px empty cart is honest and non-orderable`);
