@@ -5,6 +5,7 @@ import type { MenuCategory, MenuItem } from '@/types/menu';
 import '../rebirth-home.css';
 import '../rebirth-exploration.css';
 import '../rebirth-menu.css';
+import '../rebirth-product.css';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
