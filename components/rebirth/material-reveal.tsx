@@ -19,7 +19,7 @@ export function MaterialReveal() {
           <span lang="en">ONE REAL PHOTO · TWO WAYS TO LOOK</span>
         </div>
         <h2 id="t-material-heading">من بعيد.<br/><em>من جوه.</em></h2>
-        <p>الصورة نفسها، من أكل توسكانيني الحقيقي. اسحب وشوف إزاي التفاصيل بتتغيّر لما تقرب — من غير ما نركّب مكونات مش موجودة.</p>
+        <p>شايف الكريب كله؟ قرّب شوية. اسحب بين اللقطة الكاملة والتفاصيل اللي جواها، وشوفها من زاويتين.</p>
       </div>
       <div className="t-material__composition t-shell" data-t-story-step>
         <div className="t-material__type-rail" aria-hidden="true" lang="en">
@@ -46,7 +46,7 @@ export function MaterialReveal() {
           />
         </div>
         <div className="t-material__caption">
-          <span>PHOTO ID / TSC-02</span><span>640 × 640 · REAL RESTAURANT MATERIAL</span>
+          <span>FROM THE RESTAURANT / TUSCANINI</span><span>ONE PHOTO / TWO VIEWS</span>
           <span>اسحب أو استخدم الأسهم في الكيبورد</span>
         </div>
       </div>
