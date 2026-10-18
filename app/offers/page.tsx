@@ -16,7 +16,7 @@ export const metadata:Metadata={title:'العروض | توسكانيني',descri
 export default async function OffersPage() {
   let offers:PublicOffer[]=[];
   let sourceError=false;
-  try{offers=await getActivePublicOffers()}catch{sourceError=true}
+  try{offers=await getActivePublicOffers(undefined, { throwOnError: true })}catch{sourceError=true}
   return (
     <div className="t-page t-offers-page" dir="rtl">
       <a className="t-skip" href="#t-offers-list">انتقل للعروض</a>
