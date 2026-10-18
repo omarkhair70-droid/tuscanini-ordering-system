@@ -1,0 +1,34 @@
+.t-offers-hero{max-width:none;background:var(--red);color:#fff8e8;padding-block:20px clamp(58px,9vw,125px)}
+.t-offers-hero>*{max-width:1400px;margin-inline:auto}
+.t-offers-hero__meta,.t-offers-hero__foot{display:flex;justify-content:space-between;gap:25px;align-items:center;border-bottom:1px solid #fff7;padding-bottom:16px;font-size:12px;font-weight:800}
+.t-offers-hero__meta span:first-child,.t-offers-hero__foot span:first-child{direction:ltr;font:14px "Anton",Impact,sans-serif;letter-spacing:.08em}
+.t-offers-hero__title{display:grid;grid-template-columns:1.2fr .6fr;gap:25px;align-items:end;padding-block:clamp(30px,6vw,80px)}
+.t-offers-hero h1{font-size:clamp(75px,11vw,165px);line-height:1.1}
+.t-offers-hero h1 em{color:var(--yellow)}
+.t-offers-hero__title p{font-size:clamp(16px,1.5vw,22px);font-weight:750;line-height:2;max-width:420px;margin-top:16px}
+.t-offers-hero__foot{border-bottom:0;border-top:1px solid #fff7;padding-top:20px;padding-bottom:0}
+.t-offers-hero__foot a{font-weight:850;border-bottom:2px solid #fff;padding:9px 0}
+.t-offers-list{padding-block:clamp(50px,8vw,115px) 120px}
+.t-offers-list__heading{display:grid;grid-template-columns:1fr 1.7fr;gap:20px;align-items:start;margin-bottom:28px}
+.t-offers-list__heading h2{font-size:clamp(50px,8vw,116px);line-height:1.1}
+.t-offers-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}
+.t-offers-card{display:flex;flex-direction:column;background:var(--cream);border-top:5px solid var(--ink);padding:clamp(26px,3vw,46px);min-height:380px;position:relative}
+.t-offers-card:nth-child(4n+2){background:var(--yellow)}
+.t-offers-card__top{display:flex;justify-content:space-between;gap:20px;font:700 13px "IBM Plex Sans Arabic",Tahoma,sans-serif}
+.t-offers-card__top span:first-child{font:17px "Anton",Impact,sans-serif;direction:ltr}
+.t-offers-card h3{font-size:clamp(35px,5vw,68px);line-height:1.23;margin:35px 0 10px}
+.t-offers-card__description{font-size:16px;font-weight:650;line-height:1.9;max-width:570px}
+.t-offers-card__buy{display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:18px;margin-top:auto;padding-top:32px}
+.t-offers-card__buy>div{display:flex;flex-direction:column;gap:7px}
+.t-offers-card__buy small{font-size:13px;font-weight:800}
+.t-offers-card__buy strong{font-size:clamp(20px,2.2vw,31px)}
+.t-offers__add{background:var(--ink);color:#fff8e8;border:0;padding:14px 22px;min-height:53px;cursor:pointer;font-weight:800}
+.t-offers__add:hover{background:var(--red)}
+.t-offers__add:disabled{opacity:.45;cursor:not-allowed}
+.t-offers-card__terms{margin-top:auto;padding-top:25px;font-size:14px;font-weight:750;line-height:1.9}
+.t-offers-empty{background:var(--cream);border-top:5px solid var(--red);padding:clamp(29px,5vw,75px)}
+.t-offers-empty h3{font-size:clamp(43px,7vw,95px);line-height:1.2;margin:22px 0}
+.t-offers-empty p{font-size:16px;font-weight:750;line-height:2;max-width:550px}
+.t-offers-empty a{display:inline-block;margin-top:25px;padding:15px 25px;background:var(--ink);color:#fff8e8!important;font-weight:800}
+@media(max-width:850px){.t-offers-hero__title{grid-template-columns:1fr}.t-offers-hero h1{font-size:clamp(75px,14vw,118px)}.t-offers-grid{grid-template-columns:1fr}}
+@media(max-width:720px){.t-offers-hero__meta,.t-offers-hero__foot{font-size:10px;gap:12px}.t-offers-list__heading{grid-template-columns:1fr;gap:10px}.t-offers-list__heading h2{font-size:clamp(49px,12vw,85px)}.t-offers-card{min-height:330px}.t-offers-card h3{font-size:clamp(36px,9vw,58px)}}
