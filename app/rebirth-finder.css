@@ -1,12 +1,12 @@
 .t-finder-page{background:var(--paper)}
-.t-finder-hero{max-width:none;background:var(--ink);color:var(--paper);padding-block:clamp(50px,7vw,100px)}
+.t-finder-hero{max-width:none;background:var(--ink);color:var(--paper);padding-block:clamp(34px,4.6vw,63px)}
 .t-finder-hero>*{max-width:1400px;margin-inline:auto}
-.t-finder-hero>div{display:grid;grid-template-columns:1.2fr .8fr;gap:35px;align-items:end;margin-block:18px 35px}
-.t-finder-hero h1{font-size:clamp(70px,10vw,155px);line-height:1.05}
+.t-finder-hero>div{display:grid;grid-template-columns:1.04fr .96fr;gap:clamp(25px,5vw,90px);align-items:center;margin-block:15px 24px}
+.t-finder-hero h1{font-size:clamp(56px,7vw,99px);line-height:1.11}
 .t-finder-hero h1 em{color:var(--yellow)}
-.t-finder-hero p{font-size:clamp(16px,1.7vw,22px);font-weight:700;line-height:2;max-width:490px}
+.t-finder-hero p{font-size:clamp(15px,1.4vw,19px);font-weight:650;line-height:1.85;max-width:450px}
 .t-finder-hero>a{display:inline-block;padding:12px 0;border-bottom:2px solid var(--yellow);color:var(--yellow);font-weight:800}
-.t-finder-content{padding-block:clamp(45px,7vw,100px)}
+.t-finder-content{padding-block:clamp(36px,5vw,72px) clamp(50px,7vw,100px)}
 .t-finder-progress{display:flex;justify-content:space-between;gap:15px;font:800 14px "IBM Plex Sans Arabic",Tahoma,sans-serif;border-bottom:2px solid var(--ink);padding-bottom:16px}
 .t-finder-progress span:first-child{font-family:"Anton",Impact,sans-serif}
 .t-finder-question{border:0;padding:clamp(29px,5vw,65px) 0;margin:0;border-bottom:1px solid var(--line)}
@@ -29,9 +29,18 @@
 .t-finder-results__grid article a{font-size:13px;font-weight:800;border-bottom:2px solid var(--ink);padding-bottom:11px;margin-top:auto;align-self:flex-start}
 .t-finder-results__empty{background:var(--cream);padding:33px;font-weight:750;line-height:2}
 .t-finder-results__menu{display:inline-block;margin-top:35px;background:var(--ink);color:var(--paper)!important;padding:14px 25px;font-weight:800}
-.t-finder-unavailable{background:var(--cream);padding:clamp(32px,5vw,80px);border-top:5px solid var(--red)}
-.t-finder-unavailable h2{font-size:clamp(42px,6vw,86px);line-height:1.18;margin:25px 0}
-.t-finder-unavailable p{max-width:600px;font-size:16px;line-height:1.9;font-weight:700}
-.t-finder-unavailable a{display:inline-block;margin-top:27px;background:var(--ink);padding:15px 24px;color:var(--paper)!important;font-weight:800}
+.t-finder-unavailable{background:var(--cream);padding:clamp(27px,4vw,52px);border-top:5px solid var(--red);display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);grid-template-rows:auto 1fr auto;gap:10px clamp(25px,4vw,58px);align-items:start}
+.t-finder-unavailable>.t-index{grid-column:1/-1;color:var(--red)}
+.t-finder-unavailable h2{font:800 clamp(36px,4.2vw,58px)/1.23 "Changa",Tahoma,sans-serif;grid-column:1;grid-row:2 / span 2;margin:13px 0 0}
+.t-finder-unavailable h2 em{color:var(--red)}
+.t-finder-unavailable p{grid-column:2;grid-row:2;max-width:520px;font-size:15px;line-height:1.85;font-weight:650;padding-top:10px}
+.t-finder-unavailable__links{grid-column:2;grid-row:3;display:flex;gap:13px;flex-wrap:wrap;align-items:center;margin-top:18px}
+.t-finder-unavailable__links a{display:inline-flex;gap:20px;align-items:center;justify-content:space-between;min-height:47px;padding:12px 18px;font-size:14px;font-weight:850;border-bottom:2px solid var(--ink)}
+.t-finder-unavailable__links a:first-child{background:var(--ink);color:var(--paper)!important;border-color:var(--ink)}
+.t-finder-unavailable__links a:last-child{color:var(--ink)!important}
+.t-finder-unavailable__links a:hover{border-color:var(--red);color:var(--red)!important}
 @media(max-width:1000px){.t-finder-results__grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:720px){.t-finder-hero>div{grid-template-columns:1fr}.t-finder-hero h1{font-size:clamp(70px,15vw,110px)}.t-finder-content{padding-top:42px}.t-finder-question legend strong{font-size:clamp(33px,8vw,59px)}.t-finder-results__grid{grid-template-columns:1fr}.t-finder-results__top{align-items:start}.t-finder-question button{padding:11px 13px;font-size:13px}}
+@media(max-width:720px){.t-finder-hero>div{grid-template-columns:1fr;gap:14px;margin-block:14px 18px}.t-finder-hero h1{font-size:clamp(56px,12.8vw,82px);line-height:1.12}.t-finder-hero p{font-size:15px}.t-finder-unavailable{grid-template-columns:1fr;grid-template-rows:auto;gap:12px}.t-finder-unavailable>.t-index,.t-finder-unavailable h2,.t-finder-unavailable p,.t-finder-unavailable__links{grid-column:1;grid-row:auto}.t-finder-unavailable h2{font-size:clamp(35px,9vw,57px);margin:0}.t-finder-unavailable p{padding:0;font-size:15px}.t-finder-unavailable__links{margin-top:10px}.t-finder-content{padding-top:42px}.t-finder-question legend strong{font-size:clamp(33px,8vw,59px)}.t-finder-results__grid{grid-template-columns:1fr}.t-finder-results__top{align-items:start}.t-finder-question button{padding:11px 13px;font-size:13px}}
+
+/* Internal Re-benchmark 10: design for the choice task, not a giant unavailable poster. */
+@media(max-width:370px){.t-finder-hero h1{font-size:51px}.t-finder-unavailable h2{font-size:35px}.t-finder-unavailable__links a{font-size:12px;padding:11px 13px}}
