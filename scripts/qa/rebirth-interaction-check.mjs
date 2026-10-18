@@ -160,6 +160,21 @@ try {
       `${width}px Contact exposes real complaints escalation path`);
     const contactOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
     await check(contactOverflow<=3,`${width}px Contact no significant horizontal overflow (${contactOverflow}px)`);
+    await page.goto(baseUrl + '/reviews', { waitUntil:'networkidle', timeout:30000 });
+    await check(await page.getByRole('heading',{name:/قولنا.*رأيك/}).count()===1,
+      `${width}px Reviews authored editorial invitation renders`);
+    await check(await page.locator('body header').count()===1 &&
+      await page.locator('body main').count()===1 &&
+      await page.locator('body footer').count()===1,
+      `${width}px Reviews has exactly one authored public header/main/footer`);
+    await check(await page.getByText(/مش بنعرض مراجعات داخل الموقع حاليًا/).count()===1,
+      `${width}px Reviews truthfully shows no unverified testimonials`);
+    await check(await page.locator('.t-reviews-explanation__actions a[href^="https://wa.me/"]').count()===1,
+      `${width}px Reviews invites outbound WhatsApp only with contact link`);
+    await check(await page.locator('.t-reviews-explanation__actions a[href="/complaints"]').count()===1,
+      `${width}px Reviews preserves a separate complaint path`);
+    const reviewOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+    await check(reviewOverflow<=3,`${width}px Reviews no significant horizontal overflow (${reviewOverflow}px)`);
     await page.goto(baseUrl + '/cart', { waitUntil: 'networkidle', timeout:30000 });
     await check(await page.getByRole('heading', { name:/على.*مزاجك/ }).count()===1, `${width}px Checkout authored header renders`);
     await check(await page.getByRole('heading', { name:/لسه مفيش/ }).count()===1, `${width}px empty cart is honest and non-orderable`);
