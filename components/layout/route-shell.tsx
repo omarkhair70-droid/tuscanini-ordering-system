@@ -22,9 +22,11 @@ export function RouteShell({ children, legacyHeader, legacyFooter, legacyMobileN
   return (
     <>
       {!isNewHome ? legacyHeader : null}
-      <main id="main-content" className={isNewHome ? 'tuscanini-rebirth-main' : 'container-tight pb-32 pt-5 md:pb-16 md:pt-6'}>
-        {children}
-      </main>
+      {isNewHome ? (
+        <div className="tuscanini-rebirth-main">{children}</div>
+      ) : (
+        <main id="main-content" className="container-tight pb-32 pt-5 md:pb-16 md:pt-6">{children}</main>
+      )}
       {!isNewHome ? legacyFooter : null}
       {!isNewHome ? legacyMobileNav : null}
     </>
