@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { ExperienceHeader } from '@/components/rebirth/experience-header';
+import { FoodExploration } from '@/components/rebirth/food-exploration';
 
 const foodFamilies = [
   {
@@ -73,24 +74,12 @@ export function RebirthHome({ activeOrderSlot }: { activeOrderSlot?: ReactNode }
           </div>
         </section>
 
-        <section className="t-food-families t-shell" aria-label="اكتشف أصناف الطعام">
-          {foodFamilies.map((family) => (
-            <Link href={family.href} className={`t-food-card ${family.photo}`} key={family.id}>
-              <div className="t-food-card__photopanel t-photo" aria-hidden="true"><span>{family.english}</span></div>
-              <div className="t-food-card__info">
-                <span className="t-food-card__index">{family.id} / {family.english}</span>
-                <h3>{family.name}</h3>
-                <p>{family.note}</p>
-                <span className="t-food-card__arrow" aria-hidden="true">↗</span>
-              </div>
-            </Link>
-          ))}
-        </section>
+        <FoodExploration />
 
         <section className="t-detail" aria-labelledby="t-detail-title">
           <div className="t-detail__visual t-photo" aria-hidden="true"><span>IN DETAIL / 02</span></div>
           <div className="t-detail__content">
-            <span className="t-index">02 — A CLOSER LOOK</span>
+            <span className="t-index">04 — A CLOSER LOOK</span>
             <h2 id="t-detail-title">اللي جُوّه<br/><em>يفرق.</em></h2>
             <p>الاختيار مش مجرد اسم أو صورة. في المنيو هتلاقي الأصناف والأحجام والإضافات المتاحة، عشان تختار على أساس واضح.</p>
             <Link className="t-button t-button--outline" href="/menu">شوف كل الاختيارات <span aria-hidden="true">↗</span></Link>
@@ -99,7 +88,7 @@ export function RebirthHome({ activeOrderSlot }: { activeOrderSlot?: ReactNode }
 
         <section className="t-quick t-shell" aria-labelledby="t-quick-title">
           <div className="t-quick__copy">
-            <span className="t-index">03 — YOUR WAY</span>
+            <span className="t-index">05 — YOUR WAY</span>
             <h2 id="t-quick-title">عارف نفسك<br/><em>هتاكل إيه؟</em></h2>
             <p>ادخل على المنيو على طول. مش لازم تلف في كل التفاصيل عشان توصل لطلبك.</p>
             <div className="t-quick__actions">
@@ -112,7 +101,7 @@ export function RebirthHome({ activeOrderSlot }: { activeOrderSlot?: ReactNode }
 
         <section className="t-ending t-shell">
           <div className="t-ending__offer">
-            <span className="t-index">04 — WHAT'S ON</span>
+            <span className="t-index">06 — WHAT'S ON</span>
             <h2>العروض<br/><em>على مزاجك.</em></h2>
             <p>شوف العروض المتاحة وشروط كل عرض من صفحتها.</p>
             <Link href="/offers" className="t-text-link">شوف العروض <span aria-hidden="true">↗</span></Link>
