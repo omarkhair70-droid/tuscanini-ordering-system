@@ -32,9 +32,12 @@ export function MaterialReveal() {
           <div className="t-material__image t-material__image--detail" aria-hidden="true" style={{clipPath:`inset(0 ${100-detail}% 0 0)`}}>
             <Image src="/images/rebirth/food-02.jpg" alt="" fill sizes="(max-width: 720px) 96vw, 67vw" className="t-material__img t-material__img--macro" />
           </div>
-          <div className="t-material__handle" aria-hidden="true" style={{left:`${detail}%`}}>
-            <span className="t-material__handle-knob">↔</span>
-          </div>
+          <div className="t-material__handle" aria-hidden="true" style={{left:`${detail}%`}} />
+          <span
+            className="t-material__handle-knob"
+            aria-hidden="true"
+            style={{left:`clamp(29px, ${detail}%, calc(100% - 29px))`}}
+          >↔</span>
           <span className="t-material__badge t-material__badge--whole">اللقطة الكاملة</span>
           <span className="t-material__badge t-material__badge--detail">التفاصيل</span>
           <input
