@@ -53,3 +53,15 @@ The creative task spans REAL photography; graphic language and custom illustrati
 
 ## Evidence status
 Code implemented on the current Draft branch, TypeScript compile and Chromium artifact evidence to be linked once latest Pass 15 run completes. NOT approved or published. No merge.
+
+## PASS 15 — ACTUAL BROWSER QA / GRAPHIC EVIDENCE
+**Verified code, NOT merely a plan.**
+
+- Green Next CI and Chromium screenshot/asset workflow: [Actions #39176756399](https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39176756399) — **completed SUCCESS**, fixture interaction smoke **0 failures**, strict authentic source-photo gate.
+- **52 PNG browser captures** including normal full-page screens at mobile, tablet and desktop, plus focused user-activated navigation open state at **390px and 768px**, packaging alternate (inside) scene at **390px and 1440px**, populated old-price Menu search/product modal/cart/Food Finder states.
+- Four browser widths **320/390/768/1440** passed custom glyph presence for all **17 Menu filter chips**; Food Finder icon grid has 8 visual family choices. Three similar flavor names can be distinguished without inventing food photos.
+- At 320/390/768, illustrated mobile nav opens and closes on Escape. The five main routes retain their true hrefs and menu/cart direct access isn't hidden behind the artwork. Utility links now have distinct feedback/help/place symbols.
+- Two restaurant images (TSC-08 and TSC-07) actually decoded and switch in response to pressed buttons; original wrapper returns on second press. The changing caption correctly states it is a **different actual photographed product**, NOT a split/before-after illusion.
+- After the 2026-10-19 designer visual review: 390px navigation artwork fits one viewport, the red wrapping/inside composition keeps food credible and readable; original menu's glyphs are legible at 390px; Food Finder's outline families visibly work as a reusable line language. This is a first authoring PASS, not owner-approved corporate branding or full award-level closure.
+- A recurring test failure at the first implementation was **an obsolete locator assuming only one packaging image**, not a broken picture; browser QA now distinguishes two photos and verifies both decode. Any earlier failed CI step is superseded by the successful final run above.
+- Follow-up physical/device QA: check focus position after nav close, touch perception of folded/cut glyphs, color contrast at 200% zoom, cross-route transition budget and no unwanted animation on real low-end devices before owner sign-off.
