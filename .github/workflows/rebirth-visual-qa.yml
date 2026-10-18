@@ -53,6 +53,13 @@ jobs:
               npx --yes playwright@1.56.1 screenshot --browser chromium --viewport-size="${width_height}" --wait-for-timeout=1400 --full-page "http://localhost:3000/${route}" "artifacts/screenshots/${slug}-${width}.png"
             done
           done
+      - name: Capture narrow and tablet Home art-direction checkpoints
+        run: |
+          mkdir -p artifacts/screenshots
+          for width_height in "320,720" "768,1024"; do
+            width=${width_height%,*}
+            npx --yes playwright@1.56.1 screenshot --browser chromium --viewport-size="${width_height}" --wait-for-timeout=1400 --full-page "http://localhost:3000/" "artifacts/screenshots/home-${width}.png"
+          done
       - name: Install browser test library
         run: npm install --no-save --ignore-scripts playwright@1.56.1
       - name: Browser interactions and mobile layout smoke
