@@ -61,3 +61,12 @@ Reference principles (from `13_REBENCHMARK_AWARD_REFERENCE_GAP_2026-10-19.md`):
 6. Admin/operator role and order transactions still distinct production validation gates.
 
 **Do not merge PR #59 or deploy Main.**
+
+## Closure evidence after final responsive and interactive screenshot review
+- [Actions #39175147199](https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39175147199) — **SUCCESS**, final responsive row corrections, page sections, modal, 290 EGP custom cart and Food Finder, Chromium fixture **0 failures**, original restaurant 12-image gate.
+- **48 captured PNG files**: baseline all public routes and narrow/tablet versions, Home chapters, plus ten populated Menu search/Product/Addon/Cart/Finder screenshots (390 and 1440).
+- Actual full-page menu screenshot heights at 320px: **8070 → 5574px** (−2496px, 30.9%); 390px: **7044 → 5552px** (−1492px, 21.2%); 768px: **4730 → 3467px** (−1263px, 26.7%); 1440px: **4341 → 4232px** (−109px, 2.5%). These figures capture layout length at 20 items per page, not a speed/restaurant approval claim.
+- On 768 tablet, final 2-column compact list preserves readable type and clear product/price controls, unlike the intermediate screenshot regression.
+- Populated mobile Cart screenshot exposed a semantic reading-order bug: page had shown "Final Review" before food/customer fields. The fixed screenshot and browser coordinate check now show **actual food → delivery/contact fields → final summary/confirmation**, matching DOM reading order. Mobile cart black hero was reduced, not decorated further.
+- Real modal screenshots show distinct original product name, explicit old-price note, checked add-on, stepper quantity **2**, and correct **290 EGP** total without user/prod POST. Finder screenshot shows 8 original affordable crepes after two real questions; no fabricated spicy/new tags.
+- The selection flow's restored options and source labels are authentic, but **exact stock, actual restaurant acceptability, approved current DB price mapping and in-person phone performance remain unverified.** Do not call the project finished.
