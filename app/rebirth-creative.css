@@ -59,12 +59,9 @@
 .t-material__range::-moz-range-thumb{width:44px;height:44px;cursor:ew-resize}
 .t-material__caption{grid-column:2;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;color:#d1bea0;font:13px/1.4 "Anton",Impact,sans-serif;letter-spacing:.055em}
 .t-material__caption span:last-child{font:750 12px "IBM Plex Sans Arabic",Tahoma,sans-serif;letter-spacing:0}
-.t-material__after{display:grid;grid-template-columns:1fr .8fr;gap:clamp(30px,6vw,100px);padding-top:clamp(80px,10vw,160px);align-items:center}
-.t-material__after h3{font:800 clamp(62px,8vw,123px)/1.14 "Changa",Tahoma,sans-serif;margin-top:24px}
-.t-material__after em{color:var(--red)}
-.t-material__after p{font:700 clamp(16px,1.45vw,19px)/2 "IBM Plex Sans Arabic",Tahoma,sans-serif;max-width:530px}
-.t-material__order{display:flex;align-items:center;justify-content:space-between;gap:25px;border-bottom:3px solid var(--yellow);padding:18px 0;margin-top:30px;color:var(--yellow)!important;font:850 18px "IBM Plex Sans Arabic",Tahoma,sans-serif;max-width:385px}
-
+/* Deliberate typographic breath after image reveal, not a second giant heading. */
+.t-material__bridge{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-block:clamp(25px,4vw,54px) 0;border-top:1px solid #ffffff30;margin-top:clamp(38px,5vw,70px);font:750 clamp(15px,1.5vw,20px)/1.8 "IBM Plex Sans Arabic",Tahoma,sans-serif}
+.t-material__bridge a{display:inline-flex;align-items:center;justify-content:space-between;gap:28px;color:var(--yellow)!important;border-bottom:2px solid var(--yellow);padding:11px 0;white-space:nowrap}
 /* A real editorial sequence uses contrast in density, not the same mask everywhere. */
 .t-page .t-intro{padding-block:clamp(70px,8vw,130px) clamp(35px,5vw,75px)}
 .t-page .t-intro h2{font-size:clamp(50px,6.5vw,100px)}
@@ -100,9 +97,7 @@
 .t-material__badge--whole{right:12px}
 .t-material__badge--detail{left:12px}
 .t-material__handle-knob{width:48px;height:48px;font-size:20px}
-.t-material__after{grid-template-columns:1fr;gap:22px;padding-top:80px}
-.t-material__after h3{font-size:clamp(56px,12vw,93px)}
-.t-material__after p{font-size:15px}
+.t-material__bridge{flex-direction:column;align-items:flex-start;gap:8px;font-size:15px}
 }
 @media(max-width:370px){
 .t-page .t-hero h1{font-size:73px}
@@ -150,4 +145,17 @@
     border:2px solid var(--yellow);box-shadow:0 8px 28px #0006;
     font-size:13px
   }
+}
+
+/* Pass 03: tighter pacing after removing redundant introductory and generic order scenes. */
+.t-home-page .t-discover{padding-top:clamp(60px,8vw,120px)}
+.t-home-page .t-photo-archive{padding-bottom:clamp(74px,10vw,135px)}
+.t-home-page .t-material{padding-block:clamp(70px,8vw,116px)}
+.t-home-page .t-material__masthead h2{font-size:clamp(56px,8vw,120px);line-height:1.16}
+@media(max-width:720px){
+.t-home-page .t-discover{padding-top:52px}
+.t-home-page .t-photo-archive{padding-bottom:63px}
+.t-home-page .t-material{padding-block:70px 76px}
+.t-home-page .t-material__masthead h2{font-size:clamp(54px,12vw,85px)}
+.t-home-page .t-material__bridge{margin-top:31px;padding-top:25px}
 }
