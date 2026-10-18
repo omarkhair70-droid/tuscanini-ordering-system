@@ -201,3 +201,9 @@
   .t-header__order{min-height:41px;gap:8px;font-size:11px;padding:9px 11px}
 }
 @media(max-width:370px){.t-header__order{display:none}}
+
+/* Browser-QA finding: original tight Latin lettering collapsed into near-illegible wordmark. */
+.t-page .t-logo__latin{font-family:"Anton",Impact,sans-serif;font-weight:400;letter-spacing:.015em;line-height:1.05;}
+.t-page .t-logo__arabic{font-size:11px;letter-spacing:0;}
+.t-page .t-footer__word{font-family:"Anton",Impact,sans-serif;letter-spacing:.015em;text-decoration:none;}
+@media(max-width:720px){.t-page .t-logo__latin{font-size:23px}.t-page .t-logo__arabic{font-size:9px}}
