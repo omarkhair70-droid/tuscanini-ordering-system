@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { primaryExperienceNavigation, customerUtilityNavigation } from '@/lib/rebirth/site-map';
 
 const foodFamilies = [
   {
@@ -42,9 +43,10 @@ export function RebirthHome({ activeOrderSlot }: { activeOrderSlot?: ReactNode }
 
           <nav aria-label="التنقل الرئيسي" className="t-header__links">
             <a href="#t-main-story">اكتشف</a>
-            <Link href="/menu">المنيو</Link>
-            <Link href="/offers">العروض</Link>
-            <Link href="/about">الحكاية</Link>
+            {primaryExperienceNavigation.filter((link) => link.href !== '/').map((link) => (
+              <Link key={link.href} href={link.href}>{link.label}</Link>
+            ))}
+            <Link href="/cart" aria-label="فتح السلة">السلة</Link>
           </nav>
 
           <Link className="t-header__order" href="/menu">اطلب دلوقتي <span aria-hidden="true">↗</span></Link>
@@ -52,11 +54,13 @@ export function RebirthHome({ activeOrderSlot }: { activeOrderSlot?: ReactNode }
             <summary aria-label="افتح قائمة التنقل"><span>القائمة</span><span aria-hidden="true">☰</span></summary>
             <nav aria-label="التنقل على الهاتف" className="t-mobile-menu__panel">
               <a href="#t-main-story">اكتشف</a>
-              <Link href="/menu">المنيو</Link>
-              <Link href="/offers">العروض</Link>
-              <Link href="/food-finder">اختيارات</Link>
+              {primaryExperienceNavigation.filter((link) => link.href !== '/').map((link) => (
+                <Link key={link.href} href={link.href}>{link.label}</Link>
+              ))}
               <Link href="/cart">السلة</Link>
-              <Link href="/about">الحكاية</Link>
+              {customerUtilityNavigation.map((link) => (
+                <Link key={link.href} href={link.href}>{link.label}</Link>
+              ))}
             </nav>
           </details>
         </div>
