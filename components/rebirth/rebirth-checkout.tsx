@@ -1,5 +1,6 @@
 'use client';
 
+import { ExperienceFooter } from '@/components/rebirth/experience-footer';
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
@@ -208,6 +209,7 @@ export function RebirthCheckout() {
           ) : null}
         </div>
       </main>
+      <ExperienceFooter />
     </div>
   );
 }
