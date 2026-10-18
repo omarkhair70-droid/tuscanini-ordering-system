@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 
 const foodFamilies = [
   {
@@ -27,7 +28,7 @@ const foodFamilies = [
   },
 ];
 
-export function RebirthHome() {
+export function RebirthHome({ activeOrderSlot }: { activeOrderSlot?: ReactNode }) {
   return (
     <div className="t-page" dir="rtl">
       <a className="t-skip" href="#t-main-story">تخطَّ المقدمة وانتقل للمحتوى</a>
@@ -60,6 +61,7 @@ export function RebirthHome() {
           </details>
         </div>
       </header>
+      <div className="t-active-order-slot">{activeOrderSlot}</div>
 
       <section className="t-hero" aria-labelledby="t-hero-title">
         <div className="t-hero__headerline">
