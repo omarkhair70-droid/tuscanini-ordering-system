@@ -88,3 +88,36 @@
 @media(prefers-reduced-motion:reduce){
  .t-real-food-photo__img{transition:none!important;transform:none!important}
 }
+
+/* Pass 15 / the same authored SVG food-family grammar reaches first discovery.
+   Category state changes the REAL category photograph, not invented SKU art.
+   The photo handoff is tied to a user action, never mandatory scroll theater. */
+.t-discover__tabs button:has(.t-discover__tab-glyph){
+ display:flex;align-items:center;gap:10px;padding:10px 16px;
+}
+.t-discover__tab-glyph{
+ flex:none;color:var(--ink);
+ transition:transform .25s cubic-bezier(.16,1,.3,1)
+}
+.t-discover__tabs button[aria-selected=true] .t-discover__tab-glyph{color:var(--yellow)}
+.t-discover__name-line{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0}
+.t-discover__name-line h3{min-width:0;overflow-wrap:anywhere}
+.t-discover__large-glyph{color:var(--red);width:clamp(72px,9vw,115px);height:auto;flex:none;margin-top:22px}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+ .t-discover__tabs button:hover .t-discover__tab-glyph{transform:rotate(-13deg) scale(1.07)}
+}
+@media(prefers-reduced-motion:no-preference){
+ @keyframes t-food-photo-user-reveal{
+   from{clip-path:inset(0 100% 0 0);opacity:.9;filter:saturate(.75)}
+   to{clip-path:inset(0 0 0 0);opacity:1;filter:saturate(1)}
+ }
+ .t-discover__image .t-real-food-photo{animation:t-food-photo-user-reveal .48s cubic-bezier(.2,.8,.3,1) both}
+}
+@media(max-width:720px){
+ .t-discover__tabs button:has(.t-discover__tab-glyph){gap:7px;padding:8px 12px}
+ .t-discover__tab-glyph{width:28px;height:28px}
+ .t-discover__large-glyph{width:68px}
+}
+@media(prefers-reduced-motion:reduce){
+ .t-discover__tab-glyph,.t-discover__image .t-real-food-photo{transition:none!important;animation:none!important;clip-path:none!important}
+}
