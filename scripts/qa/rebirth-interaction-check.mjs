@@ -80,6 +80,7 @@ try {
     await cart.getByPlaceholder('الشارع، المنطقة، علامة مميزة').fill('عنوان تجريبي');
     await cart.getByRole('checkbox',{name:/راجعت الأصناف وبياناتي/}).check();
     await cart.getByRole('button',{name:/سجّل الطلب للمطعم/}).click();
+    await cart.getByText('الطلبات متوقفة الآن').waitFor({state:'visible',timeout:7000});
     await check(await cart.getByText('الطلبات متوقفة الآن').count()===1,`${width}px refused order shows exact server closure`);
     await check(submits===1,`${width}px exactly one mocked checkout request`);
     await check(await cart.getByText(/عرض اختبار غير حقيقي/).count()>0,`${width}px rejected order keeps items for correction`);
