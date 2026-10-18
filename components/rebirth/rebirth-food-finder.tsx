@@ -5,19 +5,20 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { ExperienceHeader } from '@/components/rebirth/experience-header';
 import type { MenuCategory, MenuItem } from '@/types/menu';
+import { MaterialGlyph, type MaterialGlyphName } from '@/components/rebirth/material-glyph';
 
 type FormId='all'|'crepe'|'pizza'|'sandwich'|'pasta'|'sweet'|'drinks'|'sides';
 type BudgetId='any'|'up75'|'up150'|'up250';
 type Props={categories:MenuCategory[];items:MenuItem[];catalogReady:boolean;priceNote:string};
-const forms:{id:FormId;label:string}[]=[
-  {id:'all',label:'أي حاجة حلوة'},
-  {id:'crepe',label:'كريب'},
-  {id:'pizza',label:'بيتزا'},
-  {id:'sandwich',label:'ساندوتش'},
-  {id:'pasta',label:'باستا'},
-  {id:'sweet',label:'حلو ووافل'},
-  {id:'drinks',label:'مشروبات'},
-  {id:'sides',label:'مقبلات'},
+const forms:{id:FormId;label:string;glyph:MaterialGlyphName}[]=[
+  {id:'all',label:'أي حاجة حلوة',glyph:'all'},
+  {id:'crepe',label:'كريب',glyph:'crepe'},
+  {id:'pizza',label:'بيتزا',glyph:'pizza'},
+  {id:'sandwich',label:'ساندوتش',glyph:'sandwich'},
+  {id:'pasta',label:'باستا',glyph:'pasta'},
+  {id:'sweet',label:'حلو ووافل',glyph:'sweet'},
+  {id:'drinks',label:'مشروبات',glyph:'drink'},
+  {id:'sides',label:'مقبلات',glyph:'sides'},
 ];
 const budgets:{id:BudgetId;label:string;max:number}[]=[
   {id:'any',label:'على راحتي',max:Infinity},
@@ -79,7 +80,7 @@ export function RebirthFoodFinder({categories,items,catalogReady,priceNote}:Prop
               <div className="t-finder-progress"><span>2 STEPS / YOUR FOOD</span><span>{finished?'جاهز':form===null?'01 / 02':'02 / 02'}</span></div>
               <fieldset className="t-finder-question">
                 <legend><small>01 — THE FOOD</small><strong>نفسك في نوع أكل إيه؟</strong></legend>
-                <div>{forms.map(x=><button key={x.id} type="button" aria-pressed={form===x.id} onClick={()=>{setForm(x.id);setBudget(null)}}>{x.label}</button>)}</div>
+                <div>{forms.map(x=><button key={x.id} type="button" aria-pressed={form===x.id} onClick={()=>{setForm(x.id);setBudget(null)}}><MaterialGlyph name={x.glyph} size={37} className="t-finder-form-glyph"/><span>{x.label}</span></button>)}</div>
               </fieldset>
               {form!==null&&<fieldset className="t-finder-question">
                 <legend><small>02 — STARTING PRICE</small><strong>تبدأ من كام؟</strong></legend>
