@@ -4,10 +4,11 @@ import type { ReactNode } from 'react';
 import { ExperienceHeader } from '@/components/rebirth/experience-header';
 import { FoodExploration, FoodPhoto } from '@/components/rebirth/food-exploration';
 import { MaterialReveal } from '@/components/rebirth/material-reveal';
+import { PackagingChapter, PlaceChapter } from '@/components/rebirth/physical-chapters';
 
 export function RebirthHome({ activeOrderSlot }: { activeOrderSlot?: ReactNode }) {
   return (
-    <div className="t-page" dir="rtl">
+    <div className="t-page t-home-page" dir="rtl">
       <a className="t-skip" href="#t-main-story">تخطَّ المقدمة وانتقل للمحتوى</a>
 
       <ExperienceHeader />
@@ -40,7 +41,12 @@ export function RebirthHome({ activeOrderSlot }: { activeOrderSlot?: ReactNode }
         <div className="t-hero__bottom"><span>SCROLL TO EXPLORE</span><span aria-hidden="true">↓</span><span>توسكانيني / بني سويف</span></div>
       </section>
 
-      <div className="t-ticker" aria-hidden="true"><div>CREPE <span>✳</span> PIZZA <span>✳</span> MORE THAN MEETS THE EYE <span>✳</span> TUSCANINI <span>✳</span></div></div>
+      <div className="t-ticker" role="img" aria-label="توسكانيني، كريب وبيتزا وساندوتشات">
+        <div className="t-ticker__track" aria-hidden="true">
+          <div className="t-ticker__set"><span>CREPE</span><b aria-hidden="true">✳</b> <span>PIZZA</span><b aria-hidden="true">✳</b> <span>SANDWICHES</span><b aria-hidden="true">✳</b> <span>TUSCANINI</span><b aria-hidden="true">✳</b></div>
+          <div className="t-ticker__set"><span>CREPE</span><b aria-hidden="true">✳</b> <span>PIZZA</span><b aria-hidden="true">✳</b> <span>SANDWICHES</span><b aria-hidden="true">✳</b> <span>TUSCANINI</span><b aria-hidden="true">✳</b></div>
+        </div>
+      </div>
 
       <main id="t-main-story" className="t-home-story">
         <section className="t-intro t-shell" aria-labelledby="t-intro-title">
@@ -55,6 +61,8 @@ export function RebirthHome({ activeOrderSlot }: { activeOrderSlot?: ReactNode }
 
         <MaterialReveal />
 
+        <PackagingChapter />
+
         <section className="t-quick t-shell" aria-labelledby="t-quick-title">
           <div className="t-quick__copy">
             <span className="t-index">05 — YOUR WAY</span>
@@ -68,19 +76,7 @@ export function RebirthHome({ activeOrderSlot }: { activeOrderSlot?: ReactNode }
           <div className="t-quick__art" aria-hidden="true"><span lang="en">GOOD FOOD<br/>NO DETOURS.</span></div>
         </section>
 
-        <section className="t-ending t-shell">
-          <div className="t-ending__offer">
-            <span className="t-index">06 — WHAT'S ON</span>
-            <h2>العروض<br/><em>على مزاجك.</em></h2>
-            <p>شوف العروض المتاحة وشروط كل عرض من صفحتها.</p>
-            <Link href="/offers" className="t-text-link">شوف العروض <span aria-hidden="true">↗</span></Link>
-          </div>
-          <div className="t-ending__place">
-            <span className="t-index">FIND US / BENI SUEF</span>
-            <p>توسكانيني، شارع البحر<br/>سور نادي توليب، بني سويف.</p>
-            <Link href="/contact" className="t-text-link">تواصل معانا <span aria-hidden="true">↗</span></Link>
-          </div>
-        </section>
+        <PlaceChapter />
       </main>
 
       <ExperienceFooter />
