@@ -55,11 +55,11 @@ export default function AboutPage() {
           </div>
           <div className="t-about-observed__photos t-shell">
             <figure className="t-about-observed__scene t-about-observed__scene--place">
-              <Image src="/images/rebirth/food-01.jpg" alt="مجموعة كريبات حقيقية أمام شعار توسكانيني داخل المكان" fill sizes="(max-width: 720px) 92vw, 55vw" />
+              <Image src="/images/rebirth/food-01.jpg" loading="eager" alt="مجموعة كريبات حقيقية أمام شعار توسكانيني داخل المكان" fill sizes="(max-width: 720px) 92vw, 55vw" />
               <figcaption><strong>في المكان</strong><span lang="en">TSC / 01</span></figcaption>
             </figure>
             <figure className="t-about-observed__scene t-about-observed__scene--wrap">
-              <Image src="/images/rebirth/food-08.jpg" alt="ساندوتشات بجانب عبوات توسكانيني الحمراء وورق التغليف المطبوع" fill sizes="(max-width: 720px) 74vw, 34vw" />
+              <Image src="/images/rebirth/food-08.jpg" loading="eager" alt="ساندوتشات بجانب عبوات توسكانيني الحمراء وورق التغليف المطبوع" fill sizes="(max-width: 720px) 74vw, 34vw" />
               <figcaption><strong>على العلبة</strong><span lang="en">TSC / 08</span></figcaption>
             </figure>
           </div>
