@@ -20,7 +20,7 @@ export function RebirthHome({ activeOrderSlot }: { activeOrderSlot?: ReactNode }
         <div className="t-hero__grid">
           <div className="t-hero__words">
             <p className="t-overline">مش كل الحكاية من برّه</p>
-            <h1 id="t-hero-title"><span>بُصّ</span><em>جُوَّه.</em></h1>
+            <h1 id="t-hero-title"><span>بص</span><em>جوه.</em></h1>
             <p className="t-hero__sub">أول لقمة بتبدأ من العين. اكتشف تفاصيل أكلك، واختار اللي على مزاجك.</p>
             <div className="t-hero__actions">
               <Link className="t-button t-button--dark" href="/menu">افتح المنيو <span aria-hidden="true">↗</span></Link>
