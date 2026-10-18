@@ -51,7 +51,27 @@ try{
       await page.waitForTimeout(850);
       const shown=await page.locator('.t-packaging__photo-img--package[data-current="true"]').count();
       if(shown!==1)throw new Error('Packaging film cannot conclude before first-source image is restored');
-      console.log(`MOTION VIDEO ${width}px: illustrated nav (phone), two real family photo transitions, reversible packaging crossfade — no ordering action`);
+
+      // Same recording continues onto the real former-price menu.
+      // No made-up dish images: every SKU has distinct printed graphic artwork.
+      await page.goto(base+'/menu',{waitUntil:'networkidle',timeout:30000});
+      await page.getByRole('button',{name:'كريب لحوم',exact:true}).click();
+      await page.waitForTimeout(650);
+      await glide(page,'.t-menu-items__grid');
+      const first=page.locator('.t-menu-product').first();
+      if(width===1440)await first.hover();
+      await page.waitForTimeout(520);
+      await first.locator('.t-menu-product__bottom button').click();
+      await page.locator('.t-product-dialog[open]').waitFor({timeout:6000});
+      if((await page.locator('.t-product-dialog__identity .t-product-art').count())!==1)
+        throw new Error('Product illustration must continue into item sheet');
+      await page.waitForTimeout(800);
+      const extra=page.locator('.t-product-dialog__options input[type="checkbox"]').first();
+      if(await extra.count())await extra.check();
+      await page.waitForTimeout(440);
+      await page.getByRole('button',{name:'إغلاق تفاصيل المنتج'}).click();
+      await page.waitForTimeout(480);
+      console.log(`MOTION VIDEO ${width}px: illustrated nav, real-category pictures and physical-material change, plus restaurant menu filter → unique SKU fold graphic → native product sheet — NO order submitted`);
     }finally{
       await page.close();
       await context.close();
