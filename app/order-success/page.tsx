@@ -1,3 +1,4 @@
+import { ExperienceFooter } from '@/components/rebirth/experience-footer';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { RebirthOrderTracking } from '@/components/rebirth/rebirth-order-tracking';
@@ -42,6 +43,7 @@ export default async function OrderSuccessPage({searchParams}: Props) {
           </section>
         </div>
       </main>
+      <ExperienceFooter />
     </div>
   );
 }
