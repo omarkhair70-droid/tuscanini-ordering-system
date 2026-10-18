@@ -43,6 +43,16 @@ try {
     await check(noLiveData === 1, `${width}px no fabricated historical product prices without live Supabase`);
     const menuOverflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     await check(menuOverflow <= 3, `${width}px Menu no significant horizontal overflow (${menuOverflow}px)`);
+    await page.goto(baseUrl + '/cart', { waitUntil: 'networkidle', timeout:30000 });
+    await check(await page.getByRole('heading', { name:/على.*مزاجك/ }).count()===1, `${width}px Checkout authored header renders`);
+    await check(await page.getByRole('heading', { name:/لسه مفيش/ }).count()===1, `${width}px empty cart is honest and non-orderable`);
+    await check(await page.getByRole('button', { name: /سجّل الطلب للمطعم/ }).count()===0, `${width}px empty cart cannot be submitted`);
+    const cartOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+    await check(cartOverflow<=3, `${width}px Cart no significant horizontal overflow (${cartOverflow}px)`);
+    await page.goto(baseUrl + '/order-success', { waitUntil:'networkidle', timeout:30000 });
+    await check(await page.getByText(/معندناش مرجع/).count()===1, `${width}px direct tracking URL does not falsely confirm an order`);
+    const trackingOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+    await check(trackingOverflow<=3, `${width}px Tracking no significant horizontal overflow (${trackingOverflow}px)`);
     await context.close();
   }
 } catch (error) {
