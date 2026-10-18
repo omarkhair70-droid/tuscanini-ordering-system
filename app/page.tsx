@@ -12,12 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
-  return (
-    <>
-      <RebirthHome />
-      <div className="t-rebirth-order-tracking" aria-live="polite">
-        <ActiveOrderBanner />
-      </div>
-    </>
-  );
+  return <RebirthHome activeOrderSlot={<ActiveOrderBanner />} />;
 }
