@@ -49,9 +49,13 @@ try {
     await check(await page.getByRole('img',{name:/ساندوتشات توسكانيني بجانب العلب الحمراء/}).count()===1, `${width}px real branded packaging scene present`);
     const packagingLoaded = await page.locator('.t-packaging__photo-img').evaluate(img=>img.complete && img.naturalWidth>0);
     await check(packagingLoaded, `${width}px genuine packaging photograph pixels loaded (not just img element)`);
-    await check(await page.getByRole('heading',{name:/العلبة كمان/}).count()===1, `${width}px separate red packaging chapter renders`);
-    await check(await page.getByRole('heading',{name:/الحكاية.*في بني.*سويف/}).count()===1, `${width}px local yellow place chapter renders`);
+    await check(await page.getByRole('heading',{name:/العلبة.*ليها شكل/}).count()===1, `${width}px separate red packaging chapter renders`);
+    await check(await page.getByRole('heading',{name:/تلاقينا.*في بني.*سويف/}).count()===1, `${width}px local yellow place chapter renders`);
     await check(await page.locator('.t-place-final a[href="/contact"]').count()===1, `${width}px place contact route is available`);
+    await check(await page.locator('.t-intro').count()===0, `${width}px duplicate intro chapter removed`);
+    await check(await page.locator('.t-quick').count()===0, `${width}px redundant large CTA chapter removed`);
+    await check(await page.getByRole('link',{name:/روح للمنيو/}).count()===1, `${width}px bounded menu bridge retained after photo reveal`);
+    await check(await page.locator('.t-material__after').count()===0, `${width}px no repeated enormous inside/out caption scene`);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     await check(overflow <= 3, `${width}px Home no significant horizontal overflow (${overflow}px)`);
     await check(runtimeErrors.length === 0, `${width}px Home no uncaught JavaScript errors: ${runtimeErrors.join(' / ') || 'none'}`);
