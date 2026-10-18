@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/components/cart/cart-provider';
 import { ExperienceHeader } from '@/components/rebirth/experience-header';
@@ -55,7 +55,7 @@ export function RebirthCheckout() {
     return next;
   }
 
-  async function submit(event: React.FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (submitting.current || uncertain || !settings?.isOrderingOpen || items.length === 0) return;
     const validation = validate();
