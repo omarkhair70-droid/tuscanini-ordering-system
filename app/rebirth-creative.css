@@ -115,3 +115,24 @@
 .t-page .t-hero__backplate,.t-page .t-hero__photo,.t-material__handle{transition:none!important}
 .t-hero__visual .t-real-food-photo__img{transition:none!important;transform:none!important}
 }
+
+/* Browser-image review: native Arabic stays shaped as a whole word. Two real
+   photographs land with different weights; checkout remains motion-free. */
+@media(prefers-reduced-motion:no-preference){
+  @keyframes tuscanini-photo-back {
+    from{opacity:0;transform:translate3d(22px,-16px,0) rotate(10deg)}
+    to{opacity:1;transform:translate3d(0,0,0) rotate(5deg)}
+  }
+  @keyframes tuscanini-photo-front {
+    from{opacity:0;transform:translate3d(-30px,22px,0) rotate(-9deg)}
+    to{opacity:1;transform:translate3d(0,0,0) rotate(-4deg)}
+  }
+  @keyframes tuscanini-headline-enter {
+    from{opacity:.45;transform:translate3d(0,15px,0)}
+    to{opacity:1;transform:translate3d(0,0,0)}
+  }
+  .t-page .t-hero__backplate{animation:tuscanini-photo-back .76s .08s cubic-bezier(.16,1,.3,1) both}
+  .t-page .t-hero__photo{animation:tuscanini-photo-front .84s .15s cubic-bezier(.16,1,.3,1) both}
+  .t-page .t-hero__words{animation:tuscanini-headline-enter .6s ease-out both}
+}
+.t-material__stage:focus-within{outline:3px solid var(--yellow);outline-offset:3px}
