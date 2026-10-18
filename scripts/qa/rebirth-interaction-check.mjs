@@ -85,6 +85,24 @@ try {
     await check(submits===1,`${width}px exactly one mocked checkout request`);
     await check(await cart.getByText(/عرض اختبار غير حقيقي/).count()>0,`${width}px rejected order keeps items for correction`);
     await fixtureContext.close();
+    // Isolated tracking fixture validates state semantics, not a real restaurant order.
+    let restaurantStage='جديد';
+    await page.route('**/api/orders/track**',route=>route.fulfill({
+      status:200,contentType:'application/json',
+      body:JSON.stringify({ok:true,order:{
+        orderNumber:1234,reference:'#1234',status:restaurantStage,
+        confirmationStatus:restaurantStage==='جديد'?'pending':'confirmed',
+        tableReference:null,createdAt:'2026-10-18T14:00:00.000Z',
+        orderType:'pickup',totalEstimate:85,
+      }}),
+    }));
+    await page.goto(baseUrl+'/order-success?orderId=123e4567-e89b-42d3-a456-426614174000',{waitUntil:'networkidle',timeout:30000});
+    await page.getByRole('heading',{name:'بانتظار تأكيد المطعم'}).waitFor({state:'visible',timeout:8000});
+    await check(await page.getByText(/لسه مش متأكد/).count()>0,`${width}px stored order clearly awaits restaurant confirmation`);
+    restaurantStage='جاري التحضير';
+    await page.getByRole('button',{name:/حدّث الحالة/}).click();
+    await page.getByRole('heading',{name:'الطلب بيتحضّر'}).waitFor({state:'visible',timeout:8000});
+    await check(await page.getByRole('heading',{name:'الطلب بيتحضّر'}).count()===1,`${width}px order shows preparation only after server status changes`);
     await context.close();
   }
 } catch (error) {
