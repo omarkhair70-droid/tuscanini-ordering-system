@@ -16,7 +16,7 @@ const subjects = [
   { id: 'other', chapter: '04', arabic: 'اختيارات تانية', english: 'THE EXTRA', caption: 'لكل نوع أكل طريقته وحضوره.', menu: '/menu', image: 'TSC-11', subtitle: 'MORE THAN ONE FORM' },
 ] as const;
 
-function FoodPhoto({ id, priority = false, className = '' }: { id: string; priority?: boolean; className?: string }) {
+export function FoodPhoto({ id, priority = false, className = '' }: { id: string; priority?: boolean; className?: string }) {
   const [failed, setFailed] = useState(false);
   const photo = tuscaniniFoodMedia.find((item) => item.id === id);
   if (!photo) return null;
