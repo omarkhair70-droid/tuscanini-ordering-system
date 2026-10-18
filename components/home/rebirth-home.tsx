@@ -1,3 +1,4 @@
+import { ExperienceFooter } from '@/components/rebirth/experience-footer';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { ExperienceHeader } from '@/components/rebirth/experience-header';
@@ -85,12 +86,8 @@ export function RebirthHome({ activeOrderSlot }: { activeOrderSlot?: ReactNode }
         </section>
       </main>
 
-      <footer className="t-footer">
-        <div className="t-shell t-footer__inner">
-          <span className="t-footer__word" lang="en">TUSCANINI.</span>
-          <div><span>توسكانيني — بني سويف</span><nav aria-label="روابط التذييل"><Link href="/menu">المنيو</Link><Link href="/cart">السلة</Link><Link href="/reviews">الآراء</Link><Link href="/contact">تواصل</Link></nav></div>
-        </div>
-      </footer>
+      <ExperienceFooter />
+
 
       <Link href="/menu" className="t-mobile-order">اطلب من المنيو <span aria-hidden="true">↗</span></Link>
     </div>
