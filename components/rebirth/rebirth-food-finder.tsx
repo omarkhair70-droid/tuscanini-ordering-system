@@ -6,79 +6,93 @@ import { useMemo, useState } from 'react';
 import { ExperienceHeader } from '@/components/rebirth/experience-header';
 import type { MenuCategory, MenuItem } from '@/types/menu';
 
-type FormId = 'all'|'crepe'|'pizza'|'sandwich'|'pasta';
-type TagId = 'all'|'spicy'|'new';
-type BudgetId = 'any'|'up150'|'up250';
-type Props={categories:MenuCategory[];items:MenuItem[];live:boolean};
-const forms:{id:FormId;label:string}[]=[{id:'all',label:'مفتوح لكل حاجة'},{id:'crepe',label:'كريب'},{id:'pizza',label:'بيتزا'},{id:'sandwich',label:'ساندوتش'},{id:'pasta',label:'باستا'}];
-const tags:{id:TagId;label:string}[]=[{id:'all',label:'كل الاختيارات'},{id:'spicy',label:'اللي عليها علامة حار'},{id:'new',label:'الأصناف الجديدة'}];
-const budgets:{id:BudgetId;label:string}[]=[{id:'any',label:'أي ميزانية'},{id:'up150',label:'لحد 150 ج.م'},{id:'up250',label:'لحد 250 ج.م'}];
+type FormId='all'|'crepe'|'pizza'|'sandwich'|'pasta'|'sweet'|'drinks'|'sides';
+type BudgetId='any'|'up75'|'up150'|'up250';
+type Props={categories:MenuCategory[];items:MenuItem[];catalogReady:boolean;priceNote:string};
+const forms:{id:FormId;label:string}[]=[
+  {id:'all',label:'أي حاجة حلوة'},
+  {id:'crepe',label:'كريب'},
+  {id:'pizza',label:'بيتزا'},
+  {id:'sandwich',label:'ساندوتش'},
+  {id:'pasta',label:'باستا'},
+  {id:'sweet',label:'حلو ووافل'},
+  {id:'drinks',label:'مشروبات'},
+  {id:'sides',label:'مقبلات'},
+];
+const budgets:{id:BudgetId;label:string;max:number}[]=[
+  {id:'any',label:'على راحتي',max:Infinity},
+  {id:'up75',label:'لحد 75 ج.م',max:75},
+  {id:'up150',label:'لحد 150 ج.م',max:150},
+  {id:'up250',label:'لحد 250 ج.م',max:250},
+];
+function matchesFamily(slug:string,form:FormId):boolean{
+  if (slug==='crepe-addons') return false; // addons are not a stand-alone meal recommendation
+  if(form==='all')return true;
+  if(form==='crepe')return slug.startsWith('crepe-');
+  if(form==='pizza')return slug.startsWith('pizza-');
+  if(form==='sandwich')return slug.startsWith('sandwiches-');
+  if(form==='pasta')return slug==='pasta';
+  if(form==='sweet')return slug==='waffle'||slug==='crepe-sweet';
+  if(form==='drinks')return slug==='drinks';
+  return slug==='appetizers';
+}
+const money=(value:number)=>new Intl.NumberFormat('ar-EG',{maximumFractionDigits:2}).format(value);
 
-export function RebirthFoodFinder({categories,items,live}:Props) {
+export function RebirthFoodFinder({categories,items,catalogReady,priceNote}:Props){
   const [form,setForm]=useState<FormId|null>(null);
-  const [tag,setTag]=useState<TagId|null>(null);
   const [budget,setBudget]=useState<BudgetId|null>(null);
-  const finished=form!==null && tag!==null && budget!==null;
+  const finished=form!==null && budget!==null;
   const recommendations=useMemo(()=>{
-    if(!live||!finished) return [];
-    const available=items.filter(x=>x.availability!=='unavailable' && Number.isFinite(x.priceFrom) && x.priceFrom>=0);
-    return available.filter(item=>{
-      const category=categories.find(c=>c.slug===item.categorySlug);
-      const label=(category?.slug||'').toLowerCase();
-      const matchesForm=form==='all' || (form==='crepe'&&label.startsWith('crepe-')) || (form==='pizza'&&label.startsWith('pizza-')) || (form==='sandwich'&&label.startsWith('sandwiches-')) || (form==='pasta'&&label==='pasta');
-      const matchesTag=tag==='all' || (tag==='spicy'&&item.tags?.includes('حار')) || (tag==='new'&&item.tags?.includes('جديد'));
-      const matchesBudget=budget==='any' || (budget==='up150'&&item.priceFrom<=150) || (budget==='up250'&&item.priceFrom<=250);
-      return matchesForm&&matchesTag&&matchesBudget;
-    }).sort((a,b)=>a.priceFrom-b.priceFrom).slice(0,8);
-  },[budget,categories,finished,form,items,live,tag]);
-
-  function reset() {setForm(null);setTag(null);setBudget(null)}
-  const format=(value:number)=>new Intl.NumberFormat('ar-EG',{maximumFractionDigits:2}).format(value);
+    if(!catalogReady || !finished || !form || !budget)return [];
+    const cap=budgets.find(x=>x.id===budget)?.max??Infinity;
+    return items.filter(item=>
+      item.availability!=='unavailable' &&
+      Number.isFinite(item.priceFrom) && item.priceFrom>0 &&
+      matchesFamily(item.categorySlug,form) && item.priceFrom<=cap
+    ).sort((a,b)=>a.priceFrom-b.priceFrom).slice(0,8);
+  },[budget,catalogReady,finished,form,items]);
+  function reset(){setForm(null);setBudget(null)}
   return (
     <div className="t-page t-finder-page" dir="rtl">
       <a className="t-skip" href="#t-finder-main">انتقل لاختيار الأكل</a>
       <ExperienceHeader/>
       <main id="t-finder-main">
         <header className="t-finder-hero t-shell">
-          <span className="t-index">FIND YOUR FOOD / NOT A GUESS</span>
-          <div><h1>تختار<br/><em>إزاي؟</em></h1><p>نفسك في كريب ولا بيتزا؟ اختار نوع الأكل والعلامة والسعر المناسب، وهنعرضلك من المنيو الحالية بس.</p></div>
+          <span className="t-index">02 CHOICES / REAL RECORDED MENU</span>
+          <div><h1>تختار<br/><em>إزاي؟</em></h1><p>مش لازم تحفظ أسماء الأصناف. اختار نوع الأكل والميزانية، وشوف اختيارات من نفس منيو توسكانيني السابق بأسعاره.</p></div>
           <Link href="/menu">عارف طلبك؟ روح للمنيو ↗</Link>
         </header>
         <div className="t-shell t-finder-content">
-          {!live ? (
+          <p className="t-finder-source" role="note">{priceNote}</p>
+          {!catalogReady ? (
             <section className="t-finder-unavailable" role="status">
-              <span className="t-index">القائمة الحالية / مش مؤكدة</span>
+              <span className="t-index">منيو توسكانيني</span>
               <h2>الاختيارات مش<br/><em>ظاهرة دلوقتي.</em></h2>
-              <p>مش هنقترح صنف بسعر أو توافر غير مؤكد. ممكن ترجع للمنيو أو تسأل المطعم مباشرة.</p>
+              <p>معلومات الأصناف مش متاحة للعرض حاليًا؛ تقدر تكلم المطعم مباشرة.</p>
               <div className="t-finder-unavailable__links">
                 <Link href="/menu">افتح المنيو <span aria-hidden="true">↗</span></Link>
                 <Link href="/contact">اسأل المطعم <span aria-hidden="true">↗</span></Link>
               </div>
             </section>
-          ) : (
+          ):(
             <>
-              <div className="t-finder-progress"><span>3 STEPS / YOUR CHOICE</span><span>{finished?'جاهز':form===null?'01 / 03':tag===null?'02 / 03':'03 / 03'}</span></div>
+              <div className="t-finder-progress"><span>2 STEPS / YOUR FOOD</span><span>{finished?'جاهز':form===null?'01 / 02':'02 / 02'}</span></div>
               <fieldset className="t-finder-question">
-                <legend><small>01 — THE FORM</small><strong>نفسك في نوع أكل إيه؟</strong></legend>
-                <div>{forms.map(x=><button key={x.id} type="button" aria-pressed={form===x.id} onClick={()=>{setForm(x.id);setTag(null);setBudget(null)}}>{x.label}</button>)}</div>
+                <legend><small>01 — THE FOOD</small><strong>نفسك في نوع أكل إيه؟</strong></legend>
+                <div>{forms.map(x=><button key={x.id} type="button" aria-pressed={form===x.id} onClick={()=>{setForm(x.id);setBudget(null)}}>{x.label}</button>)}</div>
               </fieldset>
               {form!==null&&<fieldset className="t-finder-question">
-                <legend><small>02 — PRODUCT TAGS</small><strong>تحب ندوّر على إيه؟</strong></legend>
-                <div>{tags.map(x=><button key={x.id} type="button" aria-pressed={tag===x.id} onClick={()=>{setTag(x.id);setBudget(null)}}>{x.label}</button>)}</div>
-                <p>بنعتمد على العلامات المسجّلة للمنتجات؛ مش بنفترض طعم أو درجة حرارة غير موثقة.</p>
-              </fieldset>}
-              {form!==null&&tag!==null&&<fieldset className="t-finder-question">
-                <legend><small>03 — STARTING PRICE</small><strong>حابب تبدأ من كام؟</strong></legend>
+                <legend><small>02 — STARTING PRICE</small><strong>تبدأ من كام؟</strong></legend>
                 <div>{budgets.map(x=><button key={x.id} type="button" aria-pressed={budget===x.id} onClick={()=>setBudget(x.id)}>{x.label}</button>)}</div>
-                <p>التصفية بالسعر الابتدائي فقط؛ الإضافات والأحجام ممكن تغيّر الإجمالي.</p>
+                <p>السعر الابتدائي من المنيو السابق؛ الأحجام والإضافات ممكن تغيّر الإجمالي، والتوافر النهائي بيتأكد مع المطعم.</p>
               </fieldset>}
               {finished&&<section className="t-finder-results" aria-labelledby="t-finder-result-title">
-                <div className="t-finder-results__top"><div><span className="t-index">THE ACTUAL MENU / MATCHING RESULTS</span><h2 id="t-finder-result-title">لقيّنا إيه؟</h2></div><button type="button" onClick={reset}>ابدأ من جديد ↺</button></div>
-                {recommendations.length===0 ? <p className="t-finder-results__empty">مفيش أصناف من القائمة الحالية بتطابق الثلاث اختيارات مع بعض. جرّب اختيارات تانية أو افتح المنيو.</p> :
+                <div className="t-finder-results__top"><div><span className="t-index">PREVIOUS MENU / REAL PRICES</span><h2 id="t-finder-result-title">لقيّنا إيه؟</h2></div><button type="button" onClick={reset}>ابدأ من جديد ↺</button></div>
+                {recommendations.length===0 ? <p className="t-finder-results__empty">مفيش صنف من المنيو السابق بيطابق النوع والميزانية مع بعض. جرّب ميزانية أو نوع تاني.</p>:
                   <div className="t-finder-results__grid">{recommendations.map(item=><article key={item.id}>
                     <span>{categories.find(c=>c.slug===item.categorySlug)?.name??'من المنيو'}</span><h3>{item.name}</h3>
-                    <p>يبدأ من <strong>{format(item.priceFrom)} ج.م</strong> قبل الإضافات</p>
-                    <Link href={`/menu?category=${encodeURIComponent(item.categorySlug)}`}>افتح القسم واختار التفاصيل ↗</Link>
+                    <p>يبدأ من <strong>{money(item.priceFrom)} ج.م</strong> قبل الإضافات</p>
+                    <Link href={`/menu?category=${encodeURIComponent(item.categorySlug)}`}>افتح القسم واختار الحجم ↗</Link>
                   </article>)}</div>}
                 <Link className="t-finder-results__menu" href="/menu">شوف المنيو كلها ↗</Link>
               </section>}
@@ -86,7 +100,7 @@ export function RebirthFoodFinder({categories,items,live}:Props) {
           )}
         </div>
       </main>
-      <ExperienceFooter />
+      <ExperienceFooter/>
     </div>
   );
 }
