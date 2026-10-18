@@ -104,10 +104,13 @@ try {
     await check(await page.locator('.t-menu-product').count()===20,
       `${width}px 113-item original menu is populated and paginated, not an unavailable dummy`);
     await page.getByRole('searchbox',{name:/دور على أكلك/}).fill('تشيكن فاير');
-    await check(await page.locator('.t-menu-product h3').count()===1 &&
-      await page.locator('.t-menu-product h3').innerText()==='تشيكن فاير',
-      `${width}px old restaurant product exact-name search filters correctly`);
-    await page.getByRole('button',{name:'اختيار تفاصيل تشيكن فاير'}).click();
+    const duplicateFlavors=await page.locator('.t-menu-product h3').allInnerTexts();
+    await check(duplicateFlavors.length>=2 &&
+      duplicateFlavors.every(name=>name==='تشيكن فاير'),
+      `${width}px exact flavor search shows same-named products across distinct old menu families`);
+    await check(await page.getByRole('button',{name:'اختيار تفاصيل كريب توسكانيني — تشيكن فاير'}).count()===1,
+      `${width}px identical flavor names have explicitly distinguishable food-family actions`);
+    await page.getByRole('button',{name:'اختيار تفاصيل كريب توسكانيني — تشيكن فاير'}).click();
     await page.locator('.t-product-dialog[open]').waitFor({timeout:4000});
     await check(await page.locator('.t-product-dialog').getByText(/أسعار منيو توسكانيني السابق/).count()===1,
       `${width}px size/addon picker states where its historical prices came from`);
@@ -240,7 +243,7 @@ try {
     const shopPage=await catalogContext.newPage();
     await shopPage.goto(baseUrl+'/menu',{waitUntil:'networkidle',timeout:30000});
     await shopPage.getByRole('searchbox',{name:/دور على أكلك/}).fill('تشيكن فاير');
-    await shopPage.getByRole('button',{name:'اختيار تفاصيل تشيكن فاير'}).click();
+    await shopPage.getByRole('button',{name:'اختيار تفاصيل كريب توسكانيني — تشيكن فاير'}).click();
     await shopPage.locator('.t-product-dialog[open]').waitFor({timeout:4000});
     await shopPage.locator('.t-product-dialog__options input[type="checkbox"]').first().check();
     await shopPage.getByRole('group',{name:'اختر الكمية'}).getByRole('button',{name:'زيادة الكمية'}).click();
