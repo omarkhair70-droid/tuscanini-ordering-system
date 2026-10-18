@@ -84,12 +84,16 @@ export function RebirthCheckout() {
         }
         return;
       }
-      saveActiveOrder({
-        orderId: payload.orderId,
-        reference: payload.reference ?? (payload.orderNumber ? `#${payload.orderNumber}` : payload.orderId),
-        tableReference: payload.tableReference ?? tableReference,
-        createdAt: new Date().toISOString(),
-      });
+      try {
+        saveActiveOrder({
+          orderId: payload.orderId,
+          reference: payload.reference ?? (payload.orderNumber ? `#${payload.orderNumber}` : payload.orderId),
+          tableReference: payload.tableReference ?? tableReference,
+          createdAt: new Date().toISOString(),
+        });
+      } catch {
+        // Storage is optional; a persisted server order is still successful.
+      }
       clearCart();
       router.push(`/order-success?orderId=${encodeURIComponent(payload.orderId)}`);
     } catch {
