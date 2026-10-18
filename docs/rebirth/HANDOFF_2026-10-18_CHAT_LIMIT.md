@@ -1,4 +1,7 @@
 # TUSCANINI REBIRTH — HANDOFF TO NEXT CHAT (2026-10-18, ~20:31 Egypt)
+
+> **LATEST STATUS UPDATE (after original handoff, 2026-10-18):** Read `docs/rebirth/08_MOTION_RND_AND_VISUAL_QA_PASS_04.md` before acting on the old outstanding-actions section below. Bridge CSS, renamed-heading QA, and the 320/390/768/1440 browser sweep were already done before this chat. Pass 04 then added one native photo motion trial, corrected the material slider knob clipping at both extremes, and verified a 26-PNG browser artifact / zero-failure Chromium run: https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39155495058 . PR #59 remains Draft. Work is DESIGN IN PROGRESS, not launch-ready.
+
 ## Read first
 This is a continuity memo, NOT a completed-feature claim. The user asked to continue creatively developing Tuscanini's real restaurant website, not to rush publishing or maximize page count. The conversation hit its context limit. **Continue execution from this branch without repeating initial research.**
 
