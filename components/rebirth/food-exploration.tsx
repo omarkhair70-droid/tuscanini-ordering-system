@@ -9,7 +9,7 @@ import { tuscaniniFoodMedia } from '@/lib/rebirth/food-media';
  * Genuine category-level photos: real Tuscanini shots, NOT product-specific proof.
  * This discovery sequence is optional; direct Menu is always visible.
  */
-const displayableGallery = tuscaniniFoodMedia.filter(photo => photo.id !== 'TSC-12');
+const displayableGallery = tuscaniniFoodMedia;
 
 const subjects = [
   { id: 'crepe', chapter: '01', arabic: 'الكريب', english: 'THE FOLD', caption: 'من برّه حكاية. ومن جوّه تفاصيل كتير.', menu: '/menu?category=crepe-tuscanini', image: 'TSC-09', subtitle: 'REAL CUTS / REAL FOOD' },
