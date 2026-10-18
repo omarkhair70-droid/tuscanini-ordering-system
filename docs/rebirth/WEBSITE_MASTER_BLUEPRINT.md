@@ -63,7 +63,7 @@ These get a readable dedicated **operations UI family**, not the cinematic/marke
 **Do not prematurely call a page CLOSED** just because its JSX exists or its build passes. End-to-end happy/error states, visual QA and realistic data all have to work.
 
 ## Unknowns and safety rules
-- The 12 photos were supplied as 640×640 JPEGs; upload and optimize real source bytes on the branch. Their absence is a blocking issue for final visual review.
+- The 12 photos were supplied as 640×640 JPEGs; 11 original files are now committed to this branch and displayed through Next/Image, which negotiates optimized formats. TSC-12 remains absent and the strict asset QA gate blocks release.
 - The original mock menu is historical; current menu items, prices, recipes and image-to-product assignments require evidence. Existing current Supabase-backed interfaces should be used when valid, but no fabricated sales or available stock.
 - Social story, hours, offers and founders must not be fabricated.
 - No sitewide publication or PR merge until integrated readiness. The legacy production website and main branch must remain untouched until then.
