@@ -44,6 +44,12 @@ try {
     await check((await lens.getAttribute('aria-valuetext'))?.includes('0٪')===true, `${width}px image detail reveal resets to full-photo side`);
     const sourcePair = await page.locator('.t-material__image img').evaluateAll(images => images.map(img => new URL(img.currentSrc || img.src).searchParams.get('url') || (img.currentSrc||img.src)));
     await check(sourcePair.length===2 && sourcePair[0]===sourcePair[1], `${width}px detail comparison uses identical real source pixels`);
+    await check(await page.locator('.t-ticker__set').count()===2, `${width}px ticker has two seamless repeating sets`);
+    await check(await page.locator('.t-ticker__track').evaluate(el=>getComputedStyle(el).animationName)==='none', `${width}px marquee respects reduced-motion setting`);
+    await check(await page.getByRole('img',{name:/ساندوتشات توسكانيني بجانب العلب الحمراء/}).count()===1, `${width}px real branded packaging scene present`);
+    await check(await page.getByRole('heading',{name:/العلبة كمان/}).count()===1, `${width}px separate red packaging chapter renders`);
+    await check(await page.getByRole('heading',{name:/الحكاية.*في بني.*سويف/}).count()===1, `${width}px local yellow place chapter renders`);
+    await check(await page.locator('.t-place-final a[href="/contact"]').count()===1, `${width}px place contact route is available`);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     await check(overflow <= 3, `${width}px Home no significant horizontal overflow (${overflow}px)`);
     await check(runtimeErrors.length === 0, `${width}px Home no uncaught JavaScript errors: ${runtimeErrors.join(' / ') || 'none'}`);
@@ -65,6 +71,14 @@ try {
     const trackingOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
     await check(trackingOverflow<=3, `${width}px Tracking no significant horizontal overflow (${trackingOverflow}px)`);
     // Isolated browser fixture: checks form behavior without contacting the restaurant DB.
+    if(width===390){
+      const motionContext=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'no-preference'});
+      const motionPage=await motionContext.newPage();
+      await motionPage.goto(baseUrl+'/',{waitUntil:'networkidle',timeout:30000});
+      const name=await motionPage.locator('.t-ticker__track').evaluate(el=>getComputedStyle(el).animationName);
+      await check(name==='t-marquee-continuous', '390px default-motion marquee actually animates');
+      await motionContext.close();
+    }
     const fixtureContext=await browser.newContext({ viewport:{width,height:844},reducedMotion:'reduce' });
     await fixtureContext.addInitScript(()=>{
       localStorage.setItem('tuscanini-cart-v1',JSON.stringify({
