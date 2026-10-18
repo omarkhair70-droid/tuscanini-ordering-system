@@ -59,3 +59,16 @@ No additional photographs on these routes because a literal food shot would crow
 ## Larger still-open project gates
 - Real menu prices/products when restaurant Supabase data is live, legitimate item photo mapping from higher-resolution originals, full ordering and kitchen truth, safe authenticated operator workflows and atomic/idempotent writes all remain separate work.
 - Don't merge Draft PR #59 or update production simply because public creative pages and fixture browser tests pass.
+
+## FINAL PASS 08 QA EVIDENCE — ACTUALLY CHECKED
+- Code checkpoint `27404207ad0b9594be28f2a6f39170dfcc505f2b`: [Browser screenshots + asset gate run #39169238633](https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39169238633) — **COMPLETED SUCCESS**.
+- Chromium interaction smoke: **0 failures**. 320 / 390 / 768 / 1440 public-route assertions all pass. TypeScript and Next production compilation and strict 12-source-photo gate also passed.
+- `tuscanini-mobile-desktop-visuals` artifact: **38 PNGs** (10 routes × 390/1440; 320/768 Home = 2; 390/1440 focused Home material/packaging = 4; 320/768 Menu, Offers, About, Contact, Reviews, Complaints = 12).
+- Explicit successful interaction tests: Contact two real configuration phone links, normalized secure WhatsApp and trusted Facebook, no fake map; Reviews no invented testimonials and direct WhatsApp/complaint choices; Complaints blocks blank draft, builds the exact client-supplied text into a WhatsApp URL, never claims backend receipt.
+- Contact, Reviews and Complaints no significant horizontal overflow at all four sizes. Exactly one public shell header, main and footer per page. Inner semantic header in Complaints is valid and correctly excluded from duplicate app-shell counting.
+- Inspected first browser screenshot contact sheet at all four widths; then inspected final 390px and 1440px full-site contact sheet for Home, Menu, Offers, About, Contact, Reviews and Complaints. Distinct scene identities survive and primary actions remain visible without fake content. No visual sign-off from restaurant owner is claimed.
+- A 320px decorative quote orphan in Reviews was removed after actual screenshot examination. Defensive English developer copy on Complaints was simplified to customer-facing `HELP / REACH TUSCANINI`.
+- This concludes **internal screenshot / browser gate for Contact + Reviews + Complaints only**; not a production-safe or approved all-site closure.
+
+### Next gate by highest operational risk
+Audit ordering DB creation for atomicity/idempotency, active store and expiry/availability truth, operator auth and kitchen state; test real merchant-approved live records before concluding real order E2E. Public creative scenes can still be retuned during one final integrated site review, but do not restart the art direction or copy other projects' aesthetics.
