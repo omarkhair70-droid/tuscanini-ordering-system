@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { RebirthMenu } from '@/components/rebirth/rebirth-menu';
-import { getSupabaseAdaptedMenu } from '@/lib/supabase/menu-adapter';
-import type { MenuCategory, MenuItem } from '@/types/menu';
+import { getRebirthMenuCatalog } from '@/lib/rebirth/previous-menu-catalog';
 import '../rebirth-home.css';
 import '../rebirth-exploration.css';
 import '../rebirth-menu.css';
@@ -17,19 +16,11 @@ export const metadata: Metadata = {
 type Props = { searchParams?: Promise<{ table?: string }> };
 
 export default async function MenuPage({ searchParams }: Props) {
-  // Never silently substitute legacy/mock prices for genuine orderable products.
-  let categories: MenuCategory[] = [];
-  let items: MenuItem[] = [];
-  let sourceVerified = false;
-  try {
-    const result = await getSupabaseAdaptedMenu();
-    categories = result.categories;
-    items = result.items;
-    sourceVerified = categories.length > 0 && items.length > 0;
-  } catch {
-    // A transparent unavailable state is safer than presenting stale old prices.
-  }
+  // Owner decision: the existing restaurant menu and its recorded prices
+  // are the baseline until a replacement is provided. Live order acceptance
+  // remains independently validated by the server; this page never posts an order.
+  const { categories, items, source } = getRebirthMenuCatalog();
   const params = searchParams ? await searchParams : {};
   const table = typeof params.table === 'string' ? params.table.trim() : '';
-  return <RebirthMenu categories={categories} items={items} initialTableReference={table || null} sourceVerified={sourceVerified} />;
+  return <RebirthMenu categories={categories} items={items} initialTableReference={table || null} source={source} />;
 }
