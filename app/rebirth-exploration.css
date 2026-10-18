@@ -1,0 +1,90 @@
+/* Tuscanini Rebirth: richer editorial composition transferred from the real-food prototype.
+ * Colors/type are WORKING choices, not an approved rebrand.
+ * Scope: .t-page, except modal which portals to browser top-layer. */
+.t-page .t-hero{background:var(--ink);color:var(--paper)}
+.t-page .t-hero__headerline,.t-page .t-hero__bottom{border-color:rgba(255,248,232,.23)}
+.t-page .t-hero h1 span{color:var(--paper)}
+.t-page .t-hero h1 em{color:var(--yellow)}
+.t-page .t-overline{color:var(--yellow)}
+.t-page .t-hero__sub{color:#e4d5c0}
+.t-page .t-hero__photo{filter:saturate(1.05);box-shadow:0 35px 75px #0008}
+.t-page .t-hero__stamp{background:var(--yellow);color:var(--ink);border:2px dashed var(--ink)}
+.t-page .t-ticker{background:var(--yellow);color:var(--ink)}
+.t-page .t-ticker span{color:var(--red)}
+.t-page h1,.t-page h2,.t-page h3{font-family:"Changa",Tahoma,Arial,sans-serif;font-weight:800;letter-spacing:0}
+.t-page .t-logo__latin,.t-page .t-ticker,.t-page .t-footer__word,.t-page .t-quick__art,.t-page .t-hero__stamp{font-family:"Anton",Impact,Arial,sans-serif;font-weight:400;letter-spacing:.02em}
+.t-discover{padding-top:clamp(70px,9vw,145px);padding-bottom:clamp(70px,10vw,155px)}
+.t-discover__intro{display:grid;grid-template-columns:1fr 2fr;gap:32px;align-items:start;margin-bottom:clamp(28px,4vw,62px)}
+.t-discover__intro h2{font-size:clamp(54px,8vw,132px);line-height:1.15}
+.t-discover__intro h2 em{color:var(--red)}
+.t-discover__intro p{font-size:clamp(14px,1.4vw,18px);line-height:2;max-width:520px;font-weight:650;margin-top:16px}
+.t-discover__tabs{display:flex;align-items:center;gap:8px;overflow-x:auto;scrollbar-width:thin;margin-bottom:0;border-bottom:2px solid var(--ink);padding-bottom:16px}
+.t-discover__tabs button{border:1px solid #d4c9b7;background:transparent;padding:12px 17px;white-space:nowrap;min-height:49px;font-size:clamp(13px,1.15vw,16px);font-weight:800;display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer}
+.t-discover__tabs button span{font-size:16px;color:var(--red)}
+.t-discover__tabs button:hover{border-color:var(--red)}
+.t-discover__tabs button[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.t-discover__tabs button[aria-selected="true"] span{color:var(--yellow)}
+.t-discover__tabs button:focus-visible{outline:3px solid #257ae8;outline-offset:-3px}
+.t-discover__panel{display:grid;grid-template-columns:1fr 1fr;background:var(--cream);min-height:480px}
+.t-discover__copy{display:flex;flex-direction:column;align-items:flex-start;padding:clamp(27px,4.4vw,75px);min-width:0}
+.t-discover__copy h3{font-size:clamp(60px,8vw,129px);line-height:1.05;margin-top:clamp(24px,3vw,47px)}
+.t-discover__copy p{font-size:clamp(15px,1.6vw,21px);line-height:1.8;font-weight:650;max-width:440px;margin-top:15px}
+.t-discover__cta{display:flex;justify-content:space-between;gap:40px;border-bottom:2px solid var(--ink);padding:13px 2px;font-size:15px;font-weight:800;margin-top:34px}
+.t-discover__cta:hover{color:var(--red)}
+.t-discover__caption{direction:ltr;font-family:"Anton",Impact,sans-serif;letter-spacing:.08em;font-size:15px;margin-top:auto;padding-top:35px;opacity:.7}
+.t-discover__image{position:relative;background:#9c3828;min-height:450px}
+.t-real-food-photo{position:relative;background:#8e3e2a;min-height:120px;width:100%;height:100%;overflow:hidden}
+.t-real-food-photo__img{object-fit:cover;object-position:center;transition:transform .6s ease}
+.t-discover__image:hover .t-real-food-photo__img{transform:scale(1.045)}
+.t-real-food-photo__missing{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:15px;padding:24px;text-align:center;color:#f8ebd9;background:linear-gradient(150deg,#a43b2e,#4a1d16);font-size:13px;font-weight:750}
+.t-real-food-photo__missing span:first-child{font-family:"Anton",Impact,sans-serif;letter-spacing:.13em;font-weight:400;font-size:15px}
+.t-discover__photo-index{position:absolute;bottom:17px;right:18px;font:14px "Anton",Impact,sans-serif;letter-spacing:.07em;color:#fff;text-shadow:0 2px 12px #000a}
+.t-photo-archive{padding-bottom:clamp(85px,10vw,165px)}
+.t-photo-archive__header{border-top:1px solid var(--line);padding-top:27px;margin-bottom:35px;display:flex;justify-content:space-between;align-items:flex-end;gap:20px}
+.t-photo-archive__header h2{font-size:clamp(42px,6.6vw,100px);line-height:1.12;margin-top:12px}
+.t-photo-archive__header h2 em{color:var(--red)}
+.t-photo-archive__header button{border:0;border-bottom:2px solid var(--ink);background:transparent;font:800 15px "IBM Plex Sans Arabic",Tahoma,sans-serif;padding:14px 0;cursor:pointer}
+.t-photo-archive__header button:hover{color:var(--red)}
+.t-photo-archive__samples{display:grid;grid-template-columns:1.1fr .9fr 1.1fr;gap:14px}
+.t-photo-archive__samples button{padding:0;background:transparent;border:0;text-align:left;cursor:pointer;position:relative;aspect-ratio:1/1}
+.t-photo-archive__samples button span{position:absolute;bottom:15px;left:15px;color:#fff;background:#171511b9;padding:4px 8px;font:12px "Anton",Impact,sans-serif}
+.t-photo-archive__samples button:hover .t-real-food-photo__img{transform:scale(1.055)}
+.t-gallery-dialog{color:#171511;background:#fff8e8;border:0;width:min(1100px,94vw);max-height:91dvh;margin:auto;padding:0;box-shadow:0 35px 100px #0008}
+.t-gallery-dialog::backdrop{background:#10100ed9}
+.t-gallery-dialog__header{padding:20px clamp(16px,3vw,40px);display:flex;justify-content:space-between;align-items:center;gap:30px;border-bottom:1px solid #d0c1aa;position:sticky;top:0;z-index:3;background:#fff8e8}
+.t-gallery-dialog__header span{font:12px "Anton",Impact,sans-serif;letter-spacing:.06em}
+.t-gallery-dialog__header h2{font:800 clamp(30px,4vw,55px)/1.2 "Changa",Tahoma,sans-serif}
+.t-gallery-dialog__header button{border:2px solid #171511;background:transparent;width:48px;height:48px;font-size:32px;cursor:pointer}
+.t-gallery-dialog__grid{padding:clamp(14px,2.5vw,30px);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.t-gallery-dialog__grid figure{margin:0;min-width:0}
+.t-gallery-dialog__grid .t-real-food-photo{aspect-ratio:1/1;height:auto}
+.t-gallery-dialog__grid figcaption{font:600 13px/1.7 "IBM Plex Sans Arabic",Tahoma,sans-serif;margin-top:8px}
+.t-gallery-dialog__grid figcaption span{font-family:"Anton",Impact,sans-serif;letter-spacing:.04em}
+@media(max-width:900px){
+ .t-discover__panel{min-height:350px}
+ .t-discover__image{min-height:360px}
+ .t-discover__copy{padding:28px}
+ .t-discover__copy h3{font-size:clamp(50px,8vw,90px)}
+}
+@media(max-width:720px){
+ .t-discover__intro{grid-template-columns:1fr;gap:20px}
+ .t-discover__intro h2{font-size:clamp(51px,11vw,90px)}
+ .t-discover__tabs{margin-inline:-20px;padding-inline:20px}
+ .t-discover__panel{grid-template-columns:1fr}
+ .t-discover__image{grid-row:1;min-height:310px;aspect-ratio:1.18/1}
+ .t-discover__copy{padding:31px 22px 35px}
+ .t-discover__copy h3{font-size:clamp(57px,12vw,95px);margin-top:16px}
+ .t-discover__caption{padding-top:25px}
+ .t-photo-archive__header{align-items:flex-start;flex-direction:column}
+ .t-photo-archive__samples{gap:7px}
+ .t-gallery-dialog__grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+ .t-gallery-dialog__grid figcaption{font-size:11px}
+}
+@media(max-width:370px){
+ .t-discover__tabs button{padding:11px;font-size:12px}
+ .t-discover__image{min-height:250px}
+ .t-gallery-dialog__grid{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+ .t-real-food-photo__img{transition:none!important;transform:none!important}
+}
