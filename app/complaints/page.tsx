@@ -21,7 +21,7 @@ export default async function ComplaintsPage() {
     <ExperienceHeader />
     <main>
       <header className="t-complaints-hero t-shell">
-        <div className="t-complaints-hero__meta"><span>توسكانيني / مساعدة وشكاوى</span><span lang="en">HELP / NOT A PROMISE OF RESOLUTION</span></div>
+        <div className="t-complaints-hero__meta"><span>توسكانيني / مساعدة وشكاوى</span><span lang="en">HELP / REACH TUSCANINI</span></div>
         <div className="t-complaints-hero__grid">
           <div><span className="t-index">01 — TELL US WHAT HAPPENED</span><h1>حصلت<br/><em>مشكلة؟</em></h1></div>
           <div className="t-complaints-hero__aside">
