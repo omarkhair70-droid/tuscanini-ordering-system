@@ -10,12 +10,13 @@ import { RebirthProductDialog } from '@/components/rebirth/rebirth-product-dialo
 import { ActiveOrderBanner } from '@/components/shared/active-order-banner';
 import { ExperienceHeader } from '@/components/rebirth/experience-header';
 import type { MenuCategory, MenuItem } from '@/types/menu';
+import { previousMenuSource } from '@/lib/rebirth/previous-menu-catalog';
 
 type Props = {
   categories: MenuCategory[];
   items: MenuItem[];
   initialTableReference: string | null;
-  sourceVerified: boolean;
+  source: typeof previousMenuSource;
 };
 
 const PAGE_SIZE = 20;
@@ -23,7 +24,7 @@ function normalizeArabic(text: string) {
   return text.normalize('NFKC').replace(/[\u064B-\u065F\u0670]/g, '').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').toLocaleLowerCase('ar').trim();
 }
 
-export function RebirthMenu({ categories, items, initialTableReference, sourceVerified }: Props) {
+export function RebirthMenu({ categories, items, initialTableReference, source }: Props) {
   const { tableReference, updateTableReference } = useCart();
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<string>('all');
@@ -39,7 +40,8 @@ export function RebirthMenu({ categories, items, initialTableReference, sourceVe
     if (tableReference !== initialTableReference) updateTableReference(initialTableReference);
   }, [initialTableReference, tableReference, updateTableReference]);
 
-  const validItems = useMemo(() => sourceVerified ? items : [], [sourceVerified, items]);
+  const validItems = items;
+  const catalogPresent = categories.length > 0 && items.length > 0;
   const filtered = useMemo(() => {
     const term = normalizeArabic(query);
     return validItems.filter(item => {
@@ -84,7 +86,7 @@ export function RebirthMenu({ categories, items, initialTableReference, sourceVe
               <span className="t-menu-intro__photo-note">من صور المطعم — مش صور مرتبطة بصنف معين</span>
             </div>
           </div>
-          <div className="t-menu-intro__bottom"><span>{sourceVerified ? 'الأسعار والتوافر حسب المنيو الحالي' : 'بنظهر المنيو لما البيانات الحالية تتوفر'}</span><Link href="/food-finder">مش عارف تختار؟ <span aria-hidden>↗</span></Link></div>
+          <div className="t-menu-intro__bottom"><span>{source.label} · السعر والتوافر النهائي عند تأكيد المطعم</span><Link href="/food-finder">مش عارف تختار؟ <span aria-hidden>↗</span></Link></div>
         </header>
         <div className="t-shell t-menu-content">
           <ActiveOrderBanner />
@@ -95,6 +97,7 @@ export function RebirthMenu({ categories, items, initialTableReference, sourceVe
               {query && <button type="button" onClick={()=>{setQuery('');setLimit(PAGE_SIZE);}}>امسح البحث</button>}
             </div>
           </section>
+          <p className="t-menu-source-note" role="note">{source.note}</p>
           <section aria-label="أقسام المنيو" className="t-menu-categories">
             <div className="t-menu-categories__heading"><span className="t-index">01 — PICK A FOOD FAMILY</span><span>{categories.length} قسم</span></div>
             <div className="t-menu-categories__scroller">
@@ -109,10 +112,10 @@ export function RebirthMenu({ categories, items, initialTableReference, sourceVe
               <div><span className="t-index">02 — CHOOSE WITH CLARITY</span><h2 id="t-menu-items-title">{category === 'all' ? 'الاختيارات' : categories.find(x=>x.slug===category)?.name}</h2></div>
               <span role="status" aria-live="polite">{filtered.length} صنف مطابق</span>
             </div>
-            {!sourceVerified ? (
+            {!catalogPresent ? (
               <div className="t-menu-unavailable" role="status">
-                <p className="t-index">LIVE DATA REQUIRED</p><h3>المنيو مش متاحة حاليًا.</h3>
-                <p>مش هنعرض أسعار قديمة كأنها الأسعار الحالية. حاول تاني بعد شوية، أو اتواصل مع المطعم للتأكد من المنيو.</p>
+                <p className="t-index">MENU DATA / MISSING</p><h3>حصلت مشكلة في تحميل المنيو.</h3>
+                <p>تواصل مع المطعم علشان تتأكد من الأصناف والأسعار.</p>
                 <Link href="/contact">تواصل مع توسكانيني ↗</Link>
               </div>
             ) : filtered.length === 0 ? (
@@ -159,8 +162,8 @@ export function RebirthMenu({ categories, items, initialTableReference, sourceVe
         </div>
       </main>
       <ExperienceFooter />
-      <RebirthProductDialog item={selectedProduct} onClose={()=>setSelectedProduct(null)} />
-      {sourceVerified && <FloatingCartCta />}
+      <RebirthProductDialog item={selectedProduct} priceSource="previous" onClose={()=>setSelectedProduct(null)} />
+      {catalogPresent && <FloatingCartCta />}
     </div>
   );
 }
