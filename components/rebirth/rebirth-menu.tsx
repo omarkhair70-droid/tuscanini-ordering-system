@@ -70,6 +70,7 @@ export function RebirthMenu({ categories, items, initialTableReference, sourceVe
               <span className="t-index">FIND YOUR FOOD / TUSCANINI</span>
               <h1>كل اللي<br/><em>نفسك فيه.</em></h1>
               <p>عارف طلبك؟ دوّر عليه بالاسم. لسه بتختار؟ ابدأ من قسم الأكل اللي على مزاجك.</p>
+              <a className="t-menu-intro__jump" href="#t-menu-search">دور على أكلك <span aria-hidden="true">↓</span></a>
             </div>
             <div className="t-menu-intro__photo-pair" aria-label="صور حقيقية عامة من المطعم، وليست صور أصناف محددة في المنيو">
               <figure className="t-menu-intro__photo t-menu-intro__photo--main">
