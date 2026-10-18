@@ -80,6 +80,14 @@ try {
     await check(overflow <= 3, `${width}px Home no significant horizontal overflow (${overflow}px)`);
     await check(runtimeErrors.length === 0, `${width}px Home no uncaught JavaScript errors: ${runtimeErrors.join(' / ') || 'none'}`);
     await page.goto(baseUrl + '/menu', { waitUntil: 'networkidle', timeout:30000 });
+    await check(await page.locator('.t-menu-intro__jump[href="#t-menu-search"]').count()===1,
+      `${width}px Menu search can be reached directly from first hero scene`);
+    const menuTitleFits = await page.locator('.t-menu-intro__copy h1').evaluate(el => {
+      const height = el.getBoundingClientRect().height;
+      const line = parseFloat(getComputedStyle(el).lineHeight);
+      return Number.isFinite(line) && height <= line * (window.innerWidth <= 390 ? 2.35 : 2.65);
+    });
+    await check(menuTitleFits, `${width}px Menu Arabic headline stays within two intentional lines`);
     const menuDocumentaryPhotos = await page.locator('.t-menu-intro__photo img').evaluateAll(images =>
       images.map(img => img.complete && img.naturalWidth > 0)
     );
