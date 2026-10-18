@@ -10,13 +10,13 @@ import { RebirthProductDialog } from '@/components/rebirth/rebirth-product-dialo
 import { ActiveOrderBanner } from '@/components/shared/active-order-banner';
 import { ExperienceHeader } from '@/components/rebirth/experience-header';
 import type { MenuCategory, MenuItem } from '@/types/menu';
-import { previousMenuSource } from '@/lib/rebirth/previous-menu-catalog';
+import type { RebirthCatalog } from '@/lib/rebirth/previous-menu-catalog';
 
 type Props = {
   categories: MenuCategory[];
   items: MenuItem[];
   initialTableReference: string | null;
-  source: typeof previousMenuSource;
+  source: RebirthCatalog['source'];
 };
 
 const PAGE_SIZE = 20;
