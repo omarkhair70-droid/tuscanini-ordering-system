@@ -346,3 +346,29 @@
   .t-menu-page .t-menu-product__price strong{font-size:17px}
   .t-menu-page .t-menu-product__bottom button{font-size:11px;padding-inline:6px}
 }
+
+/* P15 material iconography on actual catalog categories, not product photos. */
+.t-menu-page .t-menu-categories__scroller button{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:10px 15px
+}
+.t-menu-page .t-menu-category-glyph{
+  flex:none;width:27px;height:27px;
+  transition:transform .22s cubic-bezier(.16,1,.3,1)
+}
+.t-menu-page .t-menu-categories__scroller button[aria-pressed=true] .t-menu-category-glyph{
+  color:var(--yellow)
+}
+.t-menu-page .t-menu-product__family{
+  display:inline-flex;gap:6px;align-items:center;justify-content:flex-end
+}
+.t-menu-page .t-menu-product__family svg{flex:none;opacity:.65}
+@media(max-width:720px){
+ .t-menu-page .t-menu-categories__scroller button{gap:7px;font-size:12px}
+ .t-menu-page .t-menu-category-glyph{width:25px;height:25px}
+ .t-menu-page .t-menu-product__family svg{width:18px;height:18px}
+}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+ .t-menu-page .t-menu-categories__scroller button:hover .t-menu-category-glyph{transform:rotate(-10deg) scale(1.1)}
+}
+@media(prefers-reduced-motion:reduce){.t-menu-page .t-menu-category-glyph{transition:none}}
