@@ -104,6 +104,13 @@ try {
     await page.goto(baseUrl + '/offers', { waitUntil: 'networkidle', timeout:30000 });
     const offersDocumentaryPhotoLoaded = await page.locator('.t-offers-hero__photo img').evaluate(img => img.complete && img.naturalWidth > 0);
     await check(offersDocumentaryPhotoLoaded, `${width}px Offers real non-offer-specific photograph decoded`);
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL === 'https://example.supabase.co') {
+      const sourceFailureShown = await page.getByRole('heading', { name: 'مش قادرين نتحقق من العروض.' }).count();
+      const falselyEmptyShown = await page.getByRole('heading', { name: /مفيش عروض.*مؤكدة/ }).count();
+      await check(sourceFailureShown === 1 && falselyEmptyShown === 0,
+        `${width}px unavailable offers backend shows verification failure, not false no-active claim`);
+    }
+
     await check(await page.getByText('صورة من المطعم — مش صورة عرض محدد').count()===1,
       `${width}px Offers photograph is not misrepresented as a live discount`);
     await check(await page.locator('.t-offers-hero__foot a[href="/menu"]').count()===1,
