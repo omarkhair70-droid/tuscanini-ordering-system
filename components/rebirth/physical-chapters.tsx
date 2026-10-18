@@ -21,7 +21,7 @@ export function PackagingChapter() {
         </div>
         <h2 id="t-packaging-title">مش بس<br/><em>اللقمة.</em><br/>العلبة كمان.</h2>
         <div className="t-packaging__bottom">
-          <p>حتى قبل ما تفتح العلبة، توسكانيني حاضر في لونها وورقها. دي تفاصيل حقيقية من المطعم، مش رسومات اتعملت للموقع.</p>
+          <p>العلبة الحمرا، وورق التغليف المطبوع، والأكل قدامك. تفاصيل بتكمّل الإحساس حتى قبل أول لقمة.</p>
           <Link href="/menu">شوف الأكل كله <span aria-hidden="true">↗</span></Link>
         </div>
         <span className="t-packaging__ghost" lang="en" aria-hidden="true">04</span>
