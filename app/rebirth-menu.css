@@ -198,7 +198,7 @@
   color:var(--ink)
 }
 .t-menu-source-note:before{
-  content:"MENU / PREVIOUS";
+  content:"TUSCANINI / MENU";
   display:inline-block;align-self:center;flex-shrink:0;
   padding:7px 9px;background:var(--ink);color:var(--paper);
   font:12px/1.2 "Anton",Impact,sans-serif;
