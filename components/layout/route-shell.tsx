@@ -17,7 +17,7 @@ type RouteShellProps = {
  */
 export function RouteShell({ children, legacyHeader, legacyFooter, legacyMobileNav }: RouteShellProps) {
   const pathname = usePathname();
-  const isNewHome = pathname === '/' || pathname === '/menu' || pathname === '/cart' || pathname === '/order-success';
+  const isNewHome = pathname === '/' || pathname === '/menu' || pathname === '/cart' || pathname === '/order-success' || pathname === '/food-finder';
 
   return (
     <>
