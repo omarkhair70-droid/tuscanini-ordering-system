@@ -139,7 +139,7 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
                         {item.description && <p className="t-menu-product__description">{item.description}</p>}
                         <div className="t-menu-product__bottom">
                           <div className="t-menu-product__price">{available ? <><span>يبدأ من</span><strong>{item.priceFrom} ج.م</strong></> : <span>غير متاح حاليًا</span>}</div>
-                          <button type="button" disabled={!available} onClick={()=>setSelectedProduct(item)} aria-label={available ? 'اختيار تفاصيل ' + item.name : item.name + ' غير متاح'}>
+                          <button type="button" disabled={!available} onClick={()=>setSelectedProduct(item)} aria-label={available ? 'اختيار تفاصيل ' + familyName + ' — ' + item.name : familyName + ' — ' + item.name + ' غير متاح'}>
                             {available ? 'اختار التفاصيل ↗' : 'غير متاح'}
                           </button>
                         </div>
