@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { useCart } from '@/components/cart/cart-provider';
 import { FloatingCartCta } from '@/components/cart/floating-cart-cta';
-import { ProductCustomizationModal } from '@/components/menu/product-customization-modal';
+import { RebirthProductDialog } from '@/components/rebirth/rebirth-product-dialog';
 import { ActiveOrderBanner } from '@/components/shared/active-order-banner';
 import { ExperienceHeader } from '@/components/rebirth/experience-header';
 import type { MenuCategory, MenuItem } from '@/types/menu';
@@ -141,7 +141,7 @@ export function RebirthMenu({ categories, items, initialTableReference, sourceVe
           </footer>
         </div>
       </main>
-      <ProductCustomizationModal item={selectedProduct} isOpen={Boolean(selectedProduct)} onClose={()=>setSelectedProduct(null)} />
+      <RebirthProductDialog item={selectedProduct} onClose={()=>setSelectedProduct(null)} />
       {sourceVerified && <FloatingCartCta />}
     </div>
   );
