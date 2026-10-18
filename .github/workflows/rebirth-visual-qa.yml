@@ -46,7 +46,7 @@ jobs:
       - name: Capture phone-width and desktop-width views
         run: |
           mkdir -p artifacts/screenshots
-          for route in "" "menu" "offers" "food-finder" "about" "contact" "cart" "reviews" "complaints"; do
+          for route in "" "menu" "offers" "food-finder" "about" "contact" "cart" "order-success" "reviews" "complaints"; do
             slug=$(echo "${route:-home}" | tr '/' '-')
             for width_height in "390,844" "1440,900"; do
               width=${width_height%,*}
