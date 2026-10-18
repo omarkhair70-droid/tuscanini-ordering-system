@@ -10,6 +10,7 @@ import { RebirthProductDialog } from '@/components/rebirth/rebirth-product-dialo
 import { ActiveOrderBanner } from '@/components/shared/active-order-banner';
 import { ExperienceHeader } from '@/components/rebirth/experience-header';
 import type { MenuCategory, MenuItem } from '@/types/menu';
+import { MaterialGlyph, categoryMaterialGlyph } from '@/components/rebirth/material-glyph';
 import type { RebirthCatalog } from '@/lib/rebirth/previous-menu-catalog';
 
 type Props = {
@@ -101,9 +102,9 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
           <section aria-label="أقسام المنيو" className="t-menu-categories">
             <div className="t-menu-categories__heading"><span className="t-index">01 — PICK A FOOD FAMILY</span><span>{categories.length} قسم</span></div>
             <div className="t-menu-categories__scroller">
-              <button type="button" aria-pressed={category==='all'} onClick={()=>chooseCategory('all')}>كل الأصناف</button>
+              <button type="button" aria-pressed={category==='all'} onClick={()=>chooseCategory('all')}><MaterialGlyph name="all" size={26} className="t-menu-category-glyph"/>كل الأصناف</button>
               {categories.map(item => (
-                <button key={item.slug} type="button" aria-pressed={category===item.slug} onClick={()=>chooseCategory(item.slug)}>{item.name}</button>
+                <button key={item.slug} type="button" aria-pressed={category===item.slug} onClick={()=>chooseCategory(item.slug)}><MaterialGlyph name={categoryMaterialGlyph(item.slug)} size={26} className="t-menu-category-glyph"/>{item.name}</button>
               ))}
             </div>
           </section>
@@ -133,7 +134,7 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
                       <article className="t-menu-product" key={item.id}>
                         <div className="t-menu-product__top">
                           <span>{String(index+1).padStart(2,'0')}</span>
-                          <span>{familyName}</span>
+                          <span className="t-menu-product__family"><MaterialGlyph name={categoryMaterialGlyph(item.categorySlug)} size={22}/>{familyName}</span>
                         </div>
                         <h3>{item.name}</h3>
                         {item.description && <p className="t-menu-product__description">{item.description}</p>}
