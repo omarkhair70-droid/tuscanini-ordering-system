@@ -3,6 +3,7 @@ import { RebirthHome } from '@/components/home/rebirth-home';
 import { ActiveOrderBanner } from '@/components/shared/active-order-banner';
 import './rebirth-home.css';
 import './rebirth-exploration.css';
+import './rebirth-creative.css';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
