@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { tuscaniniFoodMedia } from '@/lib/rebirth/food-media';
 
 /**
@@ -54,7 +54,7 @@ export function FoodExploration() {
     setGalleryOpen(false);
   }
 
-  function handleTabKey(event: React.KeyboardEvent<HTMLButtonElement>, index: number) {
+  function handleTabKey(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(event.key)) return;
     event.preventDefault();
     const next = event.key === 'Home' ? 0
@@ -105,7 +105,7 @@ export function FoodExploration() {
 
       <section className="t-photo-archive t-shell" aria-labelledby="t-photo-archive-title">
         <div className="t-photo-archive__header">
-          <div><span className="t-index">06 — REAL RESTAURANT / EDITORIAL MATERIAL</span><h2 id="t-photo-archive-title">مش صور <em>ستوك.</em></h2></div>
+          <div><span className="t-index">03 — REAL RESTAURANT / EDITORIAL MATERIAL</span><h2 id="t-photo-archive-title">مش صور <em>ستوك.</em></h2></div>
           <button type="button" onClick={openGallery} aria-haspopup="dialog">شوف الصور الـ12 <span aria-hidden="true">↗</span></button>
         </div>
         <div className="t-photo-archive__samples">
