@@ -175,6 +175,28 @@ try {
       `${width}px Reviews preserves a separate complaint path`);
     const reviewOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
     await check(reviewOverflow<=3,`${width}px Reviews no significant horizontal overflow (${reviewOverflow}px)`);
+    await page.goto(baseUrl + '/complaints', { waitUntil:'networkidle',timeout:30000 });
+    await check(await page.getByRole('heading',{name:/حصلت.*مشكلة/}).count()===1,
+      `${width}px Complaints authored help route renders`);
+    await check(await page.locator('body header').count()===1 &&
+      await page.locator('body main').count()===1 &&
+      await page.locator('body footer').count()===1,
+      `${width}px Complaints has one public header/main/footer`);
+    await page.getByRole('button',{name:/جهز الرسالة وافتح واتساب/}).click();
+    await check(await page.getByRole('alert').getByText(/اكتب تفاصيل المشكلة/).count()===1,
+      `${width}px complaint cannot open an empty WhatsApp message`);
+    await page.getByLabel(/إيه اللي حصل/).fill('اختبار شكوى فقط - لا ترسل');
+    await page.evaluate(()=>{window.open=(url)=>{window.__capturedComplaintUrl=String(url);return null;};});
+    await page.getByRole('button',{name:/جهز الرسالة وافتح واتساب/}).click();
+    const capturedComplaint=await page.evaluate(()=>window.__capturedComplaintUrl||'');
+    await check(capturedComplaint.startsWith('https://wa.me/') &&
+      decodeURIComponent(capturedComplaint).includes('اختبار شكوى فقط - لا ترسل'),
+      `${width}px valid complaint opens prefilled WhatsApp URL locally without server POST`);
+    await check(await page.getByRole('status').getByText(/اضغط إرسال بنفسك/).count()===1,
+      `${width}px website never falsely reports complaint as received`);
+    const complaintsOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+    await check(complaintsOverflow<=3,
+      `${width}px Complaints no significant horizontal overflow (${complaintsOverflow}px)`);
     await page.goto(baseUrl + '/cart', { waitUntil: 'networkidle', timeout:30000 });
     await check(await page.getByRole('heading', { name:/على.*مزاجك/ }).count()===1, `${width}px Checkout authored header renders`);
     await check(await page.getByRole('heading', { name:/لسه مفيش/ }).count()===1, `${width}px empty cart is honest and non-orderable`);
