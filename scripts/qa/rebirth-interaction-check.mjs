@@ -53,6 +53,37 @@ try {
     await check(await page.getByText(/معندناش مرجع/).count()===1, `${width}px direct tracking URL does not falsely confirm an order`);
     const trackingOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
     await check(trackingOverflow<=3, `${width}px Tracking no significant horizontal overflow (${trackingOverflow}px)`);
+    // Isolated browser fixture: checks form behavior without contacting the restaurant DB.
+    const fixtureContext=await browser.newContext({ viewport:{width,height:844},reducedMotion:'reduce' });
+    await fixtureContext.addInitScript(()=>{
+      localStorage.setItem('tuscanini-cart-v1',JSON.stringify({
+        items:[{lineId:'fixture-line',kind:'offer',offerId:'fixture-only',offerTitle:'عرض اختبار غير حقيقي',quantity:1,unitPrice:45,totalItemPrice:45,itemNotes:''}],
+        customer:{name:'',phone:'',address:'',orderType:'delivery',generalNotes:'',confirmedAccurateDetails:false},
+        tableReference:null,
+      }));
+    });
+    await fixtureContext.route('**/api/public/site-settings',route=>route.fulfill({
+      status:200,contentType:'application/json',body:JSON.stringify({ok:true,settings:{isOrderingOpen:true,whatsappOrderNumber:''}}),
+    }));
+    let submits=0;
+    await fixtureContext.route('**/api/orders',route=>{
+      submits++;
+      return route.fulfill({status:409,contentType:'application/json',body:JSON.stringify({ok:false,code:'ORDERING_CLOSED',error:'الطلبات متوقفة الآن'}),});
+    });
+    const cart=await fixtureContext.newPage();
+    await cart.goto(baseUrl+'/cart',{waitUntil:'networkidle',timeout:30000});
+    await cart.getByRole('button',{name:/سجّل الطلب للمطعم/}).click();
+    await check(await cart.getByText(/اكتب اسمك/).count()===1,`${width}px fixture cart required name validation`);
+    await check(submits===0,`${width}px invalid checkout never posts order`);
+    await cart.getByPlaceholder('الاسم').fill('عميل اختبار');
+    await cart.getByPlaceholder('01xxxxxxxxx').fill('01012345678');
+    await cart.getByPlaceholder('الشارع، المنطقة، علامة مميزة').fill('عنوان تجريبي');
+    await cart.getByRole('checkbox',{name:/راجعت الأصناف وبياناتي/}).check();
+    await cart.getByRole('button',{name:/سجّل الطلب للمطعم/}).click();
+    await check(await cart.getByText('الطلبات متوقفة الآن').count()===1,`${width}px refused order shows exact server closure`);
+    await check(submits===1,`${width}px exactly one mocked checkout request`);
+    await check(await cart.getByText(/عرض اختبار غير حقيقي/).count()>0,`${width}px rejected order keeps items for correction`);
+    await fixtureContext.close();
     await context.close();
   }
 } catch (error) {
