@@ -118,6 +118,19 @@ try {
     const offersOverflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     await check(offersOverflow <= 3, `${width}px Offers no significant horizontal overflow (${offersOverflow}px)`);
 
+    await page.goto(baseUrl + '/food-finder', { waitUntil:'networkidle',timeout:30000 });
+    await check(await page.getByRole('heading',{name:/تختار.*إزاي/}).count()===1,
+      `${width}px Finder has distinct functional question, not duplicated Cart headline`);
+    const finderHeroHeight=await page.locator('.t-finder-hero').evaluate(el=>el.getBoundingClientRect().height);
+    await check(finderHeroHeight<=620,
+      `${width}px Finder first-scene priority is bounded (${Math.round(finderHeroHeight)}px)`);
+    await check(await page.getByRole('heading',{name:/الاختيارات مش.*ظاهرة دلوقتي/}).count()===1,
+      `${width}px unavailable menu is truthfully marked without fallback products`);
+    await check(await page.locator('.t-finder-unavailable a[href="/menu"]').count()===1 &&
+      await page.locator('.t-finder-unavailable a[href="/contact"]').count()===1,
+      `${width}px Finder unavailable state retains direct menu and restaurant contact`);
+    const finderOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+    await check(finderOverflow<=3,`${width}px Finder no significant horizontal overflow (${finderOverflow}px)`);
     await page.goto(baseUrl + '/about', { waitUntil: 'networkidle', timeout:30000 });
     await check(await page.getByRole('heading', { name: /ناس، أكل/ }).count()===1,
       `${width}px About uses verified people and place story`);
