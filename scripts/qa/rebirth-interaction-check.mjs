@@ -34,14 +34,32 @@ try {
     await check(await gallery.locator('figure').count() === 12, `${width}px all twelve original photos are accessible in gallery`);
     await gallery.getByRole('button', { name: 'إغلاق المعرض' }).click();
     await check(!(await gallery.isVisible()), `${width}px gallery closes safely`);
+    if ([390, 1440].includes(width)) {
+      await page.locator('.t-material__stage').scrollIntoViewIfNeeded();
+      await page.screenshot({ path: `artifacts/screenshots/home-material-focus-${width}.png` });
+      await page.locator('.t-packaging__content').scrollIntoViewIfNeeded();
+      await page.screenshot({ path: `artifacts/screenshots/home-packaging-focus-${width}.png` });
+    }
     const lens = page.getByRole('slider', {name:/حرّك للمقارنة/});
     await check(await lens.count()===1, `${width}px one accessible genuine-photo comparison control`);
     const before = await lens.getAttribute('aria-valuetext');
     await lens.focus();
     await lens.press('End');
     await check((await lens.getAttribute('aria-valuetext')) !== before && (await lens.getAttribute('aria-valuetext'))?.includes('100')===true, `${width}px image detail reveal responds to keyboard End`);
+    const visibleKnob = await page.locator('.t-material__stage').evaluate(stage => {
+      const bounds = stage.getBoundingClientRect();
+      const knob = stage.querySelector('.t-material__handle-knob')?.getBoundingClientRect();
+      return Boolean(knob && knob.left >= bounds.left - 2 && knob.right <= bounds.right + 2);
+    });
+    await check(visibleKnob, `${width}px reveal drag knob stays fully visible at 100%`);
     await lens.press('Home');
     await check((await lens.getAttribute('aria-valuetext'))?.includes('0٪')===true, `${width}px image detail reveal resets to full-photo side`);
+    const visibleKnobAtStart = await page.locator('.t-material__stage').evaluate(stage => {
+      const bounds = stage.getBoundingClientRect();
+      const knob = stage.querySelector('.t-material__handle-knob')?.getBoundingClientRect();
+      return Boolean(knob && knob.left >= bounds.left - 2 && knob.right <= bounds.right + 2);
+    });
+    await check(visibleKnobAtStart, `${width}px reveal drag knob stays fully visible at 0%`);
     const sourcePair = await page.locator('.t-material__image img').evaluateAll(images => images.map(img => new URL(img.currentSrc || img.src).searchParams.get('url') || (img.currentSrc||img.src)));
     await check(sourcePair.length===2 && sourcePair[0]===sourcePair[1], `${width}px detail comparison uses identical real source pixels`);
     await check(await page.locator('main#t-main-story > section').count()===5, `${width}px exactly five purposeful Home chapters after editorial cut`);
@@ -61,12 +79,6 @@ try {
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     await check(overflow <= 3, `${width}px Home no significant horizontal overflow (${overflow}px)`);
     await check(runtimeErrors.length === 0, `${width}px Home no uncaught JavaScript errors: ${runtimeErrors.join(' / ') || 'none'}`);
-    if ([390, 1440].includes(width)) {
-      await page.locator('.t-material__stage').scrollIntoViewIfNeeded();
-      await page.screenshot({ path: `artifacts/screenshots/home-material-focus-${width}.png` });
-      await page.locator('.t-packaging__content').scrollIntoViewIfNeeded();
-      await page.screenshot({ path: `artifacts/screenshots/home-packaging-focus-${width}.png` });
-    }
     await page.goto(baseUrl + '/menu', { waitUntil: 'networkidle', timeout:30000 });
     await check(await page.getByRole('searchbox', { name: /دور على أكلك/ }).count() === 1, `${width}px direct menu search exposed`);
     await check(await page.getByRole('button', { name: 'كل الأصناف' }).count() === 1, `${width}px food filter exposed`);
