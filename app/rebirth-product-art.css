@@ -1,0 +1,204 @@
+/*
+ * TUSCANINI / MENU ART PASS 16
+ * Original graphic identities for each of the 113 historic menu entries.
+ * These are NOT photorealistic dishes. The 12 original restaurant images
+ * remain FAMILY / editorial-level until item-to-photo approval exists.
+ * Source-driven ink/paper/fold grammar, not copies from award references.
+ */
+.t-product-art{
+ --t-art-rotation:0deg;--t-art-ink:#d92e24;--t-art-shift:8%;
+ position:relative;isolation:isolate;min-width:0;flex:none;
+ background:#f5cd4e;color:#171511;
+ border:2px solid #171511;overflow:hidden;
+ aspect-ratio:1;
+ contain:paint;
+}
+.t-product-art--compact{width:clamp(64px,6.7vw,92px)}
+.t-product-art--large{width:clamp(116px,16vw,192px)}
+.t-product-art--drawn:before{
+ content:"";position:absolute;z-index:-1;
+ top:-23%;left:-30%;width:75%;aspect-ratio:1;
+ border:2px dashed var(--t-art-ink);border-radius:50%;
+}
+.t-product-art--drawn:after{
+ content:"";position:absolute;z-index:0;
+ right:5%;bottom:24%;width:120%;
+ border-top:2px solid var(--t-art-ink);
+ transform:rotate(calc(var(--t-art-rotation) * -1));
+ opacity:.25;pointer-events:none;
+}
+.t-product-art--variant-0,.t-product-art--variant-3{background:#f4e9d4}
+.t-product-art--variant-1{background:#f5cd4e}
+.t-product-art--variant-2{background:#e5c3a0}
+.t-product-art--variant-4{background:#f2d1b8}
+.t-product-art--variant-5{background:#ebbd73}
+.t-product-art__registration{
+ position:absolute;right:7px;top:6px;z-index:4;
+ font:9px/1.2 "Anton",Impact,sans-serif;direction:ltr;letter-spacing:.09em
+}
+.t-product-art__serial{
+ position:absolute;bottom:6px;left:7px;z-index:4;
+ font:9px/1.15 "Anton",Impact,sans-serif;letter-spacing:.05em;
+ background:#171511;color:#fff8e8;padding:4px 6px
+}
+.t-product-art__field{
+ position:absolute;z-index:2;inset:14% 9% 11%;
+ display:grid;place-items:center;
+ color:var(--t-art-ink);transform:rotate(var(--t-art-rotation));
+ transform-origin:center;
+}
+.t-product-art__fold{
+ position:absolute;display:block;
+ pointer-events:none;
+ border:2px solid var(--t-art-ink);
+ opacity:.55;transform-origin:center;
+}
+.t-product-art__fold--one{
+ width:82%;height:63%;transform:rotate(14deg) skew(-9deg,1deg);
+ border-radius:1px 14px 1px 11px
+}
+.t-product-art__fold--two{
+ width:52%;height:93%;border-style:dashed;
+ transform:rotate(-24deg) skew(4deg,1deg);border-radius:20px 2px 10px 3px;opacity:.42
+}
+.t-product-art__glyph{
+ position:relative;z-index:2;width:60%;height:auto;
+ filter:drop-shadow(3px 4px 0 #fff8e8c0)
+}
+.t-product-art__caption{display:none}
+.t-product-art--large .t-product-art__caption{
+ position:absolute;right:6px;left:6px;bottom:6px;z-index:5;
+ display:block;text-align:center;padding:5px 2px;
+ background:#171511;color:#fff8e8;
+ font:700 10px/1.3 "IBM Plex Sans Arabic",Tahoma,sans-serif
+}
+.t-product-art--large .t-product-art__field{inset:14% 11% 19%}
+.t-product-art--photo img{object-fit:cover}
+.t-product-art__photo-note{position:absolute;bottom:0;right:0;left:0;background:#171511;color:#fff8e8;padding:4px;font:9px Anton,Impact,sans-serif;text-align:center;direction:ltr}
+
+/* A compact takeaway-menu ROW, not a tall catalog of pretend food photos.
+ * The illustration sits beside a literal item name; real price stays visible. */
+.t-menu-page .t-menu-product__identity{
+ grid-column:1;grid-row:2 / span 2;
+ display:grid;grid-template-columns:minmax(64px,clamp(64px,6.7vw,92px)) minmax(0,1fr);
+ gap:clamp(10px,1.3vw,19px);align-items:center;min-width:0;
+}
+.t-menu-page .t-menu-product__text{min-width:0;align-self:center}
+.t-menu-page .t-menu-product__text h3{
+ display:block;grid-column:auto;grid-row:auto;
+ margin:0;font-size:clamp(20px,2.4vw,31px);
+ line-height:1.33;overflow-wrap:anywhere
+}
+.t-menu-page .t-menu-product__text .t-menu-product__description{
+ display:block;grid-column:auto;grid-row:auto;
+ margin-top:5px;line-height:1.55
+}
+.t-menu-page .t-menu-product__bottom{align-self:center}
+.t-menu-page .t-menu-product__top{padding-bottom:6px}
+.t-menu-page .t-menu-source-note{border-color:var(--ink)}
+/* Per-family photographic context: one truthful source photo per whole section. */
+.t-menu-family-context{
+ margin:0 0 clamp(21px,3vw,44px);
+ background:var(--ink);color:var(--paper);
+ display:grid;grid-template-columns:clamp(128px,21vw,265px) minmax(0,1fr);
+ min-height:143px;overflow:hidden
+}
+.t-menu-family-context__photo{position:relative;min-height:143px;overflow:hidden}
+.t-menu-family-context__photo img{object-fit:cover}
+.t-menu-family-context figcaption{
+ display:flex;flex-direction:column;gap:12px;justify-content:center;
+ min-width:0;padding:clamp(14px,3vw,33px)
+}
+.t-menu-family-context figcaption>.t-index{color:var(--yellow)}
+.t-menu-family-context figcaption strong{
+ font:800 clamp(23px,3.5vw,48px)/1.3 Changa,Tahoma,sans-serif
+}
+.t-menu-family-context figcaption span:last-child{
+ font:700 clamp(11px,1.1vw,14px)/1.65 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+ color:#ece0cb
+}
+.t-menu-page .t-menu-product:focus-within,
+.t-menu-page .t-menu-product:hover{background:var(--cream)}
+.t-menu-page .t-menu-product:focus-within .t-product-art{border-color:var(--red)}
+/* The exact same visual language follows product into customization. */
+.t-product-dialog__identity{
+ display:grid;grid-template-columns:clamp(116px,18vw,192px) minmax(0,1fr);
+ gap:clamp(13px,2vw,25px);
+ align-items:start;padding:0 0 clamp(15px,2vw,24px);
+ border-bottom:1px solid #c8bca6
+}
+.t-product-dialog__identity-copy{min-width:0}
+.t-product-dialog__identity-copy>p{line-height:1.8;font-size:15px;font-weight:700}
+.t-product-dialog__identity .t-product-dialog__price-notice{
+ border-inline-start:4px solid #d92e24;padding:10px 13px;
+ margin-top:12px!important;line-height:1.75!important;font-size:12px!important
+}
+.t-product-dialog__identity~.t-product-dialog__section{margin-top:24px}
+@media(min-width:721px){
+ .t-menu-page .t-menu-product__identity{grid-template-columns:minmax(64px,clamp(64px,6.7vw,92px)) minmax(0,1fr)}
+}
+@media(max-width:860px){
+ .t-menu-page .t-menu-product__text h3{font-size:clamp(18px,2.7vw,27px)}
+}
+@media(max-width:720px){
+ .t-menu-page .t-menu-product__identity{
+   grid-template-columns:clamp(59px,17vw,82px) minmax(0,1fr);
+   gap:11px
+ }
+ .t-product-art--compact{width:clamp(59px,17vw,82px)}
+ .t-menu-page .t-menu-product__text h3{font-size:clamp(20px,5vw,27px)}
+ .t-menu-family-context{grid-template-columns:118px minmax(0,1fr);min-height:125px}
+ .t-menu-family-context__photo{min-height:125px}
+ .t-menu-family-context figcaption{gap:7px;padding:11px}
+ .t-menu-family-context figcaption strong{font-size:clamp(20px,5.8vw,30px)}
+ .t-menu-family-context figcaption .t-index{font-size:9px}
+ .t-product-dialog__identity{grid-template-columns:118px minmax(0,1fr);gap:14px}
+ .t-product-art--large{width:118px}
+}
+@media(max-width:390px){
+ .t-menu-page .t-menu-product__identity{grid-template-columns:55px minmax(0,1fr);gap:7px}
+ .t-product-art--compact{width:55px}
+ .t-product-art__registration{font-size:7px;right:4px;top:5px}
+ .t-product-art__serial{font-size:7px;bottom:4px;left:4px;padding:2px 3px}
+ .t-menu-page .t-menu-product__text h3{font-size:clamp(17px,5vw,21px)}
+ .t-menu-page .t-menu-product__text p{font-size:10px}
+}
+@media(max-width:340px){
+ .t-menu-page .t-menu-product__identity{grid-template-columns:49px minmax(0,1fr);gap:6px}
+ .t-product-art--compact{width:49px}
+ .t-menu-page .t-menu-product__text h3{font-size:17px}
+ .t-menu-page .t-menu-product__bottom button{font-size:10px}
+ .t-menu-family-context{grid-template-columns:90px minmax(0,1fr)}
+ .t-menu-family-context__photo{min-height:110px}
+ .t-menu-family-context figcaption strong{font-size:21px}
+ .t-product-dialog__identity{grid-template-columns:102px minmax(0,1fr);gap:11px}
+ .t-product-art--large{width:102px}
+ .t-product-dialog__identity-copy>p{font-size:13px}
+}
+/* Motion R&D / responsive: one coordinated material fold for card-to-sheet.
+ * Desktop hover follows the customer's pointer; keyboard focus gets equal
+ * state without hover. No auto-playing 113-photo timeline. */
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+ .t-menu-page .t-product-art__field{transition:transform .36s cubic-bezier(.2,.82,.3,1)}
+ .t-menu-page .t-menu-product:is(:hover,:focus-within) .t-product-art__field{
+   transform:translate3d(0,-4px,0) rotate(calc(var(--t-art-rotation) + 7deg))
+ }
+ .t-menu-page .t-product-art__fold{transition:transform .36s cubic-bezier(.2,.82,.3,1)}
+ .t-menu-page .t-menu-product:is(:hover,:focus-within) .t-product-art__fold--one{transform:rotate(-15deg) skew(-9deg,1deg)}
+}
+@media(prefers-reduced-motion:no-preference){
+ @keyframes t-menu-family-sheet-open{
+   from{opacity:.4;clip-path:inset(0 0 0 16%);transform:translate3d(14px,0,0)}
+   to{opacity:1;clip-path:inset(0 0 0 0);transform:translate3d(0,0,0)}
+ }
+ .t-menu-page .t-menu-items__grid{animation:t-menu-family-sheet-open .36s cubic-bezier(.16,1,.3,1) both}
+ .t-product-dialog[open] .t-product-dialog__sheet{
+   animation:t-menu-family-sheet-open .34s cubic-bezier(.16,1,.3,1) both
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ .t-menu-page .t-menu-items__grid,.t-product-dialog[open] .t-product-dialog__sheet{
+   animation:none!important;transform:none!important;clip-path:none!important
+ }
+ .t-product-art__field,.t-product-art__fold{transition:none!important}
+}
