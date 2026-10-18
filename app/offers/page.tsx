@@ -1,3 +1,4 @@
+import { ExperienceFooter } from '@/components/rebirth/experience-footer';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ExperienceHeader } from '@/components/rebirth/experience-header';
@@ -49,6 +50,7 @@ export default async function OffersPage() {
           )}
         </section>
       </main>
+      <ExperienceFooter />
     </div>
   );
 }
