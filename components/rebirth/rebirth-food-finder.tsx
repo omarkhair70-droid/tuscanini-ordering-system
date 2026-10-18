@@ -41,14 +41,19 @@ export function RebirthFoodFinder({categories,items,live}:Props) {
       <main id="t-finder-main">
         <header className="t-finder-hero t-shell">
           <span className="t-index">FIND YOUR FOOD / NOT A GUESS</span>
-          <div><h1>على<br/><em>مزاجك.</em></h1><p>مش لازم تعرف أسماء كل الأصناف. 3 اختيارات بسيطة تساعدك تلاقي حاجة من المنيو الفعلية، لو بياناتها متاحة.</p></div>
+          <div><h1>تختار<br/><em>إزاي؟</em></h1><p>نفسك في كريب ولا بيتزا؟ اختار نوع الأكل والعلامة والسعر المناسب، وهنعرضلك من المنيو الحالية بس.</p></div>
           <Link href="/menu">عارف طلبك؟ روح للمنيو ↗</Link>
         </header>
         <div className="t-shell t-finder-content">
           {!live ? (
             <section className="t-finder-unavailable" role="status">
-              <span className="t-index">LIVE MENU NEEDED</span><h2>مش هنرشّح<br/>أكل من منيو قديمة.</h2>
-              <p>معلومات الأصناف المتاحة مش مؤكدة حاليًا. تقدر ترجع للمنيو أو تتواصل مع المطعم للتأكد.</p><Link href="/contact">تواصل مع المطعم ↗</Link>
+              <span className="t-index">القائمة الحالية / مش مؤكدة</span>
+              <h2>الاختيارات مش<br/><em>ظاهرة دلوقتي.</em></h2>
+              <p>مش هنقترح صنف بسعر أو توافر غير مؤكد. ممكن ترجع للمنيو أو تسأل المطعم مباشرة.</p>
+              <div className="t-finder-unavailable__links">
+                <Link href="/menu">افتح المنيو <span aria-hidden="true">↗</span></Link>
+                <Link href="/contact">اسأل المطعم <span aria-hidden="true">↗</span></Link>
+              </div>
             </section>
           ) : (
             <>
