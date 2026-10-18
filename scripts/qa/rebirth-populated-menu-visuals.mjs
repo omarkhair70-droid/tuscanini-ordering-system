@@ -21,14 +21,22 @@ try{
     try{
       await page.goto(base+'/menu',{waitUntil:'networkidle',timeout:30000});
       await page.evaluate(()=>document.fonts.ready);
+      await page.getByRole('button',{name:'كريب لحوم',exact:true}).click();
+      await page.locator('.t-menu-family-context img').waitFor({state:'visible',timeout:6000});
+      if(!(await page.locator('.t-menu-family-context img').evaluate(img=>img.complete&&img.naturalWidth>0)))throw Error('Family photo must decode');
+      await page.screenshot({path:`artifacts/screenshots/menu-verified-family-context-${width}.png`,fullPage:true,animations:'disabled'});
+      await page.getByRole('button',{name:'كل الأصناف',exact:true}).click();
       const search=page.getByRole('searchbox',{name:/دور على أكلك/});
       await search.fill('تشيكن فاير');
       const results=await page.locator('.t-menu-product').count();
       if(results<2)throw new Error('Expected identical-flavor categories in previous restaurant menu');
       await page.evaluate(()=>window.scrollTo(0,0));
       await page.screenshot({path:`artifacts/screenshots/menu-search-${width}.png`,fullPage:true,animations:'disabled'});
+      await page.locator('.t-menu-product').first().screenshot({path:`artifacts/screenshots/menu-unique-product-art-${width}.png`,animations:'disabled'});
       await page.getByRole('button',{name:'اختيار تفاصيل كريب توسكانيني — تشيكن فاير'}).click();
       await page.locator('.t-product-dialog[open]').waitFor({timeout:5000});
+      if((await page.locator('.t-product-dialog__identity .t-product-art[data-kind="original-graphic"]').count())!==1)
+        throw Error('Expected same individual source-conscious printed art in modal');
       await page.screenshot({path:`artifacts/screenshots/menu-product-dialog-${width}.png`,animations:'disabled'});
       await page.locator('.t-product-dialog__options input[type="checkbox"]').first().check();
       await page.getByRole('group',{name:'اختر الكمية'}).getByRole('button',{name:'زيادة الكمية'}).click();
