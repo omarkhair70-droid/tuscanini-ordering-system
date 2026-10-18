@@ -16,12 +16,12 @@ export function PackagingChapter() {
       </div>
       <div className="t-packaging__content">
         <div className="t-packaging__eyebrow">
-          <span className="t-index">04 / THE OBJECT</span>
+          <span className="t-index">04 / THE WRAP</span>
           <span lang="en">FOOD. HANDS. WRAPPING.</span>
         </div>
-        <h2 id="t-packaging-title">مش بس<br/><em>اللقمة.</em><br/>العلبة كمان.</h2>
+        <h2 id="t-packaging-title">العلبة<br/><em>ليها شكل.</em></h2>
         <div className="t-packaging__bottom">
-          <p>العلبة الحمرا، وورق التغليف المطبوع، والأكل قدامك. تفاصيل بتكمّل الإحساس حتى قبل أول لقمة.</p>
+          <p>العلبة الحمرا، والورق المطبوع، والأكل اللي يفتح النفس. تفاصيل تشوفها قبل أول لقمة.</p>
           <Link href="/menu">شوف الأكل كله <span aria-hidden="true">↗</span></Link>
         </div>
         <span className="t-packaging__ghost" lang="en" aria-hidden="true">04</span>
@@ -34,8 +34,8 @@ export function PlaceChapter() {
   return (
     <section className="t-place-final" aria-labelledby="t-place-final-title">
       <div className="t-place-final__copy">
-        <span className="t-index">06 / THE PLACE — BENI SUEF</span>
-        <h2 id="t-place-final-title">الحكاية<br/>في بني<br/><em>سويف.</em></h2>
+        <span className="t-index">05 / THE PLACE — BENI SUEF</span>
+        <h2 id="t-place-final-title">تلاقينا<br/>في بني<br/><em>سويف.</em></h2>
         <p>شارع البحر، سور نادي توليب، بني سويف.</p>
         <div className="t-place-final__links">
           <Link href="/contact">المكان والتواصل <span aria-hidden="true">↗</span></Link>
