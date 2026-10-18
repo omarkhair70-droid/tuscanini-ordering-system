@@ -5,6 +5,7 @@ import '../rebirth-home.css';
 import '../rebirth-exploration.css';
 import '../rebirth-menu.css';
 import '../rebirth-product.css';
+import '../rebirth-product-art.css';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
