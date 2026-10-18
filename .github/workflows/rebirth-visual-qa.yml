@@ -53,6 +53,10 @@ jobs:
               npx --yes playwright@1.56.1 screenshot --browser chromium --viewport-size="${width_height}" --wait-for-timeout=1400 --full-page "http://localhost:3000/${route}" "artifacts/screenshots/${slug}-${width}.png"
             done
           done
+      - name: Install browser test library
+        run: npm install --no-save --ignore-scripts playwright@1.56.1
+      - name: Browser interactions and mobile layout smoke
+        run: node scripts/qa/rebirth-interaction-check.mjs
       - name: Print media gate result
         if: always()
         run: node scripts/qa/verify-rebirth-media.mjs
