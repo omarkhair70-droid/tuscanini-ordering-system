@@ -1,5 +1,6 @@
 'use client';
 
+import { ExperienceFooter } from '@/components/rebirth/experience-footer';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { useCart } from '@/components/cart/cart-provider';
@@ -141,6 +142,7 @@ export function RebirthMenu({ categories, items, initialTableReference, sourceVe
           </footer>
         </div>
       </main>
+      <ExperienceFooter />
       <RebirthProductDialog item={selectedProduct} onClose={()=>setSelectedProduct(null)} />
       {sourceVerified && <FloatingCartCta />}
     </div>
