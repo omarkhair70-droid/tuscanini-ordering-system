@@ -7,7 +7,7 @@ For each lane: study brief/evidence → narrowed source/reference check when nee
 ### Stage 0 — foundational repair / in progress
 - Preserve old Main deployment; all new work on `redesign/tuscanini-authored-experience-20261018`, Draft PR #59.
 - Single source-of-truth docs and explicit decision ledger.
-- Integrate all twelve authentic 640px original photos + optimized WebP in `public/images/rebirth`. Correctly store provenance, category-level assignment until named item mapping confirmed. **PARTIAL**: 11 source-backed original JPEGs committed to GitHub; 12th remains absent and strict media merge gate remains red. Optimized image delivery is handled by Next/Image at runtime; WebP derivation remains optional.
+- Integrate all twelve authentic 640px original photos + optimized WebP in `public/images/rebirth`. Correctly store provenance, category-level assignment until named item mapping confirmed. **COMPLETED MEDIA GATE**: all twelve source-backed original JPEG photos are committed to GitHub, including TSC-12 recovered from the actual archived HTML reference. The asset existence gate has passed in real GitHub Actions. The final crop/quality/identity review remains pending. Optimized image delivery is handled by Next/Image at runtime; WebP derivation remains optional.
 - Lock consistent CSS tokens, type roles, top navigation, secondary drawer, footer and cart entry; test on 320/390/768/1024/1440.
 - Establish route smoke tests, Playwright screenshot artifacts, mobile-focused QA, reduced motion and reference comparison.
 - Rewrite/review Home so that the actual preview reproduces or exceeds the HTML's rich photographed editorial experience.
@@ -21,6 +21,7 @@ For each lane: study brief/evidence → narrowed source/reference check when nee
 **Gate:** known-item and first-time-browsing paths tested with correct menu data and no forced creative delay.
 
 ### Stage 2 — purchase, confirmation and kitchen truth
+Implementation update (18 Oct): RebirthCheckout and RebirthOrderTracking now replace old Cart / Order Success visuals; live server validated totals, uncertain POST behavior, confirmation truth, and 390/1440 viewport QA are underway. No claim of atomic DB transactions or real restaurant E2E.
 - Cart editing + delivery/pickup/in-shop options as allowed by real backend.
 - Use idempotent/atomic order creation, clear server validation, no double-submission.
 - Explicit “received, awaiting confirmation” vs “confirmed” vs “preparing, ready” states; no fake timelines.
@@ -28,6 +29,7 @@ For each lane: study brief/evidence → narrowed source/reference check when nee
 **Gate:** working simulated test transactions incl. failure and duplicate cases, credible totals, kitchen operator check.
 
 ### Stage 3 — campaigns, discovery assistant and brand chapters
+Implementation update (18 Oct): Offers route redesigned using only live active offers (no fabricated offer data); Food Finder rebuilt to use live menu rows and explicit fail-closed copy, not historical mock suggestions. The About/Contact/Feedback public routes still await full redesign.
 - Current Offers + eligibility and deep links; no fake promo offers.
 - Food Finder uses verified live availability, not historical sample recommendations.
 - Story grounded in confirmed physical facts and approved words; real locality, not generic Italian stereotypes.
@@ -59,7 +61,7 @@ For each lane: study brief/evidence → narrowed source/reference check when nee
 | Type | Trial | Changa display, IBM Plex Sans Arabic UI, Anton editorial Latin; test implementation. |
 | Product creative thesis | Explore | Inside/Out is an engine of honest exterior/interior contrast; can be disproved. |
 | IA | Provisional | Five visible primary nav targets; accessible cart/direct Menu, secondary links in drawer/footer. |
-| Media | Required | 11 of 12 true Facebook JPEG images committed, remaining one blocked; source sizes 640x640; optimize without inventing contents. |
+| Media | Required | 12 of 12 true Facebook JPEG images committed; source sizes 640x640; optimize without inventing contents. |
 | Motion | Conditional | CSS/SVG baseline, GSAP if demonstrated; WebGL/Three/Pixi/Rive only if specific need. |
 | Backend | Audit first | Supabase itself is not “primitive” or inherently wrong; repair stale menu, atomic orders and staff permissions first. |
 | Menus/prices | Unverified | Code history isn't a live restaurant confirmation; explicit safe fallbacks. |
