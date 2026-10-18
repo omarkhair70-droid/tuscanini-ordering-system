@@ -20,9 +20,9 @@ export function RebirthHome({ activeOrderSlot }: { activeOrderSlot?: ReactNode }
         </div>
         <div className="t-hero__grid">
           <div className="t-hero__words">
-            <p className="t-overline">مش كل الحكاية من برّه</p>
+            <p className="t-overline">توسكانيني / بني سويف</p>
             <h1 id="t-hero-title"><span>بص</span><em>جوه.</em></h1>
-            <p className="t-hero__sub">أول لقمة بتبدأ من العين. اكتشف تفاصيل أكلك، واختار اللي على مزاجك.</p>
+            <p className="t-hero__sub">كريب، بيتزا، وساندوتشات تتشاف قبل ما تتطلب. اختار اللي فتح نفسك.</p>
             <div className="t-hero__actions">
               <Link className="t-button t-button--dark" href="/menu">افتح المنيو <span aria-hidden="true">↗</span></Link>
               <a className="t-text-link" href="#t-main-story">شوف الحكاية <span aria-hidden="true">↓</span></a>
@@ -49,32 +49,11 @@ export function RebirthHome({ activeOrderSlot }: { activeOrderSlot?: ReactNode }
       </div>
 
       <main id="t-main-story" className="t-home-story">
-        <section className="t-intro t-shell" aria-labelledby="t-intro-title">
-          <span className="t-index">01 — THE FOOD</span>
-          <div>
-            <h2 id="t-intro-title">الحكاية مش<br/><em>بس من برّه.</em></h2>
-            <p>كل كريب، وكل بيتزا، وكل ساندوتش له شكل وحكاية مختلفة. مش محتاج تحفظ أسماء كتير؛ اختار اللي يشهيك، والتفاصيل موجودة في المنيو.</p>
-          </div>
-        </section>
-
         <FoodExploration />
 
         <MaterialReveal />
 
         <PackagingChapter />
-
-        <section className="t-quick t-shell" aria-labelledby="t-quick-title">
-          <div className="t-quick__copy">
-            <span className="t-index">05 — YOUR WAY</span>
-            <h2 id="t-quick-title">عارف نفسك<br/><em>هتاكل إيه؟</em></h2>
-            <p>ادخل على المنيو على طول. مش لازم تلف في كل التفاصيل عشان توصل لطلبك.</p>
-            <div className="t-quick__actions">
-              <Link href="/menu" className="t-button t-button--paper">روح للمنيو <span aria-hidden="true">↗</span></Link>
-              <Link href="/food-finder" className="t-quick__secondary">محتار؟ جرّب اختيارات الأكل</Link>
-            </div>
-          </div>
-          <div className="t-quick__art" aria-hidden="true"><span lang="en">GOOD FOOD<br/>NO DETOURS.</span></div>
-        </section>
 
         <PlaceChapter />
       </main>
