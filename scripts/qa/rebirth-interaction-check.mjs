@@ -15,7 +15,7 @@ async function check(ok, message) {
 }
 
 try {
-  for (const width of [390, 1440]) {
+  for (const width of [320, 390, 768, 1440]) {
     const context = await browser.newContext({ viewport: { width, height: 844 }, reducedMotion: 'reduce' });
     const page = await context.newPage();
     const runtimeErrors = [];
