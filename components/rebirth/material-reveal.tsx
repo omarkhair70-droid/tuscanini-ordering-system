@@ -18,7 +18,7 @@ export function MaterialReveal() {
           <span className="t-index">03 / SEE THE ACTUAL FOOD</span>
           <span lang="en">ONE REAL PHOTO · TWO WAYS TO LOOK</span>
         </div>
-        <h2 id="t-material-heading">من بعيد.<br/><em>من جُوَّه.</em></h2>
+        <h2 id="t-material-heading">من بعيد.<br/><em>من جوه.</em></h2>
         <p>الصورة نفسها، من أكل توسكانيني الحقيقي. اسحب وشوف إزاي التفاصيل بتتغيّر لما تقرب — من غير ما نركّب مكونات مش موجودة.</p>
       </div>
       <div className="t-material__composition t-shell" data-t-story-step>
