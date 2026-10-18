@@ -1,0 +1,67 @@
+name: Tuscanini Rebirth — Browser Screenshots & Asset Gate
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "public/images/rebirth/**"
+      - "scripts/qa/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/rebirth-visual-qa.yml"
+
+jobs:
+  browser-visuals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-only-public-placeholder
+      SUPABASE_SERVICE_ROLE_KEY: ci-only-service-placeholder
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+      - run: npm ci
+      - name: Type safety and production compilation
+        run: |
+          npx tsc --noEmit
+          npm run build
+      - name: Install browser for screenshot capture
+        run: |
+          npx --yes playwright@1.56.1 install --with-deps chromium
+      - name: Start localhost Next production build
+        run: |
+          (npm run start > /tmp/tuscanini-next.log 2>&1 &)
+          for i in $(seq 1 50); do
+            if curl -fsS http://localhost:3000/ > /dev/null; then exit 0; fi
+            sleep 2
+          done
+          cat /tmp/tuscanini-next.log
+          exit 1
+      - name: Capture phone-width and desktop-width views
+        run: |
+          mkdir -p artifacts/screenshots
+          for route in "" "menu" "offers" "food-finder" "about" "contact" "cart" "reviews" "complaints"; do
+            slug=$(echo "${route:-home}" | tr '/' '-')
+            for width_height in "390,844" "1440,900"; do
+              width=${width_height%,*}
+              npx --yes playwright@1.56.1 screenshot --browser chromium --viewport-size="${width_height}" --wait-for-timeout=1400 --full-page "http://localhost:3000/${route}" "artifacts/screenshots/${slug}-${width}.png"
+            done
+          done
+      - name: Print media gate result
+        if: always()
+        run: node scripts/qa/verify-rebirth-media.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tuscanini-mobile-desktop-visuals
+          path: artifacts/screenshots/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Strict authentic-photo merge gate
+        run: node scripts/qa/verify-rebirth-media.mjs --strict
