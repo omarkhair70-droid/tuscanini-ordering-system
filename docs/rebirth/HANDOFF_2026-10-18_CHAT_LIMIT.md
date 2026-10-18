@@ -2,7 +2,7 @@
 
 > **LATEST STATUS UPDATE (after original handoff, 2026-10-18):** Read `docs/rebirth/08_MOTION_RND_AND_VISUAL_QA_PASS_04.md` before acting on the old outstanding-actions section below. Bridge CSS, renamed-heading QA, and the 320/390/768/1440 browser sweep were already done before this chat. Pass 04 then added one native photo motion trial, corrected the material slider knob clipping at both extremes, and verified a 26-PNG browser artifact / zero-failure Chromium run: https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39155495058 . PR #59 remains Draft. Work is DESIGN IN PROGRESS, not launch-ready.
 
-## Read first
+> **PASS 05 CONTINUATION (night of 18–19 Oct):** The latest executable creative lane is documented in `docs/rebirth/09_MENU_OFFERS_AUTHORSHIP_PASS_05.md`. Menu and Offers now have genuine restaurant-photo hero compositions and mobile QA at 320/390/768/1440; the menu has a direct jump to search and a two-line 320px headline. Offers read failures no longer masquerade as an absence of promotions. Last confirmed Chromium run: https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39165768939 (30 screenshots, zero browser fixture failures). Do not return to the stale TODO section in this older handoff. Next work: About/real restaurant story, source-aware item photography when merchant evidence exists, site-wide creative/functional integration. No merge.\n\n## Read first
 This is a continuity memo, NOT a completed-feature claim. The user asked to continue creatively developing Tuscanini's real restaurant website, not to rush publishing or maximize page count. The conversation hit its context limit. **Continue execution from this branch without repeating initial research.**
 
 ### Exact GitHub
