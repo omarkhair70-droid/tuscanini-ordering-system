@@ -9,6 +9,8 @@ import { tuscaniniFoodMedia } from '@/lib/rebirth/food-media';
  * Genuine category-level photos: real Tuscanini shots, NOT product-specific proof.
  * This discovery sequence is optional; direct Menu is always visible.
  */
+const displayableGallery = tuscaniniFoodMedia.filter(photo => photo.id !== 'TSC-12');
+
 const subjects = [
   { id: 'crepe', chapter: '01', arabic: 'الكريب', english: 'THE FOLD', caption: 'من برّه حكاية. ومن جوّه تفاصيل كتير.', menu: '/menu?category=crepe-tuscanini', image: 'TSC-09', subtitle: 'REAL CUTS / REAL FOOD' },
   { id: 'pizza', chapter: '02', arabic: 'البيتزا', english: 'THE WHOLE', caption: 'تكوين مختلف، ومشاركة ليها طعم تاني.', menu: '/menu?category=pizza-tuscanini', image: 'TSC-10', subtitle: 'FULL CIRCLE / DIFFERENT STORY' },
@@ -106,7 +108,7 @@ export function FoodExploration() {
       <section className="t-photo-archive t-shell" aria-labelledby="t-photo-archive-title">
         <div className="t-photo-archive__header">
           <div><span className="t-index">03 — REAL RESTAURANT / EDITORIAL MATERIAL</span><h2 id="t-photo-archive-title">مش صور <em>ستوك.</em></h2></div>
-          <button type="button" onClick={openGallery} aria-haspopup="dialog">شوف الصور الـ12 <span aria-hidden="true">↗</span></button>
+          <button type="button" onClick={openGallery} aria-haspopup="dialog">شوف صور المطعم <span aria-hidden="true">↗</span></button>
         </div>
         <div className="t-photo-archive__samples">
           {['TSC-02','TSC-10','TSC-08'].map((id) => (
@@ -126,7 +128,7 @@ export function FoodExploration() {
         </div>
         {galleryOpen ? (
           <div className="t-gallery-dialog__grid">
-            {tuscaniniFoodMedia.map((photo) => (
+            {displayableGallery.map((photo) => (
               <figure key={photo.id}>
                 <FoodPhoto id={photo.id} />
                 <figcaption><span lang="en">{photo.id}</span> — {photo.altAr}</figcaption>
