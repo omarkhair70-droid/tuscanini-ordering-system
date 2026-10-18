@@ -12,7 +12,7 @@ An authored, clean customer frontend INSIDE the existing repo. Legacy CSS/layout
 - Existing order-tracking component maps pending confirmation, confirmed, preparing, ready, out for delivery, delivered, cancelled; ensure every transition reflects real operator change and permissions.
 - Admin auth uses one environment shared secret + signed HMAC cookie, not individual staff identities; audit RBAC, session invalidation, activity logging, rate limiting, abuse safety and CSRF boundaries before production.
 - Operator/admin paths and menu/product editing are valuable **contracts to assess**, not a justification to keep old surfaces.
-- Photography: 12 real 640×640 source photos in conversation working files; as of the last inspection **NOT yet committed** to repo. Must be fixed before visual QA claims; missing assets are a release blocker.
+- Photography: 12 real 640×640 source photos in conversation working files; 11/12 original JPEG files are now committed as actual media bytes; remaining TSC-12 is NOT committed. Github is now testing hero/gallery loading via Chromium. Final 12/12 gate remains a release blocker.
 
 ## Stack decision gate
 | Layer | Candidate | Why | Gate before lock |
