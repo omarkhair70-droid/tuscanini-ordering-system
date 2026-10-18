@@ -16,7 +16,7 @@ type RouteShellProps = {
  * retain their existing shell until rebuilt and tested separately.
  */
 const AUTHORED_PUBLIC_ROUTES = new Set([
-  '/', '/menu', '/cart', '/order-success', '/food-finder', '/offers', '/about',
+  '/', '/menu', '/cart', '/order-success', '/food-finder', '/offers', '/about', '/contact',
 ]);
 export function RouteShell({ children, legacyHeader, legacyFooter, legacyMobileNav }: RouteShellProps) {
   const pathname = usePathname();
