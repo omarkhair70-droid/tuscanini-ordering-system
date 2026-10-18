@@ -3,6 +3,7 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { ExperienceHeader } from '@/components/rebirth/experience-header';
 import { FoodExploration, FoodPhoto } from '@/components/rebirth/food-exploration';
+import { MaterialReveal } from '@/components/rebirth/material-reveal';
 
 export function RebirthHome({ activeOrderSlot }: { activeOrderSlot?: ReactNode }) {
   return (
@@ -27,8 +28,12 @@ export function RebirthHome({ activeOrderSlot }: { activeOrderSlot?: ReactNode }
             </div>
           </div>
           <div className="t-hero__visual">
+            <span className="t-hero__underprint" lang="en" aria-hidden="true">TUSCANINI</span>
+            <div className="t-hero__backplate"><FoodPhoto id="TSC-06" priority /></div>
             <FoodPhoto id="TSC-09" priority className="t-hero__photo" />
             <div className="t-hero__stamp" lang="en" aria-hidden="true"><span>REAL FOOD.</span><span>REAL CRAVING.</span></div>
+            <span className="t-hero__photo-label" lang="en">REAL / NOT RENDERED</span>
+            <span className="t-hero__photo-facts">صور حقيقية من توسكانيني</span>
             <span className="t-hero__visualnote">01 / FOOD IN FOCUS</span>
           </div>
         </div>
@@ -48,15 +53,7 @@ export function RebirthHome({ activeOrderSlot }: { activeOrderSlot?: ReactNode }
 
         <FoodExploration />
 
-        <section className="t-detail" aria-labelledby="t-detail-title">
-          <div className="t-detail__visual t-photo" aria-hidden="true"><span>IN DETAIL / 02</span></div>
-          <div className="t-detail__content">
-            <span className="t-index">04 — A CLOSER LOOK</span>
-            <h2 id="t-detail-title">اللي جُوّه<br/><em>يفرق.</em></h2>
-            <p>الاختيار مش مجرد اسم أو صورة. في المنيو هتلاقي الأصناف والأحجام والإضافات المتاحة، عشان تختار على أساس واضح.</p>
-            <Link className="t-button t-button--outline" href="/menu">شوف كل الاختيارات <span aria-hidden="true">↗</span></Link>
-          </div>
-        </section>
+        <MaterialReveal />
 
         <section className="t-quick t-shell" aria-labelledby="t-quick-title">
           <div className="t-quick__copy">
