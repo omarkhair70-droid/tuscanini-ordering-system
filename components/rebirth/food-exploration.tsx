@@ -12,8 +12,8 @@ import { tuscaniniFoodMedia } from '@/lib/rebirth/food-media';
 const displayableGallery = tuscaniniFoodMedia;
 
 const subjects = [
-  { id: 'crepe', chapter: '01', arabic: 'الكريب', english: 'THE FOLD', caption: 'من برّه حكاية. ومن جوّه تفاصيل كتير.', menu: '/menu?category=crepe-tuscanini', image: 'TSC-09', subtitle: 'REAL CUTS / REAL FOOD' },
-  { id: 'pizza', chapter: '02', arabic: 'البيتزا', english: 'THE WHOLE', caption: 'تكوين مختلف، ومشاركة ليها طعم تاني.', menu: '/menu?category=pizza-tuscanini', image: 'TSC-10', subtitle: 'FULL CIRCLE / DIFFERENT STORY' },
+  { id: 'crepe', chapter: '01', arabic: 'الكريب', english: 'CREPE', caption: 'كريب متروس، وتفاصيل تشهي من أول بصّة.', menu: '/menu?category=crepe-tuscanini', image: 'TSC-09', subtitle: 'TUSCANINI / CREPE' },
+  { id: 'pizza', chapter: '02', arabic: 'البيتزا', english: 'PIZZA', caption: 'بيتزا كبيرة قدامك، اختار اللي يناسبك.', menu: '/menu?category=pizza-tuscanini', image: 'TSC-10', subtitle: 'TUSCANINI / PIZZA' },
   { id: 'sandwich', chapter: '03', arabic: 'الساندوتشات', english: 'THE HOLD', caption: 'الأكل في الإيد، والتفاصيل قدام العين.', menu: '/menu?category=sandwiches-french', image: 'TSC-08', subtitle: 'HELD IN THE HAND' },
   { id: 'other', chapter: '04', arabic: 'اختيارات تانية', english: 'THE EXTRA', caption: 'لكل نوع أكل طريقته وحضوره.', menu: '/menu', image: 'TSC-11', subtitle: 'MORE THAN ONE FORM' },
 ] as const;
@@ -71,7 +71,7 @@ export function FoodExploration() {
     <>
       <section className="t-discover t-shell" aria-labelledby="t-discover-title" id="t-discover">
         <div className="t-discover__intro">
-          <span className="t-index">02 — THE FOOD / FOUR EXPRESSIONS</span>
+          <span className="t-index">01 — PICK YOUR FOOD</span>
           <div>
             <h2 id="t-discover-title">مش صنف <em>واحد.</em></h2>
             <p>الأكل عند توسكانيني له أشكال مختلفة. اتفرّج على الصور الحقيقية، أو ادخل المنيو على طول.</p>
@@ -107,7 +107,7 @@ export function FoodExploration() {
 
       <section className="t-photo-archive t-shell" aria-labelledby="t-photo-archive-title">
         <div className="t-photo-archive__header">
-          <div><span className="t-index">03 — REAL RESTAURANT / EDITORIAL MATERIAL</span><h2 id="t-photo-archive-title">من قلب <em>توسكانيني.</em></h2></div>
+          <div><span className="t-index">02 — PHOTOS / FROM THE RESTAURANT</span><h2 id="t-photo-archive-title">من قلب <em>توسكانيني.</em></h2></div>
           <button type="button" onClick={openGallery} aria-haspopup="dialog">شوف صور المطعم <span aria-hidden="true">↗</span></button>
         </div>
         <div className="t-photo-archive__samples">
