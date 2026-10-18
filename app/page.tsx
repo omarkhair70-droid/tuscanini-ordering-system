@@ -4,6 +4,7 @@ import { ActiveOrderBanner } from '@/components/shared/active-order-banner';
 import './rebirth-home.css';
 import './rebirth-exploration.css';
 import './rebirth-creative.css';
+import './rebirth-story-rhythm.css';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
