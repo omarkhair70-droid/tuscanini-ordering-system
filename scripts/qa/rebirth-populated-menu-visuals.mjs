@@ -25,9 +25,11 @@ try{
       await search.fill('تشيكن فاير');
       const results=await page.locator('.t-menu-product').count();
       if(results<2)throw new Error('Expected identical-flavor categories in previous restaurant menu');
+      await page.evaluate(()=>window.scrollTo(0,0));
       await page.screenshot({path:`artifacts/screenshots/menu-search-${width}.png`,fullPage:true,animations:'disabled'});
       await page.getByRole('button',{name:'اختيار تفاصيل كريب توسكانيني — تشيكن فاير'}).click();
       await page.locator('.t-product-dialog[open]').waitFor({timeout:5000});
+      await page.screenshot({path:`artifacts/screenshots/menu-product-dialog-${width}.png`,animations:'disabled'});
       await page.locator('.t-product-dialog__options input[type="checkbox"]').first().check();
       await page.getByRole('group',{name:'اختر الكمية'}).getByRole('button',{name:'زيادة الكمية'}).click();
       await page.screenshot({path:`artifacts/screenshots/menu-size-addon-${width}.png`,animations:'disabled'});
@@ -39,6 +41,16 @@ try{
       },null,{timeout:7000});
       await page.goto(base+'/cart',{waitUntil:'networkidle',timeout:30000});
       await page.getByRole('heading',{name:'تشيكن فاير'}).waitFor({state:'visible',timeout:5000});
+      if(width===390){
+        const order=await page.evaluate(()=>{
+          const item=document.querySelector('.t-checkout-item')?.getBoundingClientRect();
+          const fields=document.querySelector('.t-checkout-inputs')?.getBoundingClientRect();
+          const summary=document.querySelector('.t-checkout-summary')?.getBoundingClientRect();
+          return Boolean(item&&fields&&summary&&item.top < fields.top && fields.bottom <= summary.top+4);
+        });
+        if(!order) throw new Error('Phone checkout must read item -> customer -> final summary');
+      }
+      await page.evaluate(()=>window.scrollTo(0,0));
       await page.screenshot({path:`artifacts/screenshots/cart-with-old-menu-${width}.png`,fullPage:true,animations:'disabled'});
       await page.goto(base+'/food-finder',{waitUntil:'networkidle',timeout:30000});
       await page.getByRole('button',{name:'كريب',exact:true}).click();
@@ -46,6 +58,7 @@ try{
       if((await page.locator('.t-finder-results__grid article').count())!==8){
         throw new Error('Finder must render 8 previous-price crepe matches');
       }
+      await page.evaluate(()=>window.scrollTo(0,0));
       await page.screenshot({path:`artifacts/screenshots/finder-matches-${width}.png`,fullPage:true,animations:'disabled'});
       console.log(`POPULATED VISUALS ${width}px: ${results} same-flavor family choices; old product 125+20, x2 = 290 EGP; cart and 8 finder matches photographed`);
     }finally{await ctx.close()}
