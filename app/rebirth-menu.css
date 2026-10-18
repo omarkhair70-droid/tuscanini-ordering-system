@@ -328,3 +328,21 @@
 @media(prefers-reduced-motion:reduce){
   .t-menu-page .t-menu-product{transition:none}
 }
+
+
+/* Actual 768px screenshot exposed a too-early one-column switch that made
+ * the populated 20-item list longer than the older card grid. A compact
+ * two-column receipt spread works from tablet widths, with a narrower price
+ * lane and restrained Arabic title sizing. */
+@media(min-width:721px) and (max-width:860px){
+  .t-menu-page .t-menu-items__grid{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:25px}
+  .t-menu-page .t-menu-product,
+  .t-menu-page .t-menu-product:nth-child(6n+2),
+  .t-menu-page .t-menu-product:nth-child(6n+5){
+    grid-template-columns:minmax(0,1fr) 105px;
+    min-height:147px;column-gap:10px
+  }
+  .t-menu-page .t-menu-product h3{font-size:clamp(21px,3.2vw,27px)}
+  .t-menu-page .t-menu-product__price strong{font-size:17px}
+  .t-menu-page .t-menu-product__bottom button{font-size:11px;padding-inline:6px}
+}
