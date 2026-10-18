@@ -193,7 +193,7 @@ export function RebirthCheckout() {
                 <h2 id="t-checkout-summary-title">الخلاصة.</h2>
                 <div className="t-checkout-summary__line"><span>عدد القطع</span><strong>{count}</strong></div>
                 <div className="t-checkout-summary__line"><span>إجمالي أصناف الطلب</span><strong>{money(subtotal)} ج.م</strong></div>
-                <p className="t-checkout-summary__notice">التوصيل وأي تعديل نهائي في الطلب بيتم تأكيده مع المطعم. الإجمالي المعروض للأصناف فقط.</p>
+                <p className="t-checkout-summary__notice">الإجمالي ده حسب أسعار منيو توسكانيني السابق. لو اتغيّر سعر أو توافر صنف، السيرفر مش هيقبل طلب بسعر مختلف؛ هتحتاج تراجع التفاصيل. رسوم التوصيل بيتأكد منها المطعم.</p>
                 {tableReference && <p className="t-checkout-summary__table">مرجع الطاولة: {tableReference}</p>}
                 <label className="t-checkout-confirm"><input type="checkbox" checked={customer.confirmedAccurateDetails}
                   onChange={e=>{updateCustomer({confirmedAccurateDetails:e.target.checked});setErrors(x=>({...x,confirmedAccurateDetails:undefined}))}}/>
