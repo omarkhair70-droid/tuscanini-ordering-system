@@ -1,8 +1,16 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
+import { MaterialGlyph } from '@/components/rebirth/material-glyph';
 
 /** Real physical restaurant evidence, not a fictional production or delivery ritual. */
 export function PackagingChapter() {
+  // Two SEPARATE real restaurant photographs: packaging TSC-08, cut food TSC-07.
+  // Never present them as before/after of the same order, product or size.
+  const [scene,setScene]=useState<'package'|'inside'>('package');
+  const packageActive=scene==='package';
   return (
     <section className="t-packaging" aria-labelledby="t-packaging-title">
       <div className="t-packaging__photo">
@@ -10,21 +18,47 @@ export function PackagingChapter() {
           src="/images/rebirth/food-08.jpg"
           alt="ساندوتشات توسكانيني بجانب العلب الحمراء وورق التغليف المطبوع الحقيقي"
           fill loading="eager" sizes="(max-width: 760px) 100vw, 50vw"
-          className="t-packaging__photo-img"
+          className="t-packaging__photo-img t-packaging__photo-img--package"
+          data-current={packageActive} aria-hidden={!packageActive}
         />
-        <span className="t-packaging__photo-label" lang="en">TSC-08 / ACTUAL TUSCANINI PACKAGING</span>
+        <Image
+          src="/images/rebirth/food-07.jpg"
+          alt="صورة مختلفة من توسكانيني: ثلاثة كريبات مفتوحة بتفاصيل الحشو الظاهرة"
+          fill loading="eager" sizes="(max-width: 760px) 100vw, 50vw"
+          className="t-packaging__photo-img t-packaging__photo-img--inside"
+          data-current={!packageActive} aria-hidden={packageActive}
+        />
+        <span className="t-packaging__photo-label" lang="en">{packageActive ? 'TSC-08 / REAL PACKAGING' : 'TSC-07 / REAL FOOD INSIDE'}</span>
+        <div className="t-packaging__view-caption" role="status">
+          {packageActive ? 'العلب وورق التغليف من صور توسكانيني' : 'دي صورة مختلفة من المطعم، مش لنفس الساندوتشات'}
+        </div>
+        <div className="t-packaging__photo-mark" aria-hidden="true">
+          <MaterialGlyph name={packageActive ? 'box' : 'cut'} size={72}/>
+        </div>
       </div>
       <div className="t-packaging__content">
         <div className="t-packaging__eyebrow">
           <span className="t-index">04 / THE WRAP</span>
-          <span lang="en">FOOD. HANDS. WRAPPING.</span>
+          <span lang="en">FOOD. PAPER. INSIDE.</span>
         </div>
         <h2 id="t-packaging-title">العلبة<br/><em>ليها شكل.</em></h2>
+        <div className="t-packaging__chooser" role="group" aria-label="تغيير مشهد الصور الحقيقية">
+          <button type="button" aria-pressed={packageActive} onClick={()=>setScene('package')}>
+            <MaterialGlyph name="box" size={34}/>
+            <span>العلبة والورق</span>
+            <small lang="en">01</small>
+          </button>
+          <button type="button" aria-pressed={!packageActive} onClick={()=>setScene('inside')}>
+            <MaterialGlyph name="cut" size={34}/>
+            <span>الأكل من جوا</span>
+            <small lang="en">02</small>
+          </button>
+        </div>
         <div className="t-packaging__bottom">
-          <p>العلبة الحمرا، والورق المطبوع، والأكل اللي يفتح النفس. تفاصيل تشوفها قبل أول لقمة.</p>
+          <p>من ورق التغليف الأحمر لصور الأكل المفتوح. اختار مشهد وشوف مواد حقيقية من المطعم — مش صور دعائية متخيلة.</p>
           <Link href="/menu">شوف الأكل كله <span aria-hidden="true">↗</span></Link>
         </div>
-        <span className="t-packaging__ghost" lang="en" aria-hidden="true">04</span>
+        <MaterialGlyph name="fold" size={340} className="t-packaging__ghost-glyph"/>
       </div>
     </section>
   );
