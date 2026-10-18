@@ -1,6 +1,7 @@
 import { ExperienceFooter } from '@/components/rebirth/experience-footer';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ExperienceHeader } from '@/components/rebirth/experience-header';
 import { RebirthOfferAction } from '@/components/rebirth/rebirth-offer-action';
 import { getActivePublicOffers } from '@/lib/offers-runtime';
@@ -23,8 +24,19 @@ export default async function OffersPage() {
       <main>
         <header className="t-offers-hero t-shell">
           <div className="t-offers-hero__meta"><span>OFFERS / THE REAL ONES</span><span>توسكانيني — بني سويف</span></div>
-          <div className="t-offers-hero__title"><h1>على<br/><em>الجاهز.</em></h1><div><span className="t-index">WHAT'S ACTUALLY ON</span><p>العروض اللي متاحة دلوقتي بس. مش بنوعدك بخصم قديم أو سعر مش مؤكد.</p></div></div>
-          <div className="t-offers-hero__foot"><span>FRESH INFORMATION / NO MADE-UP CAMPAIGNS</span><Link href="/menu">روح للمنيو ↗</Link></div>
+          <div className="t-offers-hero__title">
+            <div className="t-offers-hero__words">
+              <span className="t-index">OFFERS / WHEN THEY'RE REAL</span>
+              <h1>على<br/><em>الجاهز.</em></h1>
+              <p>العروض اللي متاحة دلوقتي بس. من غير خصم قديم ولا سعر مش مؤكد.</p>
+            </div>
+            <figure className="t-offers-hero__photo">
+              <Image src="/images/rebirth/food-11.jpg" alt="صورة أصلية لوجبة من توسكانيني بجانب عبوات الطعام، ليست صورة لعرض معين" fill priority sizes="(max-width: 720px) 88vw, 36vw" />
+              <figcaption>صورة من المطعم — مش صورة عرض محدد</figcaption>
+              <span className="t-offers-hero__photo-index" lang="en" aria-hidden="true">TSC / 11</span>
+            </figure>
+          </div>
+          <div className="t-offers-hero__foot"><span>{sourceError ? 'تعذر التحقق من العروض' : offers.length ? `${offers.length} عرض متاح` : 'مفيش عروض سارية مؤكدة دلوقتي'}</span><Link href="/menu">روح للمنيو ↗</Link></div>
         </header>
         <section className="t-shell t-offers-list" id="t-offers-list" aria-labelledby="t-offers-heading">
           <div className="t-offers-list__heading"><span className="t-index">01 — FROM THE RESTAURANT</span><h2 id="t-offers-heading">اللي متاح.</h2></div>
