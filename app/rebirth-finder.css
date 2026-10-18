@@ -44,3 +44,20 @@
 
 /* Internal Re-benchmark 10: design for the choice task, not a giant unavailable poster. */
 @media(max-width:370px){.t-finder-hero h1{font-size:51px}.t-finder-unavailable h2{font-size:35px}.t-finder-unavailable__links a{font-size:12px;padding:11px 13px}}
+
+/* Pass 11: the documented previous menu is a usable two-decision tool. */
+.t-finder-source{
+  border-right:5px solid var(--red);
+  background:var(--cream);
+  padding:13px 17px;
+  margin-bottom:clamp(24px,4vw,48px);
+  font:750 13px/1.85 "IBM Plex Sans Arabic",Tahoma,sans-serif
+}
+.t-finder-question:has(button[aria-pressed="true"]){border-bottom-color:var(--red)}
+.t-finder-results__grid article{border-top-color:var(--ink)}
+.t-finder-results__grid article:nth-child(even){border-top-color:var(--red)}
+.t-finder-results__grid article h3{overflow-wrap:anywhere}
+@media(max-width:720px){
+  .t-finder-source{font-size:12px}
+  .t-finder-question button{min-height:48px}
+}
