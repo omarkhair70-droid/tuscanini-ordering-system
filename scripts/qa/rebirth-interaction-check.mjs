@@ -122,6 +122,9 @@ try {
     await check(await page.locator('.t-menu-product').count()>0,
       `${width}px category chips filter legacy catalog and deep link correctly`);
     await page.getByRole('button',{name:'كل الأصناف',exact:true}).click();
+    await page.getByRole('button',{name:/اعرض أصناف أكتر/}).click();
+    await check(await page.locator('.t-menu-product').count()===40,
+      `${width}px full 113-record catalog supports progressive 20-to-40 loading without losing prices`);
     const menuOverflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     await check(menuOverflow <= 3, `${width}px Menu no significant horizontal overflow (${menuOverflow}px)`);
     await page.goto(baseUrl + '/offers', { waitUntil: 'networkidle', timeout:30000 });
