@@ -11,6 +11,8 @@ import { ActiveOrderBanner } from '@/components/shared/active-order-banner';
 import { ExperienceHeader } from '@/components/rebirth/experience-header';
 import type { MenuCategory, MenuItem } from '@/types/menu';
 import { MaterialGlyph, categoryMaterialGlyph } from '@/components/rebirth/material-glyph';
+import { ProductArtwork } from '@/components/rebirth/product-artwork';
+import { getCategoryContextPhoto } from '@/lib/rebirth/verified-menu-photographs';
 import type { RebirthCatalog } from '@/lib/rebirth/previous-menu-catalog';
 
 type Props = {
@@ -52,6 +54,7 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
   }, [validItems, category, query]);
 
   const displayed = filtered.slice(0, limit);
+  const contextPhoto = category==='all'?null:getCategoryContextPhoto(category as MenuItem['categorySlug']);
   function chooseCategory(slug: string) {
     setCategory(slug);
     setLimit(PAGE_SIZE);
@@ -113,6 +116,14 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
               <div><span className="t-index">02 — CHOOSE WITH CLARITY</span><h2 id="t-menu-items-title">{category === 'all' ? 'الاختيارات' : categories.find(x=>x.slug===category)?.name}</h2></div>
               <span role="status" aria-live="polite">{filtered.length} صنف مطابق</span>
             </div>
+            {catalogPresent && contextPhoto && (
+              <figure className="t-menu-family-context">
+                <div className="t-menu-family-context__photo"><Image src={contextPhoto.src} alt={contextPhoto.alt} fill
+                  sizes="(max-width:720px) 128px, 240px" /></div>
+                <figcaption><span className="t-index" lang="en">REAL RESTAURANT PHOTOGRAPH / FAMILY ONLY</span>
+                  <strong>من جوّه المطعم.</strong><span>{contextPhoto.credit} — مش صورة أي صنف معين.</span></figcaption>
+              </figure>
+            )}
             {!catalogPresent ? (
               <div className="t-menu-unavailable" role="status">
                 <p className="t-index">MENU DATA / MISSING</p><h3>حصلت مشكلة في تحميل المنيو.</h3>
@@ -126,7 +137,7 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
               </div>
             ) : (
               <>
-                <div className="t-menu-items__grid">
+                <div className="t-menu-items__grid" key={category}>
                   {displayed.map((item,index) => {
                     const available = item.availability !== 'unavailable';
                     const familyName = categories.find(c=>c.slug===item.categorySlug)?.name;
@@ -136,8 +147,13 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
                           <span>{String(index+1).padStart(2,'0')}</span>
                           <span className="t-menu-product__family"><MaterialGlyph name={categoryMaterialGlyph(item.categorySlug)} size={22}/>{familyName}</span>
                         </div>
-                        <h3>{item.name}</h3>
-                        {item.description && <p className="t-menu-product__description">{item.description}</p>}
+                        <div className="t-menu-product__identity">
+                          <ProductArtwork item={item} />
+                          <div className="t-menu-product__text">
+                            <h3>{item.name}</h3>
+                            {item.description && <p className="t-menu-product__description">{item.description}</p>}
+                          </div>
+                        </div>
                         <div className="t-menu-product__bottom">
                           <div className="t-menu-product__price">{available ? <><span>يبدأ من</span><strong>{item.priceFrom} ج.م</strong></> : <span>غير متاح حاليًا</span>}</div>
                           <button type="button" disabled={!available} onClick={()=>setSelectedProduct(item)} aria-label={available ? 'اختيار تفاصيل ' + familyName + ' — ' + item.name : familyName + ' — ' + item.name + ' غير متاح'}>
