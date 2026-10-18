@@ -14,7 +14,8 @@ export type PublicSiteSettings = {
 
 function getStaticFallbackSettings(): PublicSiteSettings {
   return {
-    isOrderingOpen: true,
+    // Fail closed when dynamic store configuration cannot be verified.
+    isOrderingOpen: false,
     whatsappOrderNumber: siteConfig.whatsappOrderNumber,
     phonePrimary: siteConfig.phonePrimary,
     phoneSecondary: siteConfig.phoneSecondary,
