@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 
 import { useCart } from '@/components/cart/cart-provider';
 import { customerUtilityNavigation, primaryExperienceNavigation } from '@/lib/rebirth/site-map';
+import { MaterialGlyph, routeMaterialGlyph } from '@/components/rebirth/material-glyph';
 
 /**
  * The same navigation will be used across every new public experience.
@@ -56,20 +57,37 @@ export function ExperienceHeader() {
               onClick={() => setOpen((current) => !current)}
             >
               <span className="sr-only">{open ? 'اقفل القائمة' : 'افتح القائمة'}</span>
-              <span aria-hidden="true">{open ? '×' : '☰'}</span>
+              <MaterialGlyph name={open ? 'cut' : 'menu'} size={27} className="t-mobile-menu__toggle-glyph"/>
             </button>
             {open ? (
-              <nav id="t-navigation-panel" aria-label="قائمة الموبايل" className="t-mobile-menu__panel">
-                {primaryExperienceNavigation.map((link) => (
-                  <Link key={link.href} href={link.href} aria-current={pathname === link.href ? 'page' : undefined} onClick={() => setOpen(false)}>
-                    {link.label}
-                  </Link>
-                ))}
-                <Link href="/cart" onClick={() => setOpen(false)}>السلة {itemsCount > 0 ? `(${itemsCount})` : ''}</Link>
-                {customerUtilityNavigation.map((link) => (
-                  <Link key={link.href} href={link.href} onClick={() => setOpen(false)}>{link.label}</Link>
-                ))}
-              </nav>
+              <>
+                <button type="button" className="t-mobile-menu__scrim" onClick={()=>setOpen(false)}
+                  aria-label="إغلاق قائمة الموبايل" tabIndex={-1}/>
+                <nav id="t-navigation-panel" aria-label="قائمة الموبايل" className="t-mobile-menu__panel">
+                  <div className="t-mobile-menu__masthead" aria-hidden="true">
+                    <MaterialGlyph name="fold" size={78}/>
+                    <div><span lang="en">TUSCANINI / BENI SUEF</span><strong>افتح اللي نفسك فيه.</strong></div>
+                  </div>
+                  <div className="t-mobile-menu__group" aria-label="أقسام الموقع">
+                    {primaryExperienceNavigation.map((link, i) => (
+                      <Link key={link.href} href={link.href} aria-current={pathname === link.href ? 'page' : undefined} onClick={() => setOpen(false)}>
+                        <MaterialGlyph name={routeMaterialGlyph(link.href)} size={29}/>
+                        <span>{link.label}</span>
+                        <small lang="en">{String(i+1).padStart(2,'0')}</small>
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="t-mobile-menu__utility">
+                    <Link href="/cart" onClick={() => setOpen(false)}><MaterialGlyph name="cart" size={25}/>السلة {itemsCount > 0 ? `(${itemsCount})` : ''}</Link>
+                    {customerUtilityNavigation.map((link) => (
+                      <Link key={link.href} href={link.href} onClick={() => setOpen(false)}>
+                        <MaterialGlyph name={routeMaterialGlyph(link.href)} size={25}/>{link.label}
+                      </Link>
+                    ))}
+                  </div>
+                  <span className="t-mobile-menu__footer" lang="en">REAL FOOD / BENI SUEF / 01</span>
+                </nav>
+              </>
             ) : null}
           </div>
         </div>
