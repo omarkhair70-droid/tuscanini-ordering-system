@@ -136,3 +136,18 @@
   .t-page .t-hero__words{animation:tuscanini-headline-enter .6s ease-out both}
 }
 .t-material__stage:focus-within{outline:3px solid var(--yellow);outline-offset:3px}
+
+/* Mobile art-direction QA: do not cover the hero photograph with a second
+   full-width order bar when the sticky header already exposes its order CTA. */
+@media(min-width:371px) and (max-width:720px){
+  .t-page .t-mobile-order{display:none}
+  .t-page .t-footer{padding-bottom:57px}
+}
+@media(max-width:370px){
+  .t-page .t-mobile-order{
+    left:12px;right:auto;bottom:max(12px,env(safe-area-inset-bottom));
+    width:auto;min-height:54px;padding:11px 15px;gap:17px;
+    border:2px solid var(--yellow);box-shadow:0 8px 28px #0006;
+    font-size:13px
+  }
+}
