@@ -33,7 +33,6 @@ export default async function ReviewsPage() {
           <span className="t-index">01 / YOUR OWN WORDS</span>
           <h1 id="t-feedback-title">قولنا<br/><em>رأيك.</em></h1>
           <div className="t-feedback-hero__aside">
-            <span lang="en" className="t-feedback-hero__mark" aria-hidden="true">“</span>
             <p>جربت أكل توسكانيني؟ رأيك يهم، سواء عجبتك التجربة أو في حاجة شايف إنها محتاجة تتظبط.</p>
             <a href="#t-reviews-action">شارك رأيك <span aria-hidden="true">↓</span></a>
           </div>
