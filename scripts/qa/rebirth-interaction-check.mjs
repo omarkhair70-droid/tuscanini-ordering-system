@@ -47,6 +47,8 @@ try {
     await check(await page.locator('.t-ticker__set').count()===2, `${width}px ticker has two seamless repeating sets`);
     await check(await page.locator('.t-ticker__track').evaluate(el=>getComputedStyle(el).animationName)==='none', `${width}px marquee respects reduced-motion setting`);
     await check(await page.getByRole('img',{name:/ساندوتشات توسكانيني بجانب العلب الحمراء/}).count()===1, `${width}px real branded packaging scene present`);
+    const packagingLoaded = await page.locator('.t-packaging__photo-img').evaluate(img=>img.complete && img.naturalWidth>0);
+    await check(packagingLoaded, `${width}px genuine packaging photograph pixels loaded (not just img element)`);
     await check(await page.getByRole('heading',{name:/العلبة كمان/}).count()===1, `${width}px separate red packaging chapter renders`);
     await check(await page.getByRole('heading',{name:/الحكاية.*في بني.*سويف/}).count()===1, `${width}px local yellow place chapter renders`);
     await check(await page.locator('.t-place-final a[href="/contact"]').count()===1, `${width}px place contact route is available`);
