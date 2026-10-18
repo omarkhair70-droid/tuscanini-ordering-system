@@ -60,9 +60,9 @@ jobs:
             width=${width_height%,*}
             npx --yes playwright@1.56.1 screenshot --browser chromium --viewport-size="${width_height}" --wait-for-timeout=1400 --full-page "http://localhost:3000/" "artifacts/screenshots/home-${width}.png"
           done
-      - name: Capture 320px and 768px Menu, Offers, About and Contact checkpoints
+      - name: Capture 320px and 768px Menu, Offers, About, Contact and Reviews checkpoints
         run: |
-          for route in menu offers about contact; do
+          for route in menu offers about contact reviews; do
             for viewport in "320,720" "768,1024"; do
               width=${viewport%,*}
               npx --yes playwright@1.56.1 screenshot --browser chromium --viewport-size="${viewport}" --wait-for-timeout=1400 --full-page "http://localhost:3000/${route}" "artifacts/screenshots/${route}-${width}.png"
