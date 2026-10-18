@@ -118,6 +118,20 @@ try {
     const offersOverflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     await check(offersOverflow <= 3, `${width}px Offers no significant horizontal overflow (${offersOverflow}px)`);
 
+    await page.goto(baseUrl + '/about', { waitUntil: 'networkidle', timeout:30000 });
+    await check(await page.getByRole('heading', { name: /ناس، أكل/ }).count()===1,
+      `${width}px About uses verified people and place story`);
+    await check(await page.getByText(/حكاية الأربعة صحاب/).count()===0,
+      `${width}px About does not publish unconfirmed four-founder legend`);
+    const aboutPhotos = await page.locator('.t-about-hero__photograph img, .t-about-observed__scene img')
+      .evaluateAll(images => images.map(img => img.complete && img.naturalWidth > 0));
+    await check(aboutPhotos.length===3 && aboutPhotos.every(Boolean),
+      `${width}px all three documentary About restaurant photos decode`);
+    await check(await page.locator('.t-about-visit a[href="/contact"]').count()===1 &&
+      await page.locator('.t-about-hero__links a[href="/menu"]').count()===1,
+      `${width}px About offers direct verified contact and menu paths`);
+    const aboutOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+    await check(aboutOverflow<=3, `${width}px About no significant horizontal overflow (${aboutOverflow}px)`);
     await page.goto(baseUrl + '/cart', { waitUntil: 'networkidle', timeout:30000 });
     await check(await page.getByRole('heading', { name:/على.*مزاجك/ }).count()===1, `${width}px Checkout authored header renders`);
     await check(await page.getByRole('heading', { name:/لسه مفيش/ }).count()===1, `${width}px empty cart is honest and non-orderable`);
