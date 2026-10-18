@@ -39,6 +39,9 @@ export function ProductArtwork({item,size='compact',className=''}:Props){
     '--t-art-rotation':`${rotation}deg`,
     '--t-art-ink':accent,
     '--t-art-shift':`${hash%22}%`,
+    '--t-art-fold-one':`${(hash%43)-21}deg`,
+    '--t-art-fold-two':`${((hash>>>6)%63)-31}deg`,
+    '--t-art-translate':`${((hash>>>11)%17)-8}px`,
   } as CSSProperties;
   return <div className={`t-product-art t-product-art--drawn t-product-art--${size} t-product-art--variant-${variant} ${className}`}
     style={style} data-kind="original-graphic" data-product-id={item.id}
