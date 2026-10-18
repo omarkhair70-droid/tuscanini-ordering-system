@@ -178,10 +178,10 @@ try {
     await page.goto(baseUrl + '/complaints', { waitUntil:'networkidle',timeout:30000 });
     await check(await page.getByRole('heading',{name:/حصلت.*مشكلة/}).count()===1,
       `${width}px Complaints authored help route renders`);
-    await check(await page.locator('body header').count()===1 &&
+    await check(await page.locator('body .t-header').count()===1 &&
       await page.locator('body main').count()===1 &&
-      await page.locator('body footer').count()===1,
-      `${width}px Complaints has one public header/main/footer`);
+      await page.locator('body .t-footer').count()===1,
+      `${width}px Complaints has one public shell header/main/footer, allowing internal section header`);
     await page.getByRole('button',{name:/جهز الرسالة وافتح واتساب/}).click();
     await check(await page.getByRole('alert').getByText(/اكتب تفاصيل المشكلة/).count()===1,
       `${width}px complaint cannot open an empty WhatsApp message`);
