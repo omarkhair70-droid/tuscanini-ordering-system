@@ -71,3 +71,102 @@
  .t-menu-footer>div{margin-top:28px}
 }
 @media(max-width:340px){.t-menu-intro__bottom{display:block}.t-menu-intro__bottom a{display:inline-block;margin-top:17px}.t-menu-product__bottom{flex-direction:column;align-items:stretch}.t-menu-product__bottom button{width:100%}}
+
+
+/* Creative Pass 05: actual restaurant photography is part of finding food,
+   NOT pretend thumbnails for unverified live products. Search stays below
+   this single bounded hero, without adding a mandatory story scene. */
+.t-menu-page .t-menu-intro{padding-bottom:clamp(37px,4vw,64px)}
+.t-menu-page .t-menu-intro__headline{
+  grid-template-columns:minmax(0,1.07fr) minmax(0,.93fr);
+  gap:clamp(18px,3vw,45px);
+  align-items:center;
+  padding-top:clamp(30px,4.4vw,75px)
+}
+.t-menu-intro__copy{min-width:0;position:relative;z-index:2}
+.t-menu-page .t-menu-intro__copy h1{
+  font-size:clamp(59px,8.2vw,130px);
+  line-height:1.13;
+  margin-top:18px
+}
+.t-menu-page .t-menu-intro__copy>p{
+  max-width:450px;
+  font-size:clamp(15px,1.25vw,19px);
+  line-height:1.85;
+  margin-top:clamp(14px,2vw,27px);
+  margin-bottom:0
+}
+.t-menu-intro__photo-pair{
+  position:relative;
+  min-width:0;
+  height:clamp(280px,33vw,460px);
+  isolation:isolate
+}
+.t-menu-intro__photo-pair:before{
+  content:"";
+  position:absolute;
+  width:77%;
+  height:74%;
+  top:9%;
+  right:12%;
+  background:var(--yellow);
+  transform:rotate(5deg)
+}
+.t-menu-intro__photo{margin:0;position:absolute;overflow:hidden;border:6px solid var(--paper);background:#873521}
+.t-menu-intro__photo img{object-fit:cover;object-position:center;transition:transform .55s ease}
+.t-menu-intro__photo--main{width:72%;height:82%;top:0;right:0;transform:rotate(3deg);z-index:1}
+.t-menu-intro__photo--accent{width:46%;height:54%;left:0;bottom:12%;transform:rotate(-6deg);box-shadow:0 15px 38px #0007;z-index:2}
+.t-menu-intro__photo figcaption{
+  position:absolute;
+  bottom:0;
+  left:0;
+  right:0;
+  background:var(--ink);
+  color:var(--paper);
+  font:12px/1.4 "Anton",Impact,sans-serif;
+  letter-spacing:.08em;
+  padding:8px 11px;
+  text-align:left;
+  direction:ltr
+}
+.t-menu-intro__photo-note{
+  position:absolute;
+  bottom:0;
+  right:0;
+  z-index:3;
+  color:var(--paper);
+  background:var(--ink);
+  border-right:3px solid var(--yellow);
+  max-width:76%;
+  padding:9px 12px;
+  font:650 12px/1.7 "IBM Plex Sans Arabic",Tahoma,sans-serif
+}
+.t-menu-page .t-menu-intro__bottom{margin-top:clamp(15px,2.5vw,36px)}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+  .t-menu-intro__photo-pair:hover .t-menu-intro__photo--main img{transform:scale(1.035)}
+  .t-menu-intro__photo-pair:hover .t-menu-intro__photo--accent img{transform:scale(1.035)}
+}
+@media(max-width:900px){
+  .t-menu-page .t-menu-intro__headline{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr)}
+  .t-menu-page .t-menu-intro__copy h1{font-size:clamp(55px,8.3vw,85px)}
+}
+@media(max-width:720px){
+  .t-menu-page .t-menu-intro__headline{grid-template-columns:minmax(0,1fr);gap:10px;padding-top:33px}
+  .t-menu-page .t-menu-intro__copy h1{font-size:clamp(57px,13vw,86px);line-height:1.14}
+  .t-menu-page .t-menu-intro__copy>p{font-size:15px;margin-top:13px;max-width:360px}
+  .t-menu-intro__photo-pair{height:clamp(220px,65vw,300px);margin-top:15px;max-width:430px;width:100%}
+  .t-menu-intro__photo--main{width:66%;height:88%}
+  .t-menu-intro__photo--accent{width:45%;height:62%;bottom:9%}
+  .t-menu-intro__photo-note{font-size:10px;max-width:65%;padding:6px 8px}
+  .t-menu-intro__photo figcaption{font-size:10px;padding:6px 8px}
+  .t-menu-page .t-menu-intro__bottom{margin-top:20px;gap:13px}
+}
+@media(max-width:370px){
+  .t-menu-page .t-menu-intro__copy h1{font-size:56px}
+  .t-menu-intro__photo-pair{height:210px}
+  .t-menu-intro__photo{border-width:4px}
+  .t-menu-page .t-menu-intro__bottom{flex-wrap:wrap}
+}
+@media(prefers-reduced-motion:reduce){
+  .t-menu-intro__photo img{transition:none!important;transform:none!important}
+}
