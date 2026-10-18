@@ -9,7 +9,6 @@
 .t-feedback-hero h1{font:800 clamp(76px,11vw,174px)/1.08 "Changa",Tahoma,sans-serif;letter-spacing:0}
 .t-feedback-hero h1 em{color:var(--yellow)}
 .t-feedback-hero__aside{align-self:center;padding-top:10px;max-width:460px}
-.t-feedback-hero__mark{display:block;font:clamp(130px,18vw,280px)/.45 "Anton",Impact,sans-serif;color:var(--yellow);direction:ltr;text-align:right}
 .t-feedback-hero__aside p{font:650 clamp(16px,1.65vw,22px)/1.9 "IBM Plex Sans Arabic",Tahoma,sans-serif}
 .t-feedback-hero__aside a{display:inline-flex;gap:30px;align-items:center;padding:12px 0;border-bottom:2px solid var(--yellow);color:var(--yellow);font-size:15px;font-weight:850;margin-top:25px}
 .t-reviews-explanation{display:grid;grid-template-columns:minmax(140px,.4fr) minmax(0,1fr);gap:clamp(28px,5vw,80px);align-items:start;padding-block:clamp(80px,9vw,140px)}
@@ -25,7 +24,6 @@
 @media(max-width:850px){
  .t-feedback-hero__content{grid-template-columns:1fr;gap:20px}
  .t-feedback-hero h1{font-size:clamp(75px,15vw,126px)}
- .t-feedback-hero__mark{font-size:120px;line-height:.55}
  .t-feedback-hero__aside{max-width:620px}
 }
 @media(max-width:720px){
@@ -46,3 +44,4 @@
  .t-feedback-hero h1{font-size:66px}
  .t-reviews-explanation h2{font-size:44px}
 }
+
