@@ -1,34 +1,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { ExperienceHeader } from '@/components/rebirth/experience-header';
-import { FoodExploration } from '@/components/rebirth/food-exploration';
-
-const foodFamilies = [
-  {
-    id: '01',
-    name: 'الكريب',
-    english: 'THE FOLD',
-    note: 'الحشوة بتقول الباقي.',
-    href: '/menu?category=crepe-tuscanini',
-    photo: 't-card--crepe',
-  },
-  {
-    id: '02',
-    name: 'البيتزا',
-    english: 'THE WHOLE',
-    note: 'اختيارات تتقسم وتتشارك.',
-    href: '/menu?category=pizza-tuscanini',
-    photo: 't-card--pizza',
-  },
-  {
-    id: '03',
-    name: 'الساندوتشات',
-    english: 'THE HOLD',
-    note: 'لقمة على أصولها.',
-    href: '/menu?category=sandwiches-french',
-    photo: 't-card--sandwich',
-  },
-];
+import { FoodExploration, FoodPhoto } from '@/components/rebirth/food-exploration';
 
 export function RebirthHome({ activeOrderSlot }: { activeOrderSlot?: ReactNode }) {
   return (
@@ -52,11 +25,9 @@ export function RebirthHome({ activeOrderSlot }: { activeOrderSlot?: ReactNode }
               <a className="t-text-link" href="#t-main-story">شوف الحكاية <span aria-hidden="true">↓</span></a>
             </div>
           </div>
-          <div className="t-hero__visual" aria-hidden="true">
-            <div className="t-hero__photo t-photo t-photo--hero">
-              <span className="t-photo__fallback">THE INSIDE<br/>IS THE EVENT</span>
-            </div>
-            <div className="t-hero__stamp" lang="en"><span>REAL FOOD.</span><span>REAL CRAVING.</span></div>
+          <div className="t-hero__visual">
+            <FoodPhoto id="TSC-09" priority className="t-hero__photo" />
+            <div className="t-hero__stamp" lang="en" aria-hidden="true"><span>REAL FOOD.</span><span>REAL CRAVING.</span></div>
             <span className="t-hero__visualnote">01 / FOOD IN FOCUS</span>
           </div>
         </div>
