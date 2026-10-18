@@ -28,7 +28,7 @@ try {
     await tab.click();
     await check(await tab.getAttribute('aria-selected') === 'true', `${width}px food category tab interaction`);
     await check(await page.getByRole('tabpanel').getByText('البيتزا', { exact: true }).count() >= 1, `${width}px category content switch`);
-    await page.getByRole('button', { name: /شوف الصور الـ12/ }).click();
+    await page.getByRole('button', { name: /شوف صور المطعم/ }).click();
     const gallery = page.getByRole('dialog', { name: /صور الطعام الحقيقية/ });
     await check(await gallery.isVisible(), `${width}px genuine restaurant image gallery opens`);
     await gallery.getByRole('button', { name: 'إغلاق المعرض' }).click();
