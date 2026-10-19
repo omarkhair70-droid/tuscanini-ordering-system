@@ -7,6 +7,7 @@ on:
     paths:
       - 'assets/intake/tuscanini-pass19-images.zip'
       - 'scripts/qa/install-generated-from-zip.py'
+      - 'scripts/qa/rebirth-interaction-check.mjs'
 
 permissions:
   contents: write
