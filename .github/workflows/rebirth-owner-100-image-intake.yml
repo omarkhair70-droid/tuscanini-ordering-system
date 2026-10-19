@@ -9,7 +9,6 @@ on:
 
 permissions:
   contents: write
-  actions: write
 
 concurrency:
   group: tuscanini-owner-ai-photo-intake
@@ -19,7 +18,7 @@ jobs:
   install-owner-food-photos:
     if: github.ref == 'refs/heads/redesign/tuscanini-authored-experience-20261018'
     runs-on: ubuntu-latest
-    timeout-minutes: 18
+    timeout-minutes: 30
     env:
       NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-only-public-placeholder
@@ -39,6 +38,36 @@ jobs:
           npm ci
           npx tsc --noEmit
           npm run build
+      - name: Source-aware 113-menu-item and exact source photo audit
+        run: |
+          node scripts/qa/rebirth-generated-match-audit.mjs
+          node scripts/qa/rebirth-menu-photo-shotlist.mjs
+      - name: Install real Chromium and Playwright tests
+        run: |
+          npx --yes playwright@1.56.1 install --with-deps chromium
+          npm install --no-save --ignore-scripts playwright@1.56.1
+      - name: Start Next production build for visible owner-generated food image validation
+        run: |
+          (npm run start > /tmp/tuscanini-generated-image-preview.log 2>&1 &)
+          for i in $(seq 1 50); do
+            if curl -fsS http://localhost:3000/menu >/dev/null; then exit 0; fi
+            sleep 2
+          done
+          cat /tmp/tuscanini-generated-image-preview.log
+          exit 1
+      - name: Real phone+desktop screenshots / 100-photo atlas / product details / cart
+        run: node scripts/qa/rebirth-populated-menu-visuals.mjs
+      - name: Real 390px and 1440px photo-to-product shared-object FLIP videos
+        run: node scripts/qa/rebirth-motion-film.mjs
+      - name: All four responsive viewports, reduced-motion and native product interactivity
+        run: node scripts/qa/rebirth-interaction-check.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tuscanini-owner-100-generated-photo-visual-qa
+          path: artifacts/screenshots/
+          if-no-files-found: warn
+          retention-days: 14
       - name: Add only 100 AI-generated food image assets to this open Draft PR branch
         run: |
           git config user.name "github-actions[bot]"
@@ -51,9 +80,5 @@ jobs:
           fi
           git commit -m "assets(tuscanini): install 100 owner-generated illustrative food photo WebPs"
           git push origin "HEAD:${REBIRTH_BRANCH}"
-      - name: Launch entire real Chromium/photo/motion QA with ALL 100 generated images enabled
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh workflow run rebirth-visual-qa.yml --ref "${REBIRTH_BRANCH}"
-          echo "QA dispatched. PR remains Draft; this workflow never deploys or merges."
+      - name: Confirm draft-branch-only asset update
+        run: echo "Images and Chromium/FLIP QA completed. NO PR merge, NO production deploy."
