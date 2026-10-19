@@ -154,7 +154,11 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
                           <span className="t-menu-product__family"><MaterialGlyph name={categoryMaterialGlyph(item.categorySlug)} size={22}/>{familyName}</span>
                         </div>
                         <div className="t-menu-product__identity">
-                          <ProductArtwork item={item} />
+                          <button className="t-menu-product__art-trigger" type="button" disabled={!available}
+                            onClick={()=>setSelectedProduct(item)}
+                            aria-label={available ? 'افتح تفاصيل ' + familyName + ' — ' + item.name + ' من الرسم' : item.name + ' غير متاح'}>
+                            <ProductArtwork item={item} />
+                          </button>
                           <div className="t-menu-product__text">
                             <h3>{item.name}</h3>
                             {item.description && <p className="t-menu-product__description">{item.description}</p>}
