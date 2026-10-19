@@ -34,6 +34,7 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
   const [limit, setLimit] = useState(PAGE_SIZE);
   const [viewMode, setViewMode] = useState<'fast'|'art'|'photo'>('photo');
   const [selectedProduct, setSelectedProduct] = useState<MenuItem | null>(null);
+  const [originRect,setOriginRect] = useState<{left:number;top:number;width:number;height:number}|null>(null);
 
   useEffect(() => {
     const current = new URLSearchParams(window.location.search).get('category');
@@ -56,6 +57,12 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
 
   const displayed = filtered.slice(0, limit);
   const contextPhoto = category==='all'?null:getCategoryContextPhoto(category as MenuItem['categorySlug']);
+  function openProduct(item:MenuItem,trigger:HTMLElement){
+    const art=trigger.querySelector<HTMLElement>('.t-product-art')??trigger.closest('.t-menu-product')?.querySelector<HTMLElement>('.t-product-art');
+    const rect=art?.getBoundingClientRect();
+    setOriginRect(rect&&rect.width>0&&rect.height>0?{left:rect.left,top:rect.top,width:rect.width,height:rect.height}:null);
+    setSelectedProduct(item);
+  }
   function chooseCategory(slug: string) {
     setCategory(slug);
     setLimit(PAGE_SIZE);
@@ -156,7 +163,7 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
                         </div>
                         <div className="t-menu-product__identity">
                           <button className="t-menu-product__art-trigger" type="button" disabled={!available}
-                            onClick={()=>setSelectedProduct(item)}
+                            onClick={event=>openProduct(item,event.currentTarget)}
                             aria-label={available ? 'افتح تفاصيل ' + familyName + ' — ' + item.name + ' من المعاينة' : item.name + ' غير متاح'}>
                             <ProductArtwork item={item} visualMode={viewMode==='photo'?'representative':'art'}/>
                           </button>
@@ -167,7 +174,7 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
                         </div>
                         <div className="t-menu-product__bottom">
                           <div className="t-menu-product__price">{available ? <><span>يبدأ من</span><strong>{item.priceFrom} ج.م</strong></> : <span>غير متاح حاليًا</span>}</div>
-                          <button type="button" disabled={!available} onClick={()=>setSelectedProduct(item)} aria-label={available ? 'اختيار تفاصيل ' + familyName + ' — ' + item.name : familyName + ' — ' + item.name + ' غير متاح'}>
+                          <button type="button" disabled={!available} onClick={event=>openProduct(item,event.currentTarget)} aria-label={available ? 'اختيار تفاصيل ' + familyName + ' — ' + item.name : familyName + ' — ' + item.name + ' غير متاح'}>
                             {available ? 'اختار التفاصيل ↗' : 'غير متاح'}
                           </button>
                         </div>
@@ -190,7 +197,7 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
         </div>
       </main>
       <ExperienceFooter />
-      <RebirthProductDialog item={selectedProduct} priceSource="previous" visualMode={viewMode==='photo'?'representative':'art'} onClose={()=>setSelectedProduct(null)} />
+      <RebirthProductDialog item={selectedProduct} priceSource="previous" visualMode={viewMode==='photo'?'representative':'art'} originRect={originRect} onClose={()=>{setSelectedProduct(null);setOriginRect(null)}} />
       {catalogPresent && <FloatingCartCta />}
     </div>
   );
