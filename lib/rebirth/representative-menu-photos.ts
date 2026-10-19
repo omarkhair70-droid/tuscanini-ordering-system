@@ -25,10 +25,27 @@ export type RepresentativeMenuPhoto = Readonly<{
   subject:string;
 }>;
 
+const canonicalPhotoPaths:Readonly<Record<number,string>>={
+  32592740:'two-savory-crepes-with-fresh-filling-32592740',
+  29143160:'close-up-of-savory-meat-filled-crepes-on-plate-29143160',
+  31856262:'delicious-chocolate-drizzled-crepe-on-brown-paper-31856262',
+  5903164:'a-crepe-with-chocolate-filling-on-white-ceramic-plate-5903164',
+  2180877:'top-view-photo-of-sliced-pizza-2180877',
+  4394623:'yummy-assorted-pizza-on-table-in-kitchen-4394623',
+  3214161:'plate-of-pasta-3214161',
+  14537686:'pasta-with-sauce-on-plate-14537686',
+  30350298:'close-up-of-gourmet-chicken-sandwich-on-wooden-plate-30350298',
+  1431305:'chicken-burger-with-fries-1431305',
+  34964956:'chocolate-waffle-with-dark-and-white-chocolate-34964956',
+  34964948:'delicious-waffle-and-chocolate-dessert-close-up-34964948',
+  5041473:'sliced-potato-fries-on-white-surface-5041473',
+  8215113:'healthy-fruit-juices-in-glasses-8215113',
+};
+
 function pexels(id:number,photographer:string,subject:string,altAr:string):RepresentativeMenuPhoto{
   return {
-    photoId:'PX-'+id,src:`https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=900`,
-    page:`https://www.pexels.com/photo/${id}/`,
+    photoId:'PX-'+id,src:`https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=640`,
+    page:`https://www.pexels.com/photo/${canonicalPhotoPaths[id]}/`,
     photographer,altAr,kind:'representative-stock',subject,
   };
 }
