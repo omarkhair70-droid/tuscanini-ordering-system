@@ -103,7 +103,18 @@ try{
         await first.scrollIntoViewIfNeeded();
         await page.waitForFunction(()=>document.querySelector('.t-menu-atlas__item img')?.naturalWidth>0,null,{timeout:15000});
         await page.screenshot({path:`artifacts/screenshots/owner-100-food-visual-atlas-${width}.png`,animations:'disabled'});
-        await page.locator('.t-menu-atlas__batch').nth(6).scrollIntoViewIfNeeded();
+        // The atlas correctly uses lazy-loading for hundreds of image cards.
+        // Scroll and DECODE the actual photographed pizza studies before
+        // capturing this QA proof; a premature screenshot only shows empty
+        // placeholders, even when the stored 720px WebP is valid.
+        const pizza=page.locator('.t-menu-atlas__batch').nth(6);
+        const pizzaImages=pizza.locator('img');
+        for(let i=0;i<4;i++){
+          const img=pizzaImages.nth(i);
+          await img.scrollIntoViewIfNeeded();
+          await img.evaluate(el=>el.decode());
+        }
+        await pizzaImages.first().scrollIntoViewIfNeeded();
         await page.screenshot({path:`artifacts/screenshots/owner-pizza-collage-preserved-${width}.png`,animations:'disabled'});
       }
       console.log(`POPULATED VISUALS ${width}px: ${results} same-flavor family choices; old product 125+20, x2 = 290 EGP; cart and 8 finder matches photographed`);
