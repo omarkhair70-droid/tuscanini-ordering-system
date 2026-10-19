@@ -41,4 +41,9 @@ Pexels says commercial website usage is allowed: https://help.pexels.com/hc/en-u
 6. Production payment/order DB remains unverified; draft PR must not be deployed or merged while creative and transactional gates remain open.
 
 ## Proof
-Green screenshot and motion run (when the current commit completes): insert specific Actions link into this document. Until then call the branch *implemented / CI pending*.
+- **Actual green browser and video proof:** [GitHub Actions #39183385454](https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39183385454) completed **SUCCESS** with 0 browser interaction fixture failures. Production TypeScript/Next build, 12 original restaurant source-photo gate, 390/1440 actual illustration and representative photo screenshots, product credit panel, and two real Chromium WebM interaction films passed.
+- Motion film explicitly required the clicked representative photo to complete **DOM FLIP** and checked `data-motion-technique=dom-flip` and `data-motion-finished=true` in actual headless Chromium at 390px and 1440px. No restaurant order POST was performed.
+- In the 390px screenshot **food photo visibly loaded from Pexels** in the named SKU card and sheet, tagged "صورة توضيحية"; the product sheet linked the photographer and source, kept unchanged old menu size-price tiers (40,60,75 in the sampled crepe entry).
+- An initial Pexels photo study had too much white plate vs food; replaced with a closer source-backed meat-filled crepe. Subsequent fixes use canonical original Pexels page slugs for direct attribution and smaller 640px CDN transforms. These *later* media edits require a separate visual run; do not claim this document's first green run certifies every later SHA.
+- Responsive original-art gallery and price-first menu remain accessible as alternates. 113/113 exact restaurant photographs are **still missing**; there are currently fourteen curated illustrative stock source IDs, reused across family members.
+
