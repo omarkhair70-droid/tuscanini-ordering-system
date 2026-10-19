@@ -6,6 +6,7 @@ import { chromium } from 'playwright';
  * order submission have been tested.
  */
 const baseUrl = process.env.REBIRTH_BASE_URL ?? 'http://127.0.0.1:3000';
+const generatedMediaReady=process.env.NEXT_PUBLIC_REBIRTH_GENERATED_IMAGES==='ready';
 const browser = await chromium.launch({ headless: true });
 let failures = 0;
 
@@ -144,10 +145,17 @@ try {
     await check(await page.getByRole('button',{name:'صور الأكل'}).getAttribute('aria-pressed')==='true' &&
       await page.locator('.t-menu-items__grid--photo').count()===1,
       `${width}px licensed illustrative-food photo view is the default, not an empty catalog`);
-    await check(await page.locator('.t-menu-items__grid--photo [data-kind="representative-stock"]').count()===20,
-      `${width}px first 20 item thumbnails use explicitly marked REPRESENTATIVE food imagery`);
-    await check(await page.locator('.t-menu-items__grid--photo .t-product-art__representative-label').first().innerText()==='صورة توضيحية',
-      `${width}px food photos are visibly disclosed as illustrative, not merchant original dishes`);
+    const expectedKind=generatedMediaReady?'generated-illustrative':'representative-stock';
+    await check(await page.locator('.t-menu-items__grid--photo [data-kind="'+expectedKind+'"]').count()===20,
+      `${width}px first 20 food cards use ${expectedKind} images with explicit source provenance`);
+    await check(await page.locator('.t-menu-items__grid--photo .t-product-art__representative-label').first().innerText()===
+      (generatedMediaReady?'صورة تخيلية توضيحية':'صورة توضيحية'),
+      `${width}px illustrated food photographs disclose truthful production source`);
+    if(generatedMediaReady){
+      const loaded=await page.locator('.t-menu-items__grid--photo [data-kind="generated-illustrative"] img')
+        .evaluateAll(images=>images.length===20&&images.every(img=>img.complete&&img.naturalWidth>0));
+      await check(loaded,`${width}px all 20 generated food previews loaded from REAL committed local WebP bytes (not broken images)`);
+    }
     await page.getByRole('button',{name:'عرض الرسومات'}).click();
     await check(await page.locator('.t-menu-items__grid--art .t-product-art').count()===20 &&
       await page.getByRole('button',{name:'عرض الرسومات'}).getAttribute('aria-pressed')==='true',
@@ -216,9 +224,14 @@ try {
     await check(await page.locator('.t-menu-items__grid--photo').count()===1,
       `${width}px users can return to the sourced illustrative-food photo layout after price-first search`);
     await page.locator('.t-menu-items__grid--photo .t-menu-product__art-trigger').first().click();
-    await check(await page.locator('.t-product-dialog[open]').count()===1 &&
-      await page.getByRole('link',{name:/مصدر الصورة التوضيحية.*Pexels/}).count()===1,
-      `${width}px native product sheet keeps source credit and real current item options`);
+    const photoSheet=page.locator('.t-product-dialog[open]');
+    await check(await photoSheet.count()===1 &&
+      (generatedMediaReady
+        ? await photoSheet.locator('[data-kind="generated-illustrative"]').count()===1 &&
+          await photoSheet.getByText(/الصورة مولّدة بالذكاء الاصطناعي/).count()===1 &&
+          await photoSheet.getByRole('link',{name:/Pexels/}).count()===0
+        : await page.getByRole('link',{name:/مصدر الصورة التوضيحية.*Pexels/}).count()===1),
+      `${width}px product sheet preserves original size/addons and correctly declares generated versus stock food photography`);
     await page.getByRole('button',{name:'إغلاق تفاصيل المنتج'}).click();
     const menuOverflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     await check(menuOverflow <= 3, `${width}px Menu no significant horizontal overflow (${menuOverflow}px)`);
