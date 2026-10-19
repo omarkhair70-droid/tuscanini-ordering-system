@@ -95,6 +95,17 @@ try{
       }
       await page.evaluate(()=>window.scrollTo(0,0));
       await page.screenshot({path:`artifacts/screenshots/finder-matches-${width}.png`,fullPage:true,animations:'disabled'});
+      if(generatedMediaReady){
+        await page.goto(base+'/menu/visual-atlas',{waitUntil:'networkidle',timeout:30000});
+        const all=page.locator('.t-menu-atlas__item');
+        if(await all.count()!==100)throw Error('Owner 100 photo atlas must show 100 real locally installed food visuals');
+        const first=page.locator('.t-menu-atlas__item img').first();
+        await first.scrollIntoViewIfNeeded();
+        await page.waitForFunction(()=>document.querySelector('.t-menu-atlas__item img')?.naturalWidth>0,null,{timeout:15000});
+        await page.screenshot({path:`artifacts/screenshots/owner-100-food-visual-atlas-${width}.png`,animations:'disabled'});
+        await page.locator('.t-menu-atlas__batch').nth(6).scrollIntoViewIfNeeded();
+        await page.screenshot({path:`artifacts/screenshots/owner-pizza-collage-preserved-${width}.png`,animations:'disabled'});
+      }
       console.log(`POPULATED VISUALS ${width}px: ${results} same-flavor family choices; old product 125+20, x2 = 290 EGP; cart and 8 finder matches photographed`);
     }finally{await ctx.close()}
   }
