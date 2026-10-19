@@ -55,6 +55,16 @@ try{
       // Same recording continues onto the real former-price menu.
       // No made-up dish images: every SKU has distinct printed graphic artwork.
       await page.goto(base+'/menu',{waitUntil:'networkidle',timeout:30000});
+      await glide(page,'.t-menu-items__grid--photo');
+      const photoItem=page.locator('.t-menu-items__grid--photo .t-menu-product').first();
+      await photoItem.locator('.t-menu-product__art-trigger').click();
+      await page.locator('.t-product-dialog[open]').waitFor({timeout:6000});
+      await page.locator('.t-product-dialog[data-motion-technique="dom-flip"][data-motion-finished="true"]')
+        .waitFor({timeout:5000});
+      if((await page.getByRole('link',{name:/مصدر الصورة التوضيحية.*Pexels/}).count())!==1)
+        throw new Error('Sample photo is not credited inside product details');
+      await page.waitForTimeout(750);
+      await page.getByRole('button',{name:'إغلاق تفاصيل المنتج'}).click();
       await glide(page,'.t-menu-view-switch');
       await page.getByRole('button',{name:'عرض الرسومات'}).click();
       await page.waitForTimeout(900);
@@ -74,7 +84,7 @@ try{
       await page.waitForTimeout(440);
       await page.getByRole('button',{name:'إغلاق تفاصيل المنتج'}).click();
       await page.waitForTimeout(480);
-      console.log(`MOTION VIDEO ${width}px: illustrated nav, real-category pictures and packaging change, plus opt-in large illustrated gallery → named food fold graphic → native size/add-on sheet — NO order submitted`);
+      console.log(`MOTION VIDEO ${width}px: real stock reference photo → measured 390ms FLIP into native product detail, credit visible; then optional authored Arabic print gallery → same product sheet. NO order submitted`);
     }finally{
       await page.close();
       await context.close();
