@@ -1,8 +1,12 @@
+'use client';
+
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
 import type { MenuItem } from '@/types/menu';
 import { MaterialGlyph, categoryMaterialGlyph } from '@/components/rebirth/material-glyph';
 import { getVerifiedMenuPhoto } from '@/lib/rebirth/verified-menu-photographs';
+import { getRepresentativeMenuPhoto } from '@/lib/rebirth/representative-menu-photos';
 
 /**
  * The 113 original menu entries deserve individually composed identities,
@@ -15,7 +19,7 @@ import { getVerifiedMenuPhoto } from '@/lib/rebirth/verified-menu-photographs';
  * The verified path only renders an approved exact SKU photo in local assets.
  * No stock photos, fabricated ingredients or generic-family-photo masquerading.
  */
-type Props = { item: Pick<MenuItem,'id'|'name'|'categorySlug'>; size?: 'compact'|'large'; className?:string };
+type Props = { item: Pick<MenuItem,'id'|'name'|'categorySlug'>; size?: 'compact'|'large'; className?:string; visualMode?:'art'|'representative' };
 function stableHash(text:string):number{
   let value=2166136261;
   for(let i=0;i<text.length;i++){
@@ -24,12 +28,26 @@ function stableHash(text:string):number{
   }
   return value>>>0;
 }
-export function ProductArtwork({item,size='compact',className=''}:Props){
+export function ProductArtwork({item,size='compact',className='',visualMode='art'}:Props){
+  const [failedUrl,setFailedUrl]=useState<string|null>(null);
   const photo=getVerifiedMenuPhoto(item.id);
+  const representative=visualMode==='representative'&&!photo?getRepresentativeMenuPhoto(item.id,item.categorySlug):null;
+  useEffect(()=>{setFailedUrl(null)},[item.id,representative?.src]);
   if(photo) return <div className={`t-product-art t-product-art--photo t-product-art--${size} ${className}`}>
     <Image src={photo.imagePath} alt={photo.altAr} fill sizes={size==='compact'?'(max-width:720px) 84px, 116px':'(max-width:720px) 160px, 230px'} />
     <span className="t-product-art__photo-note" aria-hidden="true">TUSCANINI / DISH</span>
   </div>;
+  if(representative&&representative.src!==failedUrl){
+    return <div className={`t-product-art t-product-art--representative t-product-art--${size} ${className}`}
+      data-kind="representative-stock" data-product-id={item.id}
+      data-source-photo-id={representative.photoId}
+      role="img" aria-label={`صورة توضيحية لنوع الأكل؛ ليست صورة فعلية من توسكانيني للصنف ${item.name}`}>
+      <Image src={representative.src} alt={representative.altAr} fill unoptimized
+        sizes={size==='compact'?'(max-width:720px) 82px, 100px':'(max-width:720px) 118px, 192px'}
+        onError={()=>setFailedUrl(representative.src)} />
+      <span className="t-product-art__representative-label" aria-hidden="true">صورة توضيحية</span>
+    </div>;
+  }
   const hash=stableHash(item.categorySlug+'/'+item.id);
   const variant=hash%6;
   const rotation=(hash%17)-8;
