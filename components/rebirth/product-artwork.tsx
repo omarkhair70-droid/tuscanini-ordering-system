@@ -53,6 +53,7 @@ export function ProductArtwork({item,size='compact',className=''}:Props){
       <MaterialGlyph name={categoryMaterialGlyph(item.categorySlug)} size={size==='large'?108:64}
         className="t-product-art__glyph" />
     </div>
+    <span className="t-product-art__item-name" aria-hidden="true">{item.name}</span>
     <span className="t-product-art__serial" aria-hidden="true" dir="ltr">{item.id.toUpperCase()}</span>
     <span className="t-product-art__caption">رسم تعبيري / مش صورة للصنف</span>
   </div>;
