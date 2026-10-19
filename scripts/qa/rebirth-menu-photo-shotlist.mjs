@@ -67,10 +67,10 @@ for(const field of manifest.properties){
   const altAr=textField(field.initializer,'altAr',sfm);
   if(!items.some(x=>x.id===id)||id!==itemRef||
     !verifiedBy||!sourceRef||!altAr||
-    typeof path!=='string'||!/^\\/images\\/menu\\/products\\/[a-z0-9-]+\\.(jpg|jpeg|png|webp|avif)$/i.test(path)){
+    typeof path!=='string'||!path.startsWith('/images/menu/products/')||!['.jpg','.jpeg','.png','.webp','.avif'].some(ext=>path.toLowerCase().endsWith(ext))){
     throw new Error('Invalid or unproven exact product photograph metadata for '+id);
   }
-  const physical=resolve('public',path.replace(/^\\//,''));
+  const physical=resolve('public',path.slice(1));
   if(!existsSync(physical))throw Error('Approved SKU photo not committed: '+physical);
   accepted.set(id,{imagePath:path,verifiedBy,source:sourceRef});
 }
@@ -88,7 +88,7 @@ const request={
     suggestedLocalFilename:'public/images/menu/products/'+item.id+'.jpg',
   })),
 };
-await writeFile('artifacts/screenshots/menu-exact-photo-production-list.json',JSON.stringify(request,null,2)+'\\n');
+await writeFile('artifacts/screenshots/menu-exact-photo-production-list.json',JSON.stringify(request,null,2));
 console.log('PHOTO-TRUTH GATE: '+accepted.size+'/'+items.length+
   ' exact real named-menu-item photographs approved; '+(items.length-accepted.size)+
   ' honest illustrated prints remain until owner source images arrive.');
