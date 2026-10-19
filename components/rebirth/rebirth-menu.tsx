@@ -32,7 +32,7 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<string>('all');
   const [limit, setLimit] = useState(PAGE_SIZE);
-  const [viewMode, setViewMode] = useState<'fast'|'art'>('fast');
+  const [viewMode, setViewMode] = useState<'fast'|'art'|'photo'>('photo');
   const [selectedProduct, setSelectedProduct] = useState<MenuItem | null>(null);
 
   useEffect(() => {
@@ -119,8 +119,9 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
             </div>
             {catalogPresent && <div className="t-menu-view-switch" role="group" aria-label="طريقة عرض المنيو">
               <div><button type="button" aria-pressed={viewMode==='fast'} onClick={()=>setViewMode('fast')}>المنيو السريع</button>
-              <button type="button" aria-pressed={viewMode==='art'} onClick={()=>setViewMode('art')}>عرض الرسومات</button></div>
-              <p>الرسومات لكل صنف تعبيرية، وليست صور الوجبات. صور الأصناف الأصلية هتظهر لما تتوثّق باسمها.</p>
+              <button type="button" aria-pressed={viewMode==='art'} onClick={()=>setViewMode('art')}>عرض الرسومات</button>
+              <button type="button" aria-pressed={viewMode==='photo'} onClick={()=>setViewMode('photo')}>صور الأكل</button></div>
+              <p>الصور من مكتبة مرخّصة لتوضيح نوع الأكل فقط، مش تصوير وجبات توسكانيني أو مكوناتها. الأسعار من المنيو القديم.</p>
             </div>}
             {catalogPresent && contextPhoto && (
               <figure className="t-menu-family-context">
@@ -156,8 +157,8 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
                         <div className="t-menu-product__identity">
                           <button className="t-menu-product__art-trigger" type="button" disabled={!available}
                             onClick={()=>setSelectedProduct(item)}
-                            aria-label={available ? 'افتح تفاصيل ' + familyName + ' — ' + item.name + ' من الرسم' : item.name + ' غير متاح'}>
-                            <ProductArtwork item={item} />
+                            aria-label={available ? 'افتح تفاصيل ' + familyName + ' — ' + item.name + ' من المعاينة' : item.name + ' غير متاح'}>
+                            <ProductArtwork item={item} visualMode={viewMode==='photo'?'representative':'art'}/>
                           </button>
                           <div className="t-menu-product__text">
                             <h3>{item.name}</h3>
@@ -189,7 +190,7 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
         </div>
       </main>
       <ExperienceFooter />
-      <RebirthProductDialog item={selectedProduct} priceSource="previous" onClose={()=>setSelectedProduct(null)} />
+      <RebirthProductDialog item={selectedProduct} priceSource="previous" visualMode={viewMode==='photo'?'representative':'art'} onClose={()=>setSelectedProduct(null)} />
       {catalogPresent && <FloatingCartCta />}
     </div>
   );
