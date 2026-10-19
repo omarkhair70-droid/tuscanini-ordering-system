@@ -64,7 +64,7 @@ try{
       const first=page.locator('.t-menu-product').first();
       if(width===1440)await first.hover();
       await page.waitForTimeout(520);
-      await first.locator('.t-menu-product__bottom button').click();
+      await first.locator('.t-menu-product__art-trigger').click();
       await page.locator('.t-product-dialog[open]').waitFor({timeout:6000});
       if((await page.locator('.t-product-dialog__identity .t-product-art').count())!==1)
         throw new Error('Product illustration must continue into item sheet');
