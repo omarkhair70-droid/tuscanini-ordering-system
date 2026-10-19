@@ -148,6 +148,10 @@ try {
     const artWidth=await page.locator('.t-menu-items__grid--art .t-product-art').first()
       .evaluate(el=>el.getBoundingClientRect().width);
     await check(artWidth>=105,`${width}px illustrated mode gives the selected food real visual space (${Math.round(artWidth)}px)`);
+    await page.locator('.t-menu-items__grid--art .t-menu-product__art-trigger').first().click();
+    await check(await page.locator('.t-product-dialog[open]').count()===1,
+      `${width}px touching individual graphic artwork opens the real size/addon product sheet`);
+    await page.getByRole('button',{name:'إغلاق تفاصيل المنتج'}).click();
     await page.getByRole('button',{name:'المنيو السريع'}).click();
     await check(await page.locator('.t-menu-items__grid--fast').count()===1 &&
       await page.getByRole('button',{name:'المنيو السريع'}).getAttribute('aria-pressed')==='true',
