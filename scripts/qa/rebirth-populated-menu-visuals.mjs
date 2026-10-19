@@ -24,6 +24,12 @@ try{
       // Browse the newly sourced external PHOTO mode first. A separate photo
       // honesty badge + true photographer credit must remain visible.
       await page.locator('.t-menu-items__grid--photo .t-product-art--representative').first().scrollIntoViewIfNeeded();
+      const generatedMediaReady=process.env.NEXT_PUBLIC_REBIRTH_GENERATED_IMAGES==='ready';
+      if(generatedMediaReady){
+        const photo=page.locator('.t-menu-items__grid--photo [data-kind="generated-illustrative"] img').first();
+        await photo.waitFor({state:'visible',timeout:6000});
+        await page.waitForFunction(()=>document.querySelector('.t-menu-items__grid--photo [data-kind="generated-illustrative"] img')?.naturalWidth>0,null,{timeout:9000});
+      }
       await page.waitForTimeout(800);
       await page.screenshot({path:`artifacts/screenshots/menu-representative-photo-${width}.png`,fullPage:true,animations:'disabled'});
       await page.locator('.t-menu-items__grid--photo .t-menu-product').first().screenshot({
