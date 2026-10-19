@@ -10,8 +10,6 @@ import json
 import sys
 from pathlib import Path
 from zipfile import ZipFile
-from io import BytesIO
-from PIL import Image
 
 def run() -> int:
     if len(sys.argv)!=2:
@@ -48,10 +46,17 @@ def run() -> int:
             data=z.read(name)
             if data[:4]!=b"RIFF" or data[8:12]!=b"WEBP":
                 raise ValueError("No WebP file signature: "+name)
-            with Image.open(BytesIO(data)) as im:
-                if im.format!="WEBP" or im.size!=(720,720):
-                    raise ValueError("Wrong decoded image type/dimensions: "+name)
-                im.verify()
+            # All 100 owner-generated derivatives use the regular VP8 WebP
+            # bitstream. Verify RIFF size and frame marker+720x720 dimensions
+            # using the standard library (no pip or untrusted dependency).
+            if int.from_bytes(data[4:8],"little")+8!=len(data):
+                raise ValueError("Corrupt WebP RIFF length: "+name)
+            if data[12:16]!=b"VP8 " or data[23:26]!=b"\\x9d\\x01\\x2a":
+                raise ValueError("WebP source codec or frame marker mismatch: "+name)
+            width=int.from_bytes(data[26:28],"little")&0x3fff
+            height=int.from_bytes(data[28:30],"little")&0x3fff
+            if (width,height)!=(720,720):
+                raise ValueError("Wrong image dimensions: "+name)
             prepared[Path(name).name]=data
     target.mkdir(parents=True,exist_ok=True)
     existing={p.name for p in target.glob("*.webp")}
