@@ -23,9 +23,10 @@ try{
       await page.evaluate(()=>document.fonts.ready);
       await page.getByRole('button',{name:'عرض الرسومات'}).click();
       await page.locator('.t-menu-items__grid--art .t-product-art').first().waitFor({state:'visible',timeout:6000});
-      await page.locator('.t-menu-items__grid--art').screenshot({path:`artifacts/screenshots/menu-illustrated-grid-${width}.png`,animations:'disabled'});
-      await page.locator('.t-menu-items__grid--art .t-menu-product').first().screenshot({
-        path:`artifacts/screenshots/menu-illustrated-item-${width}.png`,animations:'disabled'});
+      await page.locator('.t-menu-items__grid--art').evaluate(el=>
+        window.scrollTo(0,el.getBoundingClientRect().top+window.scrollY-130));
+      await page.screenshot({path:`artifacts/screenshots/menu-illustrated-grid-${width}.png`,fullPage:true,animations:'disabled'});
+      await page.screenshot({path:`artifacts/screenshots/menu-illustrated-item-${width}.png`,animations:'disabled'});
       await page.getByRole('button',{name:'المنيو السريع'}).click();
       await page.getByRole('button',{name:'كريب لحوم',exact:true}).click();
       await page.locator('.t-menu-family-context img').scrollIntoViewIfNeeded();
