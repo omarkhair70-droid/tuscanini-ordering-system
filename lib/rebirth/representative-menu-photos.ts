@@ -37,8 +37,8 @@ const samples={
   crepeSavory:[
     pexels(32592740,'Anthony Rahayel','Savory crêpe',
       'صورة توضيحية لكريب مالح بحشوة مختلفة، ليست صورة الصنف ولا من توسكانيني'),
-    pexels(25748217,'Helin Gezer','Savory crêpe',
-      'صورة ستوك توضيحية لكريب مالح بجانب خضراوات، لا تُظهر وجبة المطعم نفسها'),
+    pexels(29143160,'Valeria Boltneva','Meat-filled crêpes',
+      'صورة ستوك قريبة لكريب مالح محشو؛ لا تُظهر وجبة توسكانيني ولا تحدد حشو الصنف'),
   ],
   crepeSweet:[
     pexels(31856262,'Simona Russo','Chocolate crêpe',
