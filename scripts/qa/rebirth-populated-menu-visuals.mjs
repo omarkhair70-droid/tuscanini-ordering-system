@@ -21,6 +21,12 @@ try{
     try{
       await page.goto(base+'/menu',{waitUntil:'networkidle',timeout:30000});
       await page.evaluate(()=>document.fonts.ready);
+      await page.getByRole('button',{name:'عرض الرسومات'}).click();
+      await page.locator('.t-menu-items__grid--art .t-product-art').first().waitFor({state:'visible',timeout:6000});
+      await page.locator('.t-menu-items__grid--art').screenshot({path:`artifacts/screenshots/menu-illustrated-grid-${width}.png`,animations:'disabled'});
+      await page.locator('.t-menu-items__grid--art .t-menu-product').first().screenshot({
+        path:`artifacts/screenshots/menu-illustrated-item-${width}.png`,animations:'disabled'});
+      await page.getByRole('button',{name:'المنيو السريع'}).click();
       await page.getByRole('button',{name:'كريب لحوم',exact:true}).click();
       await page.locator('.t-menu-family-context img').waitFor({state:'visible',timeout:6000});
       if(!(await page.locator('.t-menu-family-context img').evaluate(img=>img.complete&&img.naturalWidth>0)))throw Error('Family photo must decode');
