@@ -5,6 +5,7 @@ import { useCart } from '@/components/cart/cart-provider';
 import type { MenuItem } from '@/types/menu';
 import { ProductArtwork } from '@/components/rebirth/product-artwork';
 import { getRepresentativeMenuPhoto } from '@/lib/rebirth/representative-menu-photos';
+import { getGeneratedMenuPhoto } from '@/lib/rebirth/generated-menu-media';
 
 type Props = {
   item: MenuItem | null;
@@ -96,7 +97,8 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
   const totalPrice = unitPrice * quantity;
   if (!item) return null;
 
-  const representative=visualMode==='representative'?getRepresentativeMenuPhoto(item.id,item.categorySlug):null;
+  const generated=visualMode==='representative'?getGeneratedMenuPhoto(item.id,item.name,item.categorySlug):null;
+  const representative=visualMode==='representative'&&!generated?getRepresentativeMenuPhoto(item.id,item.categorySlug):null;
   const unavailable = item.availability === 'unavailable';
   const invalidPrice = !Number.isFinite(unitPrice) || unitPrice <= 0 || quantity > 50;
   const cannotAdd = unavailable || invalidPrice || Boolean(item.sizes?.length && !selectedSize);
@@ -135,7 +137,7 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
             <ProductArtwork item={item} size="large" visualMode={visualMode}/>
             <div className="t-product-dialog__identity-copy">
               <p id="t-product-summary">{item.description || 'اختار التفاصيل المناسبة لطلبك.'}</p>
-              {priceSource === 'previous' && <p className="t-product-dialog__price-notice">{representative?'الصورة للتوضيح فقط وليست شكل أو مكونات الصنف من توسكانيني.':'الرسمة للتعبير عن الصنف وليست صورته الفعلية.'} الأسعار من منيو توسكانيني السابق؛ التوافر وتأكيد الطلب بيرجعوا للمطعم.</p>}
+              {priceSource === 'previous' && <p className="t-product-dialog__price-notice">{generated?'الصورة مولّدة بالذكاء الاصطناعي للتوضيح فقط، وليست صورة فعلية للصنف.':representative?'الصورة للتوضيح فقط وليست شكل أو مكونات الصنف من توسكانيني.':'الرسمة للتعبير عن الصنف وليست صورته الفعلية.'} الأسعار من منيو توسكانيني السابق؛ التوافر وتأكيد الطلب بيرجعوا للمطعم.</p>}
               {representative&&<a className="t-product-dialog__photo-credit" href={representative.page} target="_blank" rel="noopener noreferrer">مصدر الصورة التوضيحية: {representative.photographer} / Pexels ↗</a>}
             </div>
           </div>
