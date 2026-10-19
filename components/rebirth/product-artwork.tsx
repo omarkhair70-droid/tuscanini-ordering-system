@@ -7,6 +7,7 @@ import type { MenuItem } from '@/types/menu';
 import { MaterialGlyph, categoryMaterialGlyph } from '@/components/rebirth/material-glyph';
 import { getVerifiedMenuPhoto } from '@/lib/rebirth/verified-menu-photographs';
 import { getRepresentativeMenuPhoto } from '@/lib/rebirth/representative-menu-photos';
+import { getGeneratedMenuPhoto } from '@/lib/rebirth/generated-menu-media';
 
 /**
  * The 113 original menu entries deserve individually composed identities,
@@ -31,12 +32,23 @@ function stableHash(text:string):number{
 export function ProductArtwork({item,size='compact',className='',visualMode='art'}:Props){
   const [failedUrl,setFailedUrl]=useState<string|null>(null);
   const photo=getVerifiedMenuPhoto(item.id);
-  const representative=visualMode==='representative'&&!photo?getRepresentativeMenuPhoto(item.id,item.categorySlug):null;
-  useEffect(()=>{setFailedUrl(null)},[item.id,representative?.src]);
+  const generated=visualMode==='representative'&&!photo?getGeneratedMenuPhoto(item.id,item.name,item.categorySlug):null;
+  const representative=visualMode==='representative'&&!photo&&!generated?getRepresentativeMenuPhoto(item.id,item.categorySlug):null;
+  useEffect(()=>{setFailedUrl(null)},[item.id,representative?.src,generated?.src]);
   if(photo) return <div className={`t-product-art t-product-art--photo t-product-art--${size} ${className}`}>
     <Image src={photo.imagePath} alt={photo.altAr} fill sizes={size==='compact'?'(max-width:720px) 84px, 116px':'(max-width:720px) 160px, 230px'} />
     <span className="t-product-art__photo-note" aria-hidden="true">TUSCANINI / DISH</span>
   </div>;
+  if(generated&&generated.src!==failedUrl){
+    return <div className={`t-product-art t-product-art--representative t-product-art--generated t-product-art--${size} ${className}`}
+      data-kind="generated-illustrative" data-product-id={item.id} data-source-photo-id={generated.assetId}
+      role="img" aria-label={`صورة طعام مولدة للتوضيح فقط، ليست صورة أصلية لصنف ${item.name} من المطعم`}>
+      <Image src={generated.src} alt={generated.altAr} fill unoptimized
+        sizes={size==='compact'?'(max-width:720px) 160px, 280px':'(max-width:720px) 160px, 230px'}
+        onError={()=>setFailedUrl(generated.src)} />
+      <span className="t-product-art__representative-label" aria-hidden="true">صورة تخيلية توضيحية</span>
+    </div>;
+  }
   if(representative&&representative.src!==failedUrl){
     return <div className={`t-product-art t-product-art--representative t-product-art--${size} ${className}`}
       data-kind="representative-stock" data-product-id={item.id}
