@@ -50,6 +50,7 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
       if (destination) {
         const target = destination.getBoundingClientRect();
         if (target.width > 0 && target.height > 0 && originRect.width > 0 && originRect.height > 0) {
+          dialog.dataset.motionTechnique = 'dom-flip';
           bridge = destination.cloneNode(true) as HTMLElement;
           bridge.dataset.motionBridge = 'true';
           bridge.setAttribute('aria-hidden', 'true');
@@ -71,6 +72,7 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
           const settle=()=>{
             if (destination) destination.style.opacity='';
             bridge?.remove();
+            dialog.dataset.motionFinished = 'true';
           };
           animation.addEventListener('finish', settle, {once:true});
           animation.addEventListener('cancel', settle, {once:true});
