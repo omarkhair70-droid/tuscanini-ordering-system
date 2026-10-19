@@ -4,11 +4,13 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useCart } from '@/components/cart/cart-provider';
 import type { MenuItem } from '@/types/menu';
 import { ProductArtwork } from '@/components/rebirth/product-artwork';
+import { getRepresentativeMenuPhoto } from '@/lib/rebirth/representative-menu-photos';
 
 type Props = {
   item: MenuItem | null;
   onClose: () => void;
   priceSource?: 'previous' | 'live';
+  visualMode?:'art'|'representative';
 };
 
 /**
@@ -18,7 +20,7 @@ type Props = {
  * unchanged when the owner-directed historical menu is selected; the
  * restaurant server independently checks current database records on submit.
  */
-export function RebirthProductDialog({ item, onClose, priceSource = 'previous' }: Props) {
+export function RebirthProductDialog({ item, onClose, priceSource = 'previous', visualMode='art' }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const { addItem } = useCart();
   const [sizeId, setSizeId] = useState('');
@@ -49,6 +51,7 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous' }
   const totalPrice = unitPrice * quantity;
   if (!item) return null;
 
+  const representative=visualMode==='representative'?getRepresentativeMenuPhoto(item.id,item.categorySlug):null;
   const unavailable = item.availability === 'unavailable';
   const invalidPrice = !Number.isFinite(unitPrice) || unitPrice <= 0 || quantity > 50;
   const cannotAdd = unavailable || invalidPrice || Boolean(item.sizes?.length && !selectedSize);
@@ -84,10 +87,11 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous' }
         </header>
         <div className="t-product-dialog__body">
           <div className="t-product-dialog__identity">
-            <ProductArtwork item={item} size="large"/>
+            <ProductArtwork item={item} size="large" visualMode={visualMode}/>
             <div className="t-product-dialog__identity-copy">
               <p id="t-product-summary">{item.description || 'اختار التفاصيل المناسبة لطلبك.'}</p>
-              {priceSource === 'previous' && <p className="t-product-dialog__price-notice">الرسمة للتعبير عن الصنف، مش صورته الفعلية. الأسعار هي أسعار منيو توسكانيني السابق؛ التوافر وتأكيد الطلب بيرجعوا للمطعم.</p>}
+              {priceSource === 'previous' && <p className="t-product-dialog__price-notice">{representative?'الصورة للتوضيح فقط وليست شكل أو مكونات الصنف من توسكانيني.':'الرسمة للتعبير عن الصنف وليست صورته الفعلية.'} الأسعار من منيو توسكانيني السابق؛ التوافر وتأكيد الطلب بيرجعوا للمطعم.</p>}
+              {representative&&<a className="t-product-dialog__photo-credit" href={representative.page} target="_blank" rel="noopener noreferrer">مصدر الصورة التوضيحية: {representative.photographer} / Pexels ↗</a>}
             </div>
           </div>
           {item.sizes && item.sizes.length > 0 && (
