@@ -7,6 +7,7 @@ on:
       - "components/**"
       - "lib/**"
       - "public/images/rebirth/**"
+      - "public/images/rebirth/generated/**"
       - "scripts/qa/**"
       - "package.json"
       - "package-lock.json"
@@ -27,6 +28,8 @@ jobs:
           node-version: "22"
           cache: "npm"
       - run: npm ci
+      - name: Generated 100-image manifest/binary readiness gate
+        run: node scripts/qa/verify-generated-menu-media.mjs
       - name: Type safety and production compilation
         run: |
           npx tsc --noEmit
