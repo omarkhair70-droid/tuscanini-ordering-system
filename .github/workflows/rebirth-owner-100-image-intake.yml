@@ -6,6 +6,7 @@ on:
       - redesign/tuscanini-authored-experience-20261018
     paths:
       - 'assets/intake/tuscanini-pass19-images.zip'
+      - 'scripts/qa/install-generated-from-zip.py'
 
 permissions:
   contents: write
