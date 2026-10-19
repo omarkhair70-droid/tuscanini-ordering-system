@@ -152,9 +152,23 @@ try {
       (generatedMediaReady?'صورة تخيلية توضيحية':'صورة توضيحية'),
       `${width}px illustrated food photographs disclose truthful production source`);
     if(generatedMediaReady){
-      const loaded=await page.locator('.t-menu-items__grid--photo [data-kind="generated-illustrative"] img')
-        .evaluateAll(images=>images.length===20&&images.every(img=>img.complete&&img.naturalWidth>0));
-      await check(loaded,`${width}px all 20 generated food previews loaded from REAL committed local WebP bytes (not broken images)`);
+      // Image cards deliberately use native lazy-loading. On narrow phones,
+      // offscreen <img> elements MUST NOT all download immediately: that is a
+      // performance feature. Verify all 20 requested paths return real WebP
+      // bytes, and verify the actually visible first image has decoded.
+      const imageSrcs=await page.locator('.t-menu-items__grid--photo [data-kind="generated-illustrative"] img')
+        .evaluateAll(images=>images.map(img=>img.getAttribute('src')));
+      const firstImage=page.locator('.t-menu-items__grid--photo [data-kind="generated-illustrative"] img').first();
+      await firstImage.scrollIntoViewIfNeeded();
+      await page.waitForFunction(()=> {
+        const img=document.querySelector('.t-menu-items__grid--photo [data-kind="generated-illustrative"] img');
+        return Boolean(img&&img.complete&&img.naturalWidth>0);
+      },null,{timeout:12000});
+      const distinct=[...new Set(imageSrcs)];
+      const responses=await Promise.all(distinct.map(src=>page.request.get(new URL(src,baseUrl).toString())));
+      const loaded=imageSrcs.length===20&&distinct.length>=5&&
+        responses.every(r=>r.status()===200&&(r.headers()['content-type']||'').includes('image/webp'));
+      await check(loaded,`${width}px all 20 generated food asset URLs return real local WebP files; lazy loading of offscreen cards stays intact`);
     }
     await page.getByRole('button',{name:'عرض الرسومات'}).click();
     await check(await page.locator('.t-menu-items__grid--art .t-product-art').count()===20 &&
