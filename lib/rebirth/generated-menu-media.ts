@@ -21,8 +21,13 @@ export type GeneratedMenuPhoto = Readonly<{
   status:'representative-not-merchant-photograph';
 }>;
 
+// The 100 owner-generated 720x720 WebP assets were committed and passed
+// real phone/desktop Chromium & native FLIP QA in Pass 19.
+// Default on for this draft-branch experience; two explicit opt-outs keep
+// previous-branch CI ("not-ready") and a manual rollback ("off") safe.
 export const GENERATED_MEDIA_READY =
-  process.env.NEXT_PUBLIC_REBIRTH_GENERATED_IMAGES === 'ready';
+  process.env.NEXT_PUBLIC_REBIRTH_GENERATED_IMAGES !== 'not-ready' &&
+  process.env.NEXT_PUBLIC_REBIRTH_GENERATED_IMAGES !== 'off';
 
 function image(batch:number,item:number):GeneratedMenuPhoto {
   const assetId='B'+String(batch).padStart(2,'0')+'-'+String(item).padStart(2,'0');
