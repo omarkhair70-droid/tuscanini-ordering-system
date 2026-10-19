@@ -158,6 +158,8 @@ try {
     await page.locator('.t-menu-items__grid--art .t-menu-product__art-trigger').first().click();
     await check(await page.locator('.t-product-dialog[open]').count()===1,
       `${width}px touching individual graphic artwork opens the real size/addon product sheet`);
+    await check(await page.locator('.t-product-dialog[data-motion-technique]').count()===0,
+      `${width}px reduced-motion input opens the SAME native product sheet without visual FLIP`);
     await page.getByRole('button',{name:'إغلاق تفاصيل المنتج'}).click();
     await page.getByRole('button',{name:'المنيو السريع'}).click();
     await check(await page.locator('.t-menu-items__grid--fast').count()===1 &&
