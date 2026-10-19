@@ -1,4 +1,4 @@
-# TUSCANINI REBIRTH — SOURCE OF TRUTH
+> **NEXT CHAT / MOST RECENT VERIFIED STATUS (19 Oct 2026):** Read [`20_CANONICAL_NEXT_CHAT_HANDOFF_2026-10-19.md`](20_CANONICAL_NEXT_CHAT_HANDOFF_2026-10-19.md) **FIRST**. The full owner-generated **100 WebP images are now committed in GitHub and enabled**, with generated-photo Chromium/FLIP/browser QA green: [Action #39209194074](https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39209194074). PR #59 remains DRAFT, no merge or deploy. This older 18 Oct source priority and decisions remain valuable but status/old TODOs are superseded. All errors, decisions, Pass 00–19 chronology and current next work are documented in Pass 20.\n\n# TUSCANINI REBIRTH — SOURCE OF TRUTH
 Updated: 2026-10-18 | Branch: `redesign/tuscanini-authored-experience-20261018` | PR #59 (draft)
 
 ## The commission
