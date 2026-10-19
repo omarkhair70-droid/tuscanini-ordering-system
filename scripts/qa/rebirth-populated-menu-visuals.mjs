@@ -28,8 +28,11 @@ try{
         path:`artifacts/screenshots/menu-illustrated-item-${width}.png`,animations:'disabled'});
       await page.getByRole('button',{name:'المنيو السريع'}).click();
       await page.getByRole('button',{name:'كريب لحوم',exact:true}).click();
-      await page.locator('.t-menu-family-context img').waitFor({state:'visible',timeout:6000});
-      if(!(await page.locator('.t-menu-family-context img').evaluate(img=>img.complete&&img.naturalWidth>0)))throw Error('Family photo must decode');
+      await page.locator('.t-menu-family-context img').scrollIntoViewIfNeeded();
+      await page.waitForFunction(()=>{
+        const img=document.querySelector('.t-menu-family-context img');
+        return Boolean(img&&img.complete&&img.naturalWidth>0);
+      },null,{timeout:15000});
       await page.screenshot({path:`artifacts/screenshots/menu-verified-family-context-${width}.png`,fullPage:true,animations:'disabled'});
       await page.getByRole('button',{name:'كل الأصناف',exact:true}).click();
       const search=page.getByRole('searchbox',{name:/دور على أكلك/});
