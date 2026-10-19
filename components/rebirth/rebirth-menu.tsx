@@ -13,6 +13,7 @@ import type { MenuCategory, MenuItem } from '@/types/menu';
 import { MaterialGlyph, categoryMaterialGlyph } from '@/components/rebirth/material-glyph';
 import { ProductArtwork } from '@/components/rebirth/product-artwork';
 import { getCategoryContextPhoto } from '@/lib/rebirth/verified-menu-photographs';
+import { GENERATED_MEDIA_READY } from '@/lib/rebirth/generated-menu-media';
 import type { RebirthCatalog } from '@/lib/rebirth/previous-menu-catalog';
 
 type Props = {
@@ -128,7 +129,7 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
               <div><button type="button" aria-pressed={viewMode==='fast'} onClick={()=>setViewMode('fast')}>المنيو السريع</button>
               <button type="button" aria-pressed={viewMode==='art'} onClick={()=>setViewMode('art')}>عرض الرسومات</button>
               <button type="button" aria-pressed={viewMode==='photo'} onClick={()=>setViewMode('photo')}>صور الأكل</button></div>
-              <p>الصور من مكتبة مرخّصة لتوضيح نوع الأكل فقط، مش تصوير وجبات توسكانيني أو مكوناتها. الأسعار من المنيو القديم.</p>
+              <p>{GENERATED_MEDIA_READY?'صور الأكل مولّدة ومختارة للتوضيح؛ مش تصوير الوجبات الفعلية أو ضمان لمكوّناتها.':'صور الأكل من مكتبة خارجية للتوضيح فقط؛ مش تصوير الوجبات الفعلية أو ضمان لمكوّناتها.'} الأسعار من المنيو القديم. {GENERATED_MEDIA_READY&&<Link href="/menu/visual-atlas" className="t-menu-view-switch__atlas">استكشف مكتبة الصور الـ100 ↗</Link>}</p>
             </div>}
             {catalogPresent && contextPhoto && (
               <figure className="t-menu-family-context">
