@@ -21,6 +21,17 @@ try{
     try{
       await page.goto(base+'/menu',{waitUntil:'networkidle',timeout:30000});
       await page.evaluate(()=>document.fonts.ready);
+      // Browse the newly sourced external PHOTO mode first. A separate photo
+      // honesty badge + true photographer credit must remain visible.
+      await page.locator('.t-menu-items__grid--photo .t-product-art--representative').first().scrollIntoViewIfNeeded();
+      await page.waitForTimeout(800);
+      await page.screenshot({path:`artifacts/screenshots/menu-representative-photo-${width}.png`,fullPage:true,animations:'disabled'});
+      await page.locator('.t-menu-items__grid--photo .t-menu-product').first().screenshot({
+        path:`artifacts/screenshots/menu-representative-photo-item-${width}.png`,animations:'disabled'});
+      await page.locator('.t-menu-items__grid--photo .t-menu-product__art-trigger').first().click();
+      await page.locator('.t-product-dialog[open]').waitFor({timeout:6000});
+      await page.screenshot({path:`artifacts/screenshots/menu-representative-photo-sheet-${width}.png`,animations:'disabled'});
+      await page.getByRole('button',{name:'إغلاق تفاصيل المنتج'}).click();
       await page.getByRole('button',{name:'عرض الرسومات'}).click();
       await page.locator('.t-menu-items__grid--art .t-product-art').first().waitFor({state:'visible',timeout:6000});
       await page.locator('.t-menu-items__grid--art').evaluate(el=>
