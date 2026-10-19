@@ -31,6 +31,8 @@ jobs:
         run: |
           npx tsc --noEmit
           npm run build
+      - name: Exact real-photo audit and named-menu shot list
+        run: node scripts/qa/rebirth-menu-photo-shotlist.mjs
       - name: Install browser for screenshot capture
         run: |
           npx --yes playwright@1.56.1 install --with-deps chromium
