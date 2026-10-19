@@ -9,6 +9,7 @@ import { rename, mkdir } from 'node:fs/promises';
  * that reduced-motion mode removes the moving parts.
  */
 const base=process.env.REBIRTH_BASE_URL??'http://localhost:3000';
+const generatedMediaReady=process.env.NEXT_PUBLIC_REBIRTH_GENERATED_IMAGES==='ready';
 const folder='artifacts/screenshots';
 await mkdir(folder,{recursive:true});
 const browser=await chromium.launch({headless:true});
@@ -61,8 +62,12 @@ try{
       await page.locator('.t-product-dialog[open]').waitFor({timeout:6000});
       await page.locator('.t-product-dialog[data-motion-technique="dom-flip"][data-motion-finished="true"]')
         .waitFor({timeout:5000});
-      if((await page.getByRole('link',{name:/مصدر الصورة التوضيحية.*Pexels/}).count())!==1)
-        throw new Error('Sample photo is not credited inside product details');
+      if(generatedMediaReady){
+        if((await page.locator('.t-product-dialog [data-kind="generated-illustrative"] img').count())!==1||
+          (await page.locator('.t-product-dialog').getByText(/الصورة مولّدة بالذكاء الاصطناعي/).count())!==1)
+          throw new Error('Generated food visual must remain identifiable as the same truthful AI photograph inside product details');
+      }else if((await page.getByRole('link',{name:/مصدر الصورة التوضيحية.*Pexels/}).count())!==1)
+        throw new Error('Sample stock photo is not credited inside product details');
       await page.waitForTimeout(750);
       await page.getByRole('button',{name:'إغلاق تفاصيل المنتج'}).click();
       await glide(page,'.t-menu-view-switch');
@@ -84,7 +89,7 @@ try{
       await page.waitForTimeout(440);
       await page.getByRole('button',{name:'إغلاق تفاصيل المنتج'}).click();
       await page.waitForTimeout(480);
-      console.log(`MOTION VIDEO ${width}px: real stock reference photo → measured 390ms FLIP into native product detail, credit visible; then optional authored Arabic print gallery → same product sheet. NO order submitted`);
+      console.log(`MOTION VIDEO ${width}px: ${generatedMediaReady?'local owner-generated food illustration':'attributed stock food reference'} → measured 390ms native FLIP into product detail, true provenance visible; then authored gallery → same product sheet. NO order submitted`);
     }finally{
       await page.close();
       await context.close();
