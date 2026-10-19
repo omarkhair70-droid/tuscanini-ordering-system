@@ -27,6 +27,15 @@ jobs:
         with:
           node-version: "22"
           cache: "npm"
+      - name: Enable 100 generated food photo mode ONLY after their binaries exist in this checked-out branch
+        run: |
+          if test -f public/images/rebirth/generated/b01-01.webp; then
+            echo "NEXT_PUBLIC_REBIRTH_GENERATED_IMAGES=ready" >> "$GITHUB_ENV"
+            echo "RUNNING REAL OWNER-GENERATED PHOTO TESTS"
+          else
+            echo "NEXT_PUBLIC_REBIRTH_GENERATED_IMAGES=not-ready" >> "$GITHUB_ENV"
+            echo "GENERATED PHOTOS NOT INSTALLED; BROWSER QA USES PREVIOUS FALLBACK MEDIA"
+          fi
       - run: npm ci
       - name: Generated 100-image manifest/binary readiness gate
         run: node scripts/qa/verify-generated-menu-media.mjs
