@@ -11,6 +11,7 @@ type Props = {
   onClose: () => void;
   priceSource?: 'previous' | 'live';
   visualMode?:'art'|'representative';
+  originRect?:{left:number;top:number;width:number;height:number}|null;
 };
 
 /**
@@ -20,7 +21,7 @@ type Props = {
  * unchanged when the owner-directed historical menu is selected; the
  * restaurant server independently checks current database records on submit.
  */
-export function RebirthProductDialog({ item, onClose, priceSource = 'previous', visualMode='art' }: Props) {
+export function RebirthProductDialog({ item, onClose, priceSource = 'previous', visualMode='art', originRect=null }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const { addItem } = useCart();
   const [sizeId, setSizeId] = useState('');
@@ -37,9 +38,51 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
     setQuantity(1);
     setNotes('');
     dialog.showModal();
+    // Real shared-object FLIP: the selected image itself travels from the
+    // clicked thumbnail to the native sheet. The animation is OPTIONAL:
+    // no motion when disabled or if a browser lacks Web Animations.
+    let bridge: HTMLElement | null = null;
+    let destination: HTMLElement | null = null;
+    let animation: Animation | null = null;
+    if (originRect && window.matchMedia('(prefers-reduced-motion: no-preference)').matches &&
+      typeof Element.prototype.animate === 'function') {
+      destination = dialog.querySelector<HTMLElement>('.t-product-dialog__identity .t-product-art');
+      if (destination) {
+        const target = destination.getBoundingClientRect();
+        if (target.width > 0 && target.height > 0 && originRect.width > 0 && originRect.height > 0) {
+          bridge = destination.cloneNode(true) as HTMLElement;
+          bridge.dataset.motionBridge = 'true';
+          bridge.setAttribute('aria-hidden', 'true');
+          Object.assign(bridge.style, {
+            position: 'fixed', left: originRect.left+'px', top: originRect.top+'px',
+            width: originRect.width+'px', height: originRect.height+'px',
+            pointerEvents:'none', zIndex:'99',
+          });
+          dialog.appendChild(bridge);
+          destination.style.opacity = '0';
+          const dx = target.left-originRect.left;
+          const dy = target.top-originRect.top;
+          const sx = target.width/originRect.width;
+          const sy = target.height/originRect.height;
+          animation = bridge.animate([
+            { transform:'translate3d(0,0,0) scale(1,1)', opacity:0.98 },
+            { transform:`translate3d(${dx}px,${dy}px,0) scale(${sx},${sy})`, opacity:1 },
+          ], {duration:390, easing:'cubic-bezier(.16,1,.3,1)', fill:'forwards'});
+          const settle=()=>{
+            if (destination) destination.style.opacity='';
+            bridge?.remove();
+          };
+          animation.addEventListener('finish', settle, {once:true});
+          animation.addEventListener('cancel', settle, {once:true});
+        }
+      }
+    }
     const previous = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => {
+      animation?.cancel();
+      if (destination) destination.style.opacity = '';
+      bridge?.remove();
       if (dialog.open) dialog.close();
       document.body.style.overflow = previous;
     };
