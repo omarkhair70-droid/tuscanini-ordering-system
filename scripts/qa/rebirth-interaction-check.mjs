@@ -141,6 +141,17 @@ try {
       `${width}px original old-price menu is transparently source-labelled`);
     await check(await page.locator('.t-menu-product').count()===20,
       `${width}px 113-item original menu is populated and paginated, not an unavailable dummy`);
+    await page.getByRole('button',{name:'عرض الرسومات'}).click();
+    await check(await page.locator('.t-menu-items__grid--art .t-product-art').count()===20 &&
+      await page.getByRole('button',{name:'عرض الرسومات'}).getAttribute('aria-pressed')==='true',
+      `${width}px optional image-scale art gallery has twenty illustrated item identities`);
+    const artWidth=await page.locator('.t-menu-items__grid--art .t-product-art').first()
+      .evaluate(el=>el.getBoundingClientRect().width);
+    await check(artWidth>=105,`${width}px illustrated mode gives the selected food real visual space (${Math.round(artWidth)}px)`);
+    await page.getByRole('button',{name:'المنيو السريع'}).click();
+    await check(await page.locator('.t-menu-items__grid--fast').count()===1 &&
+      await page.getByRole('button',{name:'المنيو السريع'}).getAttribute('aria-pressed')==='true',
+      `${width}px fast ordering mode is reversible without losing catalog or modifier values`);
     const artworkItems=await page.locator('.t-menu-product__identity .t-product-art').evaluateAll(elements=>({
       count:elements.length,
       unique:new Set(elements.map(el=>el.getAttribute('data-product-id'))).size,
