@@ -141,6 +141,13 @@ try {
       `${width}px original old-price menu is transparently source-labelled`);
     await check(await page.locator('.t-menu-product').count()===20,
       `${width}px 113-item original menu is populated and paginated, not an unavailable dummy`);
+    await check(await page.getByRole('button',{name:'صور الأكل'}).getAttribute('aria-pressed')==='true' &&
+      await page.locator('.t-menu-items__grid--photo').count()===1,
+      `${width}px licensed illustrative-food photo view is the default, not an empty catalog`);
+    await check(await page.locator('.t-menu-items__grid--photo [data-kind="representative-stock"]').count()===20,
+      `${width}px first 20 item thumbnails use explicitly marked REPRESENTATIVE food imagery`);
+    await check(await page.locator('.t-menu-items__grid--photo .t-product-art__representative-label').first().innerText()==='صورة توضيحية',
+      `${width}px food photos are visibly disclosed as illustrative, not merchant original dishes`);
     await page.getByRole('button',{name:'عرض الرسومات'}).click();
     await check(await page.locator('.t-menu-items__grid--art .t-product-art').count()===20 &&
       await page.getByRole('button',{name:'عرض الرسومات'}).getAttribute('aria-pressed')==='true',
@@ -174,7 +181,7 @@ try {
     await page.locator('.t-product-dialog[open]').waitFor({timeout:4000});
     await check(await page.locator('.t-product-dialog__identity .t-product-art[data-kind="original-graphic"]').count()===1,
       `${width}px unique product print travels into modifier sheet; no fake recipe photo`);
-    await check(await page.locator('.t-product-dialog').getByText(/أسعار منيو توسكانيني السابق/).count()===1,
+    await check(await page.locator('.t-product-dialog').getByText(/منيو توسكانيني السابق/).count()===1,
       `${width}px size/addon picker states where its historical prices came from`);
     await check(await page.locator('.t-product-dialog__options label').count()>1,
       `${width}px old crepe is populated with real original size and addon controls`);
@@ -203,6 +210,14 @@ try {
     await page.getByRole('button',{name:/اعرض أصناف أكتر/}).click();
     await check(await page.locator('.t-menu-product').count()===40,
       `${width}px full 113-record catalog supports progressive 20-to-40 loading without losing prices`);
+    await page.getByRole('button',{name:'صور الأكل'}).click();
+    await check(await page.locator('.t-menu-items__grid--photo').count()===1,
+      `${width}px users can return to the sourced illustrative-food photo layout after price-first search`);
+    await page.locator('.t-menu-items__grid--photo .t-menu-product__art-trigger').first().click();
+    await check(await page.locator('.t-product-dialog[open]').count()===1 &&
+      await page.getByRole('link',{name:/مصدر الصورة التوضيحية.*Pexels/}).count()===1,
+      `${width}px native product sheet keeps source credit and real current item options`);
+    await page.getByRole('button',{name:'إغلاق تفاصيل المنتج'}).click();
     const menuOverflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     await check(menuOverflow <= 3, `${width}px Menu no significant horizontal overflow (${menuOverflow}px)`);
     await page.goto(baseUrl + '/offers', { waitUntil: 'networkidle', timeout:30000 });
