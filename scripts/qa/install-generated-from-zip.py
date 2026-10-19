@@ -36,7 +36,7 @@ def run() -> int:
         if metadata.get("total")!=100 or len(metadata.get("assets",[]))!=100:
             raise ValueError("Archive is not owner-confirmed 100-image set")
         indexed={a.get("webPath") for a in metadata["assets"]}
-        if indexed!={"/"+name for name in expected}:
+        if indexed!={"/"+name.removeprefix("public/") for name in expected}:
             raise ValueError("Archive inventory does not match real source assets")
         prepared={}
         for name in sorted(expected):
@@ -51,7 +51,7 @@ def run() -> int:
             # using the standard library (no pip or untrusted dependency).
             if int.from_bytes(data[4:8],"little")+8!=len(data):
                 raise ValueError("Corrupt WebP RIFF length: "+name)
-            if data[12:16]!=b"VP8 " or data[23:26]!=b"\\x9d\\x01\\x2a":
+            if data[12:16]!=b"VP8 " or data[23:26]!=bytes((0x9d,0x01,0x2a)):
                 raise ValueError("WebP source codec or frame marker mismatch: "+name)
             width=int.from_bytes(data[26:28],"little")&0x3fff
             height=int.from_bytes(data[28:30],"little")&0x3fff
