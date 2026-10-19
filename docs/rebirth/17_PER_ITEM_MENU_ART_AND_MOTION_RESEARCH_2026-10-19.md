@@ -54,3 +54,23 @@ Do not stop at legible compact rows and typed glyphs. Build an image/art system 
 
 ## Current evidence status
 Initial edits committed in Draft branch; workflow results are checked independently before asserting Pass 17 green. The **113 photos are NOT present yet**.
+
+## Pass 17-B — Two Tempos, photo provenance and measured browser proof
+
+**Owner's intent was genuinely broader than generic category icons and CSS tweaking.** Screenshot review exposed that an early SKU print placed inside a compact row was too small to register as creative food art. We did NOT scale every row into an inaccessible poster and lose the quick path. Instead:
+- `components/rebirth/rebirth-menu.tsx`: mutually exclusive **"المنيو السريع"** and **"عرض الرسومات"** views, each preserving names, old source prices, exact category and the same real item configuration. Default fast for the experienced/urgent diner; opt-in illustrated 2-col mobile / 4-col desktop gallery for the exploring diner (Two Tempos principle).
+- Every gallery tile renders its own original printed visual `ProductArtwork`: literal distinct Arabic product name INSIDE its poster, stable id-derived mark, unique fold rotations, ink tone, family glyph and truthful "رسم تعبيري / مش صورة للصنف" disclosure. **Not food photography**. The illustration itself is a real focusable/tappable button opening the native original-priced product detail sheet.
+- The same product's print follows into the product modifier drawer; the user can pick original sizes/addons without a fake photo, and checkout state remains independently validated.
+- SVG/CSS native transform/clip timing and short controlled panel entrance were chosen after studying Codrops GSAP/FLIP tutorials. They reproduce **behavioral continuity** (same graphic across views), not the exact pixels/source code, and do not block reduced-motion or the quick menu. GSAP remains an open alternative only if an evidenced cross-layout transition cannot be done native.
+- `scripts/qa/rebirth-menu-photo-shotlist.mjs`: TypeScript AST audit of the existing 113 menu items and precise verified-image dictionary, produces a machine-readable SKU name/category/price/photo-request list with no fuzzy file matches. Real photos must be owner-verified by exact SKU before being displayed as named dishes.
+- The first reliable photo audit reported **0 verified exact SKU photos / 113 items require their own sources**. The owner's **12 authentic restaurant photos remain family-level**; this is not a failure of the graphics — it is truthful photographic-production status.
+
+### Final tested evidence, not inferred
+- [GitHub Actions #39179577420](https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39179577420): **completed SUCCESS**. Production Next compilation, source-photo gate, exact named photo shotlist gate, warmed screenshot baseline, 390 and 1440 populated gallery/product/family photos, mobile+desktop WebM actual motion films, Chromium interactions **0 failures**.
+- Source photo gate output **PHOTO-TRUTH GATE: 0/113 exact real named-menu-item photographs approved**. It outputs `artifacts/screenshots/menu-exact-photo-production-list.json`; any later approved item-photo must match named item ID, nonblank photographer/source and reviewer and an actual committed asset.
+- Tested all 113 original item IDs with exact individually labelled artworks on 390px, plus 320/390/768/1440 icon/focus/no-overflow and two view modes. Visually validated selected gallery artwork widths: 254px at 320, 146px at 390, 315px at 768, 271px at 1440.
+- Browser WebM videos actually demonstrate Home source-photo changes and **Menu gallery → food-family choice → click UNIQUE item portrait → original modifier sheet**. They never submit an order.
+- Native input uses `aria-pressed` view toggles and independent touch/focus controls; reduced motion is tested separately; original prices stay unchanged.
+
+### Critical creative judgment
+The author-generated typographic illustrations are real authored work but are **not visual substitutes for genuine photographed named meals**. The large illustrated view makes that distinction intentional rather than hiding an absent photo. Final award-level materiality will require original high-res photo production, direct owner approval of the print visuals, and eventual real-device motion quality testing. Keep the creative system open; no merge or deploy.
