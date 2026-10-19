@@ -65,6 +65,18 @@
  position:relative;z-index:2;width:60%;height:auto;
  filter:drop-shadow(3px 4px 0 #fff8e8c0)
 }
+/* Native Arabic name becomes the actual individual print material:
+   no guessed ingredients, no image-rendered text, every SKU visually distinct. */
+.t-product-art__item-name{
+ display:none;position:absolute;z-index:5;inset-inline:7%;top:38%;
+ text-align:center;overflow-wrap:anywhere;
+ font:800 clamp(18px,2.15vw,29px)/1.13 "Changa",Tahoma,sans-serif;
+ color:var(--t-art-ink);text-shadow:1px 1px 0 #fff8e8aa;
+ max-height:52%;overflow:hidden;
+ transform:rotate(calc(var(--t-art-rotation) * -.34));
+}
+.t-product-art--large .t-product-art__item-name{display:block;top:39%;font-size:clamp(18px,2.5vw,29px)}
+.t-product-art--large .t-product-art__glyph{opacity:.27}
 .t-product-art__caption{display:none}
 .t-product-art--large .t-product-art__caption{
  position:absolute;right:6px;left:6px;bottom:6px;z-index:5;
@@ -270,7 +282,15 @@
  display:block;position:absolute;bottom:7px;right:8px;z-index:4;
  font:700 9px/1.35 "IBM Plex Sans Arabic",Tahoma,sans-serif
 }
-.t-menu-page .t-menu-items__grid--art .t-product-art__glyph{width:64%}
+.t-menu-page .t-menu-items__grid--art .t-product-art__glyph{width:50%;opacity:.23;transform:translate(-14%,-27%)}
+.t-menu-page .t-menu-items__grid--art .t-product-art__item-name{
+ display:block;top:30%;inset-inline:8%;font-size:clamp(19px,2.3vw,32px);
+ line-height:1.12;max-height:59%
+}
+.t-menu-page .t-menu-items__grid--art .t-product-art--variant-1 .t-product-art__item-name,
+.t-menu-page .t-menu-items__grid--art .t-product-art--variant-4 .t-product-art__item-name{top:36%;transform:rotate(4deg)}
+.t-menu-page .t-menu-items__grid--art .t-product-art--variant-0 .t-product-art__item-name,
+.t-menu-page .t-menu-items__grid--art .t-product-art--variant-3 .t-product-art__item-name{transform:rotate(-5deg)}
 .t-menu-page .t-menu-items__grid--art .t-menu-product__text h3{
  font:800 clamp(22px,2.6vw,31px)/1.26 "Changa",Tahoma,sans-serif;
  margin:0;overflow-wrap:anywhere
