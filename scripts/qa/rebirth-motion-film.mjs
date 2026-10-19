@@ -55,6 +55,9 @@ try{
       // Same recording continues onto the real former-price menu.
       // No made-up dish images: every SKU has distinct printed graphic artwork.
       await page.goto(base+'/menu',{waitUntil:'networkidle',timeout:30000});
+      await glide(page,'.t-menu-view-switch');
+      await page.getByRole('button',{name:'عرض الرسومات'}).click();
+      await page.waitForTimeout(900);
       await page.getByRole('button',{name:'كريب لحوم',exact:true}).click();
       await page.waitForTimeout(650);
       await glide(page,'.t-menu-items__grid');
@@ -71,7 +74,7 @@ try{
       await page.waitForTimeout(440);
       await page.getByRole('button',{name:'إغلاق تفاصيل المنتج'}).click();
       await page.waitForTimeout(480);
-      console.log(`MOTION VIDEO ${width}px: illustrated nav, real-category pictures and physical-material change, plus restaurant menu filter → unique SKU fold graphic → native product sheet — NO order submitted`);
+      console.log(`MOTION VIDEO ${width}px: illustrated nav, real-category pictures and packaging change, plus opt-in large illustrated gallery → named food fold graphic → native size/add-on sheet — NO order submitted`);
     }finally{
       await page.close();
       await context.close();
