@@ -228,148 +228,22 @@
  .t-product-art__field,.t-product-art__fold{transition:none!important}
 }
 
-/*
- * TWO TEMPOS / ONE TRUE CATALOG: keep the printable price-first default,
- * and offer a real image-scale art gallery for exploration on demand.
- * Every gallery tile is a distinct abstract MENU ITEM identity, not a fake
- * restaurant product photograph. Exact item photos can replace only after
- * they pass the verified SKU manifest.
- */
-.t-menu-view-switch{
- display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;
- gap:15px;border-top:2px solid var(--ink);border-bottom:1px solid #c7b59a;
- padding:17px 0 20px;margin-bottom:clamp(22px,4vw,37px)
-}
-.t-menu-view-switch>div{display:inline-flex;background:var(--ink);gap:3px;padding:3px}
-.t-menu-view-switch button{
- border:0;background:transparent;color:var(--paper);
- font:800 13px "IBM Plex Sans Arabic",Tahoma,sans-serif;
- min-height:45px;padding:10px clamp(12px,2vw,23px);cursor:pointer
-}
-.t-menu-view-switch button[aria-pressed=true]{background:var(--yellow);color:var(--ink)}
-.t-menu-view-switch button:focus-visible{outline:3px solid #1677cc;outline-offset:4px}
-.t-menu-view-switch p{
- max-width:480px;flex:1 1 250px;font:700 12px/1.85 "IBM Plex Sans Arabic",Tahoma,sans-serif;
- color:#6b5b48
-}
-.t-menu-page .t-menu-items__grid--art{
- display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
- border-top:0;gap:clamp(12px,1.6vw,23px)
-}
-.t-menu-page .t-menu-items__grid--art .t-menu-product,
-.t-menu-page .t-menu-items__grid--art .t-menu-product:nth-child(6n+2),
-.t-menu-page .t-menu-items__grid--art .t-menu-product:nth-child(6n+5){
- display:flex;flex-direction:column;gap:0;
- background:var(--cream);border:2px solid var(--ink);
- min-height:380px;padding:clamp(11px,1.5vw,17px)
-}
-.t-menu-page .t-menu-items__grid--art .t-menu-product__top{
- display:flex;align-items:center;justify-content:space-between;width:100%;
- padding:0 0 11px;min-height:30px;gap:8px
-}
-.t-menu-page .t-menu-items__grid--art .t-menu-product__identity{
- display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;
- flex:1;gap:15px;min-width:0;width:100%
-}
-.t-menu-page .t-menu-items__grid--art .t-product-art--compact{
- display:block;width:100%;height:auto;aspect-ratio:1.12/1;
- border-width:2px
-}
-.t-menu-page .t-menu-items__grid--art .t-product-art__field{inset:9% 14% 14%}
-.t-menu-page .t-menu-items__grid--art .t-product-art__registration{font-size:12px;top:10px;right:10px}
-.t-menu-page .t-menu-items__grid--art .t-product-art__serial{font-size:11px;left:9px;bottom:9px}
-.t-menu-page .t-menu-items__grid--art .t-product-art__caption{
- display:block;position:absolute;bottom:7px;right:8px;z-index:4;
- font:700 9px/1.35 "IBM Plex Sans Arabic",Tahoma,sans-serif
-}
-.t-menu-page .t-menu-items__grid--art .t-product-art__glyph{width:50%;opacity:.23;transform:translate(-14%,-27%)}
-.t-menu-page .t-menu-items__grid--art .t-product-art__item-name{
- display:block;top:30%;inset-inline:8%;font-size:clamp(19px,2.3vw,32px);
- line-height:1.12;max-height:48%
-}
-.t-menu-page .t-menu-items__grid--art .t-product-art--variant-1 .t-product-art__item-name,
-.t-menu-page .t-menu-items__grid--art .t-product-art--variant-4 .t-product-art__item-name{top:36%;transform:rotate(4deg)}
-.t-menu-page .t-menu-items__grid--art .t-product-art--variant-0 .t-product-art__item-name,
-.t-menu-page .t-menu-items__grid--art .t-product-art--variant-3 .t-product-art__item-name{transform:rotate(-5deg)}
-.t-menu-page .t-menu-items__grid--art .t-menu-product__text h3{
- font:800 clamp(22px,2.6vw,31px)/1.26 "Changa",Tahoma,sans-serif;
- margin:0;overflow-wrap:anywhere
-}
-.t-menu-page .t-menu-items__grid--art .t-menu-product__text p{
- margin-top:8px;font-size:12px;line-height:1.6
-}
-.t-menu-page .t-menu-items__grid--art .t-menu-product__bottom{
- margin-top:auto;padding-top:14px;display:flex;
- flex-direction:column;align-items:stretch;gap:13px;
- justify-content:flex-end;width:100%;border-top:1px solid #bbaa90
-}
-.t-menu-page .t-menu-items__grid--art .t-menu-product__price{
- display:flex;flex-direction:row;align-items:baseline;gap:12px
-}
-.t-menu-page .t-menu-items__grid--art .t-menu-product__price strong{font-size:clamp(18px,2vw,24px)}
-.t-menu-page .t-menu-items__grid--art .t-menu-product__bottom button{
- width:100%;font-size:13px;min-height:47px
-}
-.t-menu-page .t-menu-items__grid--art .t-menu-product:focus-within,
-.t-menu-page .t-menu-items__grid--art .t-menu-product:hover{background:#f6d9a6}
-@media(max-width:1240px){
- .t-menu-page .t-menu-items__grid--art{grid-template-columns:repeat(3,minmax(0,1fr))}
-}
-@media(max-width:850px){
- .t-menu-page .t-menu-items__grid--art{grid-template-columns:repeat(2,minmax(0,1fr))}
- .t-menu-page .t-menu-items__grid--art .t-menu-product__text h3{font-size:clamp(21px,3vw,26px)}
-}
-@media(max-width:720px){
- .t-menu-view-switch{align-items:stretch}
- .t-menu-view-switch>div{width:100%}
- .t-menu-view-switch button{flex:1;font-size:13px;min-height:46px}
- .t-menu-view-switch p{font-size:12px}
- .t-menu-page .t-menu-items__grid--art{gap:11px}
- .t-menu-page .t-menu-items__grid--art .t-menu-product,
- .t-menu-page .t-menu-items__grid--art .t-menu-product:nth-child(6n+2),
- .t-menu-page .t-menu-items__grid--art .t-menu-product:nth-child(6n+5){
-   min-height:325px;padding:9px
- }
- .t-menu-page .t-menu-items__grid--art .t-menu-product__identity{gap:10px}
- .t-menu-page .t-menu-items__grid--art .t-menu-product__text h3{font-size:clamp(19px,5.3vw,25px)}
- .t-menu-page .t-menu-items__grid--art .t-product-art__caption{font-size:8px}
- .t-menu-page .t-menu-items__grid--art .t-menu-product__bottom button{font-size:11px;min-height:42px}
- .t-menu-page .t-menu-items__grid--art .t-menu-product__price strong{font-size:18px}
- .t-menu-page .t-menu-items__grid--art .t-menu-product__top span:first-child{min-width:25px;height:22px;font-size:10px}
- .t-menu-page .t-menu-items__grid--art .t-menu-product__top span:last-child{font-size:10px}
- .t-menu-page .t-menu-items__grid--art .t-menu-product__family svg{display:none}
-}
-@media(max-width:340px){
- .t-menu-page .t-menu-items__grid--art{grid-template-columns:1fr}
- .t-menu-page .t-menu-items__grid--art .t-product-art--compact{max-height:220px}
- .t-menu-page .t-menu-items__grid--art .t-menu-product,
- .t-menu-page .t-menu-items__grid--art .t-menu-product:nth-child(6n+2),
- .t-menu-page .t-menu-items__grid--art .t-menu-product:nth-child(6n+5){min-height:0}
-}
-@media(prefers-reduced-motion:reduce){
- .t-menu-page .t-menu-items__grid--art{animation:none!important}
-}
-
-/* PASS 18 / illustrative food photography. NOT the photographed named dish.
- * Curated commercially usable Pexels image by food FAMILY. A stable named
- * dish image is only "verified" if the separate local asset gate approves it.
- * All source images retain explicit visible provenance labels. */
+/* ONE CUSTOMER MENU / Visual experiments remain in the isolated 100-frame QA atlas.
+ * Product cards use a single photographic composition with graphic fallback.
+ * No public art/fast/photo mode switch: the user chooses food, not a view engine. */
+/* Family-safe illustrative food art; NEVER an approved photographed SKU.
+ * One visible source disclosure precedes the catalog and another is in the
+ * product sheet. Repeating a black proof banner over 20 images is not UX. */
 .t-product-art--representative{background:#171511;isolation:isolate}
 .t-product-art--representative img{object-fit:cover;transition:transform .45s cubic-bezier(.2,.8,.3,1)}
-.t-product-art__representative-label{
- position:absolute;z-index:3;bottom:0;inset-inline:0;
- display:block;padding:6px 8px 7px;text-align:center;
- background:#171511e8;color:#fff8e8;
- font:800 clamp(10px,1vw,13px)/1.3 "IBM Plex Sans Arabic",Tahoma,sans-serif
-}
 .t-product-dialog__photo-credit{
  display:inline-block;margin-top:10px;border-bottom:1px solid #9a4b2c;
  color:#7d3524;font-size:12px;font-weight:750;line-height:1.8
 }
 .t-product-dialog__photo-credit:focus-visible{outline:3px solid #2676e0;outline-offset:3px}
 .t-product-art--representative.t-product-art--large{width:clamp(116px,16vw,192px)}
-/* Photographic browsing, visible bigger than "fast" rows but accessible
- * and easy to reverse. The distinct art mode remains one tap away. */
+/* Unified customer-facing food catalog. Graphic fallback is retained for
+ * products without a semantically appropriate food image. */
 .t-menu-page .t-menu-items__grid--photo{
  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
  border-top:0;gap:clamp(12px,1.6vw,22px)
@@ -432,7 +306,6 @@
  .t-menu-page .t-menu-items__grid--photo .t-menu-product__top span:last-child{font-size:10px}
  .t-menu-page .t-menu-items__grid--photo .t-menu-product__price strong{font-size:17px}
  .t-menu-page .t-menu-items__grid--photo .t-menu-product__bottom button{font-size:11px}
- .t-product-art__representative-label{font-size:11px}
 }
 @media(max-width:340px){
  .t-menu-page .t-menu-items__grid--photo{grid-template-columns:1fr}
