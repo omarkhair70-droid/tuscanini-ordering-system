@@ -154,9 +154,12 @@
 }
 .t-product-dialog__identity-copy{min-width:0}
 .t-product-dialog__identity-copy>p{line-height:1.8;font-size:15px;font-weight:700}
+/* Keep the essential source/old-price truth readable without making an
+ * engineering warning dominate the actual food and customization choices. */
 .t-product-dialog__identity .t-product-dialog__price-notice{
- border-inline-start:4px solid #d92e24;padding:10px 13px;
- margin-top:12px!important;line-height:1.75!important;font-size:12px!important
+ border:0;background:transparent;padding:0;
+ margin-top:9px!important;line-height:1.65!important;font-size:11px!important;
+ font-weight:650;color:#675440
 }
 .t-product-dialog__identity~.t-product-dialog__section{margin-top:24px}
 @media(min-width:721px){
