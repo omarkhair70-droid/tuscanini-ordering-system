@@ -126,6 +126,9 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
       returnAnimationRef.current = null;
       returnBridgeRef.current?.remove();
       returnBridgeRef.current = null;
+      // Leave the browser top layer BEFORE requesting focus on a menu card:
+      // otherwise the still-modal dialog steals focus back from that card.
+      if (dialog?.open) dialog.close();
       onClose();
       // Closing a native dialog should return keyboard users to their chosen
       // product even after the optional visual clone has finished its journey.
