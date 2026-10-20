@@ -142,15 +142,16 @@ try {
       `${width}px original old-price menu is transparently source-labelled`);
     await check(await page.locator('.t-menu-product').count()===20,
       `${width}px 113-item original menu is populated and paginated, not an unavailable dummy`);
-    await check(await page.getByRole('button',{name:'صور الأكل'}).getAttribute('aria-pressed')==='true' &&
-      await page.locator('.t-menu-items__grid--photo').count()===1,
-      `${width}px licensed illustrative-food photo view is the default, not an empty catalog`);
+    await check(await page.locator('.t-menu-items__grid--photo').count()===1 &&
+       await page.locator('.t-menu-view-switch').count()===0,
+       `${width}px one food menu, not a three-mode graphic/gallery switch`);
     const expectedKind=generatedMediaReady?'generated-illustrative':'representative-stock';
     await check(await page.locator('.t-menu-items__grid--photo [data-kind="'+expectedKind+'"]').count()===20,
       `${width}px first 20 food cards use ${expectedKind} images with explicit source provenance`);
-    await check(await page.locator('.t-menu-items__grid--photo .t-product-art__representative-label').first().innerText()===
-      (generatedMediaReady?'صورة تخيلية توضيحية':'صورة توضيحية'),
-      `${width}px illustrated food photographs disclose truthful production source`);
+    await check(await page.locator('[data-visual-disclosure="menu"]').count()===1 &&
+       (await page.locator('[data-visual-disclosure="menu"]').innerText()).includes('صور الأكل المعروضة توضيحية') &&
+       await page.locator('.t-menu-product .t-product-art__representative-label').count()===0,
+       `${width}px illustration source disclosed once, without overlays on each food photo`);
     if(generatedMediaReady){
       // Image cards deliberately use native lazy-loading. On narrow phones,
       // offscreen <img> elements MUST NOT all download immediately: that is a
@@ -170,31 +171,18 @@ try {
         responses.every(r=>r.status()===200&&(r.headers()['content-type']||'').includes('image/webp'));
       await check(loaded,`${width}px all 20 generated food asset URLs return real local WebP files; lazy loading of offscreen cards stays intact`);
     }
-    await page.getByRole('button',{name:'عرض الرسومات'}).click();
-    await check(await page.locator('.t-menu-items__grid--art .t-product-art').count()===20 &&
-      await page.getByRole('button',{name:'عرض الرسومات'}).getAttribute('aria-pressed')==='true',
-      `${width}px optional image-scale art gallery has twenty illustrated item identities`);
-    const artWidth=await page.locator('.t-menu-items__grid--art .t-product-art').first()
-      .evaluate(el=>el.getBoundingClientRect().width);
-    await check(artWidth>=105,`${width}px illustrated mode gives the selected food real visual space (${Math.round(artWidth)}px)`);
-    await page.locator('.t-menu-items__grid--art .t-menu-product__art-trigger').first().click();
-    await check(await page.locator('.t-product-dialog[open]').count()===1,
-      `${width}px touching individual graphic artwork opens the real size/addon product sheet`);
-    await check(await page.locator('.t-product-dialog[data-motion-technique]').count()===0,
-      `${width}px reduced-motion input opens the SAME native product sheet without visual FLIP`);
-    await page.getByRole('button',{name:'إغلاق تفاصيل المنتج'}).click();
-    await page.getByRole('button',{name:'المنيو السريع'}).click();
-    await check(await page.locator('.t-menu-items__grid--fast').count()===1 &&
-      await page.getByRole('button',{name:'المنيو السريع'}).getAttribute('aria-pressed')==='true',
-      `${width}px fast ordering mode is reversible without losing catalog or modifier values`);
-    const artworkItems=await page.locator('.t-menu-product__identity .t-product-art').evaluateAll(elements=>({
-      count:elements.length,
-      unique:new Set(elements.map(el=>el.getAttribute('data-product-id'))).size,
-      graphic:elements.every(el=>el.dataset.kind==='original-graphic' && el.querySelector('svg')),
-    }));
-    await check(artworkItems.count===20&&artworkItems.unique===20&&artworkItems.graphic,
-      `${width}px twenty different SKU-labeled art prints — no fictional named food photo`);
-    await page.getByRole('searchbox',{name:/دور على أكلك/}).fill('تشيكن فاير');
+    const menuArt=await page.locator('.t-menu-product__identity .t-product-art').evaluateAll(elements=>({
+       count:elements.length,
+       unique:new Set(elements.map(el=>el.getAttribute('data-product-id'))).size,
+     }));
+     await check(menuArt.count===20 && menuArt.unique===20,
+       `${width}px twenty unified cards each identify their actual historical product`);
+     await page.locator('.t-menu-items__grid--photo .t-menu-product__art-trigger').first().click();
+     await check(await page.locator('.t-product-dialog[open]').count()===1 &&
+       await page.locator('.t-product-dialog[data-motion-technique]').count()===0,
+       `${width}px product options open from food imagery without motion when reduced`);
+     await page.getByRole('button',{name:'إغلاق تفاصيل المنتج'}).click();
+     await page.getByRole('searchbox',{name:/دور على أكلك/}).fill('تشيكن فاير');
     const duplicateFlavors=await page.locator('.t-menu-product h3').allInnerTexts();
     await check(duplicateFlavors.length>=2 &&
       duplicateFlavors.every(name=>name==='تشيكن فاير'),
@@ -203,9 +191,9 @@ try {
       `${width}px identical flavor names have explicitly distinguishable food-family actions`);
     await page.getByRole('button',{name:'اختيار تفاصيل كريب توسكانيني — تشيكن فاير'}).click();
     await page.locator('.t-product-dialog[open]').waitFor({timeout:4000});
-    await check(await page.locator('.t-product-dialog__identity .t-product-art[data-kind="original-graphic"]').count()===1,
-      `${width}px unique product print travels into modifier sheet; no fake recipe photo`);
-    await check(await page.locator('.t-product-dialog').getByText(/منيو توسكانيني السابق/).count()===1,
+    await check(await page.locator('.t-product-dialog__identity .t-product-art[data-product-id]').count()===1,
+       `${width}px matched named menu item visual and modifiers share a stable SKU ID`);
+     await check(await page.locator('.t-product-dialog').getByText(/منيو توسكانيني السابق/).count()===1,
       `${width}px size/addon picker states where its historical prices came from`);
     await check(await page.locator('.t-product-dialog__options label').count()>1,
       `${width}px old crepe is populated with real original size and addon controls`);
@@ -225,24 +213,23 @@ try {
       const all=await page.locator('.t-menu-product__identity .t-product-art').evaluateAll(arts=>({
         total:arts.length,
         unique:new Set(arts.map(art=>art.getAttribute('data-product-id'))).size,
-        allAbstract:arts.every(art=>art.dataset.kind==='original-graphic'),
+        validSource:arts.every(art=>['generated-illustrative','representative-stock','original-graphic'].includes(art.dataset.kind)),
       }));
-      await check(all.total===113&&all.unique===113&&all.allAbstract,
-        '390px every one of 113 original recorded products has a distinct source-aware graphic mark');
+      await check(all.total===113&&all.unique===113&&all.validSource,
+        '390px all 113 historical items have distinct source-conscious images or illustrated fallbacks');
       await page.getByRole('button',{name:'كل الأصناف',exact:true}).click();
     }
     await page.getByRole('button',{name:/اعرض أصناف أكتر/}).click();
     await check(await page.locator('.t-menu-product').count()===40,
       `${width}px full 113-record catalog supports progressive 20-to-40 loading without losing prices`);
-    await page.getByRole('button',{name:'صور الأكل'}).click();
     await check(await page.locator('.t-menu-items__grid--photo').count()===1,
-      `${width}px users can return to the sourced illustrative-food photo layout after price-first search`);
-    await page.locator('.t-menu-items__grid--photo .t-menu-product__art-trigger').first().click();
+       `${width}px one customer menu remains intact after searching, filtering and pagination`);
+     await page.locator('.t-menu-items__grid--photo .t-menu-product__art-trigger').first().click();
     const photoSheet=page.locator('.t-product-dialog[open]');
     await check(await photoSheet.count()===1 &&
       (generatedMediaReady
         ? await photoSheet.locator('[data-kind="generated-illustrative"]').count()===1 &&
-          await photoSheet.getByText(/الصورة مولّدة بالذكاء الاصطناعي/).count()===1 &&
+          await photoSheet.getByText(/صورة توضيحية مولّدة بالذكاء الاصطناعي/).count()===1 &&
           await photoSheet.getByRole('link',{name:/Pexels/}).count()===0
         : await page.getByRole('link',{name:/مصدر الصورة التوضيحية.*Pexels/}).count()===1),
       `${width}px product sheet preserves original size/addons and correctly declares generated versus stock food photography`);
