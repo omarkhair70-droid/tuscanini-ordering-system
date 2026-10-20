@@ -29,6 +29,17 @@ try{
         const photo=page.locator('.t-menu-items__grid--photo [data-kind="generated-illustrative"] img').first();
         await photo.waitFor({state:'visible',timeout:6000});
         await page.waitForFunction(()=>document.querySelector('.t-menu-items__grid--photo [data-kind="generated-illustrative"] img')?.naturalWidth>0,null,{timeout:9000});
+        // Screenshot fidelity only: scroll/decode ALL 20 lazy item images
+        // before recording a full-page catalog. We DO NOT eager-load them
+        // in the actual customer app or disable browser lazy loading.
+        const catalogPhotos=page.locator('.t-menu-items__grid--photo [data-kind="generated-illustrative"] img');
+        for(let index=0;index<await catalogPhotos.count();index++){
+          const photo=catalogPhotos.nth(index);
+          await photo.scrollIntoViewIfNeeded({timeout:10000});
+          await photo.evaluate(el=>el.decode());
+        }
+        await page.evaluate(()=>window.scrollTo(0,0));
+        console.log(`MENU PHOTO CAPTURE ${width}px: decoded ${await catalogPhotos.count()} lazy thumbnails before full-page screenshot`);
       }
       await page.waitForTimeout(800);
       await page.screenshot({path:`artifacts/screenshots/menu-representative-photo-${width}.png`,fullPage:true,animations:'disabled'});
