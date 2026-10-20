@@ -21,8 +21,8 @@ try{
     try{
       await page.goto(base+'/menu',{waitUntil:'networkidle',timeout:30000});
       await page.evaluate(()=>document.fonts.ready);
-      // Browse the newly sourced external PHOTO mode first. A separate photo
-      // honesty badge + true photographer credit must remain visible.
+      // One customer food catalog, no repeated image stickers or art/fast/photo toggles.
+      // Provenance remains visible in one catalog note and product details.
       await page.locator('.t-menu-items__grid--photo .t-product-art--representative').first().scrollIntoViewIfNeeded();
       const generatedMediaReady=process.env.NEXT_PUBLIC_REBIRTH_GENERATED_IMAGES==='ready';
       if(generatedMediaReady){
@@ -38,13 +38,13 @@ try{
       await page.locator('.t-product-dialog[open]').waitFor({timeout:6000});
       await page.screenshot({path:`artifacts/screenshots/menu-representative-photo-sheet-${width}.png`,animations:'disabled'});
       await page.getByRole('button',{name:'إغلاق تفاصيل المنتج'}).click();
-      await page.getByRole('button',{name:'عرض الرسومات'}).click();
-      await page.locator('.t-menu-items__grid--art .t-product-art').first().waitFor({state:'visible',timeout:6000});
-      await page.locator('.t-menu-items__grid--art').evaluate(el=>
-        window.scrollTo(0,el.getBoundingClientRect().top+window.scrollY-130));
-      await page.screenshot({path:`artifacts/screenshots/menu-illustrated-grid-${width}.png`,fullPage:true,animations:'disabled'});
-      await page.screenshot({path:`artifacts/screenshots/menu-illustrated-item-${width}.png`,animations:'disabled'});
-      await page.getByRole('button',{name:'المنيو السريع'}).click();
+      await page.locator('.t-product-dialog').waitFor({state:'detached'});
+      if(await page.locator('.t-menu-view-switch').count()!==0 ||
+        await page.locator('.t-product-art__representative-label').count()!==0)
+        throw Error('Menu must not expose three modes or repeat proof stickers over food images');
+      if(await page.locator('[data-visual-disclosure="menu"]').count()!==1)
+        throw Error('One visible provenance note missing');
+      await page.screenshot({path:`artifacts/screenshots/menu-unified-catalog-${width}.png`,fullPage:true,animations:'disabled'});
       await page.getByRole('button',{name:'كريب لحوم',exact:true}).click();
       await page.locator('.t-menu-family-context img').scrollIntoViewIfNeeded();
       await page.waitForFunction(()=>{
@@ -62,8 +62,8 @@ try{
       await page.locator('.t-menu-product').first().screenshot({path:`artifacts/screenshots/menu-unique-product-art-${width}.png`,animations:'disabled'});
       await page.getByRole('button',{name:'اختيار تفاصيل كريب توسكانيني — تشيكن فاير'}).click();
       await page.locator('.t-product-dialog[open]').waitFor({timeout:5000});
-      if((await page.locator('.t-product-dialog__identity .t-product-art[data-kind="original-graphic"]').count())!==1)
-        throw Error('Expected same individual source-conscious printed art in modal');
+      if((await page.locator('.t-product-dialog__identity .t-product-art[data-product-id]').count())!==1)
+        throw Error('Selected historical item visual missing from product details');
       await page.screenshot({path:`artifacts/screenshots/menu-product-dialog-${width}.png`,animations:'disabled'});
       await page.locator('.t-product-dialog__options input[type="checkbox"]').first().check();
       await page.getByRole('group',{name:'اختر الكمية'}).getByRole('button',{name:'زيادة الكمية'}).click();
