@@ -24,6 +24,9 @@ type Props = {
  */
 export function RebirthProductDialog({ item, onClose, priceSource = 'previous', visualMode='art', originRect=null }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const closingRef = useRef(false);
+  const returnAnimationRef = useRef<Animation | null>(null);
+  const returnBridgeRef = useRef<HTMLElement | null>(null);
   const { addItem } = useCart();
   const [sizeId, setSizeId] = useState('');
   const [addonIds, setAddonIds] = useState<string[]>([]);
@@ -38,6 +41,7 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
     setAddonIds([]);
     setQuantity(1);
     setNotes('');
+    closingRef.current = false;
     dialog.showModal();
     // Real shared-object FLIP: the selected image itself travels from the
     // clicked thumbnail to the native sheet. The animation is OPTIONAL:
@@ -84,6 +88,10 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
     document.body.style.overflow = 'hidden';
     return () => {
       animation?.cancel();
+      returnAnimationRef.current?.cancel();
+      returnBridgeRef.current?.remove();
+      returnAnimationRef.current = null;
+      returnBridgeRef.current = null;
       if (destination) destination.style.opacity = '';
       bridge?.remove();
       if (dialog.open) dialog.close();
@@ -102,6 +110,68 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
   const unavailable = item.availability === 'unavailable';
   const invalidPrice = !Number.isFinite(unitPrice) || unitPrice <= 0 || quantity > 50;
   const cannotAdd = unavailable || invalidPrice || Boolean(item.sizes?.length && !selectedSize);
+
+  // Close with a measured return to the SAME visible source card. Native dialog
+  // remains open/focus-contained until the optional 310ms reverse FLIP settles.
+  // Escape, backdrop and the close button all use this single idempotent path.
+  const closeProduct = () => {
+    if (closingRef.current) return;
+    closingRef.current = true;
+    const dialog = dialogRef.current;
+    const source = Array.from(
+      document.querySelectorAll<HTMLElement>('.t-menu-product__art-trigger .t-product-art[data-product-id]')
+    ).find(node => node.dataset.productId === item.id);
+    const trigger = source?.closest<HTMLButtonElement>('button');
+    const finish = () => {
+      returnAnimationRef.current = null;
+      returnBridgeRef.current?.remove();
+      returnBridgeRef.current = null;
+      onClose();
+      // Closing a native dialog should return keyboard users to their chosen
+      // product even after the optional visual clone has finished its journey.
+      if (trigger?.isConnected) requestAnimationFrame(() => trigger.focus({ preventScroll: true }));
+    };
+    const destination = dialog?.querySelector<HTMLElement>('.t-product-dialog__identity .t-product-art');
+    const prefersMotion = window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
+    if (!originRect || !source || !destination || !dialog ||
+        !prefersMotion || typeof Element.prototype.animate !== 'function') {
+      finish();
+      return;
+    }
+    const target = source.getBoundingClientRect();
+    const from = destination.getBoundingClientRect();
+    // If filtering/navigation or viewport displacement moved the source away,
+    // never animate an image into an offscreen, stale rectangle.
+    const valid = target.width > 0 && target.height > 0 &&
+      target.left >= 0 && target.top >= 0 &&
+      target.right <= window.innerWidth && target.bottom <= window.innerHeight &&
+      from.width > 0 && from.height > 0;
+    if (!valid) {
+      finish();
+      return;
+    }
+    const bridge = destination.cloneNode(true) as HTMLElement;
+    bridge.setAttribute('aria-hidden', 'true');
+    bridge.dataset.motionBridge = 'return';
+    Object.assign(bridge.style, {
+      position: 'fixed', left: from.left + 'px', top: from.top + 'px',
+      width: from.width + 'px', height: from.height + 'px',
+      margin: '0', pointerEvents: 'none', zIndex: '99',
+    });
+    dialog.dataset.motionPhase = 'returning';
+    dialog.appendChild(bridge);
+    returnBridgeRef.current = bridge;
+    destination.style.opacity = '0';
+    const animation = bridge.animate([
+      { transform: 'translate3d(0,0,0) scale(1,1)', opacity: 1 },
+      {
+        transform: `translate3d(${target.left-from.left}px,${target.top-from.top}px,0) scale(${target.width/from.width},${target.height/from.height})`,
+        opacity: .96,
+      },
+    ], { duration: 310, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' });
+    returnAnimationRef.current = animation;
+    animation.addEventListener('finish', finish, { once: true });
+  };
 
   const addToCart = () => {
     if (cannotAdd) return;
@@ -125,12 +195,13 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
       aria-labelledby="t-product-title"
       aria-describedby="t-product-summary"
       onClose={onClose}
-      onClick={(event) => { if (event.target === dialogRef.current) onClose(); }}
+      onCancel={(event) => { event.preventDefault(); closeProduct(); }}
+      onClick={(event) => { if (event.target === dialogRef.current) closeProduct(); }}
     >
       <div className="t-product-dialog__sheet">
         <header className="t-product-dialog__header">
           <div><span className="t-product-dialog__eyebrow">ORDER DETAILS / TUSCANINI</span><h2 id="t-product-title">{item.name}</h2></div>
-          <button type="button" className="t-product-dialog__close" onClick={onClose} aria-label="إغلاق تفاصيل المنتج">×</button>
+          <button type="button" className="t-product-dialog__close" onClick={closeProduct} aria-label="إغلاق تفاصيل المنتج">×</button>
         </header>
         <div className="t-product-dialog__body">
           <div className="t-product-dialog__identity">
