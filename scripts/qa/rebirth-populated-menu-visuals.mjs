@@ -116,6 +116,24 @@ try{
         }
         await pizzaImages.first().scrollIntoViewIfNeeded();
         await page.screenshot({path:`artifacts/screenshots/owner-pizza-collage-preserved-${width}.png`,animations:'disabled'});
+
+        // Editorial curation requires actual visual evidence for ALL 100
+        // installed frames. A first-viewport atlas screenshot + four pizza
+        // studies cannot certify the other 86 image crops and near-duplicates.
+        // Scroll into view and decode each lazy image before taking a full-page
+        // comparison sheet at both real browser widths.
+        const atlasImages = page.locator('.t-menu-atlas__item img');
+        for(let index=0;index<100;index++){
+          const image=atlasImages.nth(index);
+          await image.scrollIntoViewIfNeeded({timeout:12000});
+          await image.evaluate(element=>element.decode());
+        }
+        await page.evaluate(()=>window.scrollTo(0,0));
+        await page.screenshot({
+          path:`artifacts/screenshots/owner-100-food-visual-atlas-FULL-${width}.png`,
+          fullPage:true,animations:'disabled',timeout:120000
+        });
+        console.log(`ATLAS FULL ${width}px: ALL 100 illustrative WebP images scrolled, decoded, and captured; not a named-menu photo approval`);
       }
       console.log(`POPULATED VISUALS ${width}px: ${results} same-flavor family choices; old product 125+20, x2 = 290 EGP; cart and 8 finder matches photographed`);
     }finally{await ctx.close()}
