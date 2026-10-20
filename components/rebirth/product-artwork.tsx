@@ -46,7 +46,6 @@ export function ProductArtwork({item,size='compact',className='',visualMode='art
       <Image src={generated.src} alt={generated.altAr} fill unoptimized
         sizes={size==='compact'?'(max-width:720px) 160px, 280px':'(max-width:720px) 160px, 230px'}
         onError={()=>setFailedUrl(generated.src)} />
-      <span className="t-product-art__representative-label" aria-hidden="true">صورة تخيلية توضيحية</span>
     </div>;
   }
   if(representative&&representative.src!==failedUrl){
@@ -57,7 +56,6 @@ export function ProductArtwork({item,size='compact',className='',visualMode='art
       <Image src={representative.src} alt={representative.altAr} fill unoptimized
         sizes={size==='compact'?'(max-width:720px) 82px, 100px':'(max-width:720px) 118px, 192px'}
         onError={()=>setFailedUrl(representative.src)} />
-      <span className="t-product-art__representative-label" aria-hidden="true">صورة توضيحية</span>
     </div>;
   }
   const hash=stableHash(item.categorySlug+'/'+item.id);
