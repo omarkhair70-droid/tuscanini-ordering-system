@@ -69,6 +69,8 @@ jobs:
         run: node scripts/qa/rebirth-motion-film.mjs
       - name: Browser interactions and mobile layout smoke
         run: node scripts/qa/rebirth-interaction-check.mjs
+      - name: Reverse shared-image motion, Escape, focus, reduced-motion check
+        run: node scripts/qa/rebirth-reverse-flip-check.mjs
       - name: Print media gate result
         if: always()
         run: node scripts/qa/verify-rebirth-media.mjs
