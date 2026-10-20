@@ -211,7 +211,7 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
             <ProductArtwork item={item} size="large" visualMode={visualMode}/>
             <div className="t-product-dialog__identity-copy">
               <p id="t-product-summary">{item.description || 'اختار التفاصيل المناسبة لطلبك.'}</p>
-              {priceSource === 'previous' && <p className="t-product-dialog__price-notice">{generated?'الصورة مولّدة بالذكاء الاصطناعي للتوضيح فقط، وليست صورة فعلية للصنف.':representative?'الصورة للتوضيح فقط وليست شكل أو مكونات الصنف من توسكانيني.':'الرسمة للتعبير عن الصنف وليست صورته الفعلية.'} الأسعار من منيو توسكانيني السابق؛ التوافر وتأكيد الطلب بيرجعوا للمطعم.</p>}
+              {priceSource === 'previous' && <p className="t-product-dialog__price-notice">{generated?'صورة توضيحية مولّدة بالذكاء الاصطناعي، مش صورة الصنف الفعلية.':representative?'صورة توضيحية مش تصوير الصنف الفعلي.':'رسم توضيحي، مش صورة الصنف الفعلية.'} الأسعار من منيو توسكانيني السابق؛ السعر والتوافر النهائي عند تأكيد المطعم.</p>}
               {representative&&<a className="t-product-dialog__photo-credit" href={representative.page} target="_blank" rel="noopener noreferrer">مصدر الصورة التوضيحية: {representative.photographer} / Pexels ↗</a>}
             </div>
           </div>
