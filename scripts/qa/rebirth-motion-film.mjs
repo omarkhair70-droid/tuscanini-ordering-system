@@ -70,6 +70,8 @@ try{
         throw new Error('Sample stock photo is not credited inside product details');
       await page.waitForTimeout(750);
       await page.getByRole('button',{name:'إغلاق تفاصيل المنتج'}).click();
+      await page.locator('.t-product-dialog[data-motion-phase="returning"]').waitFor({timeout:2500});
+      await page.locator('.t-product-dialog').waitFor({state:'detached',timeout:4500});
       await glide(page,'.t-menu-view-switch');
       await page.getByRole('button',{name:'عرض الرسومات'}).click();
       await page.waitForTimeout(900);
