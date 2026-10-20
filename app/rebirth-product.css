@@ -1,5 +1,6 @@
 /* Tuscanini / real order option selector. Native <dialog> in browser top layer. */
 .t-product-dialog{margin:auto 0 auto auto;inset:0 0 0 auto;border:0;padding:0;width:min(630px,100vw);max-width:100vw;height:100dvh;max-height:100dvh;box-shadow:-20px 0 65px #0006;background:#fff8e8;color:#171511;font-family:"IBM Plex Sans Arabic",Tahoma,Arial,sans-serif}
+.t-product-dialog[data-motion-technique="dom-flip"]{overflow:visible}
 .t-product-dialog::backdrop{background:#0d0c0bc7;backdrop-filter:blur(3px)}
 .t-product-dialog__sheet{height:100%;display:flex;flex-direction:column;overflow:hidden}
 .t-product-dialog__header{padding:clamp(24px,4vw,40px);background:#171511;color:#fff8e8;display:flex;justify-content:space-between;gap:24px;align-items:flex-start;flex-shrink:0}
