@@ -1,0 +1,31 @@
+# TUSCANINI REBIRTH — PASS 21: ONE CUSTOMER MENU, NOT A DESIGN LAB (20 OCT 2026)
+
+## Owner's critique — the creative brief changed at the product level
+The customer-facing menu previously exposed three competing modes: `صور الأكل`, `عرض الرسومات`, `المنيو السريع`, plus a visual atlas linked from the ordering path. Generated photos each carried a prominent black `صورة تخيلية توضيحية` caption over the food. This is visually repetitive and forces hungry customers to make technical presentation choices unrelated to buying lunch. The owner explicitly called these out as UX/art-direction defects. This pass translates **SENSORY RESTRAINT + TWO TEMPOS + FORM × FLAVOR** into one customer path, NOT another unapproved visual identity or invented dish promise.
+
+## Implemented on the same open Draft PR #59
+- `components/rebirth/rebirth-menu.tsx`: removed the `viewMode` state and the entire three-button gallery/art/fast view switch. The one visible `t-menu-items__grid--photo` combines real historical item names, old recorded starting prices, category glyphs, direct details and the original 20-at-a-time pagination/search. Family/category context continues to use *actual* 12 restaurant photo sources separately from any assumed exact named SKU.
+- Removed the customer menu's link to `/menu/visual-atlas`; the separate 100-image design QA archive **remains preserved at its direct route**, with `robots.noindex,nofollow` set so it is not marketed as the restaurant's product list. None of the original 100 WebP or source ZIP assets was deleted or regenerated.
+- `components/rebirth/product-artwork.tsx`: eliminated per-card black `صورة تخيلية توضيحية` / `صورة توضيحية` photo stickers. The visual files, image semantics, IDs, truthful Arabic `aria-label` and source classification remain. Real approved exact SKU photos still have priority if supplied, generated representative images second, stock/abstract SKU artwork only where the image is missing/mismatched.
+- `t-menu-source-note` now carries **one clear, visible menu-wide provenance statement**: generated images are illustrative and are *not restaurant SKU photographs*; previous prices, stock and actual order acceptance still need merchant confirmation. An additional **concise** truthful disclosure remains inside each product detail; real first-party contextual restaurant imagery is distinctly represented.
+- `components/rebirth/rebirth-product-dialog.tsx`, `app/rebirth-product-art.css`: shortened the generated image/previous-price disclosure and reduced its warning-style visual weight on phone; do not move the truth offscreen behind a hidden-only control. Native original-size/add-on controls and earlier forward+reverse FLIP, Escape and focus restoration preserved.
+- `app/rebirth-product-art.css`: removed large **dead public mode-switch and art-gallery style blocks**, preserving the single purposeful photograph-first grid and existing graphic fallback.
+- Do not say every named dish has an exact photo: **96/113** old item records still have category/name-safe generated *representative* images using **65 files**; **17** historically recorded products correctly remain with a non-fabricated fallback. `0/113` merchant-certified named SKU photo truth remains unchanged.
+
+## Real QA evidence, test revisions and limitations
+- Updated `scripts/qa/rebirth-interaction-check.mjs` so 320/390/768/1440 exercise one unified visual menu, collective provenance, all 113 stable SKU IDs, category/search disambiguation, previous price/add-on source, 20→40 pagination, mobile checkout/cart and accessible native dialog/reduced-motion. The old test that demanded three switches would now have been wrong.
+- Updated `scripts/qa/rebirth-populated-menu-visuals.mjs` to capture `menu-unified-catalog-390.png` and `menu-unified-catalog-1440.png` and verify **no UI modes or 20 overlaid black disclaimers**. After visually inspecting the newly captured 390px page, a black unloaded photo was discovered on the long screenshot; this was a **lazy-loading capture fidelity issue**, NOT verified user-facing image corruption. The QA capture now scrolls and decodes all 20 actual visible generated food thumbnails *for screenshot capture only*; the production browser still lazy-loads normally.
+- Updated `scripts/qa/rebirth-motion-film.mjs` to record Home → one Menu → Photo Details → Reverse FLIP → a real alternative food category, not an old art/gallery switch.
+- **Confirmed green first full run on unified customer code:** [#39351448921](https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39351448921) **SUCCESS** (this predates the follow-up QA screenshot warming and quiet product disclosure refinement). The matching [Home CI #39351448651](https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39351448651) **SUCCESS**. Further final-run QA IDs and results should be checked at the end of this pass, not assumed.
+- Actual 390px populated first product screenshot was inspected: photo, name and old price become much clearer without the black source sticker; card-to-sheet behavior still works. Remaining substantial issue: repetitive image angles/crops B03, B04, B05, some B08; independent human art curation still needed, with honest food-family matching.
+
+## Next, NOT DONE yet
+**A.** Curate actual assigned pictures by B IDs for difference in composition, while preserving source/ingredient boundaries. Do not artificially approve food photos or rewrite recipes.
+
+**B.** Integrate visual authority across Home → Menu → Details → Cart, then Offers, Finder, About, Contact, Reviews, Complaints. Different task roles, one print/packaging/photo/Arabic type signature. Avoid every page becoming the same massive hero or a museum of UI controls.
+
+**C.** Test 320/390/768/1024/1440, 200% zoom, real Android scroll/input/performance and motion/back-navigation. Browser fixture success is not physical device or human owner approval.
+
+**D.** Separate production blockers remain: actual current merchant prices/menu/hours/offer signoff, atomic/idempotent server order creation, staff security and real kitchen/order E2E.
+
+**NO MERGE. NO EXPLICIT PRODUCTION DEPLOY. NO REGENERATION OR REMOVAL OF EXISTING 100 PHOTOS.**
