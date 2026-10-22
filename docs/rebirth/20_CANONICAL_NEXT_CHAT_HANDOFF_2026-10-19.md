@@ -172,3 +172,11 @@ The owner has NOT signed off on the whole visual experience. Need inspect **actu
 ### Pass 25 verified experiment CI result (2026-10-22)
 - GitHub Actions **#39708677544 SUCCESS** for \`c546cb0a\`: disposable PostgreSQL 16 and Django spike ran **7/7 passing tests**. Full evidence: https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39708677544 .
 - This is correctness/failure-mode testing only, not stress performance or a TypeScript-vs-Django quantitative comparison; the actual store POS and production database remain untouched.
+
+
+## 6G — PASS 26 / SIDE-BY-SIDE TYPESCRIPT AND DJANGO POSTGRES SPIKES (2026-10-22)
+- Added **independent** Node 22 + TypeScript `pg` + Postgres 16 transaction/idempotency/outbox spike under `experiments/backend-v2/typescript`, plus a second job in the existing `.github/workflows/tuscanini-backend-v2-spike.yml`. Both use disposable local PostgreSQL only; no Supabase, store, customers or payment provider.
+- **Verified CI** for implementation SHA `c022f26c`: [run #39709420180](https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39709420180) succeeded: Django **7/7**, TypeScript **8/8**, TS typecheck green. A parity eighth Django retry-after-fault test was added afterward; check the NEXT run before saying it passed.
+- Read [`27_PASS_26_TYPESCRIPT_POSTGRES_PARITY_2026-10-22.md`](27_PASS_26_TYPESCRIPT_POSTGRES_PARITY_2026-10-22.md) for exact side-by-side finding. Both prototypes prove the same core data invariants; NOT a measured throughput, latency, hosting cost or full production readiness comparison.
+- **Provisional** single-restaurant direction: a modular TypeScript backend on independent PostgreSQL may keep deployment complexity lower while preserving authored Next.js UX, but framework decision remains pending POS/staff requirements, controlled API-level benchmarks and TCO. Django/Oracle Database remain evaluated alternatives.
+- Preserve old 113 historical products/prices, 100 images and art direction. The original customer order routes are **not** switched. PR #59 DRAFT, no merge or production deploy.
