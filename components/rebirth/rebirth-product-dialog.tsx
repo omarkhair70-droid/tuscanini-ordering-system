@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useCart } from '@/components/cart/cart-provider';
 import type { MenuItem } from '@/types/menu';
+import type { ProductCartItem } from '@/types/cart';
 import { ProductArtwork } from '@/components/rebirth/product-artwork';
 
 type Props = {
@@ -11,6 +12,7 @@ type Props = {
   priceSource?: 'previous' | 'live';
   visualMode?:'art'|'representative';
   originRect?:{left:number;top:number;width:number;height:number}|null;
+  editingLine?: ProductCartItem | null;
 };
 
 /**
@@ -20,12 +22,12 @@ type Props = {
  * unchanged when the owner-directed historical menu is selected; the
  * restaurant server independently checks current database records on submit.
  */
-export function RebirthProductDialog({ item, onClose, priceSource = 'previous', visualMode='art', originRect=null }: Props) {
+export function RebirthProductDialog({ item, onClose, priceSource = 'previous', visualMode='art', originRect=null, editingLine=null }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const closingRef = useRef(false);
   const returnAnimationRef = useRef<Animation | null>(null);
   const returnBridgeRef = useRef<HTMLElement | null>(null);
-  const { addItem } = useCart();
+  const { addItem, replaceProductItem } = useCart();
   const [sizeId, setSizeId] = useState('');
   const [addonIds, setAddonIds] = useState<string[]>([]);
   const [quantity, setQuantity] = useState(1);
@@ -35,10 +37,11 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
     if (!item) return;
     const dialog = dialogRef.current;
     if (!dialog) return;
-    setSizeId(item.sizes?.[0]?.id ?? '');
-    setAddonIds([]);
-    setQuantity(1);
-    setNotes('');
+    const edit=editingLine?.productId===item.id?editingLine:null;
+    setSizeId(edit?.selectedSize?.id??item.sizes?.[0]?.id??'');
+    setAddonIds(edit?.selectedAddons.map(a=>a.id)??[]);
+    setQuantity(edit?.quantity??1);
+    setNotes(edit?.itemNotes??'');
     closingRef.current = false;
     dialog.showModal();
     // Real shared-object FLIP: the selected image itself travels from the
@@ -95,7 +98,7 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
       if (dialog.open) dialog.close();
       document.body.style.overflow = previous;
     };
-  }, [item]);
+  }, [item, editingLine]);
 
   const selectedSize = useMemo(() => item?.sizes?.find(x=>x.id===sizeId) ?? null, [item,sizeId]);
   const selectedAddons = useMemo(() => item?.addons?.filter(x=>addonIds.includes(x.id)) ?? [], [item,addonIds]);
@@ -174,7 +177,7 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
 
   const addToCart = () => {
     if (cannotAdd) return;
-    addItem({
+    const line={
       productId: item.id,
       productName: item.name,
       selectedSize: selectedSize ? {id:selectedSize.id,label:selectedSize.label,price:selectedSize.price} : null,
@@ -182,7 +185,9 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
       quantity,
       itemNotes: notes.trim(),
       unitPrice,
-    });
+    };
+    if(editingLine?.productId===item.id)replaceProductItem(editingLine.lineId,line);
+    else addItem(line);
     onClose();
   };
 
@@ -199,7 +204,7 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
     >
       <div className="t-product-dialog__sheet">
         <header className="t-product-dialog__header">
-          <div><span className="t-product-dialog__eyebrow">ORDER DETAILS / TUSCANINI</span><h2 id="t-product-title">{item.name}</h2></div>
+          <div><span className="t-product-dialog__eyebrow">{editingLine?'EDIT YOUR ORDER / TUSCANINI':'ORDER DETAILS / TUSCANINI'}</span><h2 id="t-product-title">{item.name}</h2></div>
           <button type="button" className="t-product-dialog__close" onClick={closeProduct} aria-label="إغلاق تفاصيل المنتج">×</button>
         </header>
         <div className="t-product-dialog__body">
@@ -251,7 +256,7 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
         </div>
         <footer className="t-product-dialog__footer">
           <div><span>الإجمالي قبل التوصيل</span><strong>{totalPrice.toFixed(2)} ج.م</strong></div>
-          <button type="button" disabled={cannotAdd} onClick={addToCart}>{unavailable ? 'الصنف مش متاح' : 'ضيف للسلة ↗'}</button>
+          <button type="button" disabled={cannotAdd} onClick={addToCart}>{unavailable ? 'الصنف مش متاح' : editingLine?'احفظ التعديلات ↗':'ضيف للسلة ↗'}</button>
         </footer>
       </div>
     </dialog>
