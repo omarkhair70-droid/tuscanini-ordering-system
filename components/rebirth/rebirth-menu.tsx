@@ -84,7 +84,10 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
               <span className="t-index">FIND YOUR FOOD / TUSCANINI</span>
               <h1>كل اللي<br/><em>نفسك فيه.</em></h1>
               <p>عارف طلبك؟ دوّر عليه بالاسم. لسه بتختار؟ ابدأ من قسم الأكل اللي على مزاجك.</p>
-              <a className="t-menu-intro__jump" href="#t-menu-search">دور على أكلك <span aria-hidden="true">↓</span></a>
+              <nav className="t-menu-intro__actions" aria-label="اختصارات المنيو">
+                <a className="t-menu-intro__jump" href="#t-menu-search">دور بالاسم <span aria-hidden="true">↓</span></a>
+                <a className="t-menu-intro__jump t-menu-intro__jump--secondary" href="#t-menu-categories">تصفح الأقسام <span aria-hidden="true">↓</span></a>
+              </nav>
             </div>
             <div className="t-menu-intro__photo-pair" aria-label="صور حقيقية عامة من المطعم، وليست صور أصناف محددة في المنيو">
               <figure className="t-menu-intro__photo t-menu-intro__photo--main">
@@ -110,7 +113,7 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
             </div>
           </section>
           <p className="t-menu-source-note" role="note" data-visual-disclosure="menu">{source.note} {GENERATED_MEDIA_READY ? 'صور الأكل المعروضة توضيحية مولّدة بالذكاء الاصطناعي، وليست تصويرًا فعليًا للأصناف.' : 'صور الأكل المعروضة توضيحية وليست تصويرًا فعليًا للأصناف.'}</p>
-          <section aria-label="أقسام المنيو" className="t-menu-categories">
+          <section id="t-menu-categories" aria-label="أقسام المنيو" className="t-menu-categories">
             <div className="t-menu-categories__heading"><span className="t-index">01 — PICK A FOOD FAMILY</span><span>{categories.length} قسم</span></div>
             <div className="t-menu-categories__scroller">
               <button type="button" aria-pressed={category==='all'} onClick={()=>chooseCategory('all')}><MaterialGlyph name="all" size={26} className="t-menu-category-glyph"/>كل الأصناف</button>

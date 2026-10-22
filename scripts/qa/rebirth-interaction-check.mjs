@@ -119,6 +119,10 @@ try {
     await page.goto(baseUrl + '/menu', { waitUntil: 'networkidle', timeout:30000 });
     await check(await page.locator('.t-menu-intro__jump[href="#t-menu-search"]').count()===1,
       `${width}px Menu search can be reached directly from first hero scene`);
+    await check(await page.locator('.t-menu-intro__actions[aria-label="اختصارات المنيو"]').count()===1
+      && await page.locator('.t-menu-intro__jump--secondary[href="#t-menu-categories"]').count()===1
+      && await page.locator('#t-menu-categories .t-menu-categories__scroller').count()===1,
+      `${width}px Menu has explicit search/category shortcuts to the real sections`);
     const menuTitleFits = await page.locator('.t-menu-intro__copy h1').evaluate(el => {
       const height = el.getBoundingClientRect().height;
       const line = parseFloat(getComputedStyle(el).lineHeight);

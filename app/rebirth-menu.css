@@ -152,7 +152,38 @@
   margin-top:14px;
   font:800 14px/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif
 }
-.t-menu-page .t-menu-search{scroll-margin-top:95px}
+.t-menu-page .t-menu-intro__actions{
+  display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;
+  margin-top:clamp(12px,1.7vw,21px)
+}
+.t-menu-page .t-menu-intro__actions .t-menu-intro__jump{
+  margin-top:0;min-height:42px;justify-content:space-between
+}
+.t-menu-page .t-menu-intro__jump--secondary{
+  color:var(--paper);border-bottom-color:var(--paper)
+}
+.t-menu-page .t-menu-intro__actions a:focus-visible{
+  outline:3px solid #f5cd4e;outline-offset:5px
+}
+.t-menu-page .t-menu-search,.t-menu-page .t-menu-categories{
+  scroll-margin-top:95px
+}
+@media(max-width:720px){
+  /* On a phone the Menu is for finding food, not a second full-height Home.
+     Keep both authentic restaurant photos; expose search/category shortcuts sooner. */
+  .t-menu-page .t-menu-intro{padding-bottom:24px}
+  .t-menu-page .t-menu-intro__headline{padding-top:24px}
+  .t-menu-page .t-menu-intro__copy>p{line-height:1.65}
+  .t-menu-page .t-menu-intro__photo-pair{height:clamp(188px,53vw,245px);margin-top:8px}
+  .t-menu-page .t-menu-intro__bottom{margin-top:14px}
+  .t-menu-page .t-menu-content{padding-top:27px}
+  .t-menu-page .t-menu-categories{padding-top:25px}
+}
+@media(max-width:370px){
+  .t-menu-page .t-menu-intro__photo-pair{height:188px}
+  .t-menu-page .t-menu-intro__actions{gap:7px 16px}
+  .t-menu-page .t-menu-intro__actions a{font-size:12px}
+}
 
 @media(hover:hover) and (prefers-reduced-motion:no-preference){
   .t-menu-intro__photo-pair:hover .t-menu-intro__photo--main img{transform:scale(1.035)}
