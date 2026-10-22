@@ -38,3 +38,11 @@
 .t-studio__feedback{grid-column:1/-1;font-size:13px;padding:13px 15px;border-top:1px solid #ad9e89;color:#5d5244}
 @media(max-width:840px){.t-studio__layout{grid-template-columns:1fr}.t-studio__wrap{padding:18px 14px 45px}.t-studio__panel{padding:18px}.t-studio__panel-head>span{font-size:10px}.t-studio__top{padding:16px}.t-studio__intro h1{font-size:clamp(35px,9vw,58px)}}
 @media(prefers-reduced-motion:no-preference){.t-studio__stamp{animation:t-studio-stamp .45s cubic-bezier(.2,1.25,.52,1) both}@keyframes t-studio-stamp{from{opacity:.3;transform:rotate(-18deg) scale(1.1)}to{opacity:1;transform:rotate(-11deg) scale(1)}}}
+
+.t-studio__lines{list-style:none;padding:0;margin:13px 0;display:grid;gap:8px}
+.t-studio__lines>li{display:flex;flex-wrap:wrap;gap:4px 11px;align-items:baseline;
+  border-block-end:1px dashed #b9a991;padding:10px 2px;font-size:13px;line-height:1.65}
+.t-studio__lines>li strong{font-size:15px;flex-basis:100%}
+.t-studio__lines>li span{background:#f4e3c7;padding:3px 8px}
+.t-studio__lines>li small{flex-basis:100%;font-weight:750;color:#5f5143}
+.t-studio__order-customer{font-weight:900;font-size:14px!important;color:#241c15!important}
