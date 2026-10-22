@@ -139,15 +139,28 @@ jobs:
           done
           cat /tmp/tuscanini-studio.log
           exit 1
+      - name: Install Chromium and Playwright for two-screen studio browser proof
+        run: |
+          npx --yes playwright@1.56.1 install --with-deps chromium
+          npm install --no-save --ignore-scripts playwright@1.56.1
       - name: Run native Next.js and test customer ↔ operator ↔ tracking across actual HTTP
         run: |
           npm run dev -- -H 127.0.0.1 -p 3099 > /tmp/tuscanini-next.log 2>&1 &
           for attempt in $(seq 1 90); do
             if curl -fsS http://127.0.0.1:3099/studio -o /dev/null; then
               node scripts/qa/rebirth-next-studio-integration.mjs
+              node scripts/qa/rebirth-studio-two-window-browser.mjs
               exit $?
             fi
             sleep 1
           done
           cat /tmp/tuscanini-next.log
           exit 1
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tuscanini-two-screen-studio-browser
+          path: artifacts/screenshots/studio-*.png
+          if-no-files-found: warn
+          retention-days: 14
