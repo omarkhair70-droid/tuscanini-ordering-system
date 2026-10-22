@@ -20,10 +20,10 @@ The test schema is dropped and recreated. It is prohibited to point these tests 
 cd experiments/backend-v2/typescript
 npm install --no-package-lock
 TUSCANINI_SPIKE_ONLY=yes POSTGRES_DB=tuscanini_spike POSTGRES_USER=spike \
- POSTGRES_PASSWORD=<test-only-password> POSTGRES_HOST=127.0.0.1 \
+ POSTGRES_PASSWORD=local-test-only-password POSTGRES_HOST=127.0.0.1 \
  npm run typecheck
 TUSCANINI_SPIKE_ONLY=yes POSTGRES_DB=tuscanini_spike POSTGRES_USER=spike \
- POSTGRES_PASSWORD=<test-only-password> POSTGRES_HOST=127.0.0.1 \
+ POSTGRES_PASSWORD=local-test-only-password POSTGRES_HOST=127.0.0.1 \
  npm test
 ```
 

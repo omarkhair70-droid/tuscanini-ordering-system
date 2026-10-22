@@ -180,3 +180,10 @@ The owner has NOT signed off on the whole visual experience. Need inspect **actu
 - Read [`27_PASS_26_TYPESCRIPT_POSTGRES_PARITY_2026-10-22.md`](27_PASS_26_TYPESCRIPT_POSTGRES_PARITY_2026-10-22.md) for exact side-by-side finding. Both prototypes prove the same core data invariants; NOT a measured throughput, latency, hosting cost or full production readiness comparison.
 - **Provisional** single-restaurant direction: a modular TypeScript backend on independent PostgreSQL may keep deployment complexity lower while preserving authored Next.js UX, but framework decision remains pending POS/staff requirements, controlled API-level benchmarks and TCO. Django/Oracle Database remain evaluated alternatives.
 - Preserve old 113 historical products/prices, 100 images and art direction. The original customer order routes are **not** switched. PR #59 DRAFT, no merge or production deploy.
+
+
+### Pass 26 QA closure — 2026-10-22
+- **CI #39709544334 SUCCESS:** Django 8/8 and TypeScript 8/8 on disposable PostgreSQL 16; link https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39709544334 .
+- Initially Next root CI and Visual QA **failed** because broad `tsconfig.json` picked up isolated TS spike files while only spike had `pg` dependencies. Added `experiments/backend-v2/typescript/**` to root tsconfig exclusions; isolated spike still runs its own **strict typecheck** in dedicated CI job.
+- **Next Home CI #39709735191 SUCCESS** for code/config commit `36359c1a`, including inherited admin order regression, root TypeScript and Next build: https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39709735191 . Visual QA status must be verified independently; do not assume it passed.
+- Engineering call unchanged: isolated parity demonstrates correctness only; no measured throughput, cost or merchant POS readiness. No deployment, merge or live data changes.

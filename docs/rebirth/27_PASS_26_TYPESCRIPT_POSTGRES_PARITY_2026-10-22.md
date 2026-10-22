@@ -14,7 +14,7 @@ Two *independent*, isolated order/DB correctness spikes, both using **PostgreSQL
 ## Verified evidence
 
 - [GitHub Actions #39709420180](https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39709420180) on code+CI commit `c022f26ce3645061178db749276368e1e004e8fe` **completed SUCCESS** for BOTH jobs, incl. TS typecheck. Observed job logs: **Django 7/7; TypeScript 8/8**. The TypeScript suite has an extra test for valid retry after a prior failed transaction.
-- In the next commit `d851a982`, an equivalent Django retry-after-fault test was added to align the two suites at 8 cases. **Verify the next GitHub Actions run before claiming the new Django test passed.**
+- In subsequent commit `d851a982`, the equivalent Django retry-after-fault test was added. **Verified** [GitHub Actions #39709544334](https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39709544334): BOTH Django **8/8** and TypeScript **8/8** passed. **Verified** [Home CI #39709735191](https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39709735191) on commit `36359c1a`: standalone TS spike excluded from Next.js root `tsconfig.json`, restoring root typecheck and Next build.
 - These are correctness and rollback tests, NOT request latency, throughput or cost measurements. Times such as `Ran 7 tests in 0.219s` are test-runner timing and are NOT comparative performance evidence.
 
 ## Matching invariants / a precise result
@@ -29,7 +29,7 @@ Two *independent*, isolated order/DB correctness spikes, both using **PostgreSQL
 | Injected failure after header/lines/audit/outbox rolls all back | Demonstrated | Demonstrated |
 | Disconnected outbox sender can retry | Demonstrated | Demonstrated |
 | Payment and order status separate | Demonstrated | Demonstrated |
-| Retry after failed transaction | Added, new CI pending | Demonstrated |
+| Retry after failed transaction | Demonstrated | Demonstrated |
 | Actual production staff/POS/payment settlement | NOT PROVEN | NOT PROVEN |
 | Latency/cost/throughput advantage | NOT MEASURED | NOT MEASURED |
 
