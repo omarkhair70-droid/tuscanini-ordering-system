@@ -98,3 +98,13 @@ class PostgresOrderTests(TransactionTestCase):
         attempt.save(update_fields=["status"])
         order.refresh_from_db()
         self.assertEqual(order.status, "received")
+
+
+    def test_failed_transaction_allows_same_key_retry(self):
+        with self.assertRaises(RuntimeError):
+            submit_order("order-retry-fail", self.payload(), fail_at="after_history")
+        self.assertEqual(Order.objects.count(), 0)
+        result = submit_order("order-retry-fail", self.payload())
+        self.assertEqual(result.status, "received")
+        self.assertEqual(Order.objects.count(), 1)
+        self.assertEqual(OutboxEvent.objects.count(), 1)
