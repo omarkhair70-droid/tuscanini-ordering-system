@@ -20,7 +20,10 @@ const AUTHORED_PUBLIC_ROUTES = new Set([
 ]);
 export function RouteShell({ children, legacyHeader, legacyFooter, legacyMobileNav }: RouteShellProps) {
   const pathname = usePathname();
-  const isAuthoredRoute = AUTHORED_PUBLIC_ROUTES.has(pathname);
+  // Our private order-room routes have their own art-directed header and
+  // tablet shell. Do not overlay the legacy sticky marketing nav or footer.
+  const STUDIO_ROUTES = new Set(['/studio', '/operator/orders']);
+  const isAuthoredRoute = AUTHORED_PUBLIC_ROUTES.has(pathname) || STUDIO_ROUTES.has(pathname);
 
   return (
     <>

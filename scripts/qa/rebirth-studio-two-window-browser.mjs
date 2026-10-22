@@ -21,6 +21,10 @@ try{
   assert.match(orderId,/^[0-9a-f-]{36}$/i);
   await customer.getByRole('heading',{name:'اتسجّل الطلب'}).waitFor({timeout:10000});
   await tablet.goto(base+'/operator/orders',{waitUntil:'networkidle'});
+  assert.equal(await customer.locator('header.bg-brand-red').count(),0,
+    'Customer studio must not inherit the old red sticky navbar'); 
+  assert.equal(await tablet.locator('header.bg-brand-red').count(),0,
+    'Operator tablet must not inherit public sticky navbar');
   await tablet.getByPlaceholder('Studio operator key').fill(key);
   await tablet.getByRole('button',{name:/حدّث الأوردرات/}).click();
   await tablet.locator('.t-studio__order').filter({hasText:'#'+orderId.slice(0,8).toUpperCase()}).waitFor({timeout:10000});
