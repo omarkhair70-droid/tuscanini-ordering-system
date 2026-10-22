@@ -412,3 +412,63 @@ test('Order Room UI inline JavaScript parses cleanly and exposes both local firs
   assert.ok(html.includes('__STUDIO_TOKEN__'));
   assert.ok(html.includes('prefers-reduced-motion'));
 });
+
+test('Rebirth cart: catalog-priced size+addon+notes line snapshots and idempotent full payload',async()=>{
+  await syncMenuCatalog(pool,[
+    {productId:'cm1',name:'برجر',categorySlug:'crepe-meat',priceFromCents:4000,available:true,
+      sizes:[{id:'small',label:'صغير',price_cents:4000},{id:'large',label:'كبير',price_cents:6000}],
+      addons:[{id:'addon-mozzarella',label:'موتزاريلا',price_cents:2000}]},
+    {productId:'dr1',name:'مياه معدنية صغير',categorySlug:'drinks',priceFromCents:1000,available:true,
+      sizes:[{id:'single',label:'سعر واحد',price_cents:1000}],addons:[]}
+  ]);
+  const payload={
+    requestKey:'studio-rebirth-variant-001',
+    customer:{name:'Test Customer',phone:'01012345678',address:'',orderType:'pickup',generalNotes:'without onions'},
+    tableReference:'A-3',
+    items:[
+      {kind:'product',productId:'cm1',sizeId:'small',addonIds:['addon-mozzarella'],
+       quantity:2,itemNotes:'extra crispy',unitPrice:1},
+      {kind:'product',productId:'dr1',sizeId:'single',addonIds:[],quantity:1,itemNotes:''},
+    ]
+  };
+  const created=await submitMenuOrder(pool,payload);
+  assert.equal(Number(created.subtotal_cents),13000,'DB catalog price, not client unitPrice');
+  const same=await submitMenuOrder(pool,payload);
+  assert.equal(created.id,same.id);
+  assert.equal(await count('orders'),1);
+  assert.equal(await count('outbox_event'),1);
+  const rows=await pool.query<{name_snapshot:string;unit_price_cents:number;quantity:number;notes_snapshot:string;
+     selection_snapshot:{size:{id:string;price_cents:number};addons:Array<{id:string;price_cents:number}>}}> (
+    'SELECT name_snapshot,unit_price_cents,quantity,notes_snapshot,selection_snapshot FROM spike_ts.order_line WHERE order_id=$1 ORDER BY id',
+    [created.id]
+  );
+  assert.deepEqual(rows.rows.map(x=>x.name_snapshot),['برجر','مياه معدنية صغير']);
+  assert.equal(rows.rows[0]?.unit_price_cents,6000);
+  assert.equal(rows.rows[0]?.quantity,2);
+  assert.equal(rows.rows[0]?.notes_snapshot,'extra crispy');
+  assert.equal(rows.rows[0]?.selection_snapshot.size.id,'small');
+  assert.equal(rows.rows[0]?.selection_snapshot.addons[0]?.id,'addon-mozzarella');
+  const custom=await pool.query<{order_type:string;table_reference:string;customer_snapshot:{phone:string;generalNotes:string}}>(
+    'SELECT order_type,table_reference,customer_snapshot FROM spike_ts.orders WHERE id=$1',[created.id]);
+  assert.equal(custom.rows[0]?.order_type,'pickup');
+  assert.equal(custom.rows[0]?.table_reference,'A-3');
+  assert.equal(custom.rows[0]?.customer_snapshot.phone,'01012345678');
+  const bad={...payload,items:[{...payload.items[0],quantity:3},payload.items[1]]};
+  await assert.rejects(submitMenuOrder(pool,bad),RequestKeyCollision);
+  assert.equal(await count('orders'),1);
+});
+test('Rebirth cart: reject nonexistent size, duplicate or unknown add-ons without orphan order rows',async()=>{
+  await syncMenuCatalog(pool,[{
+    productId:'cm1',name:'برجر',categorySlug:'crepe-meat',priceFromCents:4000,available:true,
+    sizes:[{id:'small',label:'صغير',price_cents:4000}],addons:[{id:'moz',label:'جبنة',price_cents:2000}]
+  }]);
+  const basic={requestKey:'studio-menu-invalid-001',
+    customer:{name:'Customer',phone:'01012345678',address:'',orderType:'pickup',generalNotes:''},
+    tableReference:null,items:[{kind:'product',productId:'cm1',sizeId:'not-in-catalog',addonIds:[],quantity:1,itemNotes:''}]};
+  await assert.rejects(submitMenuOrder(pool,basic),/Required size/);
+  await assert.rejects(submitMenuOrder(pool,{...basic,items:[{...basic.items[0],sizeId:'small',addonIds:['moz','moz']}]}),/duplicate|variant/);
+  await assert.rejects(submitMenuOrder(pool,{...basic,items:[{...basic.items[0],sizeId:'small',addonIds:['foreign']}]}),/Unknown addon/);
+  assert.equal(await count('orders'),0);
+  assert.equal(await count('order_line'),0);
+  assert.equal(await count('outbox_event'),0);
+});
