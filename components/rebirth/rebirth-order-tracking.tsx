@@ -1,5 +1,5 @@
 'use client';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 type Order = {
   orderNumber: number | null;
@@ -14,8 +14,9 @@ type Order = {
 type Reply = { ok: true; order: Order } | { ok: false; error?: string };
 type StatusKey = 'pending'|'unreachable'|'confirmed'|'preparing'|'ready'|'out'|'delivered'|'cancelled'|'unknown';
 type Stage = { key: StatusKey; label: string; description: string };
+type Fact = { label: string; value: string; detail: string; state: 'verified'|'waiting'|'attention' };
+const formatMoney = (number: number) => new Intl.NumberFormat('ar-EG', { maximumFractionDigits: 2 }).format(number);
 
-const formatMoney = (number: number) => new Intl.NumberFormat('ar-EG', {maximumFractionDigits:2}).format(number);
 function getStatus(order: Order): Stage {
   if (order.confirmationStatus==='rejected'||order.status==='ملغي') return {key:'cancelled',label:'الطلب اتلغى',description:'تواصل مع المطعم للاستفسار عن تفاصيل الإلغاء.'};
   if (order.status==='تم التسليم') return {key:'delivered',label:'الطلب اتسلّم',description:'الطلب مسجل إنه اتسلّم بالفعل.'};
@@ -28,51 +29,109 @@ function getStatus(order: Order): Stage {
   return {key:'unknown',label:'حالة الطلب غير معروفة',description:'المطعم ما قدّمش حالة مفهومة دلوقتي؛ تواصل معاه للتأكد.'};
 }
 
+/* These are separate server facts, not invented sequential checkmarks.
+   In the inherited software preparing may coexist with pending confirmation.
+   Show that contradiction accurately rather than silently assuming approval. */
+function getOrderFacts(order: Order): Fact[] {
+  let confirmation: Fact;
+  switch(order.confirmationStatus){
+    case 'confirmed':
+      confirmation={label:'تأكيد المطعم',value:'تم التأكيد',detail:'مسجل كتأكيد من المطعم',state:'verified'};break;
+    case 'rejected':
+      confirmation={label:'تأكيد المطعم',value:'مرفوض',detail:'اتواصل مع المطعم لمعرفة السبب',state:'attention'};break;
+    case 'unreachable':
+      confirmation={label:'تأكيد المطعم',value:'التواصل لم يكتمل',detail:'اتواصل مع المطعم لتأكيد التفاصيل',state:'attention'};break;
+    default:
+      confirmation={label:'تأكيد المطعم',value:'بانتظار التأكيد',detail:'لم تُسجل موافقة المطعم بعد',state:'waiting'};
+  }
+  let progress: Fact={label:'التجهيز والتسليم',value:'في انتظار تحديث',detail:'مفيش حالة تجهيز أو تسليم مسجلة',state:'waiting'};
+  if(order.status==='جاري التحضير') progress={label:'التجهيز والتسليم',value:'جاري التحضير',detail:'حالة مسجلة في نظام المطعم',state:'verified'};
+  if(order.status==='جاهز للاستلام') progress={label:'التجهيز والتسليم',value:'جاهز',detail:order.orderType==='pickup'?'جاهز للاستلام حسب تحديث المطعم':'جاهز عند المطعم حسب آخر تحديث',state:'verified'};
+  if(order.status==='خرج للدليفري') progress={label:'التجهيز والتسليم',value:'خرج للتوصيل',detail:'مسجل أنه خرج من المطعم',state:'verified'};
+  if(order.status==='تم التسليم') progress={label:'التجهيز والتسليم',value:'تم التسليم',detail:'المطعم سجّل تسليم الطلب',state:'verified'};
+  if(order.status==='ملغي'||order.confirmationStatus==='rejected') progress={label:'التجهيز والتسليم',value:'الطلب ملغي',detail:'لا تفترض بدء التحضير أو التسليم',state:'attention'};
+  return [
+    {label:'تسجيل الطلب',value:'تم التسجيل',detail:'الطلب محفوظ في نظام الموقع',state:'verified'},
+    confirmation,progress,
+  ];
+}
+
 export function RebirthOrderTracking({orderId}:{orderId:string}) {
   const [order,setOrder]=useState<Order|null>(null);
   const [loading,setLoading]=useState(true);
   const [updating,setUpdating]=useState(false);
   const [error,setError]=useState('');
   const [lastUpdated,setLastUpdated]=useState<string|null>(null);
-  const reload=useCallback(async (signal?:AbortSignal) => {
+  const requestRef=useRef<AbortController|null>(null);
+  const reload=useCallback(async()=>{
+    // Manual refresh and returning from background cancel an older pending poll:
+    // an old network reply cannot overwrite a newer restaurant status.
+    requestRef.current?.abort();
+    const controller=new AbortController();
+    requestRef.current=controller;
     setUpdating(true);
     try {
-      const resp=await fetch(`/api/orders/track?orderId=${encodeURIComponent(orderId)}`,{cache:'no-store',signal});
+      const resp=await fetch(`/api/orders/track?orderId=${encodeURIComponent(orderId)}`,{cache:'no-store',signal:controller.signal});
       const data=await resp.json() as Reply;
-      if(signal?.aborted) return;
-      if(!resp.ok || !data.ok) {
-        setError(!data.ok ? data.error || 'تعذر قراءة حالة الطلب.' : 'تعذر قراءة حالة الطلب.');
-      } else {
+      if(controller.signal.aborted) return;
+      if(!resp.ok||!data.ok){
+        setError(!data.ok?data.error||'تعذر قراءة حالة الطلب.':'تعذر قراءة حالة الطلب.');
+      }else{
         setOrder(data.order);
         setError('');
         setLastUpdated(new Date().toLocaleTimeString('ar-EG',{hour:'numeric',minute:'2-digit'}));
       }
-    } catch {
-      if(!signal?.aborted) setError('مش قادرين نحدّث الحالة دلوقتي. حاول تاني أو تواصل مع المطعم.');
-    } finally {
-      if(!signal?.aborted) {setLoading(false);setUpdating(false)}
+    }catch{
+      if(!controller.signal.aborted) setError('مش قادرين نحدّث الحالة دلوقتي. آخر حالة ناجحة لسه ظاهرة؛ اتأكد من الاتصال أو تواصل مع المطعم.');
+    }finally{
+      if(requestRef.current===controller){setLoading(false);setUpdating(false);}
     }
   },[orderId]);
 
   useEffect(()=>{
-    const controller=new AbortController();
-    void reload(controller.signal);
+    void reload();
     const timer=window.setInterval(()=>{
-      if(document.visibilityState==='visible')void reload(controller.signal);
+      if(document.visibilityState==='visible')void reload();
     },15000);
-    return ()=>{controller.abort();window.clearInterval(timer)};
+    const onResume=()=>{if(document.visibilityState==='visible')void reload();};
+    const onOnline=()=>void reload();
+    document.addEventListener('visibilitychange',onResume);
+    window.addEventListener('online',onOnline);
+    return ()=>{
+      requestRef.current?.abort();
+      window.clearInterval(timer);
+      document.removeEventListener('visibilitychange',onResume);
+      window.removeEventListener('online',onOnline);
+    };
   },[reload]);
 
   const status=order?getStatus(order):null;
+  const facts=order?getOrderFacts(order):[];
   return (
     <section className="t-order-tracking" aria-labelledby="t-order-track-title">
       <div className="t-order-tracking__main">
-        <span className="t-index">TRACKING / LIVE RESTAURANT STATE</span>
-        <h2 id="t-order-track-title">{loading?'بنتحقق من الطلب…':status?.label??'محتاجين نتأكد.'}</h2>
+        <span className="t-index">TRACKING / RECORDED RESTAURANT STATUS</span>
+        <h2 id="t-order-track-title" aria-live="polite">{loading?'بنتحقق من الطلب…':status?.label??'محتاجين نتأكد.'}</h2>
         <p>{status?.description??'هنعرض الحالة اللي المطعم سجّلها في النظام، من غير ما نفترض إنه بدأ يجهز الطلب.'}</p>
+        {order&&(
+          <div className="t-order-facts" aria-label="ما الذي تأكد عن طلبك؟">
+            {facts.map((fact,index)=>(
+              <div className="t-order-fact" data-state={fact.state} key={fact.label}>
+                <span className="t-order-fact__number" aria-hidden="true">{String(index+1).padStart(2,'0')}</span>
+                <div>
+                  <span className="t-order-fact__label">{fact.label}</span>
+                  <strong>{fact.value}</strong>
+                  <small>{fact.detail}</small>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
         {error&&<p role="alert" className="t-order-tracking__error">{error}</p>}
-        <button type="button" disabled={updating} onClick={()=>void reload()} className="t-order-tracking__refresh">{updating?'جاري التحديث…':'حدّث الحالة ↻'}</button>
-        {lastUpdated&&<span className="t-order-tracking__time">آخر تحديث ناجح: {lastUpdated}</span>}
+        <div className="t-order-tracking__controls">
+          <button type="button" disabled={updating} onClick={()=>void reload()} className="t-order-tracking__refresh">{updating?'جاري التحديث…':'حدّث الحالة ↻'}</button>
+          {lastUpdated&&<span className="t-order-tracking__time">آخر تحديث ناجح: {lastUpdated}{error?' — البيانات قديمة':''}</span>}
+        </div>
       </div>
       <div className="t-order-tracking__details">
         <span className="t-index">YOUR REFERENCE / KEEP IT</span>
