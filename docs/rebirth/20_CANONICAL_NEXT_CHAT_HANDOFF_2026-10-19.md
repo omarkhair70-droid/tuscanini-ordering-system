@@ -249,3 +249,10 @@ The owner has NOT signed off on the whole visual experience. Need inspect **actu
 - On commit `482cc923` shortened menu/product/checkout consumer copy: kept one inline short note `الأسعار من المنيو السابق · الصور للتوضيح`, removed every per-product AI/legal essay and Pexels source link from product dialogs, removed repeated captions, simplified checkout consent. Asset origins remain in code, not deleted. Confirm CI and screenshots on subsequent HEAD.
 - Build active order event pipeline, server authored ETA optional, creative tracking states and **permissioned Web Push via Service Worker** (works in background on supported browsers when site closed, not universally guaranteed) with tablet control/alerts. Per-event actual timestamps; allow rich artistic motion tied to staff actions.
 - Maintain one cohesive artistic website plus functional restaurant-operated ordering. PR #59 remains DRAFT; no merge or production merchant activity without specific pilot approval.
+
+
+## PASS 35 — NEXTJS TWO-WINDOW CUSTOMER/OPERATOR LOOP ACTUALLY CONNECTED
+- Native Next.js `/studio` and `/operator/orders` communicate via dev-only `/api/studio/bridge` to localhost PostgreSQL Node, with a disposable test catalog. The backend persists order + events and staff changes; one customer sees updates from another operator window.
+- [Passing 3-job proof #39728485619](https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39728485619): Next API test, browser 390 mobile customer + 1024 tablet operator, and TypeScript/Django PostgreSQL tests. Real screenshots were inspected; `RouteShell` inherited old red navbar overlay and was fixed afterward. Full code/runbook: [Pass 35](35_NEXTJS_ORDER_ROOM_TWO_SCREEN_INTEGRATION_2026-10-22.md).
+- New current `/studio` is NOT main `/menu`→`/cart`: demo product only; do not claim real Rebirth menu customization, employee accounts or background Push. **Next Pass 36:** replace synthetic item-only contract with correct server-verified sizes/addons/offers and map the actual authored Cart + tracking to independent staging engine.
+- Draft #59 remains open, no merge/deploy, no live orders.
