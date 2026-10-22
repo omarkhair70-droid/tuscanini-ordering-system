@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { mkdir } from 'node:fs/promises';
 import { chromium } from 'playwright';
 
-const browser=await chromium.launch({headless:true});
+const browser=await chromium.launch({headless:true,...(process.env.TUSCANINI_SYSTEM_CHROME==='yes'?{channel:'chrome'}:{})});
 await mkdir('artifacts/screenshots',{recursive:true});
 try{
   const page=await browser.newPage({viewport:{width:1024,height:768},reducedMotion:'reduce'});

@@ -8,7 +8,7 @@ import { chromium } from 'playwright';
 
 const base='http://127.0.0.1:3099',key=process.env.TUSCANINI_STUDIO_OPERATOR_KEY;
 assert.ok(key&&key.length>24);
-const browser=await chromium.launch({headless:true});
+const browser=await chromium.launch({headless:true,...(process.env.TUSCANINI_SYSTEM_CHROME==='yes'?{channel:'chrome'}:{})});
 const customer=await browser.newPage({viewport:{width:390,height:844},reducedMotion:'reduce'});
 const tablet=await browser.newPage({viewport:{width:1024,height:800},reducedMotion:'reduce'});
 try{
