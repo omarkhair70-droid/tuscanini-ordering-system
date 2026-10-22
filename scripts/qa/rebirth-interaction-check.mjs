@@ -485,7 +485,10 @@ try {
     await page.getByRole('heading',{name:'الطلب بيتحضّر'}).waitFor({state:'visible',timeout:8000});
     await check(await page.getByRole('heading',{name:'الطلب بيتحضّر'}).count()===1,
       `${width}px order shows preparation only after server status changes`);
-    if(width===390)await page.screenshot({path:'artifacts/screenshots/customer-journey-tracking-preparing-unconfirmed-390.png',fullPage:true,animations:'disabled'});
+    if(width===390){
+      await page.evaluate(()=>window.scrollTo(0,0));
+      await page.screenshot({path:'artifacts/screenshots/customer-journey-tracking-preparing-unconfirmed-390.png',fullPage:true,animations:'disabled'});
+    }
     await check(await page.locator('.t-order-fact[data-state="verified"]').count()===2 &&
       await page.locator('.t-order-fact[data-state="waiting"]').count()===1,
       `${width}px preparation while confirmation is pending does not invent acceptance`);
