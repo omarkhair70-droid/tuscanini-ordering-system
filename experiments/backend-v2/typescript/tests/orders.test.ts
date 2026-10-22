@@ -343,3 +343,57 @@ test('HTTP rejects malformed JSON and does not expose private staff routes witho
     await server.close();
   }
 });
+
+test('Order Room: customer saves order, operator inbox reads it, and customer receives durable events',async()=>{
+  const server=await startLocalSimulation(pool);
+  const staffHeaders={'content-type':'application/json','x-spike-test-token':server.fixtureToken,'x-spike-role':'cashier'};
+  try{
+    const studio=await fetch(server.baseUrl+'/studio');
+    assert.equal(studio.status,200);
+    const html=await studio.text();
+    assert.ok(html.includes('ONE ORDER / TWO SCREENS'));
+    assert.ok(html.includes(server.fixtureToken));
+    const catalog=await fetch(server.baseUrl+'/api/studio/catalog');
+    assert.equal(catalog.status,200);
+    assert.ok((await catalog.json() as {items:Array<{sku:string}>}).items.some(x=>x.sku==='PIZZA_01'));
+    const placed=await fetch(server.baseUrl+'/api/orders',{method:'POST',
+      headers:{'content-type':'application/json'},
+      body:JSON.stringify({requestKey:'room-sequence-001',items:cart()})});
+    assert.equal(placed.status,200);
+    const order=await placed.json() as {id:string};
+    assert.equal((await fetch(server.baseUrl+'/api/staff/orders')).status,403);
+    const inbox=await fetch(server.baseUrl+'/api/staff/orders',{headers:staffHeaders});
+    assert.equal(inbox.status,200);
+    const data=await inbox.json() as {orders:Array<{id:string;status:string;items:Array<{qty:number}>}>};
+    assert.equal(data.orders.length,1);
+    assert.equal(data.orders[0]?.id,order.id);
+    assert.equal(data.orders[0]?.status,'received');
+    assert.deepEqual(data.orders[0]?.items.map(x=>x.qty).sort(),[1,2]);
+    const confirm=await fetch(server.baseUrl+'/api/staff/orders/'+order.id+'/decision',{
+      method:'POST',headers:staffHeaders,body:JSON.stringify({action:'accept'})});
+    assert.equal(confirm.status,200);
+    const events=await fetch(server.baseUrl+'/api/orders/'+order.id+'/events');
+    assert.equal(events.status,200);
+    const log=await events.json() as {events:Array<{status:string;actor_role:string;action:string}>};
+    assert.deepEqual(log.events.map(x=>x.status),['received','accepted']);
+    assert.deepEqual(log.events.map(x=>x.actor_role),['system','cashier']);
+    const track=await fetch(server.baseUrl+'/api/orders/'+order.id+'/tracking');
+    assert.equal((await track.json() as {status:string}).status,'accepted');
+    assert.equal(await count('outbox_event'),2);
+  }finally{await server.close()}
+});
+
+test('Order Room: kitchen cannot start before acceptance and cannot forge new customer events',async()=>{
+  const server=await startLocalSimulation(pool);
+  try{
+    const placed=await submitOrder(pool,'room-rejected-001',cart());
+    const response=await fetch(server.baseUrl+'/api/kitchen/orders/'+placed.id+'/progress',{
+      method:'POST',
+      headers:{'content-type':'application/json','x-spike-role':'kitchen','x-spike-test-token':server.fixtureToken},
+      body:JSON.stringify({action:'start'})});
+    assert.equal(response.status,409);
+    const history=await fetch(server.baseUrl+'/api/orders/'+placed.id+'/events');
+    assert.deepEqual((await history.json() as {events:Array<{status:string}>}).events.map(e=>e.status),['received']);
+    assert.equal(await count('outbox_event'),1);
+  }finally{await server.close()}
+});
