@@ -63,6 +63,9 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
     setSelectedProduct(item);
   }
   function chooseCategory(slug: string) {
+    // Choosing a new family leaves the previous text search behind. Otherwise
+    // the menu can look empty even though that family has available items.
+    setQuery('');
     setCategory(slug);
     setLimit(PAGE_SIZE);
     const url = new URL(window.location.href);
