@@ -476,13 +476,20 @@ try {
       status:200,contentType:'application/json',body:JSON.stringify({ok:true,settings:{isOrderingOpen:true,whatsappOrderNumber:''}}),
     }));
     let submits=0;
+    const submittedChoices=[];
     await fixtureContext.route('**/api/orders',route=>{
       submits++;
+      submittedChoices.push(route.request().postDataJSON());
       return route.fulfill({status:409,contentType:'application/json',body:JSON.stringify({ok:false,code:'ORDERING_CLOSED',error:'الطلبات متوقفة الآن'}),});
     });
     const cart=await fixtureContext.newPage();
     await cart.goto(baseUrl+'/cart',{waitUntil:'networkidle',timeout:30000});
     if(width===390)await cart.screenshot({path:'artifacts/screenshots/customer-journey-cart-fixture-390.png',fullPage:true,animations:'disabled'});
+    await check((await cart.getByTestId('checkout-delivery-fee').innerText()).trim()==='لسه مش محددة',
+      `${width}px delivery checkout never fabricates an approved delivery fee`);
+    await check(await cart.getByRole('heading',{name:'الدفع مش بيتم هنا.'}).count()===1 &&
+      await cart.getByText(/مفيش دفع إلكتروني مفعّل/).count()===1,
+      `${width}px checkout exposes payment not collected, without pretending a payment gateway is active`);
     await cart.getByRole('button',{name:/سجّل الطلب للمطعم/}).click();
     await check(await cart.getByText(/اكتب اسمك/).count()===1,`${width}px fixture cart required name validation`);
     await check(await cart.locator('#t-checkout-name').evaluate(el=>document.activeElement===el),
@@ -491,12 +498,44 @@ try {
     await cart.getByPlaceholder('الاسم').fill('عميل اختبار');
     await cart.getByPlaceholder('01xxxxxxxxx').fill('01012345678');
     await cart.getByPlaceholder('الشارع، المنطقة، علامة مميزة').fill('عنوان تجريبي');
+    if([390,1440].includes(width))await cart.screenshot({
+      path:`artifacts/screenshots/checkout-delivery-payment-truth-${width}.png`,fullPage:true,animations:'disabled',
+    });
     await cart.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).check();
     await cart.getByRole('button',{name:/سجّل الطلب للمطعم/}).click();
     await cart.getByText('الطلبات متوقفة الآن').waitFor({state:'visible',timeout:7000});
     await check(await cart.getByText('الطلبات متوقفة الآن').count()===1,`${width}px refused order shows exact server closure`);
     await check(submits===1,`${width}px exactly one mocked checkout request`);
+    await check(submittedChoices[0]?.customer?.orderType==='delivery' &&
+      submittedChoices[0]?.customer?.address==='عنوان تجريبي',
+      `${width}px delivery request retains the explicitly entered address`);
     await check(await cart.getByText(/عرض اختبار غير حقيقي/).count()>0,`${width}px rejected order keeps items for correction`);
+
+    // Switch an already-addressed delivery draft to pickup. Never leak that
+    // draft address into the restaurant order for an in-store pickup.
+    await cart.getByRole('radio',{name:'استلام من المطعم'}).check();
+    await check(await cart.getByPlaceholder('الشارع، المنطقة، علامة مميزة').count()===0 &&
+      (await cart.getByTestId('checkout-delivery-fee').innerText()).trim()==='لا توجد رسوم توصيل',
+      `${width}px pickup removes irrelevant address entry and does not invent delivery cost`);
+    await check(!(await cart.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).isChecked()),
+      `${width}px changing delivery to pickup requires renewed customer review`);
+    if([390,1440].includes(width))await cart.screenshot({
+      path:`artifacts/screenshots/checkout-pickup-payment-truth-${width}.png`,fullPage:true,animations:'disabled',
+    });
+    await cart.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).check();
+    const secondPost=cart.waitForResponse(resp=>new URL(resp.url()).pathname==='/api/orders');
+    await cart.getByRole('button',{name:/سجّل الطلب للمطعم/}).click();
+    await secondPost;
+    await check(submits===2 && submittedChoices[1]?.customer?.orderType==='pickup' &&
+      submittedChoices[1]?.customer?.address==='' &&
+      submittedChoices[1]?.subtotal===45,
+      `${width}px pickup payload excludes leftover delivery address, preserving original food subtotal`);
+    await cart.getByRole('radio',{name:'دليفري'}).check();
+    await check(await cart.getByPlaceholder('الشارع، المنطقة، علامة مميزة').inputValue()==='عنوان تجريبي' &&
+      (await cart.getByTestId('checkout-delivery-fee').innerText()).trim()==='لسه مش محددة',
+      `${width}px changing back to delivery restores customer draft but shows only unverified fee`);
+    await check(!(await cart.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).isChecked()),
+      `${width}px changing pickup back to delivery invalidates previous review`);
     await fixtureContext.close();
     // Isolated tracking fixture validates state semantics, not a real restaurant order.
     let restaurantStage='جديد';
