@@ -212,7 +212,7 @@ try {
     await page.locator('.t-product-dialog__close').click();
     await page.getByRole('searchbox',{name:/دور على أكلك/}).fill('');
     await page.getByRole('button',{name:'كريب لحوم',exact:true}).click();
-    await page.locator('.t-menu-product').first().waitFor({state:'visible',timeout:8000});
+    await page.waitForFunction(() => document.querySelectorAll('.t-menu-product').length > 0, null, {timeout:8000});
     await check(await page.locator('.t-menu-family-context img').count()===1&&
       await page.locator('.t-menu-family-context').getByText(/مش صورة أي صنف معين/).count()===1,
       `${width}px verified original CREPE image is shown only as a family context photo`);
