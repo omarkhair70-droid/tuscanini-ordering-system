@@ -103,14 +103,16 @@ export async function trackOrder(pool: Pool, orderId: string): Promise<{
 /** A first-party operator inbox query for the isolated studio, not Talabat/POS. */
 export async function listOperatorOrders(pool: Pool, limit=30): Promise<Array<{
   id: string; status: OrderStatus; subtotal_cents: string; created_at: string;
+  order_type:string; table_reference:string|null; customer_snapshot:unknown;
   items: Array<{ sku: string; name: string; qty: number; price_cents: number; selection:unknown; notes:string }>;
 }>> {
   if(!Number.isInteger(limit)||limit<1||limit>50)throw new OperationalError('Invalid inbox page size.',400);
   const res=await pool.query<{
     id:string;status:OrderStatus;subtotal_cents:string;created_at:string;
+    order_type:string;table_reference:string|null;customer_snapshot:unknown;
     items:Array<{sku:string;name:string;qty:number;price_cents:number;selection:unknown;notes:string}>;
   }>(`
-    SELECT o.id,o.status,o.subtotal_cents::text,o.created_at,
+    SELECT o.id,o.status,o.subtotal_cents::text,o.created_at,o.order_type,o.table_reference,o.customer_snapshot,
       COALESCE(json_agg(json_build_object('sku',l.sku_snapshot,'name',l.name_snapshot,
         'qty',l.quantity,'price_cents',l.unit_price_cents, 'selection',l.selection_snapshot, 'notes',l.notes_snapshot) ORDER BY l.id)
         FILTER (WHERE l.id IS NOT NULL),'[]'::json) AS items

@@ -3,7 +3,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 type CatalogItem={sku:string;name:string;unit_price_cents:number};
-type Order={id:string;status:string;subtotal_cents:string;created_at:string;items:Array<{sku:string;name:string;qty:number;price_cents:number}>};
+type StaffLine={sku:string;name:string;qty:number;price_cents:number;
+  selection?:{size?:{label:string}|null;addons?:Array<{label:string}>};notes?:string};
+type Order={id:string;status:string;subtotal_cents:string;created_at:string;
+  items:StaffLine[];order_type?:string;table_reference?:string|null;
+  customer_snapshot?:{name?:string;phone?:string;address?:string;generalNotes?:string}};
 type OrderEvent={id:string;status:string;created_at:string;action:string;actor_role:string};
 type StudioPayload={items?:CatalogItem[];orders?:Order[];events?:OrderEvent[];id?:string;status?:string;subtotal_cents?:string;error?:string};
 type Mode='customer'|'operator';
@@ -163,7 +167,19 @@ export function StudioOrderRoom({mode}:{mode:Mode}){
         {!operatorKey?<p className="t-studio__empty">اكتب مفتاح بيئة الاختبار لتشغيل شاشة الموظف.</p>:inbox.length===0?<p className="t-studio__empty">لسه مفيش أوردرات ظاهرة. افتح واجهة العميل وسجّل طلبًا.</p>:
           <div className="t-studio__orders">{inbox.map(item=><article key={item.id} className={'t-studio__order'+(item.status==='received'?' t-studio__order--new':'')}>
             <div className="t-studio__order-top"><strong>{shortId(item.id)}</strong><span>{states[item.status]?.label??item.status}</span></div>
-            <p>{item.items.map(line=>line.qty+' × '+line.name).join(' · ')}</p>
+            <p className="t-studio__order-customer">
+              {item.customer_snapshot?.name||'عميل تجربة'} · {item.order_type==='delivery'?'دليفري':'استلام'}
+              {item.table_reference?' · طاولة '+item.table_reference:''}
+            </p>
+            {item.customer_snapshot?.phone&&<p>الهاتف: {item.customer_snapshot.phone}</p>}
+            {item.customer_snapshot?.address&&<p>العنوان: {item.customer_snapshot.address}</p>}
+            {item.customer_snapshot?.generalNotes&&<p>ملاحظات الطلب: {item.customer_snapshot.generalNotes}</p>}
+            <ul className="t-studio__lines">{item.items.map((line,index)=><li key={index}>
+              <strong>{line.qty} × {line.name}</strong>
+              {line.selection?.size?.label&&<span>الحجم: {line.selection.size.label}</span>}
+              {Boolean(line.selection?.addons?.length)&&<span>الإضافات: {line.selection!.addons!.map(a=>a.label).join('، ')}</span>}
+              {line.notes&&<small>ملحوظة: {line.notes}</small>}
+            </li>)}</ul>
             <strong>{money(item.subtotal_cents)}</strong>
             <div className="t-studio__actions">{(actions[item.status]??[]).map(a=><button key={a.action} disabled={busy}
               onClick={()=>void applyAction(item.id,a.action)}>{a.label}</button>)}</div>
