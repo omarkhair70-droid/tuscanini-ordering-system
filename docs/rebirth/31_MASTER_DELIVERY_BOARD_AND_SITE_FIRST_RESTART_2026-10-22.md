@@ -1,3 +1,5 @@
+> **EXECUTION STATUS SUPERSEDED:** [ONE WORKING BOARD](WORKING_BOARD.md) consolidates up-to-date feature status, test gaps, screenshots and the **owner-confirmed reduced scope**: a creative public ordering website and ONE staff order tablet screen. This site's first-priority intent is retained, but older named-staff-role/multi-layer operational work below is NOT the default product plan. Secure single-restaurant access remains required.
+
 # TUSCANINI REBIRTH — MASTER DELIVERY BOARD / SITE-FIRST RESET
 **Date:** 2026-10-22 | **Owner direction:** finish the original **authored website**, while arranging the direct-order backend and tablet inbox as parts of the SAME product.
 **Repository:** `omarkhair70-droid/tuscanini-ordering-system` | **Working branch:** `redesign/tuscanini-authored-experience-20261018` | **PR:** #59 **DRAFT**, not merged, no production deploy.
