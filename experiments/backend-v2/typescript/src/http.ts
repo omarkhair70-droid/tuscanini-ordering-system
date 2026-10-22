@@ -57,7 +57,12 @@ export async function startLocalSimulation(pool: Pool): Promise<{
   close: () => Promise<void>;
 }> {
   verifyDisposableLocalDatabase();
-  const fixtureToken = randomUUID();
+  // A fixed token is needed when Next's localhost bridge runs in a
+  // separate development process. It is allowed only after the disposable
+  // local-DB guard above; otherwise keep a random per-run fixture token.
+  const bridgeToken=process.env.TUSCANINI_STUDIO_BRIDGE_TOKEN;
+  if(bridgeToken && bridgeToken.length < 24)throw new Error('Studio token must have at least 24 characters.');
+  const fixtureToken=bridgeToken ?? randomUUID();
   const server = createServer(async (req, res) => {
     const url = new URL(req.url ?? '/', 'http://127.0.0.1');
     const method = req.method ?? 'GET';
