@@ -438,6 +438,7 @@ try {
     });
     const cart=await fixtureContext.newPage();
     await cart.goto(baseUrl+'/cart',{waitUntil:'networkidle',timeout:30000});
+    if(width===390)await cart.screenshot({path:'artifacts/screenshots/customer-journey-cart-fixture-390.png',fullPage:true,animations:'disabled'});
     await cart.getByRole('button',{name:/سجّل الطلب للمطعم/}).click();
     await check(await cart.getByText(/اكتب اسمك/).count()===1,`${width}px fixture cart required name validation`);
     await check(submits===0,`${width}px invalid checkout never posts order`);
@@ -473,11 +474,13 @@ try {
       await page.locator('.t-order-fact[data-state="waiting"]').count()===2,
       `${width}px tracking confirms saved order while leaving restaurant acceptance/preparation unverified`);
     await check(await page.getByText(/لسه مش متأكد/).count()>0,`${width}px stored order clearly awaits restaurant confirmation`);
+    if(width===390)await page.screenshot({path:'artifacts/screenshots/customer-journey-tracking-pending-390.png',fullPage:true,animations:'disabled'});
     restaurantStage='جاري التحضير';
     await page.getByRole('button',{name:/حدّث الحالة/}).click();
     await page.getByRole('heading',{name:'الطلب بيتحضّر'}).waitFor({state:'visible',timeout:8000});
     await check(await page.getByRole('heading',{name:'الطلب بيتحضّر'}).count()===1,
       `${width}px order shows preparation only after server status changes`);
+    if(width===390)await page.screenshot({path:'artifacts/screenshots/customer-journey-tracking-preparing-unconfirmed-390.png',fullPage:true,animations:'disabled'});
     await check(await page.locator('.t-order-fact[data-state="verified"]').count()===2 &&
       await page.locator('.t-order-fact[data-state="waiting"]').count()===1,
       `${width}px preparation while confirmation is pending does not invent acceptance`);
