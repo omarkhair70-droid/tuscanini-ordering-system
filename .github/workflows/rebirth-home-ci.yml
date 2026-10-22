@@ -30,5 +30,7 @@ jobs:
           node-version: "22"
           cache: "npm"
       - run: npm ci
+      - name: Test concurrent admin order updates without a live database
+        run: node scripts/qa/rebirth-order-concurrency-smoke.mjs
       - run: npx tsc --noEmit
       - run: npm run build
