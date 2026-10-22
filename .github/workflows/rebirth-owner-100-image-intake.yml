@@ -1,13 +1,13 @@
 name: Tuscanini Rebirth — Install 100 Owner Food Visuals (Draft Branch Only)
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - redesign/tuscanini-authored-experience-20261018
     paths:
       - 'assets/intake/tuscanini-pass19-images.zip'
       - 'scripts/qa/install-generated-from-zip.py'
-      - 'scripts/qa/rebirth-interaction-check.mjs'
 
 permissions:
   contents: write
@@ -76,6 +76,12 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add public/images/rebirth/generated/
           changed=$(git diff --cached --name-only | wc -l | tr -d ' ')
+          # This is a ONE-TIME asset intake. An existing committed 100-image
+          # set is valid; do not fail and do not create a pointless commit.
+          if [ "$changed" -eq 0 ]; then
+            echo "100 generated images already installed on this Draft branch; no new binary changes."
+            exit 0
+          fi
           if [ "$changed" -ne 100 ]; then
             echo "Unexpected binary diff of $changed; only first-time 100-image admission permitted"
             exit 1

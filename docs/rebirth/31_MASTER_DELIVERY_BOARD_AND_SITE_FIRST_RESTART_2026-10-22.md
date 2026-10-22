@@ -45,6 +45,8 @@ Goal: **complete the original integrated Rebirth site** with a coherent, authore
 
 **Current priority order:** A1 → A2 → A3/A4 → A5. The original website is *not* visually finished merely because routes render or automated CI is green.
 
+**A1/A2 execution checkpoint (22 Oct):** Real downloaded screenshots from #39713611238 reviewed on 390/1440. Implemented faster mobile Menu hero and direct Search/Category shortcut anchors (`2286346d`) and rebalanced 390px Product Dialog image without hiding disclosure/size/addons (`002fd9f4`). Exact before/after evidence and 10 triaged route gaps: [A1/A2 Screenshot Audit](32_A1_A2_ACTUAL_SCREENSHOT_SITE_FIRST_QA_2026-10-22.md). Home CI #39717285134 and Visual/Browser QA #39717285344 SUCCESS on code SHA `002fd9f4`. **Next craft focus: Cart/Checkout and the secondary pages' unique roles; do not restart backend R&D.**
+
 ### B — DIRECT ORDER ENGINE & DATABASE — **P1: REQUIRED BEFORE REAL CHECKOUT GO-LIVE**
 | Ticket | Scope | Release rule |
 |---|---|---|
