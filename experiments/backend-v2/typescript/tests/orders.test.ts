@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { Script } from 'node:vm';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test, { after, before, beforeEach } from 'node:test';
@@ -396,4 +397,15 @@ test('Order Room: kitchen cannot start before acceptance and cannot forge new cu
     assert.deepEqual((await history.json() as {events:Array<{status:string}>}).events.map(e=>e.status),['received']);
     assert.equal(await count('outbox_event'),1);
   }finally{await server.close()}
+});
+
+test('Order Room UI inline JavaScript parses cleanly and exposes both local first-party screens',async()=>{
+  const html=await readFile(new URL('../studio/index.html',import.meta.url),'utf8');
+  const script=html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+  assert.ok(script,'Missing customer/operator studio JavaScript');
+  assert.doesNotThrow(()=>new Script(script));
+  assert.ok(html.includes('id="customer"'));
+  assert.ok(html.includes('id="operator"'));
+  assert.ok(html.includes('__STUDIO_TOKEN__'));
+  assert.ok(html.includes('prefers-reduced-motion'));
 });
