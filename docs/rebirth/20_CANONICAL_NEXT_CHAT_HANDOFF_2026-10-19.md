@@ -1,3 +1,5 @@
+> **LATEST ACTIVE HANDOFF:** [ONE WORKING BOARD](WORKING_BOARD.md) (22 Oct 2026). This 19 Oct canonical handoff remains the technical/creative history; its "NEXT" actions are not today's priorities. Public Rebirth site + one protected restaurant order screen ONLY; no staff-role suite or POS replacement.
+
 # TUSCANINI REBIRTH — CANONICAL NEXT-CHAT HANDOFF (19 OCT 2026)
 > **CURRENT EXECUTION PRIORITY (22 OCT 2026):** Read [Master Site-First Delivery Board](31_MASTER_DELIVERY_BOARD_AND_SITE_FIRST_RESTART_2026-10-22.md) **before interpreting earlier pass numbering and old 'next task' lists.** Website craft + integrated route UX leads; staged Postgres and tablet order inbox are subordinate parts of one product. Do not repeat architectural research or begin yet another POS simulation by default.
 **Start here. Read this complete document before making new changes.** This handoff takes precedence over all outdated “current status” or “next action” sections in earlier files. Historic research remains useful, but *dated claims are not the state of the working tree*.
