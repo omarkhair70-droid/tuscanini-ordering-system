@@ -177,3 +177,30 @@
     padding:12px 0 4px;margin-top:auto;box-shadow:0 -10px 15px -9px #49392a2a}
   .op-queue-list{height:auto;max-height:none;flex:1;min-height:0}
 }
+
+/* A cashier's landscape tablet is short. Bring the first decision above fold
+   at 1024×768 instead of spending that height on dashboard introductions. */
+@media(min-width:781px) and (max-height:850px){
+  .op-page{padding-block:8px}
+  .op-toolbar{padding:3px 0 11px}
+  .op-toolbar__identity strong{font-size:clamp(30px,3.3vw,42px)}
+  .op-toolbar__identity>span,.op-toolbar__identity small{font-size:10px}
+  .op-health{min-height:54px;padding:5px 0;margin-bottom:8px}
+  .op-health__key input{min-height:42px;padding:8px 10px}
+  .op-pulse{margin-bottom:7px}
+  .op-pulse>div{padding:7px 13px}
+  .op-pulse strong{font-size:clamp(31px,3.4vw,43px)}
+  .op-pulse span{font-size:11px}
+  .op-filters{margin-bottom:8px}
+  .op-filters__tabs button,.op-filters>input{min-height:40px}
+  .op-stage__focus,.op-stage__queue{padding:12px;height:clamp(390px,53vh,510px)}
+  .op-section-title{padding-bottom:8px;margin-bottom:8px}
+  .op-section-title>strong{font-size:20px}
+  .op-stage__focus>.op-ticket{padding:15px}
+  .op-stage__focus .op-ticket__masthead{padding-bottom:8px}
+  .op-stage__focus .op-ticket__meta{padding:8px 0}
+  .op-stage__focus .op-ticket__name{margin:9px 0}
+  .op-stage__focus .op-lines>li{padding:7px 0}
+  .op-stage__focus .op-ticket__details{padding:6px 0}
+  .op-stage__focus .op-ticket__bottom{margin-top:auto;padding:8px 0 0}
+}
