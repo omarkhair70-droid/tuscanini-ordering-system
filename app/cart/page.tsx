@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { RebirthCheckout } from '@/components/rebirth/rebirth-checkout';
 import '../rebirth-home.css';
 import '../rebirth-checkout.css';
+import '../rebirth-customer-journey.css';
 
 export const metadata: Metadata = {
   title: 'السلة وتأكيد الطلب | توسكانيني',

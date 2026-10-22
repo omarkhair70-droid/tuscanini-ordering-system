@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useCart } from '@/components/cart/cart-provider';
 import { ExperienceHeader } from '@/components/rebirth/experience-header';
 import { ActiveOrderBanner } from '@/components/shared/active-order-banner';
+import { CustomerJourney } from '@/components/rebirth/customer-journey';
 import { saveActiveOrder } from '@/lib/active-order-storage';
 
 type RuntimeSettings = { isOrderingOpen: boolean; whatsappOrderNumber: string };
@@ -62,7 +63,8 @@ export function RebirthCheckout() {
     const validation = validate();
     setErrors(validation);
     if (Object.keys(validation).length) {
-      document.getElementById('t-checkout-fields')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const hasContactError = Boolean(validation.name || validation.phone || validation.address);
+      document.getElementById(hasContactError ? 't-checkout-fields' : 't-checkout-summary')?.scrollIntoView({ behavior: 'auto', block: 'start' });
       return;
     }
     submitting.current = true;
@@ -110,7 +112,7 @@ export function RebirthCheckout() {
   const status = settingsFailed ? 'تعذر التحقق من حالة استقبال الطلبات. الطلب الإلكتروني مش متاح مؤقتًا.' :
     !settings ? 'بنتحقق من استقبال الطلبات…' :
       !settings.isOrderingOpen ? 'المطعم موقف استقبال الطلبات حاليًا.' :
-        'الطلب بيتسجل في النظام أولًا، وبعدها المطعم بيأكد التفاصيل قبل التحضير.';
+        'الطلب بيتسجل في النظام أولًا. تأكيد المطعم والتجهيز حالات منفصلة بتظهر لما تتسجل.';
 
   return (
     <div className="t-page t-checkout-page" dir="rtl">
@@ -121,12 +123,13 @@ export function RebirthCheckout() {
           <div className="t-checkout-hero__overline"><span>YOUR ORDER / TUSCANINI</span><span>من اختيار الأكل لتأكيده</span></div>
           <div className="t-checkout-hero__headline"><h1>على<br/><em>مزاجك.</em></h1>
             <div><span className="t-index">CART → DETAILS → RESTAURANT CONFIRMATION</span>
-              <p>راجع كل تفصيلة. الطلب مش بيبدأ تحضيره إلا لما المطعم يأكده.</p></div>
+              <p>راجع تفاصيلك. بعد تسجيل الطلب تقدر تتابع تأكيد المطعم وحالة التجهيز لما تتسجل.</p></div>
           </div>
           <div className="t-checkout-hero__bottom"><span>01 / REVIEW YOUR FOOD</span><span>{count} قطعة في السلة</span></div>
         </header>
 
         <div className="t-shell t-checkout-content">
+          <CustomerJourney stage="checkout" />
           <ActiveOrderBanner />
           {!isHydrated ? <div className="t-checkout-message" role="status">جاري تجهيز السلة…</div> : null}
 
@@ -188,16 +191,17 @@ export function RebirthCheckout() {
                 </section>
               </div>
 
-              <aside className="t-checkout-summary" aria-labelledby="t-checkout-summary-title">
+              <aside id="t-checkout-summary" className="t-checkout-summary" aria-labelledby="t-checkout-summary-title">
                 <span className="t-index">03 — FINAL REVIEW</span>
                 <h2 id="t-checkout-summary-title">الخلاصة.</h2>
+                <div className="t-checkout-summary__line"><span>نوع الطلب</span><strong>{customer.orderType==='delivery'?'دليفري':'استلام من المطعم'}</strong></div>
                 <div className="t-checkout-summary__line"><span>عدد القطع</span><strong>{count}</strong></div>
                 <div className="t-checkout-summary__line"><span>إجمالي أصناف الطلب</span><strong>{money(subtotal)} ج.م</strong></div>
                 <p className="t-checkout-summary__notice">الإجمالي ده حسب أسعار منيو توسكانيني السابق. لو اتغيّر سعر أو توافر صنف، السيرفر مش هيقبل طلب بسعر مختلف؛ هتحتاج تراجع التفاصيل. رسوم التوصيل بيتأكد منها المطعم.</p>
                 {tableReference && <p className="t-checkout-summary__table">مرجع الطاولة: {tableReference}</p>}
                 <label className="t-checkout-confirm"><input type="checkbox" checked={customer.confirmedAccurateDetails}
                   onChange={e=>{updateCustomer({confirmedAccurateDetails:e.target.checked});setErrors(x=>({...x,confirmedAccurateDetails:undefined}))}}/>
-                  <span>راجعت الأصناف وبياناتي، وعارف إن المطعم هيأكد الطلب قبل التحضير.</span></label>
+                  <span>راجعت الأصناف وبياناتي، وفاهم إن تسجيل الطلب مش معناه إن المطعم قبله أو إن التحضير بدأ.</span></label>
                 {errors.confirmedAccurateDetails && <p className="t-checkout-error">{errors.confirmedAccurateDetails}</p>}
                 <p className="t-checkout-status" role="status">{status}</p>
                 {error && <p className="t-checkout-error t-checkout-error--large" role="alert">{error}</p>}

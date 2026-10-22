@@ -2,9 +2,11 @@ import { ExperienceFooter } from '@/components/rebirth/experience-footer';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { RebirthOrderTracking } from '@/components/rebirth/rebirth-order-tracking';
+import { CustomerJourney } from '@/components/rebirth/customer-journey';
 import '../rebirth-home.css';
 import '../rebirth-checkout.css';
 import '../rebirth-tracking.css';
+import '../rebirth-customer-journey.css';
 
 export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
@@ -30,6 +32,7 @@ export default async function OrderSuccessPage({searchParams}: Props) {
           <p>من تسجيل الطلب لتأكيد المطعم. كل مرحلة بنعرضها لما تكون متسجلة فعلًا.</p>
         </header>
         <div className="t-shell t-order-page__content">
+          {valid && <CustomerJourney stage="tracking" />}
           {valid ? <RebirthOrderTracking orderId={orderId} /> :
             <section className="t-order-missing" role="status">
               <span className="t-index">NO VERIFIED ORDER REFERENCE</span>
@@ -38,7 +41,7 @@ export default async function OrderSuccessPage({searchParams}: Props) {
             </section>}
           <section className="t-order-next">
             <div><span className="t-index">WHAT HAPPENS NEXT</span><h2>بعد كده؟</h2>
-              <p>لو الطلب لسه في انتظار التأكيد، المطعم لازم يأكد التفاصيل قبل التحضير. ولو دليفري، ممكن تحتاج تبعت اللوكيشن بعد التواصل.</p></div>
+              <p>التسجيل وتأكيد المطعم والتجهيز حالات منفصلة؛ بنعرض كل واحدة لما تتسجل فعلًا. لو دليفري، ممكن المطعم يتواصل معاك لتحديد المكان.</p></div>
             <div className="t-order-next__links"><Link href="/menu">ارجع للمنيو ↗</Link><Link href="/contact">تواصل مع المطعم ↗</Link></div>
           </section>
         </div>
