@@ -3,13 +3,15 @@
 import { ExperienceFooter } from '@/components/rebirth/experience-footer';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useCart } from '@/components/cart/cart-provider';
 import { FloatingCartCta } from '@/components/cart/floating-cart-cta';
 import { RebirthProductDialog } from '@/components/rebirth/rebirth-product-dialog';
 import { ActiveOrderBanner } from '@/components/shared/active-order-banner';
 import { ExperienceHeader } from '@/components/rebirth/experience-header';
 import type { MenuCategory, MenuItem } from '@/types/menu';
+import type { ProductCartItem } from '@/types/cart';
 import { MaterialGlyph, categoryMaterialGlyph } from '@/components/rebirth/material-glyph';
 import { ProductArtwork } from '@/components/rebirth/product-artwork';
 import { getCategoryContextPhoto } from '@/lib/rebirth/verified-menu-photographs';
@@ -28,7 +30,10 @@ function normalizeArabic(text: string) {
 }
 
 export function RebirthMenu({ categories, items, initialTableReference, source }: Props) {
-  const { tableReference, updateTableReference } = useCart();
+  const router=useRouter();
+  const { tableReference, updateTableReference, items:cartItems, isHydrated } = useCart();
+  const editAttempt=useRef(false);
+  const [editingLine,setEditingLine]=useState<ProductCartItem|null>(null);
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<string>('all');
   const [limit, setLimit] = useState(PAGE_SIZE);
@@ -41,8 +46,26 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
   }, [categories]);
 
   useEffect(() => {
+    // Editing an existing cart choice must never wipe its table reference.
+    if(new URLSearchParams(window.location.search).has('editLine'))return;
     if (tableReference !== initialTableReference) updateTableReference(initialTableReference);
   }, [initialTableReference, tableReference, updateTableReference]);
+
+  useEffect(()=>{
+    if(!isHydrated || editAttempt.current)return;
+    const lineId=new URLSearchParams(window.location.search).get('editLine');
+    if(!lineId)return;
+    editAttempt.current=true;
+    const line=cartItems.find(x=>x.lineId===lineId);
+    const product=line?.kind==='product'?items.find(item=>item.id===line.productId):null;
+    if(!line || line.kind!=='product' || !product){
+      router.replace('/cart');
+      return;
+    }
+    setEditingLine(line);
+    setOriginRect(null);
+    setSelectedProduct(product);
+  },[isHydrated,cartItems,items,router]);
 
   const validItems = items;
   const catalogPresent = categories.length > 0 && items.length > 0;
@@ -197,7 +220,11 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
         </div>
       </main>
       <ExperienceFooter />
-      <RebirthProductDialog item={selectedProduct} priceSource="previous" visualMode="representative" originRect={originRect} onClose={()=>{setSelectedProduct(null);setOriginRect(null)}} />
+      <RebirthProductDialog item={selectedProduct} priceSource="previous" visualMode="representative" originRect={originRect}
+        editingLine={editingLine} onClose={()=>{
+          setSelectedProduct(null);setOriginRect(null);
+          if(editingLine){setEditingLine(null);router.push('/cart#t-cart-items-title');}
+        }} />
       {catalogPresent && <FloatingCartCta />}
     </div>
   );
