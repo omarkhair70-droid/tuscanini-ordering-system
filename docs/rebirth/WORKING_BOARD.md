@@ -1,6 +1,6 @@
 # TUSCANINI REBIRTH — ONE WORKING BOARD
 
-**Last audited:** 2026-10-22 | **Branch:** `redesign/tuscanini-authored-experience-20261018` | **PR:** [#59 (DRAFT)](https://github.com/omarkhair70-droid/tuscanini-ordering-system/pull/59) | **Audited code checkpoint:** `82a1a262d41ff78b2dd56546a410cdbb3125b3f1`.
+**Last audited (including broad capability scan):** 2026-10-22 | **Branch:** `redesign/tuscanini-authored-experience-20261018` | **PR:** [#59 (DRAFT)](https://github.com/omarkhair70-droid/tuscanini-ordering-system/pull/59) | **Audited code checkpoint:** `82a1a262d41ff78b2dd56546a410cdbb3125b3f1`.
 
 > **Start here in every new chat, and update this SAME FILE after every meaningful feature/review.** This is the current execution and coverage index; historical `00–38`, original research, the HTML reference and technical handoffs remain evidence, not competing "next task" lists. Use the current GitHub PR HEAD and Actions results if newer; never assume this snapshot is the HEAD forever.
 
@@ -146,7 +146,7 @@ Automated evidence exists for **some**, not all, of these; never automatically t
 
 **Blocked by owner input:** T10 current restaurant data, actual logo/source photos and hands-on operating acceptance. Other dev/creative tasks continue independently.
 
-**Not active / out of scope:** extra staff role architecture, Django/Oracle repeats, Talabat API, print/POS integration, cashier replacement, inventory system, reward points, fictional maps/delivery tracking, payments without commission. Retain old `/admin/*` only as legacy until explicit preservation/removal decision; do not confuse them with the new tablet screen.
+**Not active / out of scope unless newly commissioned:** extra staff role architecture, Django/Oracle repeats, Talabat API, print/POS integration, cashier replacement, inventory system, fictional maps/delivery tracking. **Payments, rewards and other commercial ideas are explicitly indexed in section 9 as candidate decisions, not automatically discarded or silently authorized.** Retain old `/admin/*` only as legacy until explicit preservation/removal decision; do not confuse them with the new tablet screen.
 
 ## 8. Always-on workflow for our future chats
 
@@ -162,3 +162,272 @@ Automated evidence exists for **some**, not all, of these; never automatically t
 **2026-10-22 / board initialization:** reconciled [site-first master plan](31_MASTER_DELIVERY_BOARD_AND_SITE_FIRST_RESTART_2026-10-22.md), [full customer journey](33_PASS_30_FULL_CUSTOMER_JOURNEY_AND_TRACKING_SYSTEM_2026-10-22.md), [staged Postgres two-window flow](36_REBIRTH_REAL_CART_OPERATOR_TICKET_POSTGRES_2026-10-22.md), [Order Press/Ticket Rail](37_THE_ORDER_PRESS_AND_TICKET_RAIL_2026-10-22.md), [sound/mobile Pass 38](38_OPERATOR_ATTENTION_AND_SITE_VISUAL_QA_2026-10-22.md), actual route tree, endpoints, QA scripts, worker and last three successful CI checks on `82a1a262`. **Only planning/docs in this board pass — no new runtime feature or deployment claim.**
 
 **Next code action:** **T01 Cart/Checkout actual mobile/keyboard and error-state craft**, with T05 operator reconnection/sound observation queued in parallel once T01 screenshot proof is captured. The website leads, screen stays one product.
+
+
+---
+
+## 9. THE UNEXPLORED PRODUCT UNIVERSE — discovered, not commissioned
+
+**User scope correction (22 Oct 2026):** This board must also remember the **big questions never previously discussed or built**: every practical payment route, fulfillment variants, post-order lifecycle, support/reputation, retention, commercial terms, responsive edge cases, operational failure modes, strategic creative ideas and launch infrastructure. The previous T01–T12 are the **immediate execution shortlist**, **not the entire conceivable product**.
+
+**Crucial rule:** The following is a **capability/opportunity inventory**, NOT approval to implement everything. We continue to build **one website plus one restaurant order screen**, not a POS/ERP, kitchen ERP, accounts platform or delivery fleet. Nothing starts automatically because it appears here.
+
+Tags:
+- **CORE** — logically required for reliable first-party ordering, but often needs restaurant-specific business decisions.
+- **DECIDE** — potentially high value; estimate cost/complexity and have the owner choose.
+- **IDEA** — creative differentiator / R&D hypothesis; test usefulness before shipping.
+- **LATER** — optional future growth; never postpone the usable first release for it.
+- **OUT** — outside current commissioning; record as a boundary, not a backlog promise.
+
+Each future proposal gets an **owner/user value**, evidence/source, **dependency**, UX treatment, technical contract, risks, operating responsibility, test plan, then one of: \`chosen / experimenting / shelved / declined\`. Features cannot become \`done\` from attractive mockups.
+
+### U01 — Payment methods and combinations (much broader than today's cart)
+
+**Audited reality:** Current \`types/cart.ts\` carries delivery/pickup and items, but **no payment-method field**. The original \`rebirth-checkout.tsx\` submits an order; staged PostgreSQL shows order transaction correctness, **not a merchant payment processor**. \`spike_ts.payment_attempt\` exists as an experimental schema table, not evidence of card/wallet payments. No merchant settlement, capture, refund or successful external provider webhook has been demonstrated.
+
+| ID | Method/experience | Status | Questions & required behavior |
+|---|---|---|---|
+| P01 | Cash on delivery (**COD**) | CORE / DECIDE | Will restaurant take cash for delivery? exact collection actor, change needed, cash due, failed handoff |
+| P02 | Cash on pickup (**pay at store**) | CORE / DECIDE | Reservation versus confirmed order; pay when arriving; no false “paid” on submit |
+| P03 | Existing counter card POS when picking up | DECIDE | **External** cashier terminal collects payment; website must not claim it processed payment |
+| P04 | Online domestic/international cards (Visa/Mastercard/Meeza where supported) | DECIDE | Egyptian merchant onboarding, processor, currency, accepted card types, 3DS, settlement, merchant fees |
+| P05 | Mobile wallets (Vodafone Cash, Orange Cash, e& money, WE Pay, others actually supported) | DECIDE | Provider-hosted wallet/R2P flow and callback; never assume every wallet is enabled for this merchant |
+| P06 | InstaPay / instant account transfer | DECIDE | Distinguish **manual transfer + verified reconciliation** from supported merchant payment acceptance; **never** interpret screenshot/typed reference as paid |
+| P07 | QR-code mobile-wallet merchant acceptance | DECIDE | Dynamic order-bound merchant QR, expiry, provider verification, callback, mismatch/refund |
+| P08 | Fawry or comparable payment-reference collection | DECIDE | Merchant/provider capabilities, reference expiry, pending-paid transition, remote confirmation |
+| P09 | Secure payment link / hosted checkout | DECIDE | Pay before/after staff acceptance? Expiring, amount-locked reference, authenticated callback, resume/cancel |
+| P10 | Apple Pay / Google Pay | DECIDE | Provider-country/browser-device eligibility, wallet availability and fallback; not guaranteed for every merchant |
+| P11 | Split payment (cash + online, two people) | LATER | Partial amounts, exact balance, failed second payer, refunds across methods; not automatic V1 |
+| P12 | Pay for another person / gift order | IDEA | Receiver phone/privacy, address confirmation, surprise vs notification, payer/refund ownership |
+| P13 | Tips (before/after order) | DECIDE | Recipient/tax/accounting treatment, refunds, merchant policy, skip friction |
+| P14 | Gift cards / store credit / prepaid balances | LATER | Issuance, redemption, expiry, fraud, ledger/liability — not a generic coupon |
+| P15 | Installments / BNPL | LATER / likely unnecessary for low-value restaurant orders | Provider availability and true consumer need; do not build for fashion |
+| P16 | Deposit/prepay for scheduled large orders | DECIDE | Booking commitment, no-show/cancellation/deposit-refund terms |
+| P17 | Refund to original method / partial item refund | CORE **if** any prepaid method chosen | Idempotent refund API, permissions, amounts, webhook/ledger reconciliation, customer notice |
+| P18 | In-person QR/card/cash at counter | DECIDE | Existing restaurant equipment stays external; optionally record only that staff confirmed payment |
+
+**Payment engine acceptance — independent from order status:**
+- **CORE if online payment:** \`created → pending → authorized (if used) → captured/paid\`, or \`failed / expired / cancelled\`; refund states \`requested / partial / full / failed\`; processor-native statuses mapped without inventing financial success.
+- The website should show **payment method + amount due/paid** separately from **restaurant accepted/preparing/ready/delivered**. A recorded order is not paid; a paid charge does not necessarily imply restaurant acceptance.
+- Server computes **line item + variant + addon + discount + delivery fee + service fee + tax (if applicable) + tip = charged grand total**, with currency minor-units and immutable amount snapshot. Define who pays provider fees and whether prices displayed include those fees.
+- Idempotent payment intents, safe provider redirect return, customer refresh/back, 3D Secure failure/abandon, webhook signature, out-of-order webhook, timeout, duplicates, payment accepted after restaurant reject/closed, cancel versus capture race, amount tampering, settled-without-order and orphaned order-without-payment.
+- Reconciliation and settlement: processor transaction ID, amount, method, provider status, merchant payout/batch, fees, refund, chargeback/dispute, exception queue, audit and owner exports; avoid introducing accounting/POS replacement UI unless justified.
+- **NEVER collect or store raw card number/CVV on Tuscanini servers.** Choose a provider-hosted redirect/embedded compliant checkout. Payment method availability and compliance are dependent on processor, merchant contract and PCI scope. No credentials/secrets in repo.
+
+**Official research sources (comparison leads, not committed providers):**
+- Egypt CBE mobile-wallet QR and R2P merchant acceptance: https://www.cbe.org.eg/en/payment-systems-and-services/payment-services/payment-acceptance/mobile-payment-acceptance
+- Egypt CBE wallet ecosystem: https://www.cbe.org.eg/en/payment-systems-and-services/payment-services/mobile-wallet
+- Egypt CBE Instant Payment Network: https://www.cbe.org.eg/en/payment-systems-and-services/instant-payment-network (does NOT by itself prove a Tuscanini merchant API exists)
+- Paymob's own checkout payment-method overview: https://developers.paymob.com/paymob-docs/developers/checkout-experiences/overview (provider example only)
+- Official PCI SSC hosted/embedded payment boundary: https://www.pcisecuritystandards.org/faqs/1438/ and SAQ updates https://www.pcisecuritystandards.org/faqs/1588/
+
+### U02 — Fulfillment, physical service, location and timing
+
+- **F01 CORE:** Pickup versus delivery information differs; no address on pickup; don't ask irrelevant fields.
+- **F02 DECIDE:** ASAP vs **preorder** for later, schedule date/time, earliest slot, maximum look-ahead, capacity and closure.
+- **F03 DECIDE:** Store hours, weekly holidays, Ramadan/special holidays, temporary busy/pause, kitchen cut-off, per-fulfillment time windows; server-controlled availability.
+- **F04 CORE if delivery:** Areas/pincodes/neighborhoods accepted, unavailable address feedback, real delivery fee, free-delivery threshold, minimum order, ETA source.
+- **F05 DECIDE:** Delivery address as text, landmark, apartment/floor, optional map pin, caller instructions, pickup branch and directions; privacy retention for exact address.
+- **F06 DECIDE:** Restaurant's own courier vs external delivery service; who marks dispatched/delivered, handoff rules, no synthetic courier GPS.
+- **F07 DECIDE:** Estimated preparation/delivery time **entered by staff** and revised on ticket, delay handling, pickup notification, lateness and exception.
+- **F08 LATER:** Multiple branches and branch-aware inventory/prices/hours/coverage; only if merchant actually has them.
+- **F09 LATER:** Dine-in / table QR and table reference; existing historical table support is not a commissioned in-venue POS.
+- **F10 DECIDE:** Group/bulk order and timed catering; lead time, confirmations and deposits only if demand verified.
+- **F11 IDEA:** “Ready to pick up” accessible ticket matching physical packaging; printed/digital receipt referent without inventing hardware.
+- **F12 DECIDE:** Lost/undeliverable courier, unreachable customer, no-show pickup, incorrect address, wrong handoff and what the operator can resolve.
+
+### U03 — Menu truth and rich food selection
+
+- **M01 CORE:** Current merchant-approved categories, products, Arabic names/descriptions, prices, price variants, availability and last verified date.
+- **M02 CORE:** Sizes, toppings/add-ons, modifier groups, required/exclusive selections, min/max selection limits, notes/allowed length, quantity bounds, incompatible combos.
+- **M03 DECIDE:** Half/half pizza, choose bread/sauce/cooking level, substitution/replacement, combo meals, drinks/sides bundles **only if the real menu supports them**.
+- **M04 DECIDE:** Sold-out item/addon and low-stock availability without sitewide ordering shutdown; price change while cart open, cart correction review.
+- **M05 DECIDE:** Allergens and ingredient disclosure, dietary/spicy tags with source confirmation; **never derive allergen safety from AI-generated images**.
+- **M06 IDEA:** Editorial close-ups, ingredient cross-sections, paper-fold labels, animations mapped to actual categories; useful not fictitious.
+- **M07 CORE:** Arabic synonym search/typo/accent variants, duplicate same names across categories, no-results suggestions, direct category URLs.
+- **M08 LATER:** Favorites, saved last selection, recently ordered, one-click reorder with **fresh** prices/availability/choice validation.
+- **M09 DECIDE:** Nutritional content, portion weights, ingredient changes, allergen cross-contact policy; only with verified merchant source.
+- **M10 DECIDE:** Dynamic combos / meal builder that never misprices optional extras; owner decides scope.
+
+### U04 — Promotions, commercial rules and value
+
+- **C01 CORE:** Actual active offers with eligibility/availability/time windows; transparent current price.
+- **C02 DECIDE:** Promo codes (fixed/%), single-use/first-order, max discount, minimum subtotal, eligible category, expiry, stacking rules, abuse checks.
+- **C03 DECIDE:** Product bundles, family boxes, add-on upsell and checkout recommendation based on real menu, not dark-pattern cross-sell.
+- **C04 DECIDE:** Free delivery or discounted delivery threshold; rounding, tax/fee clarity and edge cases.
+- **C05 LATER:** Loyalty points/stamps, birthday rewards, referral code, cashback/store credits; requires meaningful merchant repeat-customer strategy and privacy model.
+- **C06 IDEA:** Digital packaging ritual when offer unlocks, personalized reorder print label; test speed/clarity before production.
+- **C07 DECIDE:** Restaurant-funded versus payment-provider campaign and settlement owner, refund after discounted item removed.
+- **C08 DECIDE:** Gift/free product exceptions, employee/manual adjustment constrained by authorized staff (not full POS).
+
+### U05 — Checkout, basket, order records and after-sales reality
+
+- **X01 CORE:** Persist cart across refresh/back/tab close; separate multiple configurations of same SKU correctly; edits and line deletion not merged unexpectedly.
+- **X02 CORE:** Review exact size/addons/notes/qty, current price and all fees **before** commit, delivery/pickup fields and contact.
+- **X03 CORE:** Double-click guard, idempotent server order key, timeout/ambiguous response, stale cart, delayed network, retry that doesn't clone a sale.
+- **X04 CORE:** Unique readable restaurant reference vs private opaque customer tracking capability; QR/share links with privacy.
+- **X05 DECIDE:** Anonymous guest checkout as default versus optional saved identity; avoid compulsory registration and OTP without need.
+- **X06 DECIDE:** “Modify order” grace period and explicit acceptance cutoff; preserve server audit and totals, operator sees corrected ticket.
+- **X07 DECIDE:** Customer cancellation before acceptance/preparation; separate merchant cancel, rejection reason, auto/refund if prepaid, fair user copy.
+- **X08 DECIDE:** Customer request support/change via WhatsApp/call or in-product support; meaningful escalation, no imaginary SLA.
+- **X09 DECIDE:** SMS/email confirmation only with lawful consent, verified delivery provider, failure handling, templates; not universally necessary.
+- **X10 LATER:** Order history/reorder with opt-in identity, receipts and archived transactions; data minimization.
+- **X11 DECIDE:** Data minimization and deletion/retention: order phone/address kept only as operationally required; avoid surfacing on unnecessary screens.
+- **X12 DECIDE:** Printable downloadable order receipt/ticket for customer (not necessarily a tax invoice); truthful paid/unpaid words.
+
+### U06 — Live ticket, operator attention and order exception choreography
+
+- **O-U01 CORE:** New order attention, audible opt-in, connection status, no lost ticket after sleep/reload, bounded polling/reconnect.
+- **O-U02 CORE:** Readable item/size/notes at once; focus/queue/rail search, next action, touch size, no 20-order overlap.
+- **O-U03 CORE:** Double actions, stale version conflict, two browsers taking action concurrently, request timeout, safe refresh; one authoritative event log.
+- **O-U04 DECIDE:** Operator short decline/hold/delay **reason** and customer-facing message, not giant operational analytics.
+- **O-U05 DECIDE:** Operator-set prep ETA and corrections, meaningful customer stamp and notification.
+- **O-U06 DECIDE:** Phone/address reveal on explicit need, privacy/screen sharing, call action, no PII in audio/toasts/logs.
+- **O-U07 DECIDE:** Pause new web orders and reopening **without** breaking already accepted orders.
+- **O-U08 IDEA:** Paper print-room art direction, motion on new state only, order “tear/open/stamp/pass” loop shared across site and restaurant tablet.
+- **O-U09 DECIDE:** How staff hand over into *existing* cashier/kitchen workflow; check “entered in POS” only if required by actual restaurant procedure.
+- **O-U10 OUT:** Multi-employee scheduling, inventory procurement, kitchen station routing, Talabat sync and receipt printer until explicitly requested.
+- **O-U11 CORE:** One secure restaurant-only access gate, private API and audit; **not** separate role-management app.
+
+### U07 — Messaging, service and customer trust
+
+- **N01 CORE:** In-page real-time-ish status with correction after missed intervals, stale/offline indicators and manual refresh.
+- **N02 DECIDE:** Customer Web Push (explicit opt-in, scoped tracking subscription, background SW notification/click, expired/unsubscribed token and retries).
+- **N03 DECIDE:** SMS or WhatsApp *business-platform* notifications with cost/consent/template and provider delivery acknowledgment, distinct from a \`wa.me\` link.
+- **N04 DECIDE:** Confirmation/pickup-ready vs marketing notifications; separate consent and per-category unsubscribe.
+- **N05 DECIDE:** Structured “problem with my order” linked to order ID versus current WhatsApp draft; receipt and response expectations.
+- **N06 DECIDE:** Review capture after delivered, private feedback vs public review, moderation/source authenticity, zero fake ratings.
+- **N07 LATER:** FAQ/how ordering works, shipping/returns/refunds policy, accessibility contact and support escalation.
+- **N08 IDEA:** “Your food has entered the kitchen” expressive status stamp with meaningful narration and silent/reduced-motion option.
+- **N09 CORE:** Error messages actionable, distinct order/payment/fulfillment facts, offline fallbacks and human contact path.
+
+### U08 — Retention, discovery and growth (not mandatory loyalty platform)
+
+- **G01 CORE:** Local SEO and brand search listing, contact/open-hours correctness, structured restaurant/menu facts only when supported, metadata, canonical URLs.
+- **G02 DECIDE:** OpenGraph/social share image, campaign deep links, QR on physical packaging to menu or order status, print-ready QR with tested short destinations.
+- **G03 DECIDE:** First/repeat visitor journey: direct menu above fold, saved cart, optional quick reorder and revisit active ticket.
+- **G04 LATER:** Opt-in CRM/customer segmentation, email/WhatsApp marketing and consent/deletion; not assumed from checkout phone number.
+- **G05 LATER:** Referral/affiliate, loyalty, gamification, “build your box” experiments; evidence from real orders before cost.
+- **G06 DECIDE:** Basic analytics events: menu opened → product viewed → modifier selected → cart → checkout attempt → recorded order → fulfilled, with no raw address/phone in analytics.
+- **G07 DECIDE:** Merchant KPI reading outside the operator order screen (e.g. privacy-safe event reports); never build a dashboard just because analytics exists.
+- **G08 IDEA:** Physical/digital brand continuations using true store packaging, sticker/receipt and bespoke food glyphs, not generic points/streaks.
+
+### U09 — Original creative direction and authoring beyond pages
+
+- **A-U01 CORE:** Truly ownable Tuscanini typographic/motion/physical identity; not 10 matching heroes or copied award-winning patterns.
+- **A-U02 CORE:** Full mobile/desktop rhythm and photography: 12 actual restaurant photographs + 100 generated category illustrations, careful role/story/attribution and correct SKU truth.
+- **A-U03 DECIDE:** Menu-as-print-sheet, package-fold transitions, living tear-off receipt; unique **behavior** not ornamental parallax.
+- **A-U04 DECIDE:** Food discovery by appetite/occasion, contextual category shuffle, user-decision aids, visually distinct secondary routes.
+- **A-U05 IDEA:** Micro-interactions tied to quantities/addons; reversible product-to-cart shared element, deliberate sound only where requested, optical/tactile responsiveness.
+- **A-U06 DECIDE:** Photography production shot list for missing exact products, genuine packaging/video/macro footage, owner-approved custom logo and source art.
+- **A-U07 IDEA:** Genuine Beni Suef/place language, real photos and locality as authored content with verifiable claims, not made-up origin myths.
+- **A-U08 CORE:** Respect performance, 320px, 200% zoom, virtual keyboard, Arabic/mixed text, dark/light contrasts, reduced motion, focus and screen reader.
+
+### U10 — Physical restaurant and human handoff
+
+- **H01 CORE:** Full observed customer→tablet→staff→existing cashier/kitchen handoff with actual person; document failure points and who answers phone.
+- **H02 DECIDE:** Multiple sources coexist (phone, counter, Talabat, web); operator screen shows **web orders only**, no claims of merged full restaurant queue.
+- **H03 DECIDE:** Offline tablet/internet outage plan: how merchant takes calls, what the website tells customers, how staff checks pending orders when back online.
+- **H04 DECIDE:** Who owns menu changes, opening/closing orders, temporary stock stop, support escalations and end-of-day reconciliation.
+- **H05 DECIDE:** Staff instructions, two-minute training, readable minimal order ID and printed fallback if the business already has a print process.
+- **H06 OUT unless newly commissioned:** POS integration, fleet management, native Android cashier app, cashier drawer printing and enterprise personnel management.
+
+### U11 — Technical quality, privacy, compliance, supportability
+
+- **Q01 CORE:** Site and server pricing/discount/fee authority, concurrency, mutations under DB transaction, idempotency and proper event history.
+- **Q02 CORE:** Connection pool, DB migration/versioning, data backup/restore, deploy/rollback, site availability, error budgets and minimal observability.
+- **Q03 CORE:** Secure customer ticket capability, no guessable PII link abuse, retention controls, scoped restaurant endpoint, rate limiting and secret hygiene.
+- **Q04 CORE if payment selected:** Hosted PCI-responsible checkout, signed callbacks, payment/refund idempotency, reconciliation, processor downtime, fraud/chargeback policies.
+- **Q05 CORE:** HTTPS, secure cookie if used, CSRF where necessary, SSRF/input validation, cache protections, media CSP, cross-browser behavior.
+- **Q06 CORE:** Privacy notice, consent where applicable, retention/deletion request channel, consumer-facing terms, payment/refund policy once payment exists; review Egyptian legal/tax obligations with merchant/professional before asserting exact requirements.
+- **Q07 CORE:** Mobile Lighthouse/Core Web Vitals/slow 3G/low-end Android, images optimized, CSS/JS budgets; no motion trapping repeat visitors.
+- **Q08 CORE:** Accessibility 320–1440, 200% zoom, touch, physical keyboard, focus/ESC, ARIA announcements, reduced-motion and contrast.
+- **Q09 CORE:** Metadata/favicon/manifest/offline error/PWA updates; Android/iOS install behavior; notification permissions if Push gets chosen.
+- **Q10 CORE:** Automated screenshot/functional/error-state regression across public pages and operator; synthetic QA separated from merchant data.
+- **Q11 DECIDE:** Feature flags and rollback switches for payment methods, web ordering, offers, delivery zones, operator sound, push.
+- **Q12 CORE:** Slow provider, intermittent hosting, out-of-order events, retries, stale catalog, partial failures, process restarts, delayed processing; rehearse failure mode.
+- **Q13 DECIDE:** Automated accessibility audits and threat-model/review; prioritize high-risk commerce screens, not empty checklists.
+- **Q14 CORE:** Never send contact info, raw order contents or secret keys to analytics/third-party visual observability.
+
+### U12 — Experiments, decisions and merchant economics
+
+- **R01 DECIDE:** Which payment methods have merchant acceptance contracts? Fees and payouts? **No provider selected** yet.
+- **R02 DECIDE:** Is cash at delivery/pickup the desired initial V1, with online payments as separate rollout?
+- **R03 DECIDE:** Delivery fleet/coverage/fees, opening hours, pickup timing, tax-inclusive display, cancellation and refund policy.
+- **R04 DECIDE:** Who updates catalog, who sees tablet, who confirms orders, how they treat Talabat/existing POS?
+- **R05 DECIDE:** Brand/media/logotype actual owner approval, menu pricing/ingredient photos and customer contact truth.
+- **R06 IDEA:** 3–5 tested creative hypotheses with clear customer behavior and performance effect, not infinite inspirational research.
+- **R07 DECIDE:** Provider/hosting total-cost model, maintenance ownership, backups and low-traffic economics.
+- **R08 DECIDE:** A real merchant-supervised synthetic-to-pilot trial, then explicit approval to switch on production checkout.
+
+## 10. DETAILED PAYMENT & COMMERCE DECISION TREE — do not hide inside T01
+
+**Why it matters:** A gorgeous cart with no agreed payment, delivery-fee and cancellation contract is not a complete restaurant ordering product. Conversely, **not** every method should be built simply to appear feature-rich.
+
+1. **Before asking for payment:** confirm whether restaurant accepts **cash-on-delivery**, **cash-on-pickup**, **card-at-counter**, **online prepay**, and which methods/fees/regions it actually supports. Decide whether orders can be placed without prepay.
+2. **If no online payment commissioned for V1:** show honest “الدفع عند الاستلام” or “الدفع في الفرع” *only after merchant confirmation*. Persist method and \`unpaid / due_on_delivery / due_on_pickup\` as appropriate; no fabricated \`paid\` state. The existing cashier handles collection.
+3. **If online payments commissioned:** pick actual merchant-eligible gateway based on official API docs, live/test access, card/wallet methods, costs, settlement, support, refunds, dispute response, and real device experience. Do NOT expose card collection fields on Tuscanini server.
+4. **Place/order-charge relationship:** choose and prove one coherent approach: authorize/capture on accepted order; or pay-then-accept with automatic rejection/refund handling. Avoid uncoupled paid charges and rejected orders.
+5. **Financial lifecycle as a separate record:** payment intent, merchant order, provider reference, attempts, webhook, refund, settlement and exceptions. Customer sees short understandable words; restaurant sees only necessary operation data.
+6. **Test matrix before any online payment launch:** normal payment; 3DS approval/reject; payer closes tab; slow callback; two callbacks; client forged success URL; duplicate POST; out-of-stock after pay; restaurant rejects after capture; partial cancellation; double refund; gateway outage; mismatch between payout and order; webhook failure/retry; dispute.
+7. **Merchant acceptance** signs off supported cards/wallets, payout account, refund responsibility, legal/customer copy, invoice/tax applicability, and reconciliation procedure.
+
+**Explicit design opportunity:** The post-order living ticket can combine **three honest layers** — \`Order received\` / \`Restaurant preparing\` / \`Payment settled or due\` — inside one coherent paper-like physical design. This is more distinctive and useful than adding three unrelated dashboard cards.
+
+## 11. ONE-PRODUCT CROSS-CHANNEL CUSTOMER JOURNEY (all the unseen transitions)
+
+\`\`\`text
+Discovery (search/social/QR/return visit)
+   → Homepage/direct menu (fast and expressive)
+   → Search/category/finder/valid offer
+   → Actual food choice and modifiers (or saved/reordered validated option)
+   → Basket edit & location/service mode
+   → Available time/fee/payment terms
+   → Customer contact + complete total + consent
+   → Server validates current menu and requested slot
+   → Order created exactly once (regardless of double tap/retry)
+   → [If prepaid chosen] verified provider payment / pending / failure / refund
+   → Restaurant order tablet receives it (+ optional sound)
+   → Staff accepts/rejects and prepares in existing restaurant workflow
+   → Updated estimate / prepared / pickup or delivery
+   → Same customer's living ticket and optional notification
+   → Collected / handed over / completed (paid status independent)
+   → Support / complaint / review / optional reorder / recommendation
+\`\`\`
+
+**Branches often forgotten:** search no results, unapproved product, expired promo, wrong pickup time, no delivery coverage, no change for cash, incorrect phone, duplicate modifiers, disconnected user, browser refresh, staff offline, merchant closed, item sold out, staff rejection, post-payment cancellation/refund, delivery failed, stale ticket, missed notification, multiple tabs, iOS PWA restriction, operator tablet sleep, data-removal request, and merchant changes a price while cart sits open.
+
+## 12. FEATURE EVALUATION AND COVERAGE RULES
+
+Never substitute a giant list for product judgment. When choosing a candidate from U01–U12:
+
+| Field | Required decision |
+|---|---|
+| Feature ID / job | Concrete customer/staff problem it solves; whose moment |
+| Current reality | \`not discussed / not built / built local / CI proved / deployed / merchant confirmed\` with exact artifact |
+| Business value | Order conversion, reduced effort/errors, repeat, service/trust or distinctive creative expression |
+| Complexity/ops | Front-end / server / database / external contract / subscriptions / cost / maintenance owner |
+| User experience | Full happy path **and** refusal/error/empty/retry/offline/return case |
+| Dependencies | Merchant decision, payment provider, customer consent, images, ops, delivery partner |
+| Next action | Research 1 narrow fact / wire mock safely / build staging / usability test / decline |
+| Validation | Screenshot + interaction + DB test + real device/provider/merchant gate as applicable |
+
+**Do not** make everything P0. No uncommissioned payment, CRM, SMS, loyalty, multi-store, location tracking, consumer accounts or employee profiles simply because this catalog exists.
+
+### Updated execution tracks after broad product audit
+
+| Track | Work now | Explicitly visible decision lane | Later possibilities |
+|---|---|---|---|
+| Experience | Home→Menu→Product→Cart→Ticket craft, all supporting pages, mobile/accessibility | approved content, image truth, fulfillment/service rules | reorder, favorites, gifts, category animation |
+| Commerce | real item/option math, safe checkout, order submission and tracking | cash vs prepay, fees, promo validity, cancellation/refunds, provider approval | wallets, dynamic QR, payment links, loyalty |
+| Restaurant screen | Press/Rail touch usability, live order attention/status/reconnect | simple access, prep estimate, handoff reality, order closures | print integration/stations only if commissioned |
+| Growth/service | truthful contact/review/complaints, working support and discovery | actual offer terms, analytics consent, search and deep links | campaigns, CRM, referrals, membership |
+| Platform | isolated Postgres, test and production gates, mobile PWA, web push design | cost, HTTPS, monitoring, retention, owner approval | multi-branch and advanced insight if actual demand |
+
+**Next implementation is still T01** unless the user explicitly reprioritizes. **Parallel product-discovery questions:** what exact payment-at-handoff method the restaurant uses, online payment willingness, delivery coverage and fees, operating hours, cancellation handling and approval of today's menu. None of those questions freezes creative implementation.
+
+### Broad audit log (22 Oct 2026)
+
+**Source inspection:** \`types/cart.ts\` has no payment method; \`components/rebirth/rebirth-checkout.tsx\` currently validates name/phone/delivery address and records an order, with local studio override; \`app/api/orders/route.ts\` retains Supabase for non-staging traffic; \`public/sw.js\` handles offline shell but no customer Web Push; \`/reviews\` and \`/complaints\` route to WhatsApp rather than a persisted support desk. Historic SQL contained tables/enums for older admin/reviews, but schema presence is not a released first-party review/payment system. All backend success described earlier remains **staging-only**.
+
+**No new payment code was claimed or deployed in this audit.** The exploratory universe adds opportunities, risks, acceptance cases and merchant questions to the SAME ongoing board so work does not disappear between chats. The original T01–T12 are still the current short execution queue; this section is its **comprehensive possibility register**.
