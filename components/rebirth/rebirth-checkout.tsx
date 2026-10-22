@@ -10,7 +10,7 @@ import { ActiveOrderBanner } from '@/components/shared/active-order-banner';
 import { CustomerJourney } from '@/components/rebirth/customer-journey';
 import { saveActiveOrder } from '@/lib/active-order-storage';
 
-type RuntimeSettings = { isOrderingOpen: boolean; whatsappOrderNumber: string };
+type RuntimeSettings = { isOrderingOpen: boolean; whatsappOrderNumber: string; studioMode?: boolean };
 type ApiResult = { ok: true; orderId: string; reference?: string; orderNumber?: number | null; tableReference?: string | null }
   | { ok: false; error?: string; code?: string };
 type ErrorField = 'name' | 'phone' | 'address' | 'confirmedAccurateDetails';
@@ -28,6 +28,7 @@ export function RebirthCheckout() {
   const [error, setError] = useState('');
   const [errors, setErrors] = useState<Errors>({});
   const submitting = useRef(false);
+  const requestRef = useRef<{hash:string;key:string}|null>(null);
 
   const count = useMemo(() => items.reduce((sum, line) => sum + line.quantity, 0), [items]);
 
@@ -71,9 +72,14 @@ export function RebirthCheckout() {
     setSending(true);
     setError('');
     try {
+      // Stable key per exact choice+contact payload enables safe retry in staging.
+      const data={ customer, items, subtotal, tableReference };
+      const hash=JSON.stringify(data);
+      if(!requestRef.current||requestRef.current.hash!==hash)
+        requestRef.current={hash,key:'studio-'+crypto.randomUUID()};
       const response = await fetch('/api/orders', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customer, items, subtotal, tableReference }),
+        body: JSON.stringify({ ...data, requestKey:requestRef.current.key }),
       });
       const payload = await response.json() as ApiResult;
       if (!response.ok || !payload.ok) {
@@ -82,8 +88,8 @@ export function RebirthCheckout() {
           setError(reason || 'محتاجين تراجع تفاصيل الطلب والأسعار الحالية.');
         } else {
           // Server/transport may have persisted the order before the error response.
-          setUncertain(true);
-          setError('مش قادرين نأكد إذا الطلب اتحفظ أو لأ. بلاش تعيد الإرسال دلوقتي؛ تواصل مع المطعم للتأكد عشان ما يتكررش.');
+          setUncertain(!settings?.studioMode);
+          setError(settings?.studioMode?'في مشكلة في الاتصال بالتجربة، جرّب الإرسال مرة تانية بنفس الطلب.':'مش قادرين نأكد إذا الطلب اتحفظ أو لأ. بلاش تعيد الإرسال دلوقتي؛ تواصل مع المطعم للتأكد عشان ما يتكررش.');
         }
         return;
       }
@@ -97,11 +103,12 @@ export function RebirthCheckout() {
       } catch {
         // Storage is optional; a persisted server order is still successful.
       }
+      requestRef.current=null;
       clearCart();
       router.push(`/order-success?orderId=${encodeURIComponent(payload.orderId)}`);
     } catch {
-      setUncertain(true);
-      setError('الاتصال انقطع أثناء إرسال الطلب، ومش معروف إذا اتحفظ. احتفظ بالأصناف واتواصل مع المطعم قبل أي محاولة جديدة.');
+      setUncertain(!settings?.studioMode);
+      setError(settings?.studioMode?'الاتصال بالتجربة اتقطع، جرّب تاني.':'الاتصال انقطع أثناء إرسال الطلب، ومش معروف إذا اتحفظ. احتفظ بالأصناف واتواصل مع المطعم قبل أي محاولة جديدة.');
     } finally {
       submitting.current = false;
       setSending(false);

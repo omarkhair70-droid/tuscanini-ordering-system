@@ -1,13 +1,16 @@
 import { NextResponse } from 'next/server';
 
 import { getPublicOrderTrackingOrThrow } from '@/lib/orders/track-order';
+import { isLocalStudioRequest } from '@/lib/studio-bridge';
+import { getStagedRebirthTracking, StudioMenuError } from '@/lib/studio-menu-orders';
 
 export async function GET(request: Request) {
   try {
     const requestUrl = new URL(request.url);
     const orderId = requestUrl.searchParams.get('orderId') ?? '';
 
-    const tracking = await getPublicOrderTrackingOrThrow(orderId);
+    const tracking = isLocalStudioRequest(request) ? await getStagedRebirthTracking(orderId)
+      : await getPublicOrderTrackingOrThrow(orderId);
 
     return NextResponse.json({
       ok: true,
@@ -24,6 +27,7 @@ export async function GET(request: Request) {
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'تعذر تحميل تتبع الطلب.';
+    if(error instanceof StudioMenuError)return NextResponse.json({ok:false,error:message},{status:error.status});
     const isValidationError = message.includes('غير صالح');
     const isNotFound = message.includes('غير موجود');
 
