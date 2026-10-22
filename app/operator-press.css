@@ -166,3 +166,14 @@
   @keyframes op-ticket-enter{from{opacity:.6;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 }
 @media(prefers-reduced-motion:reduce){.op-ticket,.op-queue-row{animation:none!important;transition:none!important}}
+
+/* Tablet focus: one actionable ticket and one independent queue viewport.
+   Keep action controls visible as long orders overflow their own paper surface. */
+@media(min-width:781px){
+  .op-stage__focus,.op-stage__queue{height:clamp(425px,58vh,660px);display:flex;flex-direction:column}
+  .op-stage__focus>.op-ticket{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+    scrollbar-color:#a38e72 #fdf6e8;scrollbar-width:thin;display:flex;flex-direction:column}
+  .op-stage__focus .op-ticket__bottom{position:sticky;bottom:-1px;background:var(--card);
+    padding:12px 0 4px;margin-top:auto;box-shadow:0 -10px 15px -9px #49392a2a}
+  .op-queue-list{height:auto;max-height:none;flex:1;min-height:0}
+}
