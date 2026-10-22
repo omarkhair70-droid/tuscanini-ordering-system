@@ -34,6 +34,18 @@ try{
   assert.equal(await page.locator('.op-rail .op-ticket').count(),20,'Rail must contain all twenty tickets');
   assert.ok(await page.locator('.op-rail__track').evaluate(e=>e.scrollWidth>e.clientWidth),
     'Horizontal scroll must be available without squeezing the tickets');
+  const initialRailOffset=await page.locator('.op-rail__track').evaluate(e=>e.scrollLeft);
+  await page.getByRole('button',{name:'التذاكر التالية'}).click();
+  await page.waitForFunction(previous=>document.querySelector('.op-rail__track')?.scrollLeft!==previous,
+    initialRailOffset,{timeout:5000});
+  assert.ok((await page.locator('.op-rail__track').evaluate(e=>e.scrollLeft))<initialRailOffset,
+    'Next-ticket navigation must move into the RTL rail');
+  await page.getByRole('button',{name:'التذاكر السابقة'}).click();
+  await page.getByRole('button',{name:'♪ فعّل تنبيه الأوردر'}).click();
+  assert.equal(await page.getByRole('button',{name:'♪ الصوت شغال'}).getAttribute('aria-pressed'),'true',
+    'Staff must explicitly opt in to order sound');
+  await page.getByRole('button',{name:'♪ الصوت شغال'}).click();
+  assert.equal(await page.getByRole('button',{name:'♪ فعّل تنبيه الأوردر'}).getAttribute('aria-pressed'),'false');
   await page.screenshot({path:'artifacts/screenshots/ticket-rail-20-orders-1024.png',fullPage:true,animations:'disabled'});
   await page.getByRole('button',{name:'المسرح الرئيسي'}).click();
   await page.locator('.op-stage').waitFor();
@@ -59,9 +71,11 @@ try{
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+3),
     'No viewport horizontal overflow at 390 mobile');
   assert.equal(await page.locator('.op-queue-row').count(),19);
+  assert.ok(await page.locator('.op-stage__focus').evaluate(e=>e.getBoundingClientRect().top<window.innerHeight),
+    '390px staff must see the first actionable ticket without scrolling');
   await page.screenshot({path:'artifacts/screenshots/press-20-orders-390.png',fullPage:true,animations:'disabled'});
   await page.close();
   console.log('PASS: 20-ORDER PRESS / focus + 19 selectable queue items, All Day counts and disabled demo actions.');
-  console.log('PASS: 20-ORDER TICKET RAIL / 20 scrollable tickets, 6 new filtered, selection preserved on switch.');
+  console.log('PASS: 20-ORDER TICKET RAIL / 20 tickets, clickable RTL rail arrows, opt-in bell, selection preserved.');
   console.log('PASS: 1024 landscape, 768 portrait and 390 mobile with no horizontal overflow.');
 }finally{await browser.close()}
