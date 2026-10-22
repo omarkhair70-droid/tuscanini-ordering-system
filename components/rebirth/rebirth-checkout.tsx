@@ -65,7 +65,13 @@ export function RebirthCheckout() {
     setErrors(validation);
     if (Object.keys(validation).length) {
       const hasContactError = Boolean(validation.name || validation.phone || validation.address);
-      document.getElementById(hasContactError ? 't-checkout-fields' : 't-checkout-summary')?.scrollIntoView({ behavior: 'auto', block: 'start' });
+      const firstField=validation.name?'t-checkout-name':validation.phone?'t-checkout-phone':
+        validation.address?'t-checkout-address':null;
+      if(firstField)document.getElementById(firstField)?.focus();
+      else document.getElementById('t-checkout-confirm')?.focus();
+      document.getElementById(hasContactError ? 't-checkout-fields' : 't-checkout-summary')?.scrollIntoView({
+        behavior:'auto',block:'start',
+      });
       return;
     }
     submitting.current = true;
@@ -122,7 +128,7 @@ export function RebirthCheckout() {
         'جاهز تسجل طلبك؟ هتقدر تتابعه بعد الإرسال.';
 
   return (
-    <div className="t-page t-checkout-page" dir="rtl">
+    <div className={'t-page t-checkout-page'+(isHydrated&&items.length?' t-checkout-page--filled':'')} dir="rtl">
       <a className="t-skip" href="#t-checkout-main">انتقل لبيانات الطلب</a>
       <ExperienceHeader />
       <main id="t-checkout-main">
@@ -173,6 +179,12 @@ export function RebirthCheckout() {
                         {line.itemNotes && <p>ملاحظات: {line.itemNotes}</p>}
                         <strong>{money(line.totalItemPrice)} ج.م</strong>
                         <div className="t-checkout-item__controls">
+                          {line.kind==='product'&&<Link
+                            className="t-checkout-edit"
+                            href={`/menu?editLine=${encodeURIComponent(line.lineId)}`}
+                            aria-label={`تعديل الحجم والإضافات وملاحظات ${line.productName}`}>
+                            تعديل التفاصيل ↗
+                          </Link>}
                           <div className="t-checkout-stepper" role="group" aria-label={`كمية ${line.kind === 'offer' ? line.offerTitle : line.productName}`}>
                             <button type="button" aria-label="تقليل الكمية" disabled={line.quantity<=1 || sending || uncertain} onClick={()=>updateItemQuantity(line.lineId,Math.max(1,line.quantity-1))}>−</button>
                             <output aria-live="polite">{line.quantity}</output>
@@ -189,17 +201,17 @@ export function RebirthCheckout() {
                 <section className="t-checkout-section" id="t-checkout-fields" aria-labelledby="t-cart-customer-title">
                   <div className="t-checkout-section__head"><span className="t-index">02 — ABOUT YOU</span><h2 id="t-cart-customer-title">نوصلّك إزاي؟</h2></div>
                   <div className="t-checkout-inputs">
-                    <label>اسمك <input type="text" autoComplete="name" value={customer.name} aria-invalid={!!errors.name} aria-describedby={errors.name?'t-error-name':undefined}
+                    <label>اسمك <input id="t-checkout-name" type="text" autoComplete="name" value={customer.name} aria-invalid={!!errors.name} aria-describedby={errors.name?'t-error-name':undefined}
                       onChange={e=>{updateCustomer({name:e.target.value});setErrors(x=>({...x,name:undefined}))}} placeholder="الاسم" maxLength={100}/></label>
                     {errors.name && <p id="t-error-name" className="t-checkout-error">{errors.name}</p>}
-                    <label>رقم الموبايل <input type="tel" inputMode="tel" autoComplete="tel" value={customer.phone} aria-invalid={!!errors.phone} aria-describedby={errors.phone?'t-error-phone':undefined}
+                    <label>رقم الموبايل <input id="t-checkout-phone" type="tel" inputMode="tel" autoComplete="tel" value={customer.phone} aria-invalid={!!errors.phone} aria-describedby={errors.phone?'t-error-phone':undefined}
                       onChange={e=>{updateCustomer({phone:e.target.value});setErrors(x=>({...x,phone:undefined}))}} placeholder="01xxxxxxxxx" maxLength={20}/></label>
                     {errors.phone && <p id="t-error-phone" className="t-checkout-error">{errors.phone}</p>}
                     <fieldset className="t-checkout-type"><legend>نوع الطلب</legend><div>
                       <label><input type="radio" name="fulfillment" checked={customer.orderType==='delivery'} onChange={()=>updateCustomer({orderType:'delivery'})}/><span>دليفري</span></label>
                       <label><input type="radio" name="fulfillment" checked={customer.orderType==='pickup'} onChange={()=>{updateCustomer({orderType:'pickup'});setErrors(x=>({...x,address:undefined}))}}/><span>استلام من المطعم</span></label>
                     </div></fieldset>
-                    {customer.orderType==='delivery' && <><label>عنوان التوصيل <textarea rows={3} value={customer.address} aria-invalid={!!errors.address} aria-describedby={errors.address?'t-error-address':undefined}
+                    {customer.orderType==='delivery' && <><label>عنوان التوصيل <textarea id="t-checkout-address" rows={3} value={customer.address} aria-invalid={!!errors.address} aria-describedby={errors.address?'t-error-address':undefined}
                       onChange={e=>{updateCustomer({address:e.target.value});setErrors(x=>({...x,address:undefined}))}} placeholder="الشارع، المنطقة، علامة مميزة" maxLength={500}/></label>
                       {errors.address && <p id="t-error-address" className="t-checkout-error">{errors.address}</p>}</>}
                     <label>ملاحظات عامة (اختياري) <textarea rows={2} value={customer.generalNotes} onChange={e=>updateCustomer({generalNotes:e.target.value})} maxLength={500} placeholder="أي تفاصيل تساعد المطعم"/></label>
@@ -215,7 +227,7 @@ export function RebirthCheckout() {
                 <div className="t-checkout-summary__line"><span>إجمالي أصناف الطلب</span><strong>{money(subtotal)} ج.م</strong></div>
                 <p className="t-checkout-summary__notice">رسوم التوصيل، لو موجودة، بتتحدد مع المطعم.</p>
                 {tableReference && <p className="t-checkout-summary__table">مرجع الطاولة: {tableReference}</p>}
-                <label className="t-checkout-confirm"><input type="checkbox" checked={customer.confirmedAccurateDetails}
+                <label className="t-checkout-confirm"><input id="t-checkout-confirm" type="checkbox" checked={customer.confirmedAccurateDetails}
                   onChange={e=>{updateCustomer({confirmedAccurateDetails:e.target.checked});setErrors(x=>({...x,confirmedAccurateDetails:undefined}))}}/>
                   <span>راجعت الأصناف وبيانات الطلب.</span></label>
                 {errors.confirmedAccurateDetails && <p className="t-checkout-error">{errors.confirmedAccurateDetails}</p>}
