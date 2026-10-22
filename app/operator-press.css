@@ -204,3 +204,8 @@
   .op-stage__focus .op-ticket__details{padding:6px 0}
   .op-stage__focus .op-ticket__bottom{margin-top:auto;padding:8px 0 0}
 }
+
+/* Twenty-order visual QA caught row compression in the queue at 1024px:
+   each ticket needs its intrinsic two-row height while the queue scrolls. */
+.op-queue-list{grid-auto-rows:minmax(80px,max-content)}
+.op-queue-row{min-height:80px;align-content:center}
