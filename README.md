@@ -1,3 +1,5 @@
+> **CURRENT REBIRTH WORKING BOARD (22 OCT 2026):** [Single authoritative execution / coverage register](docs/rebirth/WORKING_BOARD.md). It supersedes the historical snapshots and old implementation bullets below. The current product is ONE authored customer ordering website plus ONE staff order inbox, not a POS or staff-management suite. The board tracks actual build/CI/visual/field/merchant statuses. PR #59 remains draft.
+
 > ### TUSCANINI REBIRTH / 2026 — active development
 > The restaurant site is being rebuilt as a new authored customer + operations experience. The original implementation is preserved on `main`; the live redesign is a **Draft PR**, not a finished release.
 >
