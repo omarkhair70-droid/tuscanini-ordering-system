@@ -277,7 +277,10 @@ export const parseCreateOrderPayloadOrThrow = (payload: unknown): ValidatedOrder
   const orderType = parseOrderTypeOrThrow(customerPayload.orderType);
   const name = parseStringOrThrow(customerPayload.name, 'الاسم');
   const phone = parsePhoneOrThrow(customerPayload.phone);
-  const address = parseOptionalString(customerPayload.address);
+  // Server-side minimization: an old delivery address is irrelevant (and
+  // private) once the customer chooses in-store pickup, even if a caller
+  // manually posts an address that the UI would have omitted.
+  const address = orderType === 'delivery' ? parseOptionalString(customerPayload.address) : '';
 
   if (orderType === 'delivery' && !address) {
     throw new Error('العنوان مطلوب في حالة الدليفري.');
