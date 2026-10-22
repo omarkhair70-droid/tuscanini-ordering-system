@@ -133,7 +133,7 @@ try {
       images.map(img => img.complete && img.naturalWidth > 0)
     );
     await check(menuDocumentaryPhotos.length === 2 && menuDocumentaryPhotos.every(Boolean), `${width}px Menu authentic source photos decoded`);
-    await check(await page.getByText('من صور المطعم — مش صور مرتبطة بصنف معين').count()===1,
+    await check(await page.locator('.t-menu-intro__photo').count()===2,
       `${width}px Menu photo context does not imply named products`);
 
     await check(await page.getByRole('searchbox', { name: /دور على أكلك/ }).count() === 1, `${width}px direct menu search exposed`);
@@ -450,7 +450,7 @@ try {
     await cart.getByPlaceholder('الاسم').fill('عميل اختبار');
     await cart.getByPlaceholder('01xxxxxxxxx').fill('01012345678');
     await cart.getByPlaceholder('الشارع، المنطقة، علامة مميزة').fill('عنوان تجريبي');
-    await cart.getByRole('checkbox',{name:/راجعت الأصناف وبياناتي/}).check();
+    await cart.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).check();
     await cart.getByRole('button',{name:/سجّل الطلب للمطعم/}).click();
     await cart.getByText('الطلبات متوقفة الآن').waitFor({state:'visible',timeout:7000});
     await check(await cart.getByText('الطلبات متوقفة الآن').count()===1,`${width}px refused order shows exact server closure`);
