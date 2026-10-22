@@ -49,3 +49,40 @@ jobs:
         run: pip install -r experiments/backend-v2/requirements.txt
       - name: Atomicity, price authority, idempotency and outbox failure tests
         run: python experiments/backend-v2/run_spike.py
+
+
+  typescript-transaction-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: spike
+          POSTGRES_PASSWORD: only-for-ephemeral-ci-tests
+          POSTGRES_DB: tuscanini_spike
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U spike -d tuscanini_spike"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TUSCANINI_SPIKE_ONLY: "yes"
+      POSTGRES_HOST: 127.0.0.1
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: tuscanini_spike
+      POSTGRES_USER: spike
+      POSTGRES_PASSWORD: only-for-ephemeral-ci-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install isolated TypeScript/Postgres dependencies (no root project changes)
+        run: npm install --prefix experiments/backend-v2/typescript --no-package-lock --no-audit --no-fund
+      - name: Strict TypeScript compilation check
+        run: npm run typecheck --prefix experiments/backend-v2/typescript
+      - name: Atomicity, idempotency, order/price and outbox parity tests
+        run: npm test --prefix experiments/backend-v2/typescript
