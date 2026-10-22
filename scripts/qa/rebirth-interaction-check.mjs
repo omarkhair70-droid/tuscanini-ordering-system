@@ -389,6 +389,8 @@ try {
     await catalogContext.close();
     await page.goto(baseUrl + '/cart', { waitUntil: 'networkidle', timeout:30000 });
     await check(await page.getByRole('heading', { name:/على.*مزاجك/ }).count()===1, `${width}px Checkout authored header renders`);
+    await check(await page.locator('.t-customer-journey [aria-current="step"]').getByText('راجع التفاصيل').count()===1,
+      `${width}px checkout uses the shared journey with current review step`);
     await check(await page.getByRole('heading', { name:/لسه مفيش/ }).count()===1, `${width}px empty cart is honest and non-orderable`);
     await check(await page.getByRole('button', { name: /سجّل الطلب للمطعم/ }).count()===0, `${width}px empty cart cannot be submitted`);
     const cartOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
@@ -446,22 +448,44 @@ try {
     await fixtureContext.close();
     // Isolated tracking fixture validates state semantics, not a real restaurant order.
     let restaurantStage='جديد';
-    await page.route('**/api/orders/track**',route=>route.fulfill({
+    let restaurantConfirmation='pending';
+    let simulateTrackingOffline=false;
+    await page.route('**/api/orders/track**',route=>simulateTrackingOffline
+      ? route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({ok:false,error:'الاتصال بالمطعم غير متاح مؤقتًا'})})
+      : route.fulfill({
       status:200,contentType:'application/json',
       body:JSON.stringify({ok:true,order:{
         orderNumber:1234,reference:'#1234',status:restaurantStage,
-        confirmationStatus:restaurantStage==='جديد'?'pending':'confirmed',
+        confirmationStatus:restaurantConfirmation,
         tableReference:null,createdAt:'2026-10-18T14:00:00.000Z',
         orderType:'pickup',totalEstimate:85,
       }}),
     }));
     await page.goto(baseUrl+'/order-success?orderId=123e4567-e89b-42d3-a456-426614174000',{waitUntil:'networkidle',timeout:30000});
     await page.getByRole('heading',{name:'بانتظار تأكيد المطعم'}).waitFor({state:'visible',timeout:8000});
+    await check(await page.locator('.t-customer-journey [aria-current="step"]').getByText('تابع الطلب').count()===1 &&
+      await page.locator('.t-order-fact[data-state="verified"]').count()===1 &&
+      await page.locator('.t-order-fact[data-state="waiting"]').count()===2,
+      `${width}px tracking confirms saved order while leaving restaurant acceptance/preparation unverified`);
     await check(await page.getByText(/لسه مش متأكد/).count()>0,`${width}px stored order clearly awaits restaurant confirmation`);
     restaurantStage='جاري التحضير';
     await page.getByRole('button',{name:/حدّث الحالة/}).click();
     await page.getByRole('heading',{name:'الطلب بيتحضّر'}).waitFor({state:'visible',timeout:8000});
-    await check(await page.getByRole('heading',{name:'الطلب بيتحضّر'}).count()===1,`${width}px order shows preparation only after server status changes`);
+    await check(await page.getByRole('heading',{name:'الطلب بيتحضّر'}).count()===1,
+      `${width}px order shows preparation only after server status changes`);
+    await check(await page.locator('.t-order-fact[data-state="verified"]').count()===2 &&
+      await page.locator('.t-order-fact[data-state="waiting"]').count()===1,
+      `${width}px preparation while confirmation is pending does not invent acceptance`);
+    restaurantConfirmation='confirmed';
+    await page.getByRole('button',{name:/حدّث الحالة/}).click();
+    await check(await page.locator('.t-order-fact[data-state="verified"]').count()===3,
+      `${width}px independently confirmed order facts become verified only from server response`);
+    simulateTrackingOffline=true;
+    await page.getByRole('button',{name:/حدّث الحالة/}).click();
+    await page.getByText('الاتصال بالمطعم غير متاح مؤقتًا').waitFor({state:'visible',timeout:8000});
+    await check(await page.getByRole('heading',{name:'الطلب بيتحضّر'}).count()===1 &&
+      await page.locator('.t-order-tracking__time').getByText(/البيانات قديمة/).count()===1,
+      `${width}px offline refresh retains last successful status and marks it stale`);
     await context.close();
   }
 } catch (error) {
