@@ -397,6 +397,10 @@ try {
     // A real cart LINE edit must preserve the order's identity rather than
     // adding a second copy of the item. Back to Menu preloads exact choices.
     const originalLineId=selectedLegacy.lineId;
+    if([390,1440].includes(width)){
+      await shopPage.screenshot({path:`artifacts/screenshots/checkout-before-line-edit-${width}.png`,
+        fullPage:true,animations:'disabled'});
+    }
     await shopPage.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).check();
     await shopPage.getByRole('link',{name:/تعديل الحجم والإضافات وملاحظات تشيكن فاير/}).click();
     await shopPage.locator('.t-product-dialog[open]').waitFor({timeout:8000});
@@ -411,6 +415,16 @@ try {
     await shopPage.locator('#rebirth-product-notes').fill('بدون بصل - تعديل من السلة');
     await shopPage.getByRole('button',{name:/احفظ التعديلات/}).click();
     await shopPage.waitForURL(/\/cart(?:#|$)/,{timeout:12000});
+    await shopPage.waitForFunction(id=>{
+      const saved=JSON.parse(localStorage.getItem('tuscanini-cart-v1')||'{}');
+      return saved.items?.length===1&&saved.items[0].lineId===id&&
+        saved.items[0].quantity===1&&saved.items[0].selectedAddons?.length===0;
+    },originalLineId,{timeout:8000});
+    if([390,1440].includes(width)){
+      await shopPage.evaluate(()=>window.scrollTo(0,0));
+      await shopPage.screenshot({path:`artifacts/screenshots/checkout-after-line-edit-${width}.png`,
+        fullPage:true,animations:'disabled'});
+    }
     const updated=await shopPage.evaluate(()=>{
       const saved=JSON.parse(localStorage.getItem('tuscanini-cart-v1')||'{}');
       return {items:saved.items??[],reviewed:!!saved.customer?.confirmedAccurateDetails};
