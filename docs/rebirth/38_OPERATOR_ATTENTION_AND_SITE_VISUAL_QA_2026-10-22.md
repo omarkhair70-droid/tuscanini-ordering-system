@@ -1,3 +1,5 @@
+> **OWNER SCOPE CORRECTION:** The next-work section below suggesting named cashier/kitchen accounts and sessions is superseded by [ONE WORKING BOARD](WORKING_BOARD.md): one protected restaurant order screen with simple secure access. All other tested visuals and evidence here remain valid. No new HR, staff roles or POS suite.
+
 # PASS 38 — Order attention + real screenshot craft review
 **22 Oct 2026 · PR #59 DRAFT · branch `redesign/tuscanini-authored-experience-20261018`**
 
