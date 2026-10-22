@@ -67,11 +67,14 @@ export function RebirthCheckout() {
       const hasContactError = Boolean(validation.name || validation.phone || validation.address);
       const firstField=validation.name?'t-checkout-name':validation.phone?'t-checkout-phone':
         validation.address?'t-checkout-address':null;
-      if(firstField)document.getElementById(firstField)?.focus();
-      else document.getElementById('t-checkout-confirm')?.focus();
-      document.getElementById(hasContactError ? 't-checkout-fields' : 't-checkout-summary')?.scrollIntoView({
-        behavior:'auto',block:'start',
-      });
+      const target=document.getElementById(firstField??'t-checkout-confirm');
+      if(target){
+        // Focus the ACTUAL invalid control. Scrolling the entire section after
+        // focusing would hide address errors below the phone fields on mobile.
+        target.focus();
+        target.scrollIntoView({behavior:'auto',block:'center'});
+      }else document.getElementById(hasContactError?'t-checkout-fields':'t-checkout-summary')
+        ?.scrollIntoView({behavior:'auto',block:'start'});
       return;
     }
     submitting.current = true;
