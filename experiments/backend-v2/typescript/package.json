@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "test": "tsx --test tests/*.test.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "studio": "tsx src/studio.ts"
   },
   "dependencies": {
     "pg": "8.16.3"
