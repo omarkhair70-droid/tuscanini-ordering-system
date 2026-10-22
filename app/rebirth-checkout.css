@@ -168,3 +168,33 @@
   .t-checkout-page--filled .t-checkout-hero__headline h1{font-size:30px}
   .t-checkout-page--filled .t-checkout-hero__headline p{font-size:11px}
 }
+
+/* T01 / truthful service + payment handoff.
+   No fake payment selection or made-up delivery-fee arithmetic. */
+.t-checkout-service-note{
+  background:var(--yellow);color:var(--ink);border-inline-start:3px solid var(--red);
+  padding:11px 14px;font-size:13px;line-height:1.8;font-weight:750
+}
+.t-checkout-summary__food-total{
+  display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;
+  gap:8px 14px;padding:17px 0;border-bottom:2px solid var(--ink)
+}
+.t-checkout-summary__food-total span{font-size:14px;font-weight:900}
+.t-checkout-summary__food-total strong{font-size:clamp(23px,3vw,30px);font-weight:900}
+.t-checkout-payment-note{
+  margin-block:19px 20px;padding:19px;border:1px dashed #8c7e68;
+  background:var(--paper);
+}
+.t-checkout-payment-note h3{
+  font-size:clamp(19px,2.5vw,24px);font-weight:900;line-height:1.4;margin:7px 0 9px;
+}
+.t-checkout-payment-note p{
+  font-size:13px;line-height:1.85;font-weight:650;color:#4a3f33;margin-top:9px
+}
+.t-checkout-payment-note p:last-child{border-top:1px solid #d4c5ae;padding-top:10px}
+.t-checkout-payment-note .t-index{font-size:11px}
+@media(max-width:720px){
+  .t-checkout-summary__food-total{padding:12px 0}
+  .t-checkout-payment-note{margin:12px 0 16px;padding:13px}
+  .t-checkout-payment-note h3{font-size:20px}
+}
