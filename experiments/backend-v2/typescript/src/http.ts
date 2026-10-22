@@ -21,14 +21,14 @@ function json(res: ServerResponse, status: number, data: unknown): void {
   res.end(JSON.stringify(data));
 }
 
-async function readJson(req: IncomingMessage): Promise<Record<string, unknown>> {
+async function readJson(req: IncomingMessage, maxBytes = 16_384): Promise<Record<string, unknown>> {
   if (!(req.headers['content-type'] ?? '').startsWith('application/json')) {
     throw new OperationalError('JSON content type required.', 415);
   }
   let text = '';
   for await (const chunk of req) {
     text += String(chunk);
-    if (Buffer.byteLength(text) > 16_384) {
+    if (Buffer.byteLength(text) > maxBytes) {
       throw new OperationalError('Fixture body is too large.', 413);
     }
   }
@@ -84,7 +84,7 @@ export async function startLocalSimulation(pool: Pool): Promise<{
       }
       if(method==='POST'&&url.pathname==='/api/studio/catalog/sync'){
         fixtureRole(req,fixtureToken);
-        const body=await readJson(req);
+        const body=await readJson(req,128_000);
         const synced=await syncMenuCatalog(pool,body.products);
         json(res,200,{count:synced});
         return;
