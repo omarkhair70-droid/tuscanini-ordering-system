@@ -61,3 +61,62 @@ const unchanged=await request('events',{id});
 assert.equal(unchanged.payload.events.length,5);
 console.log('PASS: real Next customer → PostgreSQL order → operator inbox → actions → customer tracking & 5 events.');
 console.log('PASS: idempotency, staff secret gate, invalid references, stale action conflict.');
+
+// REAL REBIRTH CART: same public /api/orders + /api/orders/track endpoints,
+// server-sourced 113-product catalog, real variant/add-on/note line snapshots.
+const settings=await fetch(base+'/api/public/site-settings').then(x=>x.json());
+assert.equal(settings.settings?.studioMode,true,'Local checkout must have real staging mode enabled');
+const key2='studio-'+crypto.randomUUID();
+const customer={name:'عميل تجربة',phone:'01012345678',address:'',orderType:'pickup',
+  generalNotes:'من غير بصل',confirmedAccurateDetails:true};
+const menuItems=[
+  {lineId:'rebirth-fixture-1',kind:'product',productId:'cm1',productName:'برجر',
+    selectedSize:{id:'small',label:'صغير',price:40},
+    selectedAddons:[{id:'addon-mozzarella',label:'موتزاريلا',price:20}],
+    quantity:2,itemNotes:'مستوي زيادة',unitPrice:60,totalItemPrice:120},
+  {lineId:'rebirth-fixture-2',kind:'product',productId:'dr1',productName:'مياه معدنية صغير',
+    selectedSize:{id:'single',label:'سعر واحد',price:10},
+    selectedAddons:[],quantity:1,itemNotes:'',unitPrice:10,totalItemPrice:10},
+];
+const rebirthBody={customer,items:menuItems,subtotal:130,tableReference:'A-3',requestKey:key2};
+async function fullOrder(body){
+  const res=await fetch(base+'/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(body)});
+  return {status:res.status,payload:await res.json()};
+}
+const realOrder=await fullOrder(rebirthBody);
+assert.equal(realOrder.status,200,'Authored Rebirth cart must save against staging catalog');
+assert.equal(realOrder.payload.ok,true);
+const realId=realOrder.payload.orderId;
+const repeat=await fullOrder(rebirthBody);
+assert.equal(repeat.payload.orderId,realId,'Exact retry returns one order');
+const realInbox=await request('inbox',{key:operatorKey});
+const savedLine=realInbox.payload.orders.find(o=>o.id===realId);
+assert.ok(savedLine,'Customized Rebirth order appears in operator inbox');
+assert.equal(savedLine.subtotal_cents,'13000');
+assert.equal(savedLine.order_type,'pickup');
+assert.equal(savedLine.table_reference,'A-3');
+assert.equal(savedLine.customer_snapshot.name,'عميل تجربة');
+assert.equal(savedLine.customer_snapshot.generalNotes,'من غير بصل');
+assert.equal(savedLine.items[0]?.selection.size.id,'small');
+assert.equal(savedLine.items[0]?.selection.addons[0]?.id,'addon-mozzarella');
+assert.equal(savedLine.items[0]?.notes,'مستوي زيادة');
+const stamped=await fullOrder({...rebirthBody,items:[{...menuItems[0],quantity:3,totalItemPrice:180},menuItems[1]],subtotal:190});
+assert.equal(stamped.status,409,'Same request key with changed quantity cannot create order');
+const forgery=await fullOrder({...rebirthBody,requestKey:'studio-'+crypto.randomUUID(),
+  items:[{...menuItems[0],unitPrice:1,totalItemPrice:2}],subtotal:2});
+assert.equal(forgery.status,200,'Client cart local arithmetic may validate, but DB price remains authoritative');
+const forgedSaved=(await request('inbox',{key:operatorKey})).payload.orders.find(o=>o.id===forgery.payload.orderId);
+assert.equal(forgedSaved.subtotal_cents,'12000','Backend ignores malicious unitPrice, calculates from catalog');
+await request('action',{id:realId,key:operatorKey,body:{action:'accept'}});
+await request('action',{id:realId,key:operatorKey,body:{action:'start'}});
+const branded=await fetch(base+'/api/orders/track?orderId='+realId).then(x=>x.json());
+assert.equal(branded.ok,true);
+assert.equal(branded.order.status,'جاري التحضير');
+assert.equal(branded.order.confirmationStatus,'confirmed');
+assert.equal(branded.order.totalEstimate,130);
+const page=await fetch(base+'/order-success?orderId='+realId);
+assert.equal(page.status,200);
+assert.match(await page.text(),/Order in Motion|ORDER IN MOTION|TRACKING/);
+console.log('PASS: FULL REBIRTH CART → menu catalog/server-priced size/addon/notes → operator → original ticket.');
+console.log('PASS: full-cart retries and altered-cart conflicts, price forgery rejected as monetary authority.');
