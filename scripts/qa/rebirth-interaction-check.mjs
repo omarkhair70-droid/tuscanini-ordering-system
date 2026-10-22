@@ -483,6 +483,7 @@ try {
       `${width}px preparation while confirmation is pending does not invent acceptance`);
     restaurantConfirmation='confirmed';
     await page.getByRole('button',{name:/حدّث الحالة/}).click();
+    await page.locator('.t-order-fact[data-state="verified"]').nth(2).waitFor({state:'visible',timeout:8000});
     await check(await page.locator('.t-order-fact[data-state="verified"]').count()===3,
       `${width}px independently confirmed order facts become verified only from server response`);
     simulateTrackingOffline=true;
