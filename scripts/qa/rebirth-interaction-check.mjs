@@ -397,6 +397,7 @@ try {
     // A real cart LINE edit must preserve the order's identity rather than
     // adding a second copy of the item. Back to Menu preloads exact choices.
     const originalLineId=selectedLegacy.lineId;
+    await shopPage.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).check();
     await shopPage.getByRole('link',{name:/تعديل الحجم والإضافات وملاحظات تشيكن فاير/}).click();
     await shopPage.locator('.t-product-dialog[open]').waitFor({timeout:8000});
     await check(await shopPage.getByRole('button',{name:/احفظ التعديلات/}).count()===1,
@@ -412,11 +413,11 @@ try {
     await shopPage.waitForURL(/\/cart(?:#|$)/,{timeout:12000});
     const updated=await shopPage.evaluate(()=>{
       const saved=JSON.parse(localStorage.getItem('tuscanini-cart-v1')||'{}');
-      return saved.items??[];
+      return {items:saved.items??[],reviewed:!!saved.customer?.confirmedAccurateDetails};
     });
-    await check(updated.length===1&&updated[0].lineId===originalLineId&&updated[0].quantity===1 &&
-      updated[0].unitPrice===125&&updated[0].totalItemPrice===125 &&
-      updated[0].selectedAddons?.length===0&&updated[0].itemNotes==='بدون بصل - تعديل من السلة',
+    await check(updated.items.length===1&&updated.items[0].lineId===originalLineId&&updated.items[0].quantity===1 &&
+      updated.items[0].unitPrice===125&&updated.items[0].totalItemPrice===125 &&
+      updated.items[0].selectedAddons?.length===0&&updated.items[0].itemNotes==='بدون بصل - تعديل من السلة' && !updated.reviewed,
       `${width}px saved cart edit updates same receipt line, recalculates price, keeps notes and never duplicates`);
     await check(await shopPage.getByRole('button',{name:/سجّل الطلب للمطعم/}).isDisabled(),
       `${width}px historic menu doesn't bypass store-open/live-order validation`);
