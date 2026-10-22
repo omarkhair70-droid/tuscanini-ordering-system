@@ -45,7 +45,9 @@ function makePreviewOrders():Order[]{
   return statuses.map((status,i)=>{
     const qty=1+i%3, p=labels[i%labels.length], add=i%4===0?[{label:'موتزاريلا'}]:i%5===0?[{label:'صوص إضافي'}]:[];
     return {
-      id:'preview-'+String(i+1).padStart(8,'0')+'-design-only',status,
+      // Unique receipt prefixes: the eight-character order ref must not
+      // collapse every preview ticket to '#PREVIEW-'.
+      id:(1000+i).toString(16).toUpperCase().padStart(8,'0')+'-1111-4111-8111-111111111111',status,
       subtotal_cents:String((65+(i%6)*27)*100*qty),
       created_at:new Date(Date.now()-(i*3+2)*60000).toISOString(),
       order_type:i%4===0?'delivery':'pickup',table_reference:i%6===0?'A-'+(i%8+1):null,
