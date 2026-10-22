@@ -197,3 +197,12 @@ The owner has NOT signed off on the whole visual experience. Need inspect **actu
 - Operational tests cover complete happy path, cashier rejection, unauthorized fixture role, premature kitchen action, rollbacks, concurrent conflicting cashier actions, outbox offline retry and invalid HTTP input.
 - Still missing: real POS adapter and owner-confirmed staff rules, secure staff identity, provider payment and settlement, staged performance tests, production outbox lease/dedup, local hardware fallback and live menu price approval. Existing customer-facing Rebirth pages/images/old prices unchanged.
 - PR #59 **DRAFT**; NO MERGE / NO PRODUCTION DEPLOY.
+
+
+## 6I — PASS 28 / WHY WE SIMULATED; RESTAURANT REALITY GATE (2026-10-22)
+- Read [`29_PASS_28_OPERATIONS_REALITY_CHECK_AND_SIMULATION_SCOPE_2026-10-22.md`](29_PASS_28_OPERATIONS_REALITY_CHECK_AND_SIMULATION_SCOPE_2026-10-22.md): critical distinction between **correctness testing on a fictitious process** and **actual merchant-approved restaurant workflows**.
+- Owner rightly questioned what the previous 15-test simulated POS/kitchen process was based upon. Answer: it is a **test fixture** inspired by generic ordering patterns, NOT learned from the restaurant's actual POS, cashier, kitchen or receipt practices. Passing CI is no evidence that the fixture reflects the store's process.
+- **Concrete source mismatch:** current admin `preparing` is allowed from `جديد` with `confirmation_status=pending` (and `types/admin-kitchen.ts` includes `جديد`), while experiment forces cashier `accept` before kitchen `start`. Both approaches need owner confirmation; neither may be asserted as restaurant reality.
+- Current Rebirth checkout posts to `/api/orders`, saves active order, then displays server tracking; this demonstrates **web code behavior**, not delivery to actual POS/printer/kitchen or payment confirmation. Historical `web_whatsapp` source field is not proof of actual WhatsApp handoff.
+- **Next step is operational discovery, NOT another fictional POS/KDS simulator**: one authorized real order walkthrough and POS system identification, cashier confirmation rule, actual kitchen notification, money/receipt authority, outages; preserve privacy and don't request access credentials. Then choose direct-order web channel, replacement POS, or hybrid adapter, and write status/price/ledger contracts grounded in observations.
+- Preserve old 113 historical catalog entries and visual work, no merchant production database/money changes. PR #59 DRAFT, NO MERGE OR DEPLOY.
