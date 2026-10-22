@@ -35,6 +35,12 @@ try{
   assert.ok(await page.locator('.op-rail__track').evaluate(e=>e.scrollWidth>e.clientWidth),
     'Horizontal scroll must be available without squeezing the tickets');
   await page.screenshot({path:'artifacts/screenshots/ticket-rail-20-orders-1024.png',fullPage:true,animations:'disabled'});
+  await page.getByRole('button',{name:'المسرح الرئيسي'}).click();
+  await page.locator('.op-stage').waitFor();
+  assert.equal(await page.locator('.op-ticket__masthead>strong').innerText(),focused,
+    'Switching layout without changing the filter must retain the chosen order');
+  await page.getByRole('button',{name:'شريط التذاكر'}).click();
+  await page.locator('.op-rail').waitFor();
   await page.getByRole('button',{name:/جديد/}).click();
   await page.waitForFunction(()=>document.querySelectorAll('.op-rail .op-ticket').length===6,null,{timeout:8000});
   assert.equal(await page.locator('.op-rail .op-ticket').count(),6,'Received filter shows exactly six new orders');
@@ -43,8 +49,7 @@ try{
   assert.equal(await page.locator('.op-rail .op-ticket').count(),20);
   await page.getByRole('button',{name:'المسرح الرئيسي'}).click();
   await page.locator('.op-stage').waitFor();
-  assert.equal(await page.locator('.op-ticket__masthead>strong').innerText(),focused,
-    'Return to Press retains the selected order');
+  assert.equal(await page.locator('.op-ticket').count(),1,'Press keeps one focus after filter reset');
 
   await page.setViewportSize({width:768,height:1024});
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+3),
