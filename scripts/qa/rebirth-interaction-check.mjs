@@ -383,7 +383,9 @@ try {
       `${width}px actual recorded 125 + 20 addon, quantity 2, is stored as 290 EGP cart`);
     await shopPage.goto(baseUrl+'/cart',{waitUntil:'networkidle',timeout:30000});
     if(width<=720){
-      await check(await shopPage.locator('.t-checkout-quicknav strong').getByText(/290/).count()===1 &&
+      const cartQuickAmount=(await shopPage.locator('.t-checkout-quicknav strong').textContent())?.trim();
+      const expectedArabicAmount=new Intl.NumberFormat('ar-EG',{maximumFractionDigits:2}).format(290)+' ج.م';
+      await check(cartQuickAmount===expectedArabicAmount &&
         await shopPage.getByRole('link',{name:/اكمل بياناتك/}).count()===1,
         `${width}px mobile Cart opens with an accurate estimated product subtotal and a direct customer-form shortcut`);
     }
