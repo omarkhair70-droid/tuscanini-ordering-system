@@ -474,6 +474,9 @@ try {
     }));
     await page.goto(baseUrl+'/order-success?orderId=123e4567-e89b-42d3-a456-426614174000',{waitUntil:'networkidle',timeout:30000});
     await page.getByRole('heading',{name:'بانتظار تأكيد المطعم'}).waitFor({state:'visible',timeout:8000});
+    await check(await page.locator('.t-order-tracking[data-current-status="pending"] .t-order-story__seal-text').getByText('SAVED').count()===1 &&
+      await page.locator('.t-order-ticket__footer').getByText(/مش إيصال دفع/).count()===1,
+      `${width}px editorial living ticket shows saved state but never claims payment`);
     await check(await page.locator('.t-customer-journey [aria-current="step"]').getByText('تابع الطلب').count()===1 &&
       await page.locator('.t-order-fact[data-state="verified"]').count()===1 &&
       await page.locator('.t-order-fact[data-state="waiting"]').count()===2,

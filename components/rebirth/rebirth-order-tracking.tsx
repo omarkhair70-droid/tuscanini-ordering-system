@@ -107,42 +107,96 @@ export function RebirthOrderTracking({orderId}:{orderId:string}) {
 
   const status=order?getStatus(order):null;
   const facts=order?getOrderFacts(order):[];
+  // Decorative editorial seal: textual status is still exclusively backend-derived.
+  // A stamp is not a payment receipt, kitchen ticket, ETA or merchant acceptance.
+  const statusStamp: Record<StatusKey,string> = {
+    pending: 'SAVED', confirmed: 'CONFIRMED', preparing: 'PREPARING',
+    ready: 'READY', out: 'ON THE WAY', delivered: 'DELIVERED',
+    cancelled: 'CANCELLED', unreachable: 'CONTACT', unknown: 'CHECKING',
+  };
+  const stampedText=loading?'CHECKING':statusStamp[status?.key??'unknown'];
   return (
-    <section className="t-order-tracking" aria-labelledby="t-order-track-title">
+    <section className="t-order-tracking" aria-labelledby="t-order-track-title"
+      data-current-status={status?.key??'unknown'} data-connection={error?'stale':'fresh'}>
       <div className="t-order-tracking__main">
-        <span className="t-index">TRACKING / RECORDED RESTAURANT STATUS</span>
-        <h2 id="t-order-track-title" aria-live="polite">{loading?'بنتحقق من الطلب…':status?.label??'محتاجين نتأكد.'}</h2>
-        <p>{status?.description??'هنعرض الحالة اللي المطعم سجّلها في النظام، من غير ما نفترض إنه بدأ يجهز الطلب.'}</p>
+        <div className="t-order-story__masthead">
+          <span className="t-index">TUSCANINI / ORDER IN MOTION</span>
+          <span className="t-order-story__edition" lang="en">THE LIVING TICKET — 001</span>
+        </div>
+        <div className="t-order-story__hero">
+          <div className="t-order-story__headcopy">
+            <span className="t-order-story__eyebrow">اللي نعرفه عن طلبك دلوقتي</span>
+            <h2 id="t-order-track-title" aria-live="polite" aria-atomic="true">
+              {loading?'بنتحقق من الطلب…':status?.label??'محتاجين نتأكد.'}
+            </h2>
+            <p>{status?.description??'هنعرض الحالة اللي المطعم سجّلها، من غير ما نفترض إنه بدأ يجهز الطلب.'}</p>
+          </div>
+          <div key={stampedText} className="t-order-story__seal" aria-hidden="true">
+            <span className="t-order-story__seal-mark">T<span aria-hidden="true">✳</span></span>
+            <span className="t-order-story__seal-text" lang="en">{stampedText}</span>
+          </div>
+        </div>
+
+        <div className="t-order-story__rule" aria-hidden="true"><span>01</span><span>02</span><span>03</span></div>
+        <div className="t-order-story__facts-heading">
+          <strong>ورقة الطلب بتتحرّك مع كل تحديث حقيقي.</strong>
+          <span lang="en">ONLY RECORDED FACTS</span>
+        </div>
         {order&&(
           <div className="t-order-facts" aria-label="ما الذي تأكد عن طلبك؟">
             {facts.map((fact,index)=>(
               <div className="t-order-fact" data-state={fact.state} key={fact.label}>
                 <span className="t-order-fact__number" aria-hidden="true">{String(index+1).padStart(2,'0')}</span>
-                <div>
+                <div className="t-order-fact__copy">
                   <span className="t-order-fact__label">{fact.label}</span>
                   <strong>{fact.value}</strong>
                   <small>{fact.detail}</small>
                 </div>
+                <span className="t-order-fact__signal" aria-hidden="true" />
               </div>
             ))}
           </div>
         )}
+        {!order&&<div className="t-order-story__loading" role="status">بنراجع الرقم مع النظام. مش هنقول إن الطلب وصل إلا لما نلاقيه مسجل.</div>}
         {error&&<p role="alert" className="t-order-tracking__error">{error}</p>}
         <div className="t-order-tracking__controls">
-          <button type="button" disabled={updating} onClick={()=>void reload()} className="t-order-tracking__refresh">{updating?'جاري التحديث…':'حدّث الحالة ↻'}</button>
-          {lastUpdated&&<span className="t-order-tracking__time">آخر تحديث ناجح: {lastUpdated}{error?' — البيانات قديمة':''}</span>}
+          <button type="button" disabled={updating} onClick={()=>void reload()} className="t-order-tracking__refresh">
+            <span aria-hidden="true" className="t-order-tracking__refresh-mark">↻</span>
+            {updating?'جاري التحديث…':'حدّث حالة الطلب'}
+          </button>
+          <div className="t-order-tracking__connection">
+            <span className="t-order-tracking__connection-dot" aria-hidden="true" />
+            <span className="t-order-tracking__time">
+              {error?'تعذّر الاتصال — آخر حالة ناجحة محفوظة':
+                lastUpdated?'آخر تحديث ناجح: '+lastUpdated:'مستنيين أول تحديث مؤكد'}
+              {error&&lastUpdated?' · '+lastUpdated+' — البيانات قديمة':''}
+            </span>
+          </div>
         </div>
+        <p className="t-order-tracking__cadence">الصفحة بتراجع حالة الطلب كل ١٥ ثانية وهي مفتوحة. من غير وعد بوقت تجهيز أو توصيل مش مؤكد.</p>
       </div>
       <div className="t-order-tracking__details">
-        <span className="t-index">YOUR REFERENCE / KEEP IT</span>
-        <strong>{order?.reference??'لا يوجد مرجع مؤكد بعد'}</strong>
+        <div className="t-order-ticket__masthead">
+          <span lang="en">TUSCANINI / YOUR COPY</span>
+          <span lang="en">ORDER NOTE · 01</span>
+        </div>
+        <div className="t-order-ticket__reference">
+          <span>مرجع طلبك</span>
+          <strong>{order?.reference??'لا يوجد مرجع مؤكد بعد'}</strong>
+          <small>احتفظ بالرقم لو احتجت تتواصل مع المطعم.</small>
+        </div>
+        <div className="t-order-ticket__perforation" aria-hidden="true"><span>✳</span></div>
         <dl>
           <div><dt>نوع الطلب</dt><dd>{order?.orderType==='delivery'?'دليفري':order?.orderType==='pickup'?'استلام':'غير متاح'}</dd></div>
           <div><dt>إجمالي الأصناف المسجل</dt><dd>{order?formatMoney(order.totalEstimate)+' ج.م':'غير متاح'}</dd></div>
           <div><dt>الطاولة</dt><dd>{order?.tableReference??'—'}</dd></div>
           <div><dt>وقت التسجيل</dt><dd>{order?.createdAt?new Date(order.createdAt).toLocaleString('ar-EG'):'غير متاح'}</dd></div>
         </dl>
-        <p>الأرقام وحالة التوصيل بتتأكد مع المطعم. آخر تحديث ناجح هو المرجع، ولو الاتصال انقطع ممكن الحالة تتأخر.</p>
+        <p className="t-order-ticket__disclaimer">الإجمالي حسب الأصناف المسجلة، ومش بالضرورة شامل التوصيل. حالة الدفع والتجهيز بتتأكد مع المطعم.</p>
+        <div className="t-order-ticket__footer">
+          <span lang="en">KEEP THIS REFERENCE</span>
+          <span>دي تذكرة متابعة، مش إيصال دفع.</span>
+        </div>
       </div>
     </section>
   );
