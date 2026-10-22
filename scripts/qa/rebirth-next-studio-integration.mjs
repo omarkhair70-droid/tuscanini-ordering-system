@@ -67,7 +67,7 @@ console.log('PASS: idempotency, staff secret gate, invalid references, stale act
 const settings=await fetch(base+'/api/public/site-settings').then(x=>x.json());
 assert.equal(settings.settings?.studioMode,true,'Local checkout must have real staging mode enabled');
 const key2='studio-'+crypto.randomUUID();
-const customer={name:'عميل تجربة',phone:'01012345678',address:'',orderType:'pickup',
+const rebirthCustomer={name:'عميل تجربة',phone:'01012345678',address:'',orderType:'pickup',
   generalNotes:'من غير بصل',confirmedAccurateDetails:true};
 const menuItems=[
   {lineId:'rebirth-fixture-1',kind:'product',productId:'cm1',productName:'برجر',
@@ -78,7 +78,7 @@ const menuItems=[
     selectedSize:{id:'single',label:'سعر واحد',price:10},
     selectedAddons:[],quantity:1,itemNotes:'',unitPrice:10,totalItemPrice:10},
 ];
-const rebirthBody={customer,items:menuItems,subtotal:130,tableReference:'A-3',requestKey:key2};
+const rebirthBody={customer:rebirthCustomer,items:menuItems,subtotal:130,tableReference:'A-3',requestKey:key2};
 async function fullOrder(body){
   const res=await fetch(base+'/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify(body)});
