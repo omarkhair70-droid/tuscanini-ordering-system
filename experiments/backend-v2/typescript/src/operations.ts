@@ -118,7 +118,10 @@ export async function listOperatorOrders(pool: Pool, limit=30): Promise<Array<{
         FILTER (WHERE l.id IS NOT NULL),'[]'::json) AS items
     FROM spike_ts.orders o
     LEFT JOIN spike_ts.order_line l ON l.order_id=o.id
-    GROUP BY o.id ORDER BY o.created_at DESC,o.id DESC LIMIT $1
+    GROUP BY o.id ORDER BY
+      CASE WHEN o.status='received' THEN 0 WHEN o.status IN ('accepted','preparing') THEN 1
+           WHEN o.status='ready' THEN 2 ELSE 3 END,
+      o.created_at DESC,o.id DESC LIMIT $1
   `,[limit]);
   return res.rows;
 }

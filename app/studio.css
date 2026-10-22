@@ -46,3 +46,15 @@
 .t-studio__lines>li span{background:#f4e3c7;padding:3px 8px}
 .t-studio__lines>li small{flex-basis:100%;font-weight:750;color:#5f5143}
 .t-studio__order-customer{font-weight:900;font-size:14px!important;color:#241c15!important}
+
+/* Operator-first information hierarchy: orders get the canvas, not the guide. */
+@media(min-width:841px){
+  .t-studio__layout[data-studio-mode="operator"]{grid-template-columns:minmax(0,1fr) 230px}
+  .t-studio__layout[data-studio-mode="operator"] .t-studio__orders{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;align-items:start
+  }
+  .t-studio__layout[data-studio-mode="operator"] .t-studio__orders>.t-studio__order{margin:0}
+  .t-studio__layout[data-studio-mode="operator"] .t-studio__guide{padding:18px}
+  .t-studio__layout[data-studio-mode="operator"] .t-studio__guide .t-studio__panel-head{flex-wrap:wrap}
+}
+@media(max-width:840px){.t-studio__orders>.t-studio__order{margin-bottom:11px}}

@@ -77,6 +77,7 @@ try{
   assert.equal(await real.locator('.t-order-tracking[data-current-status="preparing"]').count(),1);
   const overflow=await real.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
   assert.ok(overflow<=3,'Rebirth order ticket must not horizontally overflow on mobile');
+  await real.evaluate(()=>window.scrollTo(0,0));
   await real.screenshot({path:'artifacts/screenshots/studio-original-rebirth-tracking-390.png',fullPage:true,animations:'disabled'});
   await tablet.screenshot({path:'artifacts/screenshots/studio-rebirth-order-operator-1024.png',fullPage:true,animations:'disabled'});
   console.log('PASS browser: original Rebirth Menu → custom Cart → Order Success updated by real operator actions.');

@@ -129,7 +129,7 @@ export function StudioOrderRoom({mode}:{mode:Mode}){
     finally{setBusy(false);}
   };
 
-  return <section className="t-studio__layout" aria-label={mode==='customer'?'تجربة الطلب':'لوحة تشغيل الأوردرات'}>
+  return <section className="t-studio__layout" data-studio-mode={mode} aria-label={mode==='customer'?'تجربة الطلب':'لوحة تشغيل الأوردرات'}>
     {mode==='customer'?<>
       <section className="t-studio__panel" aria-labelledby="studio-menu">
         <div className="t-studio__panel-head"><h2 id="studio-menu">منيو التجربة</h2><span>01 / PICK</span></div>
