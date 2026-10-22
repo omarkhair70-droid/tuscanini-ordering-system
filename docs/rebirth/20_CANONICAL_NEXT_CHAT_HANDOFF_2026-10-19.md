@@ -159,3 +159,11 @@ The owner has NOT signed off on the whole visual experience. Need inspect **actu
 - Provisional preferred **modular monolith** at single-restaurant scope: authored Next.js front, independent Django or minimal retained TypeScript application API, PostgreSQL transactional database, durable outbox and optional local POS adapter; no microservices, Redis or offline-agent complexity until evidenced. Owner is experienced with Django/Oracle on other projects, but do not assume one framework automatically wins.
 - Required before migration: understand current actual store POS/software, price authority, cash/card merchant/gateway, LAN/offline behavior, ETA e-receipt applicability; compare hosting TCO and safe migration; staging transaction/idempotency/POS/mock tests.
 - Research-only docs committed; no backend conversion, no live database access, no credentials, no new 100-image generation or menu changes. **PR #59 remains DRAFT; NO MERGE OR PRODUCTION DEPLOY.**
+
+
+## 6F — PASS 25 / ISOLATED POSTGRESQL BACKEND V2 PROOF (22 OCT 2026)
+- Added executable **test-only** Django 5.2/PostgreSQL 16 spike under \`experiments/backend-v2/\`; isolated \`.github/workflows/tuscanini-backend-v2-spike.yml\` creates disposable local CI Postgres test DB. Runner explicitly refuses non-local hosts and real DB names.
+- Proof tests: atomic order+lines+audit+outbox; DB-sourced prices/snapshots; retry idempotency and unique-key conflict; two concurrent same-key requests; disconnected mock outbox retries; distinct payment state. No real POS, cards, customer records, or production Supabase accessed.
+- **Do not report all tests passed until linked GitHub Actions run completes successfully.** This is a correctness experiment, *not* a cost/latency comparison versus TypeScript.
+- See [\`26_PASS_25_DATABASE_V2_AND_TRANSACTION_SPIKE_2026-10-22.md\`](26_PASS_25_DATABASE_V2_AND_TRANSACTION_SPIKE_2026-10-22.md), plus experiment README. Django, Oracle Database and independent PostgreSQL are still subject to actual comparative/operational gates.
+- No frontend/menu/images modified. PR #59 **DRAFT**. NO MERGE / NO PRODUCTION DEPLOY.
