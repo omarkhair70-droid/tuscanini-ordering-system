@@ -99,3 +99,38 @@ export async function trackOrder(pool: Pool, orderId: string): Promise<{
   if (!rows.rows[0]) throw new OperationalError('Order does not exist.', 404);
   return rows.rows[0];
 }
+
+/** A first-party operator inbox query for the isolated studio, not Talabat/POS. */
+export async function listOperatorOrders(pool: Pool, limit=30): Promise<Array<{
+  id: string; status: OrderStatus; subtotal_cents: string; created_at: string;
+  items: Array<{ sku: string; name: string; qty: number; price_cents: number }>;
+}>> {
+  if(!Number.isInteger(limit)||limit<1||limit>50)throw new OperationalError('Invalid inbox page size.',400);
+  const res=await pool.query<{
+    id:string;status:OrderStatus;subtotal_cents:string;created_at:string;
+    items:Array<{sku:string;name:string;qty:number;price_cents:number}>;
+  }>(`
+    SELECT o.id,o.status,o.subtotal_cents::text,o.created_at,
+      COALESCE(json_agg(json_build_object('sku',l.sku_snapshot,'name',l.name_snapshot,
+        'qty',l.quantity,'price_cents',l.unit_price_cents) ORDER BY l.id)
+        FILTER (WHERE l.id IS NOT NULL),'[]'::json) AS items
+    FROM spike_ts.orders o
+    LEFT JOIN spike_ts.order_line l ON l.order_id=o.id
+    GROUP BY o.id ORDER BY o.created_at DESC,o.id DESC LIMIT $1
+  `,[limit]);
+  return res.rows;
+}
+
+/** The actual event ledger used by the live ticket, ordered by durable event id. */
+export async function listOrderEvents(pool: Pool,orderId:string):Promise<Array<{
+  id:string;status:OrderStatus;action:string;actor_role:string;created_at:string;
+}>> {
+  validateOrderId(orderId);
+  const order=await pool.query('SELECT 1 FROM spike_ts.orders WHERE id=$1',[orderId]);
+  if(!order.rows[0])throw new OperationalError('Order does not exist.',404);
+  const result=await pool.query<{
+    id:string;status:OrderStatus;action:string;actor_role:string;created_at:string;
+  }>(`SELECT id::text,status,action,actor_role,created_at
+     FROM spike_ts.order_status_event WHERE order_id=$1 ORDER BY id ASC`,[orderId]);
+  return result.rows;
+}

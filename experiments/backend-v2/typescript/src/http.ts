@@ -4,12 +4,13 @@
  * Do not expose publicly, proxy to production, or copy as a live endpoint.
  */
 import { randomUUID } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import type { Pool } from 'pg';
 import { verifyDisposableLocalDatabase } from './db.js';
 import { RequestKeyCollision, submitOrder, type CartLine } from './orders.js';
-import { OperationalError, advanceOrder, trackOrder, type StaffAction, type StaffRole } from './operations.js';
+import { OperationalError, advanceOrder, listOperatorOrders, listOrderEvents, trackOrder, type StaffAction, type StaffRole } from './operations.js';
 
 function json(res: ServerResponse, status: number, data: unknown): void {
   res.writeHead(status, {
@@ -61,6 +62,30 @@ export async function startLocalSimulation(pool: Pool): Promise<{
     const url = new URL(req.url ?? '/', 'http://127.0.0.1');
     const method = req.method ?? 'GET';
     try {
+      if(method==='GET'&&url.pathname==='/studio'){
+        const html=await readFile(new URL('../studio/index.html',import.meta.url),'utf8');
+        res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store',
+          'Content-Security-Policy':"default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'none'"});
+        res.end(html.replaceAll('__STUDIO_TOKEN__',fixtureToken));
+        return;
+      }
+      if(method==='GET'&&url.pathname==='/api/studio/catalog'){
+        const rows=await pool.query<{sku:string;name:string;unit_price_cents:number}>(
+          'SELECT sku,name,unit_price_cents FROM spike_ts.catalog_item WHERE available=true ORDER BY sku'
+        );
+        json(res,200,{items:rows.rows});
+        return;
+      }
+      if(method==='GET'&&url.pathname==='/api/staff/orders'){
+        fixtureRole(req,fixtureToken);
+        json(res,200,{orders:await listOperatorOrders(pool,30)});
+        return;
+      }
+      const events=/^\\/api\\/orders\\/([0-9a-f-]+)\\/events$/i.exec(url.pathname);
+      if(method==='GET'&&events){
+        json(res,200,{events:await listOrderEvents(pool,events[1])});
+        return;
+      }
       if (method === 'POST' && url.pathname === '/api/orders') {
         const body = await readJson(req);
         const order = await submitOrder(pool, body.requestKey as string, body.items as CartLine[]);
