@@ -65,7 +65,11 @@ try{
   assert.match(realId,/^[0-9a-f-]{36}$/i);
   await real.getByRole('heading',{name:'بانتظار تأكيد المطعم'}).waitFor({timeout:12000});
   await tablet.getByRole('button',{name:/حدّث الأوردرات/}).click();
-  const realCard=tablet.locator('.t-studio__order').filter({hasText:'#'+realId.slice(0,8).toUpperCase()});
+  // The operator intentionally keeps the previous ticket selected after an
+  // action; select the newly received order from the queue, don't auto-steal focus.
+  const newOrderRef='#'+realId.slice(0,8).toUpperCase();
+  await tablet.getByRole('button',{name:'افتح أوردر '+newOrderRef}).click();
+  const realCard=tablet.locator('.t-studio__order').filter({hasText:newOrderRef});
   await realCard.waitFor({timeout:10000});
   assert.match(await realCard.innerText(),/تشيكن فاير/);
   assert.match(await realCard.innerText(),/موتزاريلا/);
