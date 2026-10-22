@@ -31,8 +31,11 @@ CREATE TABLE spike_ts.order_status_event (
   order_id uuid NOT NULL REFERENCES spike_ts.orders(id) ON DELETE RESTRICT,
   status varchar(24) NOT NULL,
   detail varchar(200) NOT NULL,
+  actor_role varchar(20) NOT NULL DEFAULT 'system',
+  action varchar(50) NOT NULL DEFAULT 'receive',
   created_at timestamptz NOT NULL DEFAULT now()
 );
+CREATE INDEX ts_order_events_order_idx ON spike_ts.order_status_event(order_id, created_at);
 CREATE TABLE spike_ts.outbox_event (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   order_id uuid NOT NULL REFERENCES spike_ts.orders(id) ON DELETE RESTRICT,

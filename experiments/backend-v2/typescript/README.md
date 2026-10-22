@@ -34,3 +34,11 @@ No HTTP API or production auth exists here. No workload latency, cost, multi-reg
 The `outbox` toy holds a DB lock while calling a mock sender; a real outbox worker should use short-lived claim/lease and retry backoff, avoid holding DB transactions during slow network operations, and require deduplication downstream.
 
 See `docs/rebirth/27_PASS_26_TYPESCRIPT_POSTGRES_PARITY_2026-10-22.md` for the **decision matrix**. Correctness parity does not establish performance superiority.
+
+
+## Pass 27 — operational HTTP / POS simulation (local only)
+- \`src/operations.ts\`: cashier accept/reject, kitchen start/ready, cashier deliver as a **row-locked finite-state machine**, with order-state + audit row + durable outbox committed atomically.
+- \`src/http.ts\`: test-only JSON API listening **only on 127.0.0.1 on an ephemeral port**, when explicit local DB safety flags are set. \`POST /api/orders\`, \`GET /api/orders/:id/tracking\`, \`POST /api/staff/orders/:id/decision\`, \`POST /api/kitchen/orders/:id/progress\` and \`POST /api/staff/orders/:id/handoff\`.
+- The API uses a **random fixture-only token** and a **caller-supplied simulated role**. This is **NOT REAL AUTH**. It is intentionally unusable as a production cashier/kitchen API. No payment confirmation, real POS, networked printer or mobile device is connected.
+- \`tests/orders.test.ts\` contains isolated end-to-end HTTP fixtures for happy and rejected workflows, no premature kitchen action, stale concurrent staff updates, network retry and transaction rollback, plus the previous checkout tests.
+- The outbox mock sends while holding a database transaction; **real production worker must use claim/lease/backoff and deduplicated consumers**. A web submit marked \`received\` is NOT a restaurant-confirmed order.

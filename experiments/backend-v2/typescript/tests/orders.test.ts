@@ -4,6 +4,8 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test, { after, before, beforeEach } from 'node:test';
 import { openDisposablePool } from '../src/db.js';
+import { advanceOrder } from '../src/operations.js';
+import { startLocalSimulation } from '../src/http.js';
 import {
   RequestKeyCollision,
   deliverOneOutbox,
@@ -149,4 +151,195 @@ test('failed transaction leaves the same idempotency key free for a valid retry'
   assert.equal(created.status, 'received');
   assert.equal(await count('orders'), 1);
   assert.equal(await count('outbox_event'), 1);
+});
+
+
+test('local HTTP: submitted -> accepted -> preparing -> ready -> delivered', async () => {
+  const server = await startLocalSimulation(pool);
+  const action = (path: string, body: unknown, role?: 'cashier' | 'kitchen', token = server.fixtureToken) =>
+    fetch(server.baseUrl + path, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        ...(role ? { 'x-spike-role': role, 'x-spike-test-token': token } : {}),
+      },
+      body: JSON.stringify(body),
+    });
+  try {
+    const created = await action('/api/orders', { requestKey: 'flow-happy-0001', items: cart() });
+    assert.equal(created.status, 200);
+    const received = await created.json() as { id: string; status: string; subtotal_cents: string };
+    assert.equal(received.status, 'received');
+    assert.equal(Number(received.subtotal_cents), 31500);
+
+    const initial = await fetch(server.baseUrl + '/api/orders/' + received.id + '/tracking');
+    assert.equal((await initial.json() as { status: string }).status, 'received');
+
+    const transitions: Array<{ path: string; role: 'cashier' | 'kitchen'; action: string; state: string }> = [
+      { path: '/api/staff/orders/', role: 'cashier', action: 'accept', state: 'accepted' },
+      { path: '/api/kitchen/orders/', role: 'kitchen', action: 'start', state: 'preparing' },
+      { path: '/api/kitchen/orders/', role: 'kitchen', action: 'ready', state: 'ready' },
+      { path: '/api/staff/orders/', role: 'cashier', action: 'deliver', state: 'delivered' },
+    ];
+    for (const step of transitions) {
+      const suffix = step.action === 'accept' ? '/decision'
+        : step.action === 'deliver' ? '/handoff' : '/progress';
+      const response = await action(step.path + received.id + suffix, { action: step.action }, step.role);
+      assert.equal(response.status, 200, step.action + ': ' + await response.text());
+      const tracked = await fetch(server.baseUrl + '/api/orders/' + received.id + '/tracking');
+      assert.equal((await tracked.json() as { status: string }).status, step.state);
+    }
+
+    assert.equal(await count('orders'), 1);
+    assert.equal(await count('order_status_event'), 5);
+    assert.equal(await count('outbox_event'), 5);
+    const events = await pool.query<{ status: string; actor_role: string; action: string }>(
+      'SELECT status, actor_role, action FROM spike_ts.order_status_event ORDER BY id',
+    );
+    assert.deepEqual(events.rows.map(x => x.status), [
+      'received', 'accepted', 'preparing', 'ready', 'delivered',
+    ]);
+    assert.deepEqual(events.rows.map(x => x.actor_role), [
+      'system', 'cashier', 'kitchen', 'kitchen', 'cashier',
+    ]);
+  } finally {
+    await server.close();
+  }
+});
+
+test('local HTTP: cashier rejects and kitchen cannot process the order', async () => {
+  const server = await startLocalSimulation(pool);
+  const request = (path: string, body: unknown, role?: 'cashier' | 'kitchen') =>
+    fetch(server.baseUrl + path, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        ...(role ? { 'x-spike-role': role, 'x-spike-test-token': server.fixtureToken } : {}),
+      },
+      body: JSON.stringify(body),
+    });
+  try {
+    const placed = await request('/api/orders', {
+      requestKey: 'flow-rejected-0001', items: cart(),
+    });
+    const { id } = await placed.json() as { id: string };
+    const reject = await request('/api/staff/orders/' + id + '/decision', { action: 'reject' }, 'cashier');
+    assert.equal(reject.status, 200);
+    const start = await request('/api/kitchen/orders/' + id + '/progress', { action: 'start' }, 'kitchen');
+    assert.equal(start.status, 409);
+    const track = await fetch(server.baseUrl + '/api/orders/' + id + '/tracking');
+    assert.equal((await track.json() as { status: string }).status, 'rejected');
+    assert.equal(await count('order_status_event'), 2);
+    assert.equal(await count('outbox_event'), 2);
+  } finally {
+    await server.close();
+  }
+});
+
+test('local HTTP: missing fixture token, wrong role and premature kitchen action are rejected', async () => {
+  const server = await startLocalSimulation(pool);
+  try {
+    const placed = await fetch(server.baseUrl + '/api/orders', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ requestKey: 'flow-unauth-0001', items: cart() }),
+    });
+    const { id } = await placed.json() as { id: string };
+    const url = server.baseUrl + '/api/staff/orders/' + id + '/decision';
+    const without = await fetch(url, {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ action: 'accept' }),
+    });
+    assert.equal(without.status, 403);
+    const unauthorized = await fetch(url, {
+      method: 'POST', headers: {
+        'content-type': 'application/json',
+        'x-spike-test-token': server.fixtureToken,
+        'x-spike-role': 'kitchen',
+      },
+      body: JSON.stringify({ action: 'accept' }),
+    });
+    assert.equal(unauthorized.status, 403);
+    const premature = await fetch(server.baseUrl + '/api/kitchen/orders/' + id + '/progress', {
+      method: 'POST', headers: {
+        'content-type': 'application/json',
+        'x-spike-test-token': server.fixtureToken,
+        'x-spike-role': 'kitchen',
+      },
+      body: JSON.stringify({ action: 'start' }),
+    });
+    assert.equal(premature.status, 409);
+    assert.equal(await count('order_status_event'), 1);
+  } finally {
+    await server.close();
+  }
+});
+
+test('operator update + audit + outbox are one atomic transaction on failure', async () => {
+  const placed = await submitOrder(pool, 'flow-rollback-001', cart());
+  await assert.rejects(
+    advanceOrder(pool, placed.id, 'accept', 'cashier', { failAfterUpdate: true }),
+    /Injected fault: status write/,
+  );
+  const current = await pool.query<{ status: string }>(
+    'SELECT status FROM spike_ts.orders WHERE id=$1', [placed.id],
+  );
+  assert.equal(current.rows[0]?.status, 'received');
+  assert.equal(await count('order_status_event'), 1);
+  assert.equal(await count('outbox_event'), 1);
+});
+
+test('two staff decisions cannot both change the same received order', async () => {
+  const placed = await submitOrder(pool, 'flow-concurrent1', cart());
+  const results = await Promise.allSettled([
+    advanceOrder(pool, placed.id, 'accept', 'cashier'),
+    advanceOrder(pool, placed.id, 'reject', 'cashier'),
+  ]);
+  assert.equal(results.filter(x => x.status === 'fulfilled').length, 1);
+  assert.equal(results.filter(x => x.status === 'rejected').length, 1);
+  assert.equal(await count('order_status_event'), 2);
+  assert.equal(await count('outbox_event'), 2);
+  const final = await pool.query<{ status: string }>('SELECT status FROM spike_ts.orders WHERE id=$1', [placed.id]);
+  assert.ok(['accepted', 'rejected'].includes(final.rows[0]?.status ?? ''));
+});
+
+test('store event delivery outage leaves status and outbox durable for a retry', async () => {
+  const placed = await submitOrder(pool, 'flow-outage-0001', cart());
+  await advanceOrder(pool, placed.id, 'accept', 'cashier');
+  await assert.rejects(
+    deliverOneOutbox(pool, async () => { throw new Error('Simulated store offline'); }),
+    /Simulated store offline/,
+  );
+  assert.equal(await count('outbox_event'), 2);
+  const pendingBefore = await pool.query<{ n: string }>(
+    'SELECT count(*)::text AS n FROM spike_ts.outbox_event WHERE delivered_at IS NULL',
+  );
+  assert.equal(Number(pendingBefore.rows[0]?.n), 2);
+  const received: Array<{ id: string; status: string }> = [];
+  for (let i = 0; i < 2; i++) {
+    assert.equal(await deliverOneOutbox(pool, async (id, payload) => {
+      received.push({ id, status: (payload as { status: string }).status });
+    }), true);
+  }
+  assert.equal(await deliverOneOutbox(pool, async () => assert.fail('No remaining events')), false);
+  assert.deepEqual(received.map(x => x.status).sort(), ['accepted', 'received']);
+  const state = await pool.query<{ status: string }>('SELECT status FROM spike_ts.orders WHERE id=$1', [placed.id]);
+  assert.equal(state.rows[0]?.status, 'accepted');
+});
+
+test('HTTP rejects malformed JSON and does not expose private staff routes without fixture credentials', async () => {
+  const server = await startLocalSimulation(pool);
+  try {
+    const malformed = await fetch(server.baseUrl + '/api/orders', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: '{bad',
+    });
+    assert.equal(malformed.status, 400);
+    assert.equal(await count('orders'), 0);
+    const missing = await fetch(server.baseUrl + '/api/orders/00000000-0000-4000-8000-000000000000/tracking');
+    assert.equal(missing.status, 404);
+  } finally {
+    await server.close();
+  }
 });
