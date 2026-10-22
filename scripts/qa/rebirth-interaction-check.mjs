@@ -142,7 +142,7 @@ try {
       `${width}px all sixteen authentic categories and All carry drawn SVG family pictograms`);
     await check(await page.locator('.t-menu-categories__scroller button').count()===17,
       `${width}px historical Tuscanini menu has 16 original category filters plus All`);
-    await check(await page.getByText(/منيو توسكانيني السابق بأسعاره/).count()>=1,
+    await check(await page.locator('[data-visual-disclosure="menu"]').getByText(/الأسعار من المنيو السابق/).count()===1,
       `${width}px original old-price menu is transparently source-labelled`);
     await check(await page.locator('.t-menu-product').count()===20,
       `${width}px 113-item original menu is populated and paginated, not an unavailable dummy`);
@@ -153,7 +153,7 @@ try {
     await check(await page.locator('.t-menu-items__grid--photo [data-kind="'+expectedKind+'"]').count()===20,
       `${width}px first 20 food cards use ${expectedKind} images with explicit source provenance`);
     await check(await page.locator('[data-visual-disclosure="menu"]').count()===1 &&
-       (await page.locator('[data-visual-disclosure="menu"]').innerText()).includes('صور الأكل المعروضة توضيحية') &&
+       (await page.locator('[data-visual-disclosure="menu"]').innerText()).includes('الصور للتوضيح') &&
        await page.locator('.t-menu-product .t-product-art__representative-label').count()===0,
        `${width}px illustration source disclosed once, without overlays on each food photo`);
     if(generatedMediaReady){
@@ -205,7 +205,7 @@ try {
        await check(detailPhotoWidth>=135 && detailPhotoWidth<=160,
          '390px product detail illustration carries food imagery without hiding size/addon controls');
      }
-     await check(await page.locator('.t-product-dialog').getByText(/منيو توسكانيني السابق/).count()===1,
+     await check(await page.locator('.t-product-dialog').getByText(/الأسعار حسب المنيو السابق/).count()===1,
       `${width}px size/addon picker states where its historical prices came from`);
     await check(await page.locator('.t-product-dialog__options label').count()>1,
       `${width}px old crepe is populated with real original size and addon controls`);
@@ -214,7 +214,7 @@ try {
     await page.getByRole('button',{name:'كريب لحوم',exact:true}).click();
     await page.waitForFunction(() => document.querySelectorAll('.t-menu-product').length > 0, null, {timeout:8000});
     await check(await page.locator('.t-menu-family-context img').count()===1&&
-      await page.locator('.t-menu-family-context').getByText(/مش صورة أي صنف معين/).count()===1,
+      await page.locator('.t-menu-family-context').getByText(/من جوّه المطعم/).count()===1,
       `${width}px verified original CREPE image is shown only as a family context photo`);
     await check(await page.locator('.t-menu-product').count()>0,
       `${width}px category chips filter legacy catalog and deep link correctly`);
@@ -243,10 +243,10 @@ try {
     const photoSheet=page.locator('.t-product-dialog[open]');
     await check(await photoSheet.count()===1 &&
       (generatedMediaReady
-        ? await photoSheet.locator('[data-kind="generated-illustrative"]').count()===1 &&
-          await photoSheet.getByText(/صورة توضيحية مولّدة بالذكاء الاصطناعي/).count()===1 &&
-          await photoSheet.getByRole('link',{name:/Pexels/}).count()===0
-        : await page.getByRole('link',{name:/مصدر الصورة التوضيحية.*Pexels/}).count()===1),
+        ? await photoSheet.locator('[data-kind="generated-illustrative"]').count()===1
+        : await photoSheet.locator('[data-kind="representative-stock"]').count()===1) &&
+        await photoSheet.getByText('الأسعار حسب المنيو السابق.').count()===1 &&
+        await photoSheet.getByText(/مولّدة بالذكاء الاصطناعي|مش تصوير الصنف|Pexels/).count()===0,
       `${width}px product sheet preserves original size/addons and correctly declares generated versus stock food photography`);
     await page.getByRole('button',{name:'إغلاق تفاصيل المنتج'}).click();
     const menuOverflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);

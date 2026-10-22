@@ -19,8 +19,8 @@ import type { MenuCategory, MenuItem } from '@/types/menu';
  */
 export const previousMenuSource = {
   kind: 'owner-directed-previous-menu' as const,
-  label: 'منيو توسكانيني السابق بأسعاره',
-  note: 'الأصناف والأسعار حسب منيو توسكانيني السابق؛ التوافر وتسجيل الطلب يتأكدوا من المطعم.',
+  label: 'المنيو',
+  note: 'الأسعار من المنيو السابق · الصور للتوضيح',
 };
 
 export type RebirthCatalog = {

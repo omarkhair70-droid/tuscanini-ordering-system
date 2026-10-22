@@ -42,7 +42,7 @@ export function ProductArtwork({item,size='compact',className='',visualMode='art
   if(generated&&generated.src!==failedUrl){
     return <div className={`t-product-art t-product-art--representative t-product-art--generated t-product-art--${size} ${className}`}
       data-kind="generated-illustrative" data-product-id={item.id} data-source-photo-id={generated.assetId}
-      role="img" aria-label={`صورة طعام مولدة للتوضيح فقط، ليست صورة أصلية لصنف ${item.name} من المطعم`}>
+      role="img" aria-label={`صورة توضيحية لـ${item.name}`}>
       <Image src={generated.src} alt={generated.altAr} fill unoptimized
         sizes={size==='compact'?'(max-width:720px) 160px, 280px':'(max-width:720px) 160px, 230px'}
         onError={()=>setFailedUrl(generated.src)} />
@@ -52,7 +52,7 @@ export function ProductArtwork({item,size='compact',className='',visualMode='art
     return <div className={`t-product-art t-product-art--representative t-product-art--${size} ${className}`}
       data-kind="representative-stock" data-product-id={item.id}
       data-source-photo-id={representative.photoId}
-      role="img" aria-label={`صورة توضيحية لنوع الأكل؛ ليست صورة فعلية من توسكانيني للصنف ${item.name}`}>
+      role="img" aria-label={`صورة توضيحية لـ${item.name}`}>
       <Image src={representative.src} alt={representative.altAr} fill unoptimized
         sizes={size==='compact'?'(max-width:720px) 82px, 100px':'(max-width:720px) 118px, 192px'}
         onError={()=>setFailedUrl(representative.src)} />
@@ -73,7 +73,7 @@ export function ProductArtwork({item,size='compact',className='',visualMode='art
   } as CSSProperties;
   return <div className={`t-product-art t-product-art--drawn t-product-art--${size} t-product-art--variant-${variant} ${className}`}
     style={style} data-kind="original-graphic" data-product-id={item.id}
-    role="img" aria-label={`رسمة فنية مميزة للصنف ${item.name}، ليست صورة فوتوغرافية للوجبة`}>
+    role="img" aria-label={`رسم فني لـ${item.name}`}>
     <span className="t-product-art__registration" aria-hidden="true">T. / {serial}</span>
     <div className="t-product-art__field" aria-hidden="true">
       <span className="t-product-art__fold t-product-art__fold--one"/>
@@ -83,6 +83,5 @@ export function ProductArtwork({item,size='compact',className='',visualMode='art
     </div>
     <span className="t-product-art__item-name" aria-hidden="true">{item.name}</span>
     <span className="t-product-art__serial" aria-hidden="true" dir="ltr">{item.id.toUpperCase()}</span>
-    <span className="t-product-art__caption">رسم تعبيري / مش صورة للصنف</span>
   </div>;
 }

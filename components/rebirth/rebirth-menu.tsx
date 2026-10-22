@@ -13,7 +13,6 @@ import type { MenuCategory, MenuItem } from '@/types/menu';
 import { MaterialGlyph, categoryMaterialGlyph } from '@/components/rebirth/material-glyph';
 import { ProductArtwork } from '@/components/rebirth/product-artwork';
 import { getCategoryContextPhoto } from '@/lib/rebirth/verified-menu-photographs';
-import { GENERATED_MEDIA_READY } from '@/lib/rebirth/generated-menu-media';
 import type { RebirthCatalog } from '@/lib/rebirth/previous-menu-catalog';
 
 type Props = {
@@ -98,10 +97,10 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
                 <Image src="/images/rebirth/food-03.jpg" alt="بيتزا حقيقية داخل علبة توسكانيني المطبوعة" fill sizes="(max-width: 720px) 36vw, 19vw" />
                 <figcaption lang="en">02 / THE BOX</figcaption>
               </figure>
-              <span className="t-menu-intro__photo-note">من صور المطعم — مش صور مرتبطة بصنف معين</span>
+              
             </div>
           </div>
-          <div className="t-menu-intro__bottom"><span>{source.label} · السعر والتوافر النهائي عند تأكيد المطعم</span><Link href="/food-finder">مش عارف تختار؟ <span aria-hidden>↗</span></Link></div>
+          <div className="t-menu-intro__bottom"><span>اختار الأكل اللي على مزاجك.</span><Link href="/food-finder">مش عارف تختار؟ <span aria-hidden>↗</span></Link></div>
         </header>
         <div className="t-shell t-menu-content">
           <ActiveOrderBanner />
@@ -112,7 +111,7 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
               {query && <button type="button" onClick={()=>{setQuery('');setLimit(PAGE_SIZE);}}>امسح البحث</button>}
             </div>
           </section>
-          <p className="t-menu-source-note" role="note" data-visual-disclosure="menu">{source.note} {GENERATED_MEDIA_READY ? 'صور الأكل المعروضة توضيحية مولّدة بالذكاء الاصطناعي، وليست تصويرًا فعليًا للأصناف.' : 'صور الأكل المعروضة توضيحية وليست تصويرًا فعليًا للأصناف.'}</p>
+          <p className="t-menu-source-note" role="note" data-visual-disclosure="menu">{source.note}</p>
           <section id="t-menu-categories" aria-label="أقسام المنيو" className="t-menu-categories">
             <div className="t-menu-categories__heading"><span className="t-index">01 — PICK A FOOD FAMILY</span><span>{categories.length} قسم</span></div>
             <div className="t-menu-categories__scroller">
@@ -132,8 +131,8 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
               <figure className="t-menu-family-context">
                 <div className="t-menu-family-context__photo"><Image src={contextPhoto.src} alt={contextPhoto.alt} fill
                   sizes="(max-width:720px) 128px, 240px" /></div>
-                <figcaption><span className="t-index" lang="en">REAL RESTAURANT PHOTOGRAPH / FAMILY ONLY</span>
-                  <strong>من جوّه المطعم.</strong><span>{contextPhoto.credit} — مش صورة أي صنف معين.</span></figcaption>
+                <figcaption><span className="t-index" lang="en">FROM TUSCANINI</span>
+                  <strong>من جوّه المطعم.</strong><span>{contextPhoto.credit}</span></figcaption>
               </figure>
             )}
             {!catalogPresent ? (

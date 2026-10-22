@@ -112,7 +112,7 @@ export function RebirthCheckout() {
   const status = settingsFailed ? 'تعذر التحقق من حالة استقبال الطلبات. الطلب الإلكتروني مش متاح مؤقتًا.' :
     !settings ? 'بنتحقق من استقبال الطلبات…' :
       !settings.isOrderingOpen ? 'المطعم موقف استقبال الطلبات حاليًا.' :
-        'الطلب بيتسجل في النظام أولًا. تأكيد المطعم والتجهيز حالات منفصلة بتظهر لما تتسجل.';
+        'جاهز تسجل طلبك؟ هتقدر تتابعه بعد الإرسال.';
 
   return (
     <div className="t-page t-checkout-page" dir="rtl">
@@ -123,7 +123,7 @@ export function RebirthCheckout() {
           <div className="t-checkout-hero__overline"><span>YOUR ORDER / TUSCANINI</span><span>من اختيار الأكل لتأكيده</span></div>
           <div className="t-checkout-hero__headline"><h1>على<br/><em>مزاجك.</em></h1>
             <div><span className="t-index">CART → DETAILS → RESTAURANT CONFIRMATION</span>
-              <p>راجع تفاصيلك. بعد تسجيل الطلب تقدر تتابع تأكيد المطعم وحالة التجهيز لما تتسجل.</p></div>
+              <p>راجع أكلك وبياناتك، وبعد الإرسال تابع الطلب خطوة بخطوة.</p></div>
           </div>
           <div className="t-checkout-hero__bottom"><span>01 / REVIEW YOUR FOOD</span><span>{count} قطعة في السلة</span></div>
         </header>
@@ -206,11 +206,11 @@ export function RebirthCheckout() {
                 <div className="t-checkout-summary__line"><span>نوع الطلب</span><strong>{customer.orderType==='delivery'?'دليفري':'استلام من المطعم'}</strong></div>
                 <div className="t-checkout-summary__line"><span>عدد القطع</span><strong>{count}</strong></div>
                 <div className="t-checkout-summary__line"><span>إجمالي أصناف الطلب</span><strong>{money(subtotal)} ج.م</strong></div>
-                <p className="t-checkout-summary__notice">الإجمالي ده حسب أسعار منيو توسكانيني السابق. لو اتغيّر سعر أو توافر صنف، السيرفر مش هيقبل طلب بسعر مختلف؛ هتحتاج تراجع التفاصيل. رسوم التوصيل بيتأكد منها المطعم.</p>
+                <p className="t-checkout-summary__notice">رسوم التوصيل، لو موجودة، بتتحدد مع المطعم.</p>
                 {tableReference && <p className="t-checkout-summary__table">مرجع الطاولة: {tableReference}</p>}
                 <label className="t-checkout-confirm"><input type="checkbox" checked={customer.confirmedAccurateDetails}
                   onChange={e=>{updateCustomer({confirmedAccurateDetails:e.target.checked});setErrors(x=>({...x,confirmedAccurateDetails:undefined}))}}/>
-                  <span>راجعت الأصناف وبياناتي، وفاهم إن تسجيل الطلب مش معناه إن المطعم قبله أو إن التحضير بدأ.</span></label>
+                  <span>راجعت الأصناف وبيانات الطلب.</span></label>
                 {errors.confirmedAccurateDetails && <p className="t-checkout-error">{errors.confirmedAccurateDetails}</p>}
                 <p className="t-checkout-status" role="status">{status}</p>
                 {error && <p className="t-checkout-error t-checkout-error--large" role="alert">{error}</p>}

@@ -4,8 +4,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useCart } from '@/components/cart/cart-provider';
 import type { MenuItem } from '@/types/menu';
 import { ProductArtwork } from '@/components/rebirth/product-artwork';
-import { getRepresentativeMenuPhoto } from '@/lib/rebirth/representative-menu-photos';
-import { getGeneratedMenuPhoto } from '@/lib/rebirth/generated-menu-media';
 
 type Props = {
   item: MenuItem | null;
@@ -105,8 +103,6 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
   const totalPrice = unitPrice * quantity;
   if (!item) return null;
 
-  const generated=visualMode==='representative'?getGeneratedMenuPhoto(item.id,item.name,item.categorySlug):null;
-  const representative=visualMode==='representative'&&!generated?getRepresentativeMenuPhoto(item.id,item.categorySlug):null;
   const unavailable = item.availability === 'unavailable';
   const invalidPrice = !Number.isFinite(unitPrice) || unitPrice <= 0 || quantity > 50;
   const cannotAdd = unavailable || invalidPrice || Boolean(item.sizes?.length && !selectedSize);
@@ -211,8 +207,7 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
             <ProductArtwork item={item} size="large" visualMode={visualMode}/>
             <div className="t-product-dialog__identity-copy">
               <p id="t-product-summary">{item.description || 'اختار التفاصيل المناسبة لطلبك.'}</p>
-              {priceSource === 'previous' && <p className="t-product-dialog__price-notice">{generated?'صورة توضيحية مولّدة بالذكاء الاصطناعي، مش تصوير الصنف.':representative?'صورة توضيحية، مش تصوير الصنف.':'رسم توضيحي، مش تصوير الصنف.'} الأسعار من منيو توسكانيني السابق؛ السعر والتوافر بيتأكدوا عند المطعم.</p>}
-              {representative&&<a className="t-product-dialog__photo-credit" href={representative.page} target="_blank" rel="noopener noreferrer">مصدر الصورة التوضيحية: {representative.photographer} / Pexels ↗</a>}
+              {priceSource === 'previous' && <p className="t-product-dialog__price-notice">الأسعار حسب المنيو السابق.</p>}
             </div>
           </div>
           {item.sizes && item.sizes.length > 0 && (
