@@ -209,3 +209,61 @@
    each ticket needs its intrinsic two-row height while the queue scrolls. */
 .op-queue-list{grid-auto-rows:minmax(80px,max-content)}
 .op-queue-row{min-height:80px;align-content:center}
+
+/* PASS 38 / Ticket attention and dense touch surfaces.
+   One glance should reach the actionable receipt, not a stack of reports. */
+.op-health__sound{padding:8px 13px;background:#fffaf0;border:1px solid var(--ink);font-size:12px;font-weight:900}
+.op-health__sound[aria-pressed="true"]{background:#316043;border-color:#316043;color:white}
+.op-health__arrival{background:var(--red);color:white;padding:7px 11px;font-size:12px;font-weight:900;
+  animation:op-new-order .36s ease-out}
+.op-rail__navigation{display:flex;gap:5px;margin-inline-start:auto}
+.op-rail__navigation button{border:1px solid var(--yellow);background:var(--yellow);color:var(--ink);
+  min-width:47px;min-height:42px;font-size:23px;line-height:1;font-weight:900}
+.op-rail__navigation button:hover{background:var(--paper)}
+.op-rail__track:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+@keyframes op-new-order{from{opacity:.6;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.op-health__arrival{animation:none}}
+
+/* 390px: foreground the customer's next order. Still show the total,
+   status filters, search and explicit test-mode state without hiding actions. */
+@media(max-width:500px){
+  .op-toolbar{gap:7px;padding:0 0 8px}
+  .op-toolbar__identity{gap:0}
+  .op-toolbar__identity strong{font-size:27px;line-height:1.18}
+  .op-toolbar__identity>span,.op-toolbar__identity small{display:none}
+  .op-toolbar__tools{gap:5px;flex-wrap:nowrap}
+  .op-view{flex:1;min-width:0;padding:3px;gap:2px}
+  .op-view button{font-size:11px;padding:6px 5px;min-height:38px}
+  .op-preview{flex:0 0 111px;padding:5px 6px;font-size:10px;min-height:44px}
+  .op-health{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:5px;
+    margin-bottom:8px;min-height:0;padding:6px 0}
+  .op-health__mark,.op-health__key,.op-health__link,.op-health__arrival{grid-column:1/-1}
+  .op-health__mark{min-height:0;padding:4px 8px;font-size:11px;justify-content:center}
+  .op-health__sync,.op-health__sound{min-height:37px;padding:4px 5px;font-size:11px}
+  .op-health__key{flex-wrap:wrap}
+  .op-health__key input{width:100%}
+  .op-health__link{margin-inline-start:0}
+  .op-root[data-preview="true"] .op-health__link{display:none}
+  .op-pulse{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:8px}
+  .op-pulse>div{min-height:65px;padding:6px 5px;border-bottom:0!important;
+    border-inline-end:1px solid var(--line)!important}
+  .op-pulse>div:last-child{border-inline-end:0!important}
+  .op-pulse b{display:none}
+  .op-pulse strong{font-size:29px;line-height:1.05}
+  .op-pulse span{font-size:10px;line-height:1.25}
+  .op-filters{gap:6px;margin-bottom:8px}
+  .op-filters__tabs{display:flex;flex-wrap:nowrap;gap:3px}
+  .op-filters__tabs button{min-width:0;min-height:36px;padding:5px 3px;
+    font-size:10px;gap:3px;flex:1;justify-content:center}
+  .op-filters__tabs button span{font-size:12px}
+  .op-filters>input{min-height:37px;padding:6px 10px}
+  .op-section-title{margin-bottom:8px;padding-bottom:7px}
+  .op-section-title>strong{font-size:18px}
+  .op-ticket__name{margin:9px 0}
+  .op-ticket__meta{padding:8px 0}
+  .op-ticket__bottom{gap:10px}
+  .op-actions{flex:1}
+  .op-actions button{flex:1;justify-content:center;gap:9px;padding:7px 9px;min-height:47px}
+  .op-rail__navigation{width:100%;justify-content:flex-end}
+  .op-rail__navigation button{min-height:38px}
+}
