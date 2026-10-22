@@ -82,3 +82,41 @@
   .t-checkout-column{gap:42px}
   .t-checkout-section__head h2{font-size:clamp(36px,8vw,54px)}
 }
+
+/* Journey V2: navigation into the real form, no fake checkout completion.
+   Only shown on small touch screens; the full receipt remains visible below. */
+.t-checkout-quicknav{display:none}
+#t-checkout-summary,#t-checkout-fields{scroll-margin-top:105px}
+@media(max-width:720px){
+  .t-checkout-hero{padding-block:13px 21px}
+  .t-checkout-hero__headline{padding-block:10px 12px}
+  .t-checkout-hero__headline h1{font-size:clamp(43px,10.6vw,58px)}
+  .t-checkout-hero__headline p{font-size:13px;line-height:1.65}
+  .t-checkout-content{padding-top:16px}
+  .t-checkout-quicknav{
+    display:flex;gap:14px;justify-content:space-between;align-items:center;
+    padding:14px 13px;background:var(--yellow);border:2px solid var(--ink);
+    margin-bottom:23px
+  }
+  .t-checkout-quicknav>div{display:flex;flex-direction:column;gap:3px}
+  .t-checkout-quicknav span{font-size:11px;line-height:1.55;font-weight:750}
+  .t-checkout-quicknav strong{font-size:20px;line-height:1.2;font-weight:900}
+  .t-checkout-quicknav a{
+    font-size:12px;font-weight:900;min-height:42px;min-width:120px;
+    padding:10px 9px;display:flex;align-items:center;justify-content:center;
+    gap:7px;background:var(--ink);color:var(--paper)
+  }
+  .t-checkout-column{gap:27px}
+  .t-checkout-section__head{padding-bottom:13px}
+  .t-checkout-item{padding:16px 0;gap:10px}
+  .t-checkout-item__details h3{font-size:clamp(20px,5.2vw,27px)}
+  .t-checkout-inputs{padding-top:18px}
+  .t-checkout-summary{padding:22px 18px}
+  .t-checkout-summary h2{margin-bottom:13px}
+  .t-checkout-summary__line{padding:10px 0}
+  .t-checkout-summary__notice{padding:14px 0;line-height:1.75}
+}
+@media(max-width:350px){
+  .t-checkout-quicknav{gap:7px;padding:10px 9px}
+  .t-checkout-quicknav a{min-width:100px;padding:9px 5px}
+}

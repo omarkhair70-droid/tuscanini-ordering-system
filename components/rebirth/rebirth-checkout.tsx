@@ -131,6 +131,15 @@ export function RebirthCheckout() {
         <div className="t-shell t-checkout-content">
           <CustomerJourney stage="checkout" />
           <ActiveOrderBanner />
+          {isHydrated && items.length > 0 && (
+            <nav className="t-checkout-quicknav" aria-label="اختصارات مراجعة الطلب">
+              <div>
+                <span>إجمالي الأصناف التقديري · {count} قطعة</span>
+                <strong>{money(subtotal)} ج.م</strong>
+              </div>
+              <a href="#t-checkout-fields">اكمل بياناتك <span aria-hidden="true">↓</span></a>
+            </nav>
+          )}
           {!isHydrated ? <div className="t-checkout-message" role="status">جاري تجهيز السلة…</div> : null}
 
           {isHydrated && !items.length ? (
