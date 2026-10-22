@@ -4,12 +4,22 @@ on:
   pull_request:
     paths:
       - "experiments/backend-v2/**"
+      - "components/studio/operator-press.tsx"
+      - "app/operator-press.css"
+      - "app/operator/orders/page.tsx"
+      - "scripts/qa/rebirth-operator-press-visual.mjs"
+      - "scripts/qa/rebirth-studio-two-window-browser.mjs"
       - ".github/workflows/tuscanini-backend-v2-spike.yml"
   push:
     branches:
       - "redesign/**"
     paths:
       - "experiments/backend-v2/**"
+      - "components/studio/operator-press.tsx"
+      - "app/operator-press.css"
+      - "app/operator/orders/page.tsx"
+      - "scripts/qa/rebirth-operator-press-visual.mjs"
+      - "scripts/qa/rebirth-studio-two-window-browser.mjs"
       - ".github/workflows/tuscanini-backend-v2-spike.yml"
   workflow_dispatch:
 
