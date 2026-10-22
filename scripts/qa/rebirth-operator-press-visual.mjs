@@ -21,6 +21,9 @@ try{
 
   const original=await page.locator('.op-ticket__masthead>strong').innerText();
   await page.locator('.op-queue-row').nth(2).click();
+  await page.waitForFunction(previous=>
+    document.querySelector('.op-stage .op-ticket__masthead>strong')?.textContent?.trim()!==previous,
+    original,{timeout:8000});
   const focused=await page.locator('.op-ticket__masthead>strong').innerText();
   assert.notEqual(focused,original,'Press selection must change the focus ticket');
   await page.getByRole('button',{name:'المسرح الرئيسي'}).waitFor();
@@ -33,10 +36,13 @@ try{
     'Horizontal scroll must be available without squeezing the tickets');
   await page.screenshot({path:'artifacts/screenshots/ticket-rail-20-orders-1024.png',fullPage:true,animations:'disabled'});
   await page.getByRole('button',{name:/جديد/}).click();
+  await page.waitForFunction(()=>document.querySelectorAll('.op-rail .op-ticket').length===6,null,{timeout:8000});
   assert.equal(await page.locator('.op-rail .op-ticket').count(),6,'Received filter shows exactly six new orders');
   await page.getByRole('button',{name:/كل الطلبات/}).click();
+  await page.waitForFunction(()=>document.querySelectorAll('.op-rail .op-ticket').length===20,null,{timeout:8000});
   assert.equal(await page.locator('.op-rail .op-ticket').count(),20);
   await page.getByRole('button',{name:'المسرح الرئيسي'}).click();
+  await page.locator('.op-stage').waitFor();
   assert.equal(await page.locator('.op-ticket__masthead>strong').innerText(),focused,
     'Return to Press retains the selected order');
 
