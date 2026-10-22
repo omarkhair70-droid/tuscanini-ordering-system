@@ -209,7 +209,7 @@ export function OperatorPress(){
         setConnecting(true);await sync(key);setConnecting(false);
       }}>حدّث الأوردرات ↻</button>
       <span className={'op-health__link'+(message?' op-health__link--error':'')} role="status">
-        {message||lastSync?'آخر مزامنة '+lastSync:'من غير اتصال لسه'}
+        {message ? message : lastSync ? 'آخر مزامنة '+lastSync : 'من غير اتصال لسه'}
       </span>
     </div>
     <div className="op-pulse" aria-label="عدد الطلبات حسب الحالة">
