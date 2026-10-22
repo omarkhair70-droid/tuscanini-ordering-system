@@ -81,7 +81,68 @@ export async function startLocalSimulation(pool: Pool): Promise<{
         json(res,200,{orders:await listOperatorOrders(pool,30)});
         return;
       }
-      const events=/^\\/api\\/orders\\/([0-9a-f-]+)\\/events$/i.exec(url.pathname);
+      const events=new RegExp('^/api/orders/([0-9a-f-]+)/events
+      if(method==='GET'&&events){
+        json(res,200,{events:await listOrderEvents(pool,events[1])});
+        return;
+      }
+      if (method === 'POST' && url.pathname === '/api/orders') {
+        const body = await readJson(req);
+        const order = await submitOrder(pool, body.requestKey as string, body.items as CartLine[]);
+        json(res, 200, { id: order.id, status: order.status, subtotal_cents: order.subtotal_cents });
+        return;
+      }
+      const tracking = /^\/api\/orders\/([0-9a-f-]+)\/tracking$/i.exec(url.pathname);
+      if (method === 'GET' && tracking) {
+        json(res, 200, await trackOrder(pool, tracking[1]));
+        return;
+      }
+      const action = /^\/api\/(staff|kitchen)\/orders\/([0-9a-f-]+)\/(decision|progress|handoff)$/i.exec(url.pathname);
+      if (method === 'POST' && action) {
+        const role = fixtureRole(req, fixtureToken);
+        const body = await readJson(req);
+        const requested = body.action;
+        const allowedForRoute: Record<string, string[]> = {
+          'staff/decision': ['accept', 'reject'],
+          'kitchen/progress': ['start', 'ready'],
+          'staff/handoff': ['deliver'],
+        };
+        const route = action[1] + '/' + action[3];
+        if (!allowedForRoute[route]?.includes(String(requested))) {
+          throw new OperationalError('Operation not valid for this route.', 400);
+        }
+        const result = await advanceOrder(pool, action[2], requested as StaffAction, role);
+        json(res, 200, result);
+        return;
+      }
+      json(res, 404, { error: 'Simulation route not found.' });
+    } catch (error) {
+      const status = error instanceof OperationalError ? error.httpStatus
+        : error instanceof RequestKeyCollision ? 409
+        : error instanceof SyntaxError || error instanceof TypeError ? 400
+        : error instanceof Error && /Expected 1|Invalid SKU|Request key format|Unavailable or unknown/.test(error.message) ? 400
+        : 500;
+      json(res, status, { error: error instanceof Error ? error.message : 'Unexpected simulation error.' });
+    }
+  });
+
+  // No caller-provided host/port: the ephemeral fixture cannot bind to a LAN IP.
+  await new Promise<void>((resolve, reject) => {
+    server.once('error', reject);
+    server.listen(0, '127.0.0.1', () => {
+      server.removeListener('error', reject);
+      resolve();
+    });
+  });
+  const address = server.address() as AddressInfo;
+  return {
+    baseUrl: 'http://127.0.0.1:' + address.port,
+    fixtureToken,
+    close: () => new Promise<void>((resolve, reject) =>
+      server.close(error => error ? reject(error) : resolve())),
+  };
+}
+,'i').exec(url.pathname);
       if(method==='GET'&&events){
         json(res,200,{events:await listOrderEvents(pool,events[1])});
         return;
