@@ -162,7 +162,7 @@ export function RebirthOrderTracking({orderId}:{orderId:string}) {
         <div className="t-order-tracking__controls">
           <button type="button" disabled={updating} onClick={()=>void reload()} className="t-order-tracking__refresh">
             <span aria-hidden="true" className="t-order-tracking__refresh-mark">↻</span>
-            {updating?'جاري التحديث…':'حدّث حالة الطلب'}
+            {updating?'جاري التحديث…':'حدّث الحالة'}
           </button>
           <div className="t-order-tracking__connection">
             <span className="t-order-tracking__connection-dot" aria-hidden="true" />
