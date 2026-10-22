@@ -498,9 +498,14 @@ try {
     await cart.getByPlaceholder('الاسم').fill('عميل اختبار');
     await cart.getByPlaceholder('01xxxxxxxxx').fill('01012345678');
     await cart.getByPlaceholder('الشارع، المنطقة، علامة مميزة').fill('عنوان تجريبي');
-    if([390,1440].includes(width))await cart.screenshot({
-      path:`artifacts/screenshots/checkout-delivery-payment-truth-${width}.png`,fullPage:true,animations:'disabled',
-    });
+    if([390,1440].includes(width)){
+      // Playwright full-page captures can place a sticky header halfway down
+      // the stitched image if the input has auto-scrolled the active viewport.
+      await cart.evaluate(()=>{document.activeElement?.blur();window.scrollTo(0,0);});
+      await cart.screenshot({
+        path:`artifacts/screenshots/checkout-delivery-payment-truth-${width}.png`,fullPage:true,animations:'disabled',
+      });
+    }
     await cart.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).check();
     await cart.getByRole('button',{name:/سجّل الطلب للمطعم/}).click();
     await cart.getByText('الطلبات متوقفة الآن').waitFor({state:'visible',timeout:7000});
@@ -519,9 +524,12 @@ try {
       `${width}px pickup removes irrelevant address entry and does not invent delivery cost`);
     await check(!(await cart.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).isChecked()),
       `${width}px changing delivery to pickup requires renewed customer review`);
-    if([390,1440].includes(width))await cart.screenshot({
-      path:`artifacts/screenshots/checkout-pickup-payment-truth-${width}.png`,fullPage:true,animations:'disabled',
-    });
+    if([390,1440].includes(width)){
+      await cart.evaluate(()=>{document.activeElement?.blur();window.scrollTo(0,0);});
+      await cart.screenshot({
+        path:`artifacts/screenshots/checkout-pickup-payment-truth-${width}.png`,fullPage:true,animations:'disabled',
+      });
+    }
     await cart.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).check();
     const secondPost=cart.waitForResponse(resp=>new URL(resp.url()).pathname==='/api/orders');
     await cart.getByRole('button',{name:/سجّل الطلب للمطعم/}).click();
