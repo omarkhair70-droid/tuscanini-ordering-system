@@ -43,3 +43,13 @@ The team should choose based on a real 15–20 order comparison:
 - Merchant-verified menu/fees and release authorization. No production merge/deploy.
 
 **Next focused pass:** visually inspect real Chromium screenshots, simplify any crowded info, test live actions after mode switches, then build staff authentication and new order attention without disturbing the Rebirth customer's authored menu/checkout.
+
+## Verified implementation after 20-ticket screenshots
+
+- **Full CI succeeded:** [run #39743754156](https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39743754156). All three jobs green: PostgreSQL/Django proof, TypeScript order transactions and integrated Next customer/real Postgres/operator Chromium test.
+- Full-stage Chromium screenshots in its artifact `tuscanini-two-screen-studio-browser` (`12410218314`): `press-20-orders-1024.png`, `ticket-rail-20-orders-1024.png`, `press-20-orders-768.png`, `press-20-orders-390.png`, plus the actual staging customer/operator screenshots.
+- **Actual visual issue discovered and fixed:** when 19 ticket rows shared a bounded 1024px queue, auto-grid row shrinking caused the text of different tickets to overlap. `grid-auto-rows:minmax(80px,max-content)` maintains a legitimate touch/readable row size while independently scrolling the queue. Rechecked screenshots: overlap eliminated.
+- The title/header above the core actions was condensed for a short 1024×768 tablet viewport. The active ticket's action section is preserved at the bottom of its own scrollable paper surface.
+- **Important test semantics:** preview fake order IDs are individually unique; mode switching preserves the manually focused order; *changing category filters* intentionally clears the focus, which is correct and independently tested. Staff action also preserves the focused ticket despite newly arriving orders.
+- **Recommendation for next craft review:** **Order Press** as default cashier decision mode (fewer taps, one clear active order, All Day aggregated ingredient production), **Ticket Rail** as secondary visual scan and comparison mode. Do not choose by aesthetics alone—operator should compare on a real tablet after staff auth, sound and station timings are attached.
+- No merge or production deploy; real browser proof took place against isolated localhost Postgres and the stress data was 20 fake, disabled-action order models.
