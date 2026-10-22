@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tuscanini — Order Room</title>
+<style>
+:root{--ink:#161411;--paper:#f3ead9;--yellow:#f6ce48;--red:#b5281f;--cream:#e8ddc8}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:600 16px/1.75 Tahoma,Arial,sans-serif}
+button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}
+button:focus-visible,input:focus-visible{outline:3px solid #1673bc;outline-offset:3px}
+header{background:var(--ink);color:var(--paper);padding:24px clamp(16px,4vw,55px);border-bottom:10px solid var(--red)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;max-width:1250px;margin:auto}
+.logo{font:900 clamp(32px,5vw,64px)/1 Impact,Arial,sans-serif;letter-spacing:-1px;color:var(--yellow)}
+.eyebrow{font:800 11px/1.6 Arial,sans-serif;letter-spacing:.14em}h1,h2,h3,p{margin:0}h1{font-size:clamp(24px,4vw,47px);line-height:1.3;margin:15px 0 8px}
+nav{display:flex;gap:10px}nav button{background:none;color:var(--paper);border:1px solid #887f72;padding:10px 17px}
+nav button[aria-selected=true]{background:var(--yellow);border-color:var(--yellow);color:var(--ink)}
+main{max-width:1250px;margin:auto;padding:clamp(15px,3vw,39px)}.story{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:21px;align-items:end}
+.story p{max-width:670px;color:#5b4e3e}.pill{font:800 12px Arial,sans-serif;padding:8px 12px;border:1px solid var(--ink)}
+.grid{display:grid;grid-template-columns:minmax(0,.94fr) minmax(0,1.06fr);gap:18px}
+.sheet{background:#fff9ee;border:1px solid #a99c85;border-top:6px solid var(--red);padding:clamp(17px,2.2vw,29px);min-width:0}
+.sheet-title{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px dashed #938878;padding-bottom:12px;margin-bottom:17px}
+.sheet-title h2{font-size:clamp(22px,3vw,34px)}
+.list{display:grid;gap:9px}.food{padding:12px;border:1px solid #a99c85;display:flex;gap:10px;align-items:center;justify-content:space-between}
+.food strong{display:block;font-size:17px}.food small{color:#695a4d}.qty{width:66px;text-align:center;border:1px solid var(--ink);min-height:40px}
+.primary{background:var(--ink);color:var(--paper);padding:13px 21px;border:0;font-weight:900;min-height:48px}
+.primary:hover:not(:disabled){background:var(--red)}.secondary{border:2px solid var(--ink);background:transparent;padding:10px 16px;font-weight:900}
+.summary{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:18px 0;font-size:15px}.summary strong{font-size:25px}
+.ticket{background:var(--cream);padding:21px;border-top:5px solid var(--ink);margin-top:14px;position:relative}
+.ticket:after{content:"";height:8px;background:repeating-linear-gradient(135deg,var(--paper) 0 5px,var(--cream) 5px 10px);position:absolute;bottom:-8px;left:0;right:0}
+.ticket>div:first-child{display:flex;justify-content:space-between;border-bottom:2px dashed var(--ink);padding-bottom:11px;gap:10px}
+.ticket .state{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:20px 0;border-bottom:1px dashed #ad9e86}
+.ticket .state strong{font-size:clamp(23px,3.3vw,40px)}.stamp{border:3px double var(--red);border-radius:50%;aspect-ratio:1;width:83px;display:grid;place-content:center;text-align:center;color:var(--red);transform:rotate(-10deg);font:900 12px Arial,sans-serif}
+.events{list-style:none;padding:0;display:grid;gap:7px}.events li{display:flex;gap:13px;padding:9px;border-bottom:1px solid #c8b89f}.events li span:first-child{font:900 13px Arial,sans-serif;color:var(--red)}.events small{display:block;color:#685a4a}
+#operator{display:none}.inbox{display:grid;gap:10px}
+.order{background:#fffaed;border:1px solid #b4a388;padding:16px}.order.new{border-right:6px solid var(--red)}
+.order h3{font-size:19px;overflow-wrap:anywhere}.order p{color:#6d5c48;font-size:13px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.actions button{border:1px solid var(--ink);padding:9px 12px;background:var(--yellow);font-size:13px;font-weight:900}.actions button:hover{background:var(--cream)}
+.empty{border:1px dashed #887862;padding:19px;color:#6d5c48;font-weight:700}.status{font-size:12px;color:#5f4f3f}
+footer{margin:44px auto 0;max-width:1250px;border-top:1px solid #a89b89;padding:20px 0;font-size:12px;color:#594d40}
+[hidden]{display:none!important}@media(max-width:760px){.grid{grid-template-columns:1fr}.top{align-items:start}nav{width:100%}nav button{flex:1}.sheet{padding:15px}.story{margin-bottom:16px}}
+@media(prefers-reduced-motion:no-preference){.stamp{animation:stamp .45s cubic-bezier(.2,1.2,.5,1) both}@keyframes stamp{from{transform:rotate(-15deg) scale(1.18);opacity:.3}to{transform:rotate(-10deg) scale(1);opacity:1}}}
+</style>
+</head>
+<body>
+<header><div class="top"><div><div class="eyebrow">THE ORDER ROOM / PRIVATE LOCAL STUDIO</div><div class="logo">TUSCANINI.</div></div><nav aria-label="وضع التجربة"><button id="customerTab" aria-selected="true">01 / العميل</button><button id="operatorTab" aria-selected="false">02 / تابلت المطعم</button></nav></div></header>
+<main>
+<div class="story"><div><div class="eyebrow">ONE ORDER / TWO SCREENS</div><h1>الأوردر بيتحرّك هنا.</h1><p>طلب من العميل، قرار من التابلت، وتذكرة بتتغير قدامك. نفس قاعدة PostgreSQL التجريبية، مش بيانات مطعم حقيقية.</p></div><span class="pill">LOCAL DEV · NOT PRODUCTION</span></div>
+<section id="customer" aria-label="واجهة العميل">
+  <div class="grid">
+    <section class="sheet"><div class="sheet-title"><h2>اختار أكلك.</h2><span class="eyebrow">01 / THE MENU</span></div><div class="list" id="catalog"><div class="empty">بنجيب الأصناف…</div></div><div class="summary"><span>إجمالي الأصناف</span><strong id="total">٠ ج.م</strong></div><button id="place" class="primary">سجّل الطلب ↗</button><p class="status" id="placeStatus" role="status" aria-live="polite">اختار صنف واحد على الأقل.</p></section>
+    <section class="sheet"><div class="sheet-title"><h2>تذكرتك الحيّة.</h2><span class="eyebrow">02 / ORDER IN MOTION</span></div><div id="ticketHolder" class="empty">بعد تسجيل الطلب، هتظهر هنا حالته وتتغير مع قرارات الموظف.</div><div id="ticket" class="ticket" hidden><div><strong>YOUR COPY / TUSCANINI</strong><span id="ref"></span></div><div class="state"><div><small>حالة الطلب دلوقتي</small><strong id="state"></strong></div><span id="stamp" class="stamp" aria-hidden="true">SAVED</span></div><ol id="events" class="events"></ol><small>كل حدث من قاعدة البيانات، مش عدّاد متخيّل. دي تذكرة متابعة، مش إيصال دفع.</small></div><p id="customerStatus" class="status" role="status" aria-live="polite"></p><button id="notify" class="secondary" hidden>فعّل تنبيه داخل المتصفح</button></section>
+  </div>
+</section>
+<section id="operator" aria-label="شاشة تشغيل المطعم">
+  <div class="sheet"><div class="sheet-title"><h2>الأوردرات قدامك.</h2><span class="eyebrow">STAFF INBOX / TUSCANINI</span></div><p style="margin-bottom:16px">هنا الموظف بيغير الحالة. اللي يتسجل يظهر عند العميل من نفس السيرفر. شاشة التطوير تستخدم Token تجريبي فقط.</p><div class="inbox" id="orders"><div class="empty">جاري تحميل الطلبات…</div></div><p id="operatorStatus" class="status" role="status" aria-live="polite"></p></div>
+</section>
+<footer>هذه واجهة تطوير متصلة فقط بقاعدة البيانات المحلية المخصصة tuscanini_spike. لا Talabat، ولا POS، ولا عملاء حقيقيين. اضغط على التبويبين أو افتحهما في نافذتين.</footer>
+</main>
+<script>
+(()=>{
+  'use strict';
+  const fixtureToken='__STUDIO_TOKEN__';
+  const $=id=>document.getElementById(id);
+  const states={received:['تم تسجيل الطلب','SAVED'],accepted:['المطعم أكّد طلبك','ACCEPTED'],rejected:['الطلب مرفوض','REJECTED'],preparing:['الأوردر بيتحضّر','COOKING'],ready:['طلبك جاهز','READY'],delivered:['تم التسليم','DELIVERED']};
+  let activeOrder=null, lastVersion='', lastOperatorVersion='',catalog=[];
+  const money=cents=>new Intl.NumberFormat('ar-EG',{maximumFractionDigits:2}).format(Number(cents)/100)+' ج.م';
+  const text=(node,value)=>{node.textContent=value};
+  async function request(path,init={}){
+    const res=await fetch(path,{cache:'no-store',...init});let data;
+    try{data=await res.json()}catch{throw Error('رد غير متوقع من النظام')}
+    if(!res.ok)throw Error(data.error||'تعذر الاتصال');return data;
+  }
+  function mode(which){
+    $('customer').style.display=which==='customer'?'block':'none';
+    $('operator').style.display=which==='operator'?'block':'none';
+    $('customerTab').setAttribute('aria-selected',String(which==='customer'));
+    $('operatorTab').setAttribute('aria-selected',String(which==='operator'));
+    location.hash=which;
+    if(which==='operator')void pollOperator();
+  }
+  $('customerTab').onclick=()=>mode('customer');$('operatorTab').onclick=()=>mode('operator');
+  async function loadCatalog(){
+    try{
+      const result=await request('/api/studio/catalog');catalog=result.items;
+      $('catalog').replaceChildren();
+      for(const item of catalog){
+        const row=document.createElement('label');row.className='food';
+        const name=document.createElement('span');const strong=document.createElement('strong');text(strong,item.name);
+        const small=document.createElement('small');text(small,money(item.unit_price_cents));name.append(strong,small);
+        const qty=document.createElement('input');qty.type='number';qty.min='0';qty.max='10';qty.step='1';qty.value='0';qty.className='qty';
+        qty.dataset.sku=item.sku;qty.setAttribute('aria-label','كمية '+item.name);qty.oninput=updateTotal;
+        row.append(name,qty);$('catalog').append(row);
+      }
+    }catch(error){text($('placeStatus'),error.message)}
+  }
+  function cart(){
+    return [...document.querySelectorAll('.qty')].map(el=>({sku:el.dataset.sku,qty:Number(el.value)}))
+      .filter(x=>Number.isInteger(x.qty)&&x.qty>0&&x.qty<=10);
+  }
+  function updateTotal(){
+    const items=cart(),sum=items.reduce((n,item)=>{
+      const product=catalog.find(x=>x.sku===item.sku);return n+(product?.unit_price_cents||0)*item.qty;
+    },0);
+    text($('total'),money(sum));$('place').disabled=items.length===0;
+  }
+  $('place').onclick=async()=>{
+    const items=cart();if(!items.length)return;
+    $('place').disabled=true;text($('placeStatus'),'جاري تسجيل الطلب…');
+    try{
+      const key='studio-'+crypto.randomUUID();
+      const result=await request('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({requestKey:key,items})});
+      activeOrder=result.id;sessionStorage.setItem('tuscanini-studio-order',activeOrder);
+      text($('placeStatus'),'تم حفظ طلب التجربة في PostgreSQL.');
+      $('ticketHolder').hidden=true;$('ticket').hidden=false;$('notify').hidden=false;
+      await pollCustomer();mode('customer');
+    }catch(error){text($('placeStatus'),error.message)}
+    finally{updateTotal()}
+  };
+  async function pollCustomer(){
+    if(!activeOrder)return;
+    try{
+      const [order,history]=await Promise.all([
+        request('/api/orders/'+encodeURIComponent(activeOrder)+'/tracking'),
+        request('/api/orders/'+encodeURIComponent(activeOrder)+'/events')]);
+      const signature=JSON.stringify(history.events);
+      const status=states[order.status]||[order.status.toString().slice(0,45),'UPDATE'];
+      if(lastVersion && signature!==lastVersion && document.visibilityState==='visible' &&
+        'Notification'in window && Notification.permission==='granted'){
+        new Notification('توسكانيني · '+status[0],{body:'افتح تذكرتك وشوف الجديد.'});
+      }
+      lastVersion=signature;
+      text($('ref'),'#'+activeOrder.slice(0,8).toUpperCase());
+      text($('state'),status[0]);text($('stamp'),status[1]);
+      const host=$('events');host.replaceChildren();
+      for(const event of history.events){
+        const li=document.createElement('li'),number=document.createElement('span'),description=document.createElement('span'),label=document.createElement('strong'),at=document.createElement('small');
+        text(number,String(event.id).padStart(2,'0'));text(label,states[event.status]?.[0]||event.status);
+        text(at,new Date(event.created_at).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}));
+        description.append(label,at);li.append(number,description);host.append(li);
+      }
+      text($('customerStatus'),'آخر مراجعة ناجحة · '+new Date().toLocaleTimeString('ar-EG'));
+    }catch(error){text($('customerStatus'),'الاتصال متعذر · آخر حالة محفوظة في الشاشة · '+error.message)}
+  }
+  $('notify').onclick=async()=>{
+    if(!('Notification'in window)){text($('customerStatus'),'المتصفح ده مش بيدعم إشعارات الصفحة.');return}
+    const p=await Notification.requestPermission();
+    text($('customerStatus'),p==='granted'?'إشعارات الصفحة مفعّلة.':'الإشعارات غير مفعّلة.');
+  };
+  const actions={received:[['accept','قبول','cashier','staff','decision'],['reject','رفض','cashier','staff','decision']],
+    accepted:[['start','بدأ التحضير','kitchen','kitchen','progress']],
+    preparing:[['ready','جاهز','kitchen','kitchen','progress']],
+    ready:[['deliver','تم التسليم','cashier','staff','handoff']]};
+  function staffHeaders(role){return {'Content-Type':'application/json','x-spike-role':role,'x-spike-test-token':fixtureToken}}
+  async function pollOperator(){
+    try{
+      const data=await request('/api/staff/orders',{headers:staffHeaders('cashier')});
+      const version=JSON.stringify(data.orders);if(version===lastOperatorVersion)return;
+      lastOperatorVersion=version;const host=$('orders');host.replaceChildren();
+      if(data.orders.length===0){const empty=document.createElement('div');empty.className='empty';text(empty,'مفيش أوردرات لسه. جرّب تسجّل واحد من تبويب العميل.');host.append(empty)}
+      for(const order of data.orders){
+        const card=document.createElement('article');card.className='order'+(order.status==='received'?' new':'');
+        const title=document.createElement('h3');text(title,'#'+order.id.slice(0,8).toUpperCase()+' · '+(states[order.status]?.[0]||order.status));
+        const desc=document.createElement('p');text(desc,order.items.map(x=>x.qty+' × '+x.name).join(' · ')+' · '+money(order.subtotal_cents));
+        const buttons=document.createElement('div');buttons.className='actions';
+        for(const [action,label,role,route,kind] of actions[order.status]||[]){
+          const btn=document.createElement('button');text(btn,label);
+          btn.onclick=async()=>{
+            btn.disabled=true;
+            try{await request('/api/'+route+'/orders/'+encodeURIComponent(order.id)+'/'+kind,{
+              method:'POST',headers:staffHeaders(role),body:JSON.stringify({action})});
+              lastOperatorVersion='';await pollOperator();if(activeOrder===order.id)await pollCustomer();
+            }catch(error){text($('operatorStatus'),error.message);lastOperatorVersion='';await pollOperator()}
+          };buttons.append(btn);
+        }
+        card.append(title,desc,buttons);host.append(card);
+      }
+      text($('operatorStatus'),'آخر مزامنة · '+new Date().toLocaleTimeString('ar-EG'));
+    }catch(error){text($('operatorStatus'),'تعذّرت مزامنة الأوردرات: '+error.message)}
+  }
+  activeOrder=sessionStorage.getItem('tuscanini-studio-order');
+  if(activeOrder){$('ticketHolder').hidden=true;$('ticket').hidden=false;$('notify').hidden=false}
+  void loadCatalog().then(updateTotal);
+  mode(location.hash==='#operator'?'operator':'customer');
+  void pollCustomer();setInterval(()=>{if(document.visibilityState==='visible'){void pollCustomer();if(location.hash==='#operator')void pollOperator()}},2000);
+  window.addEventListener('online',()=>{void pollCustomer();void pollOperator()});
+})();
+</script>
+</body></html>
