@@ -30,3 +30,33 @@
 .t-order-missing p{font-weight:750;line-height:2;max-width:620px}
 @media(max-width:850px){.t-order-tracking{grid-template-columns:1fr}.t-order-next{grid-template-columns:1fr}}
 @media(max-width:720px){.t-order-hero h1{font-size:clamp(66px,15vw,110px)}.t-order-page__content{padding-top:38px}.t-order-tracking__main,.t-order-tracking__details{padding:26px}.t-order-tracking__main h2{font-size:clamp(35px,9vw,65px)}}
+
+/* JOURNEY V2 — actual independent server facts, not a predictive timeline */
+.t-order-tracking__main{min-width:0}
+.t-order-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:30px}
+.t-order-fact{display:flex;gap:10px;background:#fff8e8;border:1px solid #bfb09c;padding:14px 10px;min-width:0}
+.t-order-fact[data-state="verified"]{border-top:4px solid #366646}
+.t-order-fact[data-state="waiting"]{border-top:4px solid #9a8973}
+.t-order-fact[data-state="attention"]{border-top:4px solid #c43225}
+.t-order-fact__number{font:18px/1 Anton,Impact,sans-serif;direction:ltr;color:#625446}
+.t-order-fact>div{display:flex;flex-direction:column;gap:5px;min-width:0}
+.t-order-fact__label{font-size:11px;font-weight:850;color:#5f5142}
+.t-order-fact strong{font-size:clamp(13px,1.5vw,18px);line-height:1.45}
+.t-order-fact small{font-size:11px;line-height:1.6;color:#665849;font-weight:650}
+.t-order-tracking__controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:24px}
+.t-order-tracking__controls .t-order-tracking__refresh{margin-top:0}
+.t-order-tracking__controls .t-order-tracking__time{margin-top:0}
+@media(max-width:1240px){.t-order-facts{grid-template-columns:1fr}}
+@media(min-width:851px) and (max-width:1240px){.t-order-tracking{grid-template-columns:1.25fr .75fr}}
+@media(max-width:720px){
+  .t-order-hero{padding-block:24px 30px}
+  .t-order-hero h1{font-size:clamp(48px,11.3vw,70px);margin:11px 0}
+  .t-order-hero>p{font-size:14px;line-height:1.65}
+  .t-order-page__content{padding-top:20px}
+  .t-order-tracking__main,.t-order-tracking__details{padding:22px 17px}
+  .t-order-tracking__main h2{font-size:clamp(29px,8vw,46px);margin:14px 0}
+  .t-order-tracking__main>p:not(.t-order-tracking__error){font-size:15px;line-height:1.75}
+  .t-order-facts{margin-top:20px;gap:7px}
+  .t-order-fact{padding:10px 13px}
+  .t-order-tracking__controls{margin-top:17px}
+}
