@@ -409,7 +409,7 @@ try {
     await shopPage.getByRole('group',{name:'اختر الكمية'}).getByRole('button',{name:'تقليل الكمية'}).click();
     await shopPage.locator('#rebirth-product-notes').fill('بدون بصل - تعديل من السلة');
     await shopPage.getByRole('button',{name:/احفظ التعديلات/}).click();
-    await shopPage.waitForURL(/\\/cart(?:#|$)/,{timeout:12000});
+    await shopPage.waitForURL(/\/cart(?:#|$)/,{timeout:12000});
     const updated=await shopPage.evaluate(()=>{
       const saved=JSON.parse(localStorage.getItem('tuscanini-cart-v1')||'{}');
       return saved.items??[];
