@@ -485,6 +485,8 @@ try {
     if(width===390)await cart.screenshot({path:'artifacts/screenshots/customer-journey-cart-fixture-390.png',fullPage:true,animations:'disabled'});
     await cart.getByRole('button',{name:/سجّل الطلب للمطعم/}).click();
     await check(await cart.getByText(/اكتب اسمك/).count()===1,`${width}px fixture cart required name validation`);
+    await check(await cart.locator('#t-checkout-name').evaluate(el=>document.activeElement===el),
+      `${width}px invalid checkout focuses the actual first missing field`);
     await check(submits===0,`${width}px invalid checkout never posts order`);
     await cart.getByPlaceholder('الاسم').fill('عميل اختبار');
     await cart.getByPlaceholder('01xxxxxxxxx').fill('01012345678');
