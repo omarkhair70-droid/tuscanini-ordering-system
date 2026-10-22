@@ -21,7 +21,7 @@ assert.equal(customer.status,200,'Customer Next route should render');
 assert.match(await customer.text(),/اختار. اطلب. عيش الحكاية./);
 const tablet=await fetch(base+'/operator/orders');
 assert.equal(tablet.status,200,'Operator Next route should render');
-assert.match(await tablet.text(),/الأوردرات تحت إيدك/);
+assert.match(await tablet.text(),/الأوردرات بتتحرّك/);
 const cat=await request('catalog');
 assert.equal(cat.response.status,200);
 const sku=cat.payload.items.find(x=>x.sku==='TUSC_DEMO_01')?.sku;
