@@ -62,12 +62,14 @@ try{
       await page.locator('.t-product-dialog[open]').waitFor({timeout:6000});
       await page.locator('.t-product-dialog[data-motion-technique="dom-flip"][data-motion-finished="true"]')
         .waitFor({timeout:5000});
-      if(generatedMediaReady){
-        if((await page.locator('.t-product-dialog [data-kind="generated-illustrative"] img').count())!==1||
-          (await page.locator('.t-product-dialog').getByText(/صورة توضيحية مولّدة بالذكاء الاصطناعي/).count())!==1)
-          throw new Error('Generated food visual must remain identifiable as the same truthful AI photograph inside product details');
-      }else if((await page.getByRole('link',{name:/مصدر الصورة التوضيحية.*Pexels/}).count())!==1)
-        throw new Error('Sample stock photo is not credited inside product details');
+      // Asset identity/provenance remains in DOM metadata and source modules.
+      // The customer-facing product sheet is for sizes, add-ons and ordering,
+      // not for long AI-credit disclaimers or stock-photo links.
+      const expectedKind=generatedMediaReady?'generated-illustrative':'representative-stock';
+      if((await page.locator('.t-product-dialog [data-kind="'+expectedKind+'"] img').count())!==1||
+         (await page.locator('.t-product-dialog').getByText('الأسعار حسب المنيو السابق.').count())!==1||
+         (await page.locator('.t-product-dialog').getByText(/مولّدة بالذكاء الاصطناعي|مش تصوير الصنف|Pexels/).count())!==0)
+        throw new Error('The original food visual must carry into product details without customer-facing provenance essays');
       await page.waitForTimeout(750);
       await page.getByRole('button',{name:'إغلاق تفاصيل المنتج'}).click();
       await page.locator('.t-product-dialog[data-motion-phase="returning"]').waitFor({timeout:2500});
