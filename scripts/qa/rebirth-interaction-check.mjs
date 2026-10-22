@@ -197,6 +197,14 @@ try {
     await page.locator('.t-product-dialog[open]').waitFor({timeout:4000});
     await check(await page.locator('.t-product-dialog__identity .t-product-art[data-product-id]').count()===1,
        `${width}px matched named menu item visual and modifiers share a stable SKU ID`);
+
+     if(width===390){
+       const detailPhotoWidth=await page.locator('.t-product-dialog__identity .t-product-art--large').evaluate(
+         el=>el.getBoundingClientRect().width
+       );
+       await check(detailPhotoWidth>=135 && detailPhotoWidth<=160,
+         '390px product detail illustration carries food imagery without hiding size/addon controls');
+     }
      await check(await page.locator('.t-product-dialog').getByText(/منيو توسكانيني السابق/).count()===1,
       `${width}px size/addon picker states where its historical prices came from`);
     await check(await page.locator('.t-product-dialog__options label').count()>1,

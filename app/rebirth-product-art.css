@@ -331,3 +331,27 @@
  .t-product-art--representative img{transition:none!important}
  .t-menu-product__art-trigger:hover .t-product-art--representative img{transform:none!important}
 }
+
+
+/* PASS A2 / MOBILE PRODUCT PHOTO AUTHORITY
+ * Real 390px screenshot review: the 118px illustration was crowded by long
+ * provenance. Keep the disclosure intact, but give food a stronger visual role
+ * while keeping the option choices reachable and the sticky CTA visible. */
+@media(max-width:720px){
+  .t-product-dialog__identity{
+    grid-template-columns:clamp(122px,36vw,150px) minmax(0,1fr);
+    gap:12px;
+    align-items:center;
+  }
+  .t-product-dialog__identity .t-product-art--large{
+    width:100%;
+    max-width:100%;
+  }
+  .t-product-dialog__identity-copy>p{
+    font-size:clamp(12px,3.55vw,14px);
+    line-height:1.6;
+  }
+  .t-product-dialog__identity .t-product-dialog__price-notice{
+    line-height:1.5!important;
+  }
+}
