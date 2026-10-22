@@ -394,6 +394,30 @@ try {
     }
     await check(await shopPage.getByRole('heading',{name:/تشيكن فاير/}).count()===1,
       `${width}px previous menu item survives into authored populated checkout`);
+    // A real cart LINE edit must preserve the order's identity rather than
+    // adding a second copy of the item. Back to Menu preloads exact choices.
+    const originalLineId=selectedLegacy.lineId;
+    await shopPage.getByRole('link',{name:/تعديل الحجم والإضافات وملاحظات تشيكن فاير/}).click();
+    await shopPage.locator('.t-product-dialog[open]').waitFor({timeout:8000});
+    await check(await shopPage.getByRole('button',{name:/احفظ التعديلات/}).count()===1,
+      `${width}px cart edit opens same source product in explicit editing mode`);
+    const addonChoice=shopPage.locator('.t-product-dialog__options input[type="checkbox"]').first();
+    await check(await addonChoice.isChecked(),`${width}px chosen mozzarella survives into editor`);
+    await check((await shopPage.getByRole('group',{name:'اختر الكمية'}).locator('output').innerText()).trim()==='2',
+      `${width}px original line quantity is preserved in editor`);
+    await addonChoice.uncheck();
+    await shopPage.getByRole('group',{name:'اختر الكمية'}).getByRole('button',{name:'تقليل الكمية'}).click();
+    await shopPage.locator('#rebirth-product-notes').fill('بدون بصل - تعديل من السلة');
+    await shopPage.getByRole('button',{name:/احفظ التعديلات/}).click();
+    await shopPage.waitForURL(/\\/cart(?:#|$)/,{timeout:12000});
+    const updated=await shopPage.evaluate(()=>{
+      const saved=JSON.parse(localStorage.getItem('tuscanini-cart-v1')||'{}');
+      return saved.items??[];
+    });
+    await check(updated.length===1&&updated[0].lineId===originalLineId&&updated[0].quantity===1 &&
+      updated[0].unitPrice===125&&updated[0].totalItemPrice===125 &&
+      updated[0].selectedAddons?.length===0&&updated[0].itemNotes==='بدون بصل - تعديل من السلة',
+      `${width}px saved cart edit updates same receipt line, recalculates price, keeps notes and never duplicates`);
     await check(await shopPage.getByRole('button',{name:/سجّل الطلب للمطعم/}).isDisabled(),
       `${width}px historic menu doesn't bypass store-open/live-order validation`);
     await catalogContext.close();
