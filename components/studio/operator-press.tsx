@@ -176,6 +176,9 @@ export function OperatorPress(){
   };
   const apply=async(id:string,action:string)=>{
     if(preview||pendingId||!key)return;
+    // Keep this ticket in focus as it advances stages; otherwise another
+    // incoming order would steal the canvas while staff are mid-task.
+    setSelectedId(id);
     setPendingId(id);
     try{
       await requestAction(key,id,action);await sync(key);
