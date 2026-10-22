@@ -75,3 +75,15 @@ Future multi-store only (no premature implementation):
 - A written code freeze/migration plan and rollback rehearsal before any database cutover.
 
 **No Supabase-to-production-Postgres move in this pass. PR #59 stays Draft. No Merge or Deploy.**
+
+
+## Verified CI run — October 22, 2026
+
+**SUCCESS**: [Tuscanini Backend V2 PostgreSQL Spike, GitHub Actions #39708677544](https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39708677544), code SHA \`c546cb0a73fbcb97efc125b27514efbae799b8f0\`.
+
+Observed CI logs:
+- Django created isolated \`test_tuscanini_spike\` on PostgreSQL 16 and destroyed it afterward.
+- \`Ran 7 tests in 0.236s — OK\`.
+- All seven classes of behavior passed: database-sourced prices and order price snapshots; rollback after injected failure at multiple stages; independent order/payment statuses; outbox retry after simulated network failure; request-key fingerprint mismatch; same-key repeat; simultaneous same-key concurrent writes.
+- That 0.236 s number is **test suite execution time, NOT request latency, throughput benchmark, or infrastructure/cost comparison**.
+- Existing Next.js system unchanged. Any later code changes require their own checks.

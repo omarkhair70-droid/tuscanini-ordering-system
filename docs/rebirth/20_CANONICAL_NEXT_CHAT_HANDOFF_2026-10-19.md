@@ -167,3 +167,8 @@ The owner has NOT signed off on the whole visual experience. Need inspect **actu
 - **Do not report all tests passed until linked GitHub Actions run completes successfully.** This is a correctness experiment, *not* a cost/latency comparison versus TypeScript.
 - See [\`26_PASS_25_DATABASE_V2_AND_TRANSACTION_SPIKE_2026-10-22.md\`](26_PASS_25_DATABASE_V2_AND_TRANSACTION_SPIKE_2026-10-22.md), plus experiment README. Django, Oracle Database and independent PostgreSQL are still subject to actual comparative/operational gates.
 - No frontend/menu/images modified. PR #59 **DRAFT**. NO MERGE / NO PRODUCTION DEPLOY.
+
+
+### Pass 25 verified experiment CI result (2026-10-22)
+- GitHub Actions **#39708677544 SUCCESS** for \`c546cb0a\`: disposable PostgreSQL 16 and Django spike ran **7/7 passing tests**. Full evidence: https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39708677544 .
+- This is correctness/failure-mode testing only, not stress performance or a TypeScript-vs-Django quantitative comparison; the actual store POS and production database remain untouched.
