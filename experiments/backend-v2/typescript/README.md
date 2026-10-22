@@ -64,3 +64,9 @@ New endpoints: `GET /api/staff/orders` (requires test role/token), `GET /api/ord
 **Intentional boundary:** This works on one computer in two browser windows, not as a public staff app; the staff token/role is **fixture-only** and unfit for production auth, and the sample menu is fictitious. The studio is not yet embedded into the authored Next.js Rebirth pages. **Background mobile Push is NOT implemented**; that requires a real Push subscription, service worker and server-side sender. Talabat and the existing conventional POS remain separate.
 
 **Next code step:** Mount the same order-event contracts behind Next.js staging-only adapters, use separate staff identities/tracking capabilities, and build the real tablet-first UI with approved merchant menu choices. Keep order transport/test environment separable from live Supabase data until migration is deliberately complete.
+
+
+### Pass 36 — full Rebirth cart is now staged
+When the studio Node server and Next dev server are launched with the Pass 35 localhost bridge flags, users should test the **original** Next.js `/menu → /cart → /order-success` instead of using the three sample choices under `/studio`. The customer's actual sizes, chosen addons, quantity, notes, table reference and phone/address are persisted under `spike_ts` and the operator sees them on the `/operator/orders` Next tablet screen. The staged backend computes product prices from a synchronized snapshot of the historical menu. The additive migration `schema-menu.sql` is executed on startup; tests reset only a **disposable** schema.
+
+CI real-route + browser evidence: [#39731707615](https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39731707615). No real restaurant order and no live POS integration. Offers currently empty in the authored menu and are explicitly not silently stripped from the staging cart.

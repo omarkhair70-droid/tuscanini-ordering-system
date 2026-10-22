@@ -256,3 +256,10 @@ The owner has NOT signed off on the whole visual experience. Need inspect **actu
 - [Passing 3-job proof #39728485619](https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39728485619): Next API test, browser 390 mobile customer + 1024 tablet operator, and TypeScript/Django PostgreSQL tests. Real screenshots were inspected; `RouteShell` inherited old red navbar overlay and was fixed afterward. Full code/runbook: [Pass 35](35_NEXTJS_ORDER_ROOM_TWO_SCREEN_INTEGRATION_2026-10-22.md).
 - New current `/studio` is NOT main `/menu`→`/cart`: demo product only; do not claim real Rebirth menu customization, employee accounts or background Push. **Next Pass 36:** replace synthetic item-only contract with correct server-verified sizes/addons/offers and map the actual authored Cart + tracking to independent staging engine.
 - Draft #59 remains open, no merge/deploy, no live orders.
+
+
+## PASS 36 — REAL REBIRTH CART CONNECTED TO OPERATOR VIA POSTGRESQL (2026-10-22)
+- The public-**looking** Rebirth Menu/Cart/Ticket pages now communicate with the *independent Postgres backend* when Next.js is in **explicit development-only localhost studio mode**. Existing non-dev behavior/merchant DB unchanged.
+- Full contract: sizes + add-ons + quantities + line notes + customer/fulfillment + receipt status, all server-priced from a snapshot of 113 historical authored items imported to `spike_ts.menu_catalog`, with idempotent full-payload hashes and transactional audit/outbox.
+- Proof **[#39731707615](https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39731707615)**: successful actual Chromium 390px menu→cart→order-success status change driven by 1024px operator; test JSON contract rejects same-key different-cart, ignores fake client prices. Independent TS suite 20 tests now.
+- Implementation and instructions: [36_REBIRTH_REAL_CART_OPERATOR_TICKET_POSTGRES_2026-10-22.md](36_REBIRTH_REAL_CART_OPERATOR_TICKET_POSTGRES_2026-10-22.md). Full visual QA still separate. Next is employee login and tablet operational UX and opt-in background push, **not** another detached demonstration.
