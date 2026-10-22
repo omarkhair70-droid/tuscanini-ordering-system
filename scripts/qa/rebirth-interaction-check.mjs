@@ -382,6 +382,11 @@ try {
       selectedLegacy.unitPrice===145 && selectedLegacy.quantity===2),
       `${width}px actual recorded 125 + 20 addon, quantity 2, is stored as 290 EGP cart`);
     await shopPage.goto(baseUrl+'/cart',{waitUntil:'networkidle',timeout:30000});
+    if(width<=720){
+      await check(await shopPage.locator('.t-checkout-quicknav strong').getByText(/290/).count()===1 &&
+        await shopPage.getByRole('link',{name:/اكمل بياناتك/}).count()===1,
+        `${width}px mobile Cart opens with an accurate estimated product subtotal and a direct customer-form shortcut`);
+    }
     await check(await shopPage.getByRole('heading',{name:/تشيكن فاير/}).count()===1,
       `${width}px previous menu item survives into authored populated checkout`);
     await check(await shopPage.getByRole('button',{name:/سجّل الطلب للمطعم/}).isDisabled(),
