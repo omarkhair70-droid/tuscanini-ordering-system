@@ -212,12 +212,14 @@ try {
     await page.locator('.t-product-dialog__close').click();
     await page.getByRole('searchbox',{name:/دور على أكلك/}).fill('');
     await page.getByRole('button',{name:'كريب لحوم',exact:true}).click();
+    await page.locator('.t-menu-product').first().waitFor({state:'visible',timeout:8000});
     await check(await page.locator('.t-menu-family-context img').count()===1&&
       await page.locator('.t-menu-family-context').getByText(/مش صورة أي صنف معين/).count()===1,
       `${width}px verified original CREPE image is shown only as a family context photo`);
     await check(await page.locator('.t-menu-product').count()>0,
       `${width}px category chips filter legacy catalog and deep link correctly`);
     await page.getByRole('button',{name:'كل الأصناف',exact:true}).click();
+    await page.getByRole('button',{name:/اعرض أصناف أكتر/}).waitFor({state:'visible',timeout:8000});
     if(width===390){
       for(let batch=0;batch<5;batch++){
         await page.getByRole('button',{name:/اعرض أصناف أكتر/}).click();
@@ -230,6 +232,7 @@ try {
       await check(all.total===113&&all.unique===113&&all.validSource,
         '390px all 113 historical items have distinct source-conscious images or illustrated fallbacks');
       await page.getByRole('button',{name:'كل الأصناف',exact:true}).click();
+      await page.getByRole('button',{name:/اعرض أصناف أكتر/}).waitFor({state:'visible',timeout:8000});
     }
     await page.getByRole('button',{name:/اعرض أصناف أكتر/}).click();
     await check(await page.locator('.t-menu-product').count()===40,
