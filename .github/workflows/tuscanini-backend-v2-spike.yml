@@ -129,7 +129,7 @@ jobs:
         run: |
           npm run studio --prefix experiments/backend-v2/typescript > /tmp/tuscanini-studio.log 2>&1 &
           for attempt in $(seq 1 60); do
-            port=$(sed -nE 's#.*(http://127\\.0\\.0\\.1:[0-9]+)/studio.*#\\1#p' /tmp/tuscanini-studio.log | head -1)
+            port=$(grep -oE 'http://127[.]0[.]0[.]1:[0-9]+' /tmp/tuscanini-studio.log | head -1 || true)
             if [ -n "$port" ]; then
               echo "TUSCANINI_STUDIO_ORIGIN=$port" >> "$GITHUB_ENV"
               echo "Disposable studio is responding on loopback."
