@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 type Phase='received'|'accepted'|'preparing'|'ready'|'delivered'|'rejected';
 type Variant={label:string;price_cents?:number};
@@ -37,6 +37,21 @@ function age(date:string){
   const n=Date.parse(date);if(!Number.isFinite(n))return '—';
   const minutes=Math.max(0,Math.floor((Date.now()-n)/60000));
   return minutes<1?'دلوقتي':minutes<60?minutes+' د':Math.floor(minutes/60)+' س '+minutes%60+' د';
+}
+/** Soft two-tone order cue; only ever armed by a staff click. */
+function playOrderCue(context:AudioContext){
+  const now=context.currentTime;
+  [0,0.16].forEach((delay,i)=>{
+    const tone=context.createOscillator();
+    const volume=context.createGain();
+    tone.type='sine';
+    tone.frequency.setValueAtTime(i===0?740:988,now+delay);
+    volume.gain.setValueAtTime(0.0001,now+delay);
+    volume.gain.exponentialRampToValueAtTime(0.13,now+delay+0.025);
+    volume.gain.exponentialRampToValueAtTime(0.0001,now+delay+0.23);
+    tone.connect(volume);volume.connect(context.destination);
+    tone.start(now+delay);tone.stop(now+delay+0.24);
+  });
 }
 function makePreviewOrders():Order[]{
   const labels=['تشيكن فاير','كريب برجر','بيتزا تشيكن رانش','كريب مكس جبن','توسكانيني سبيشال','مياه معدنية'];
@@ -139,18 +154,51 @@ export function OperatorPress(){
   const [connecting,setConnecting]=useState(false);
   const [search,setSearch]=useState('');
   const [clock,setClock]=useState(0);
+  const [soundOn,setSoundOn]=useState(false);
+  const [newArrivals,setNewArrivals]=useState(0);
+  const [syncError,setSyncError]=useState(false);
+  const knownReceived=useRef<Set<string>|null>(null);
+  const audioContext=useRef<AudioContext|null>(null);
+  const audioArmed=useRef(false);
+  const railTrack=useRef<HTMLDivElement|null>(null);
 
   useEffect(()=>{
     if(new URLSearchParams(window.location.search).get('preview')==='20')setPreview(true);
     const timer=window.setInterval(()=>setClock(v=>v+1),30000);
-    return ()=>window.clearInterval(timer);
+    return ()=>{window.clearInterval(timer);void audioContext.current?.close();audioContext.current=null;};
   },[]);
+  const toggleSound=async()=>{
+    if(audioArmed.current){audioArmed.current=false;setSoundOn(false);return;}
+    try{
+      const context=audioContext.current??new AudioContext();
+      audioContext.current=context;
+      await context.resume();
+      audioArmed.current=true;setSoundOn(true);
+      playOrderCue(context);
+    }catch{
+      setSyncError(true);setMessage('الصوت مش متاح في المتصفح ده');
+    }
+  };
+  const moveRail=(direction:'next'|'previous')=>{
+    railTrack.current?.scrollBy({
+      left:direction==='next'?-320:320,
+      behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',
+    });
+  };
   const sync=useCallback(async(operatorKey:string)=>{
     if(!operatorKey)return;
     try{
       const data=await requestInbox(operatorKey);
-      setOrders(data);setLastSync(new Date().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}));setMessage('');
-    }catch(e){setMessage(e instanceof Error?e.message:'تعذّر الاتصال بالمحرك');}
+      const received=new Set(data.filter(o=>o.status==='received').map(o=>o.id));
+      const added=knownReceived.current===null?[]:[...received].filter(id=>!knownReceived.current?.has(id));
+      knownReceived.current=received;
+      if(added.length){
+        setNewArrivals(added.length);
+        if(audioArmed.current&&audioContext.current?.state==='running')playOrderCue(audioContext.current);
+      }
+      setOrders(data);setLastSync(new Date().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}));
+      setSyncError(false);setMessage('');
+    }catch(e){setSyncError(true);setMessage(e instanceof Error?e.message:'تعذّر الاتصال بالمحرك');}
   },[]);
   useEffect(()=>{
     if(preview||!key)return;
@@ -184,8 +232,8 @@ export function OperatorPress(){
     setPendingId(id);
     try{
       await requestAction(key,id,action);await sync(key);
-      setMessage('اتحدث '+short(id)+' بنجاح');
-    }catch(e){setMessage(e instanceof Error?e.message:'تعذر تحديث الأوردر');}
+      setSyncError(false);setNewArrivals(0);setMessage('اتحدث '+short(id)+' بنجاح');
+    }catch(e){setSyncError(true);setMessage(e instanceof Error?e.message:'تعذر تحديث الأوردر');}
     finally{setPendingId('');}
   };
   const filters:[Filter,string,number][]=[
@@ -202,7 +250,7 @@ export function OperatorPress(){
           <button type="button" aria-pressed={layout==='rail'} onClick={()=>setLayout('rail')}>شريط التذاكر</button>
         </div>
         <button type="button" className="op-preview" aria-pressed={preview} onClick={()=>{
-          setPreview(v=>!v);setFilter('all');setSelectedId('');setMessage('');
+          setPreview(v=>!v);setFilter('all');setSelectedId('');setMessage('');setNewArrivals(0);
         }}>{preview?'العودة للأوردرات':'جرّب ضغط 20 طلبًا'}</button>
       </div>
     </div>
@@ -210,12 +258,19 @@ export function OperatorPress(){
       {preview?<span className="op-health__mark">عرض تصميم · ٢٠ طلبًا تجريبيًا · الأزرار غير مفعّلة</span>:
         <label className="op-health__key"><span>مفتاح تجربة الموظف</span><input type="password" placeholder="Studio operator key"
           value={key} onChange={e=>setKey(e.target.value)} autoComplete="off"/></label>}
+      <button type="button" className="op-health__sound" aria-pressed={soundOn}
+        onClick={()=>{void toggleSound();}} title="تنبيه صوتي عند وصول طلب جديد">
+        {soundOn?'♪ الصوت شغال':'♪ فعّل تنبيه الأوردر'}
+      </button>
       <button type="button" className="op-health__sync" disabled={preview||!key||connecting} onClick={async()=>{
         setConnecting(true);await sync(key);setConnecting(false);
       }}>حدّث الأوردرات ↻</button>
-      <span className={'op-health__link'+(message?' op-health__link--error':'')} role="status">
+      <span className={'op-health__link'+(syncError?' op-health__link--error':'')} role="status">
         {message ? message : lastSync ? 'آخر مزامنة '+lastSync : 'من غير اتصال لسه'}
       </span>
+      {!preview&&newArrivals>0&&<strong className="op-health__arrival" role="status" aria-live="polite">
+        وصل {newArrivals.toLocaleString('ar-EG')} أوردر جديد
+      </strong>}
     </div>
     <div className="op-pulse" aria-label="عدد الطلبات حسب الحالة">
       <div className="op-pulse__live"><b lang="en">LIVE QUEUE</b><strong>{data.length.toLocaleString('ar-EG')}</strong>
@@ -247,8 +302,14 @@ export function OperatorPress(){
             <small data-phase={o.status}>{STATUS[o.status]?.label??o.status}</small></button>)}</div>
         </div>
       </div>:<div className="op-rail" data-testid="order-ticket-rail" aria-label="شريط التذاكر الأفقي">
-        <div className="op-section-title"><span>ROLLING TICKETS / SWIPE →</span><strong>كل أوردر ورقة.</strong></div>
-        <div className="op-rail__track">{filtered.map(o=><OrderTicket key={o.id} order={o} preview={preview}
+        <div className="op-section-title op-section-title--rail">
+          <span>ROLLING TICKETS / SWIPE</span><strong>كل أوردر ورقة.</strong>
+          <div className="op-rail__navigation" role="group" aria-label="تحريك شريط التذاكر">
+            <button type="button" onClick={()=>moveRail('previous')} aria-label="التذاكر السابقة">→</button>
+            <button type="button" onClick={()=>moveRail('next')} aria-label="التذاكر التالية">←</button>
+          </div>
+        </div>
+        <div className="op-rail__track" ref={railTrack} tabIndex={0} aria-label="اسحب أفقيًا لمراجعة التذاكر">{filtered.map(o=><OrderTicket key={o.id} order={o} preview={preview}
           pending={pendingId===o.id} onAction={apply} compact/>)}</div>
       </div>}
     <AllDay orders={data}/>
