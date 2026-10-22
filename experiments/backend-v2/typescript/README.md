@@ -42,3 +42,25 @@ See `docs/rebirth/27_PASS_26_TYPESCRIPT_POSTGRES_PARITY_2026-10-22.md` for the *
 - The API uses a **random fixture-only token** and a **caller-supplied simulated role**. This is **NOT REAL AUTH**. It is intentionally unusable as a production cashier/kitchen API. No payment confirmation, real POS, networked printer or mobile device is connected.
 - \`tests/orders.test.ts\` contains isolated end-to-end HTTP fixtures for happy and rejected workflows, no premature kitchen action, stale concurrent staff updates, network retry and transaction rollback, plus the previous checkout tests.
 - The outbox mock sends while holding a database transaction; **real production worker must use claim/lease/backoff and deduplicated consumers**. A web submit marked \`received\` is NOT a restaurant-confirmed order.
+
+## Order Room — the first working customer ↔ operator loop
+
+**From generic backend spike to one operational feature:** An interactive local browser studio is now included at `studio/index.html`. Both views talk to the same persisted PostgreSQL records through the same HTTP server:
+`customer submit → DB order/outbox → operator inbox → staff action → DB event log → customer ticket`.
+
+To launch (ONLY against a disposable PostgreSQL 16 database on the same computer, named exactly `tuscanini_spike`):
+
+```bash
+cd experiments/backend-v2/typescript
+npm install --no-package-lock
+TUSCANINI_SPIKE_ONLY=yes POSTGRES_DB=tuscanini_spike POSTGRES_HOST=127.0.0.1 \
+ POSTGRES_USER=spike POSTGRES_PASSWORD=local-test-only-password npm run studio
+```
+
+Open the printed `http://127.0.0.1:<port>/studio` twice, customer and operator. Place a sample order in one view, accept / start / ready / delivered in the other. The ticket loads the actual persisted event ledger and refreshes while visible. A local browser tab can request optional **foreground** notifications. A stopped/restarted server retains database orders; Node tests, in contrast, reset their disposable test schema.
+
+New endpoints: `GET /api/staff/orders` (requires test role/token), `GET /api/orders/:id/events`, `GET /api/studio/catalog`, `GET /studio`. The existing write and tracking endpoints remain test-only. Two new PostgreSQL HTTP tests verify that the operator inbox sees customer orders and that a staff action adds durable events; invalid early kitchen processing produces no event.
+
+**Intentional boundary:** This works on one computer in two browser windows, not as a public staff app; the staff token/role is **fixture-only** and unfit for production auth, and the sample menu is fictitious. The studio is not yet embedded into the authored Next.js Rebirth pages. **Background mobile Push is NOT implemented**; that requires a real Push subscription, service worker and server-side sender. Talabat and the existing conventional POS remain separate.
+
+**Next code step:** Mount the same order-event contracts behind Next.js staging-only adapters, use separate staff identities/tracking capabilities, and build the real tablet-first UI with approved merchant menu choices. Keep order transport/test environment separable from live Supabase data until migration is deliberately complete.
