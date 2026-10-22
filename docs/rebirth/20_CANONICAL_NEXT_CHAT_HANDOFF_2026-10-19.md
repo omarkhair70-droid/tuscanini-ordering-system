@@ -187,3 +187,13 @@ The owner has NOT signed off on the whole visual experience. Need inspect **actu
 - Initially Next root CI and Visual QA **failed** because broad `tsconfig.json` picked up isolated TS spike files while only spike had `pg` dependencies. Added `experiments/backend-v2/typescript/**` to root tsconfig exclusions; isolated spike still runs its own **strict typecheck** in dedicated CI job.
 - **Next Home CI #39709735191 SUCCESS** for code/config commit `36359c1a`, including inherited admin order regression, root TypeScript and Next build: https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39709735191 . Visual QA status must be verified independently; do not assume it passed.
 - Engineering call unchanged: isolated parity demonstrates correctness only; no measured throughput, cost or merchant POS readiness. No deployment, merge or live data changes.
+
+
+## 6H — PASS 27 / STAFF AND KITCHEN LOOPBACK WORKFLOW SPIKE (2026-10-22)
+- Read [`28_PASS_27_OPERATOR_KITCHEN_HTTP_SIMULATION_2026-10-22.md`](28_PASS_27_OPERATOR_KITCHEN_HTTP_SIMULATION_2026-10-22.md). This is a real **disposable PostgreSQL + HTTP loopback** test implementation, NOT deployed restaurant software.
+- `experiments/backend-v2/typescript/src/operations.ts` adds row-locked transitions with atomic status + event audit + outbox: `received → accepted/rejected → preparing → ready → delivered`. Fixture rules: cashier accept/reject and deliver; kitchen start/ready. A rejected order cannot be prepared.
+- `experiments/backend-v2/typescript/src/http.ts` exposes **127.0.0.1-only** test routes for customer submit/order tracking/cashier/kitchen actions. Token and role headers are **simulated test fixtures**, not real RBAC or production auth.
+- Verified [GitHub Actions #39711012982](https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39711012982) on code commit `9ec9598f`: **TypeScript 15/15**, strict typecheck success; Django legacy spike job success. Another spike run #39711017453 succeeded. Check Home CI and Visual QA separately.
+- Operational tests cover complete happy path, cashier rejection, unauthorized fixture role, premature kitchen action, rollbacks, concurrent conflicting cashier actions, outbox offline retry and invalid HTTP input.
+- Still missing: real POS adapter and owner-confirmed staff rules, secure staff identity, provider payment and settlement, staged performance tests, production outbox lease/dedup, local hardware fallback and live menu price approval. Existing customer-facing Rebirth pages/images/old prices unchanged.
+- PR #59 **DRAFT**; NO MERGE / NO PRODUCTION DEPLOY.
