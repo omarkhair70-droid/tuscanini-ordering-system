@@ -13,6 +13,7 @@ type CartContextValue = {
   subtotal: number;
   addItem: (input: CartDraftItemInput) => void;
   addOfferItem: (input: CartDraftOfferItemInput) => void;
+  replaceProductItem: (lineId: string, input: CartDraftItemInput) => void;
   updateItemQuantity: (lineId: string, quantity: number) => void;
   removeItem: (lineId: string) => void;
   clearCart: () => void;
@@ -84,6 +85,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const addItem = useCallback((input: CartDraftItemInput) => setState((c) => ({ ...c, items: [...c.items, toProductCartItem(input)] })), []);
   const addOfferItem = useCallback((input: CartDraftOfferItemInput) => setState((c) => ({ ...c, items: [...c.items, toOfferCartItem(input)] })), []);
+  // Editing an existing receipt line preserves its identity and position.
+  // Do not convert an edit into an additional item in the cart.
+  const replaceProductItem = useCallback((lineId: string, input: CartDraftItemInput) => {
+    setState((c) => ({ ...c, items: c.items.map((item) =>
+      item.kind === 'product' && item.lineId === lineId && item.productId === input.productId
+        ? { ...item, ...input, kind:'product' as const, lineId,
+            quantity: Math.max(1, Math.min(50, input.quantity)),
+            totalItemPrice: input.unitPrice * Math.max(1, Math.min(50, input.quantity)) }
+        : item,
+    ) }));
+  }, []);
   const updateItemQuantity = useCallback((lineId: string, quantity: number) => {
     if (quantity < 1) return;
     setState((c) => ({ ...c, items: c.items.map((item) => (item.lineId === lineId ? { ...item, quantity, totalItemPrice: item.unitPrice * quantity } : item)) }));
@@ -93,7 +105,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const updateCustomer = useCallback((input: Partial<CartCustomerForm>) => setState((c) => ({ ...c, customer: { ...c.customer, ...input } })), []);
   const updateTableReference = useCallback((value: string | null) => setState((c) => (c.tableReference === value ? c : { ...c, tableReference: value })), []);
 
-  const value = useMemo(() => ({ items: state.items, customer: state.customer, tableReference: state.tableReference, isHydrated, itemsCount, subtotal, addItem, addOfferItem, updateItemQuantity, removeItem, clearCart, updateCustomer, updateTableReference }), [state, isHydrated, itemsCount, subtotal, addItem, addOfferItem, updateItemQuantity, removeItem, clearCart, updateCustomer, updateTableReference]);
+  const value = useMemo(() => ({ items: state.items, customer: state.customer, tableReference: state.tableReference, isHydrated, itemsCount, subtotal, addItem, addOfferItem, replaceProductItem, updateItemQuantity, removeItem, clearCart, updateCustomer, updateTableReference }), [state, isHydrated, itemsCount, subtotal, addItem, addOfferItem, replaceProductItem, updateItemQuantity, removeItem, clearCart, updateCustomer, updateTableReference]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
