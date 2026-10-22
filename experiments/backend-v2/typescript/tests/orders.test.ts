@@ -7,6 +7,7 @@ import test, { after, before, beforeEach } from 'node:test';
 import { openDisposablePool } from '../src/db.js';
 import { advanceOrder } from '../src/operations.js';
 import { startLocalSimulation } from '../src/http.js';
+import { syncMenuCatalog, submitMenuOrder } from '../src/menu-orders.js';
 import {
   RequestKeyCollision,
   deliverOneOutbox,
@@ -34,11 +35,13 @@ before(async () => {
   // Runs only after openDisposablePool validated all localhost test DB guards.
   await pool.query('DROP SCHEMA IF EXISTS spike_ts CASCADE');
   await pool.query(sql);
+  const menuSql=await readFile(new URL('../schema-menu.sql',import.meta.url),'utf8');
+  await pool.query(menuSql);
 });
 
 beforeEach(async () => {
   await pool.query(
-    'TRUNCATE spike_ts.payment_attempt, spike_ts.outbox_event, spike_ts.order_status_event, spike_ts.order_line, spike_ts.orders, spike_ts.catalog_item RESTART IDENTITY CASCADE',
+    'TRUNCATE spike_ts.payment_attempt, spike_ts.outbox_event, spike_ts.order_status_event, spike_ts.order_line, spike_ts.orders, spike_ts.catalog_item, spike_ts.menu_catalog RESTART IDENTITY CASCADE',
   );
   await pool.query(
     "INSERT INTO spike_ts.catalog_item(sku,name,unit_price_cents,available) VALUES ('PIZZA_01','Synthetic pizza',14500,true),('DRINK_01','Synthetic drink',2500,true)",

@@ -10,6 +10,7 @@ import type { AddressInfo } from 'node:net';
 import type { Pool } from 'pg';
 import { verifyDisposableLocalDatabase } from './db.js';
 import { RequestKeyCollision, submitOrder, type CartLine } from './orders.js';
+import { syncMenuCatalog, submitMenuOrder } from './menu-orders.js';
 import { OperationalError, advanceOrder, listOperatorOrders, listOrderEvents, trackOrder, type StaffAction, type StaffRole } from './operations.js';
 
 function json(res: ServerResponse, status: number, data: unknown): void {
@@ -81,6 +82,30 @@ export async function startLocalSimulation(pool: Pool): Promise<{
         json(res,200,{items:rows.rows});
         return;
       }
+      if(method==='POST'&&url.pathname==='/api/studio/catalog/sync'){
+        fixtureRole(req,fixtureToken);
+        const body=await readJson(req);
+        const synced=await syncMenuCatalog(pool,body.products);
+        json(res,200,{count:synced});
+        return;
+      }
+      if(method==='POST'&&url.pathname==='/api/orders/menu'){
+        const body=await readJson(req);
+        const order=await submitMenuOrder(pool,body);
+        json(res,200,{id:order.id,status:order.status,subtotal_cents:order.subtotal_cents});
+        return;
+      }
+      const fullTrack=/^\/api\/orders\/([0-9a-f-]+)\/menu-tracking$/i.exec(url.pathname);
+      if(method==='GET'&&fullTrack){
+        const order=await pool.query<{id:string;status:string;subtotal_cents:string;created_at:string;
+          order_type:string;table_reference:string|null}>(
+          'SELECT id,status,subtotal_cents::text,created_at,order_type,table_reference FROM spike_ts.orders WHERE id=$1',
+          [fullTrack[1]]
+        );
+        if(!order.rows[0])throw new OperationalError('Order does not exist.',404);
+        json(res,200,order.rows[0]);
+        return;
+      }
       if(method==='GET'&&url.pathname==='/api/staff/orders'){
         fixtureRole(req,fixtureToken);
         json(res,200,{orders:await listOperatorOrders(pool,30)});
@@ -125,7 +150,7 @@ export async function startLocalSimulation(pool: Pool): Promise<{
       const status = error instanceof OperationalError ? error.httpStatus
         : error instanceof RequestKeyCollision ? 409
         : error instanceof SyntaxError || error instanceof TypeError ? 400
-        : error instanceof Error && /Expected 1|Invalid SKU|Request key format|Unavailable or unknown/.test(error.message) ? 400
+        : error instanceof Error && /Expected 1|Invalid SKU|Invalid menu choice|Request key format|Unavailable or unknown/.test(error.message) ? 400
         : 500;
       json(res, status, { error: error instanceof Error ? error.message : 'Unexpected simulation error.' });
     }

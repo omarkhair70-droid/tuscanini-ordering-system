@@ -10,6 +10,8 @@ async function main(){
     const sql=await readFile(new URL('../schema.sql',import.meta.url),'utf8');
     await pool.query(sql);
   }
+  const migration=await readFile(new URL('../schema-menu.sql',import.meta.url),'utf8');
+  await pool.query(migration);
   await pool.query(`
     INSERT INTO spike_ts.catalog_item(sku,name,unit_price_cents,available)
     VALUES ('TUSC_DEMO_01','كريب توسكانيني / تجربة',9500,true),
