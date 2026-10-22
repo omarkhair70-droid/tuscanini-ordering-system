@@ -164,8 +164,8 @@ jobs:
           for attempt in $(seq 1 90); do
             if curl -fsS http://127.0.0.1:3099/studio -o /dev/null; then
               node scripts/qa/rebirth-next-studio-integration.mjs
-              node scripts/qa/rebirth-studio-two-window-browser.mjs
               node scripts/qa/rebirth-operator-press-visual.mjs
+              node scripts/qa/rebirth-studio-two-window-browser.mjs
               exit $?
             fi
             sleep 1
