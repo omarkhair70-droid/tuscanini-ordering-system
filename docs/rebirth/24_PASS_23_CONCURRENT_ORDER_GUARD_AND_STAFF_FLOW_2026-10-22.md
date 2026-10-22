@@ -32,7 +32,7 @@ After Pass 22 cataloged the historical restaurant backend and the Egyptian POS/o
 
 ## Test evidence / status
 
-- Local isolated rehearsal of the five regression scenarios using a Source-compatible mock completed successfully (`PASS: 5 order state tests`), and GitHub Actions now executes the committed **actual-code** regression. Link final corresponding Action run and its observed conclusion after it completes; do **not** call pending CI green.
+- **Verified actual-code GitHub Home CI** on code+test+CI SHA `d41b7b284c13c53a3092b0b425373269d3f8d347`: [run #39703982972](https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39703982972) **completed SUCCESS**. Its job steps show regression test **success**, `npx tsc --noEmit` **success** and `npm run build` **success**. Job log contains `PASS: 5 admin order concurrency tests; no merchant database accessed`. A new docs-only head may have additional CI runs; do not conflate older and newer SHA results.
 - No live Supabase connection or real order E2E was performed in this pass.
 - Existing generated 100 food images, 113 historical catalog items and prices, and Rebirth customer visual direction left untouched.
 
