@@ -460,6 +460,7 @@ try {
     // Isolated tracking fixture validates state semantics, not a real restaurant order.
     let restaurantStage='جديد';
     let restaurantConfirmation='pending';
+    let restaurantOrderType='pickup';
     let simulateTrackingOffline=false;
     await page.route('**/api/orders/track**',route=>simulateTrackingOffline
       ? route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({ok:false,error:'الاتصال بالمطعم غير متاح مؤقتًا'})})
@@ -469,7 +470,7 @@ try {
         orderNumber:1234,reference:'#1234',status:restaurantStage,
         confirmationStatus:restaurantConfirmation,
         tableReference:null,createdAt:'2026-10-18T14:00:00.000Z',
-        orderType:'pickup',totalEstimate:85,
+        orderType:restaurantOrderType,totalEstimate:85,
       }}),
     }));
     await page.goto(baseUrl+'/order-success?orderId=123e4567-e89b-42d3-a456-426614174000',{waitUntil:'networkidle',timeout:30000});
@@ -506,6 +507,33 @@ try {
     await check(await page.getByRole('heading',{name:'الطلب بيتحضّر'}).count()===1 &&
       await page.locator('.t-order-tracking__time').getByText(/البيانات قديمة/).count()===1,
       `${width}px offline refresh retains last successful status and marks it stale`);
+    // Every invented order-state combination is a browser fixture, not a real
+    // merchant order. Check the visual seal never implies a state not in API data.
+    simulateTrackingOffline=false;
+    const visualStates=[
+      {status:'جديد',confirmation:'unreachable',type:'pickup',headline:'المطعم حاول يتواصل معاك',stamp:'CONTACT',attention:1},
+      {status:'جديد',confirmation:'rejected',type:'pickup',headline:'الطلب اتلغى',stamp:'CANCELLED',attention:2},
+      {status:'جاهز للاستلام',confirmation:'confirmed',type:'pickup',headline:'الطلب جاهز للاستلام',stamp:'READY',attention:0},
+      {status:'خرج للدليفري',confirmation:'confirmed',type:'delivery',headline:'الطلب خرج للدليفري',stamp:'ON THE WAY',attention:0},
+      {status:'تم التسليم',confirmation:'confirmed',type:'delivery',headline:'الطلب اتسلّم',stamp:'DELIVERED',attention:0},
+      {status:'ملغي',confirmation:'pending',type:'pickup',headline:'الطلب اتلغى',stamp:'CANCELLED',attention:1},
+    ];
+    for(const item of visualStates){
+      restaurantStage=item.status;
+      restaurantConfirmation=item.confirmation;
+      restaurantOrderType=item.type;
+      await page.getByRole('button',{name:/حدّث الحالة/}).click();
+      await page.getByRole('heading',{name:item.headline,exact:true}).waitFor({state:'visible',timeout:8000});
+      await page.locator('.t-order-story__seal-text').getByText(item.stamp,{exact:true}).waitFor({state:'visible',timeout:8000});
+      await check(await page.locator('.t-order-fact[data-state="attention"]').count()===item.attention,
+        `${width}px ${item.stamp} is a truthful receipt status without inventing confirmation/payment`);
+      if(width===390 && ['READY','DELIVERED'].includes(item.stamp)){
+        await page.evaluate(()=>window.scrollTo(0,0));
+        await page.screenshot({path:`artifacts/screenshots/tracking-ticket-${item.stamp.toLowerCase()}-390.png`,fullPage:true,animations:'disabled'});
+      }
+    }
+    await check(await page.getByText(/وقت وصول متوقع|نسبة التحضير|تم الدفع/).count()===0,
+      `${width}px the creative receipt never displays an invented ETA, cooking percentage or payment claim`);
     await context.close();
   }
 } catch (error) {
