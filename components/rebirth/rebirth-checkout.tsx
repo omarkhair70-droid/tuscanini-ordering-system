@@ -82,7 +82,14 @@ export function RebirthCheckout() {
     setError('');
     try {
       // Stable key per exact choice+contact payload enables safe retry in staging.
-      const data={ customer, items, subtotal, tableReference };
+      // A pickup draft may retain a previously typed delivery address for
+      // convenience if the customer switches back. Never send that address
+      // to the restaurant when the selected fulfillment is pickup.
+      const orderCustomer={
+        ...customer,
+        address:customer.orderType==='delivery'?customer.address.trim():'',
+      };
+      const data={ customer:orderCustomer, items, subtotal, tableReference };
       const hash=JSON.stringify(data);
       if(!requestRef.current||requestRef.current.hash!==hash)
         requestRef.current={hash,key:'studio-'+crypto.randomUUID()};
@@ -202,7 +209,7 @@ export function RebirthCheckout() {
                 </section>
 
                 <section className="t-checkout-section" id="t-checkout-fields" aria-labelledby="t-cart-customer-title">
-                  <div className="t-checkout-section__head"><span className="t-index">02 — ABOUT YOU</span><h2 id="t-cart-customer-title">نوصلّك إزاي؟</h2></div>
+                  <div className="t-checkout-section__head"><span className="t-index">02 — ORDER DETAILS</span><h2 id="t-cart-customer-title">تكمل إزاي؟</h2></div>
                   <div className="t-checkout-inputs">
                     <label>اسمك <input id="t-checkout-name" type="text" autoComplete="name" value={customer.name} aria-invalid={!!errors.name} aria-describedby={errors.name?'t-error-name':undefined}
                       onChange={e=>{updateCustomer({name:e.target.value});setErrors(x=>({...x,name:undefined}))}} placeholder="الاسم" maxLength={100}/></label>
@@ -210,10 +217,15 @@ export function RebirthCheckout() {
                     <label>رقم الموبايل <input id="t-checkout-phone" type="tel" inputMode="tel" autoComplete="tel" value={customer.phone} aria-invalid={!!errors.phone} aria-describedby={errors.phone?'t-error-phone':undefined}
                       onChange={e=>{updateCustomer({phone:e.target.value});setErrors(x=>({...x,phone:undefined}))}} placeholder="01xxxxxxxxx" maxLength={20}/></label>
                     {errors.phone && <p id="t-error-phone" className="t-checkout-error">{errors.phone}</p>}
-                    <fieldset className="t-checkout-type"><legend>نوع الطلب</legend><div>
+                    <fieldset className="t-checkout-type" aria-describedby="t-checkout-service-note"><legend>هتستلم أوردرِك إزاي؟</legend><div>
                       <label><input type="radio" name="fulfillment" checked={customer.orderType==='delivery'} onChange={()=>updateCustomer({orderType:'delivery'})}/><span>دليفري</span></label>
                       <label><input type="radio" name="fulfillment" checked={customer.orderType==='pickup'} onChange={()=>{updateCustomer({orderType:'pickup'});setErrors(x=>({...x,address:undefined}))}}/><span>استلام من المطعم</span></label>
                     </div></fieldset>
+                    <p className="t-checkout-service-note" id="t-checkout-service-note" role="status">
+                      {customer.orderType==='pickup'
+                        ? 'هتستلم بنفسك من المطعم. مش محتاجين عنوان توصيل، وتقدر تتابع حالة التجهيز بعد تسجيل الطلب.'
+                        : 'اكتب عنوان واضح. المطعم محتاج يتأكد من إمكانية التوصيل وأي رسوم قبل تأكيد الطلب.'}
+                    </p>
                     {customer.orderType==='delivery' && <><label>عنوان التوصيل <textarea id="t-checkout-address" rows={3} value={customer.address} aria-invalid={!!errors.address} aria-describedby={errors.address?'t-error-address':undefined}
                       onChange={e=>{updateCustomer({address:e.target.value});setErrors(x=>({...x,address:undefined}))}} placeholder="الشارع، المنطقة، علامة مميزة" maxLength={500}/></label>
                       {errors.address && <p id="t-error-address" className="t-checkout-error">{errors.address}</p>}</>}
@@ -227,12 +239,23 @@ export function RebirthCheckout() {
                 <h2 id="t-checkout-summary-title">الخلاصة.</h2>
                 <div className="t-checkout-summary__line"><span>نوع الطلب</span><strong>{customer.orderType==='delivery'?'دليفري':'استلام من المطعم'}</strong></div>
                 <div className="t-checkout-summary__line"><span>عدد القطع</span><strong>{count}</strong></div>
-                <div className="t-checkout-summary__line"><span>إجمالي أصناف الطلب</span><strong>{money(subtotal)} ج.م</strong></div>
-                <p className="t-checkout-summary__notice">رسوم التوصيل، لو موجودة، بتتحدد مع المطعم.</p>
+                <div className="t-checkout-summary__line"><span>رسوم التوصيل</span><strong data-testid="checkout-delivery-fee">{customer.orderType==='pickup'?'لا توجد رسوم توصيل':'لسه مش محددة'}</strong></div>
+                <div className="t-checkout-summary__food-total">
+                  <span>إجمالي الأصناف فقط</span><strong>{money(subtotal)} ج.م</strong>
+                </div>
+                <section className="t-checkout-payment-note" aria-label="التكلفة وطريقة الدفع">
+                  <span className="t-index">PAYMENT / NOT CHARGED</span>
+                  <h3>الدفع مش بيتم هنا.</h3>
+                  <p>دي خطوة تسجيل طلب، مش تحصيل فلوس. طريقة الدفع المتاحة هتتأكد مع المطعم؛ مفيش دفع إلكتروني مفعّل على الموقع حاليًا.</p>
+                  <p>{customer.orderType==='pickup'
+                    ? 'الاستلام من المطعم، من غير رسوم توصيل. الإجمالي ده للأصناف بس.'
+                    : 'رسوم الدليفري والمنطقة المتاحة محتاجين تأكيد المطعم؛ إجمالي الأصناف مش السعر النهائي شامل التوصيل.'}</p>
+                  <p>أسعار الأصناف حسب المنيو السابق ومحتاجة تأكيد من المطعم.</p>
+                </section>
                 {tableReference && <p className="t-checkout-summary__table">مرجع الطاولة: {tableReference}</p>}
                 <label className="t-checkout-confirm"><input id="t-checkout-confirm" type="checkbox" checked={customer.confirmedAccurateDetails}
                   onChange={e=>{updateCustomer({confirmedAccurateDetails:e.target.checked});setErrors(x=>({...x,confirmedAccurateDetails:undefined}))}}/>
-                  <span>راجعت الأصناف وبيانات الطلب.</span></label>
+                  <span>راجعت الأصناف وبيانات الطلب، وفاهم إن السعر النهائي وطريقة الدفع هيتأكدوا مع المطعم.</span></label>
                 {errors.confirmedAccurateDetails && <p className="t-checkout-error">{errors.confirmedAccurateDetails}</p>}
                 <p className="t-checkout-status" role="status">{status}</p>
                 {error && <p className="t-checkout-error t-checkout-error--large" role="alert">{error}</p>}
