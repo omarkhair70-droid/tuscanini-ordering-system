@@ -86,3 +86,68 @@ jobs:
         run: npm run typecheck --prefix experiments/backend-v2/typescript
       - name: Atomicity, idempotency, order/price and outbox parity tests
         run: npm test --prefix experiments/backend-v2/typescript
+
+  studio-next-integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: spike
+          POSTGRES_PASSWORD: only-for-ephemeral-ci-tests
+          POSTGRES_DB: tuscanini_spike
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U spike -d tuscanini_spike"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TUSCANINI_SPIKE_ONLY: "yes"
+      POSTGRES_HOST: 127.0.0.1
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: tuscanini_spike
+      POSTGRES_USER: spike
+      POSTGRES_PASSWORD: only-for-ephemeral-ci-tests
+      TUSCANINI_STUDIO_ENABLED: "yes"
+      TUSCANINI_STUDIO_BRIDGE_TOKEN: "ci-only-disposable-studio-bridge-token-for-loopback"
+      TUSCANINI_STUDIO_OPERATOR_KEY: "ci-only-disposable-operator-key-for-loopback"
+      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-only-public-placeholder
+      SUPABASE_SERVICE_ROLE_KEY: ci-only-service-placeholder
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - run: npm install --prefix experiments/backend-v2/typescript --no-package-lock --no-audit --no-fund
+      - name: Start disposable PostgreSQL-backed event service on loopback
+        run: |
+          npm run studio --prefix experiments/backend-v2/typescript > /tmp/tuscanini-studio.log 2>&1 &
+          for attempt in $(seq 1 60); do
+            port=$(sed -nE 's#.*(http://127\\.0\\.0\\.1:[0-9]+)/studio.*#\\1#p' /tmp/tuscanini-studio.log | head -1)
+            if [ -n "$port" ]; then
+              echo "TUSCANINI_STUDIO_ORIGIN=$port" >> "$GITHUB_ENV"
+              echo "Disposable studio is responding on loopback."
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/tuscanini-studio.log
+          exit 1
+      - name: Run native Next.js and test customer ↔ operator ↔ tracking across actual HTTP
+        run: |
+          npm run dev -- -H 127.0.0.1 -p 3099 > /tmp/tuscanini-next.log 2>&1 &
+          for attempt in $(seq 1 90); do
+            if curl -fsS http://127.0.0.1:3099/studio -o /dev/null; then
+              node scripts/qa/rebirth-next-studio-integration.mjs
+              exit $?
+            fi
+            sleep 1
+          done
+          cat /tmp/tuscanini-next.log
+          exit 1
