@@ -1,0 +1,119 @@
+/**
+ * EPHEMERAL LOCAL SIMULATOR ONLY. Deliberately NOT a production HTTP API:
+ * test-token + caller-supplied role are test fixtures, NOT authentication/RBAC.
+ * Do not expose publicly, proxy to production, or copy as a live endpoint.
+ */
+import { randomUUID } from 'node:crypto';
+import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
+import type { AddressInfo } from 'node:net';
+import type { Pool } from 'pg';
+import { verifyDisposableLocalDatabase } from './db.js';
+import { RequestKeyCollision, submitOrder, type CartLine } from './orders.js';
+import { OperationalError, advanceOrder, trackOrder, type StaffAction, type StaffRole } from './operations.js';
+
+function json(res: ServerResponse, status: number, data: unknown): void {
+  res.writeHead(status, {
+    'Content-Type': 'application/json; charset=utf-8',
+    'Cache-Control': 'no-store',
+  });
+  res.end(JSON.stringify(data));
+}
+
+async function readJson(req: IncomingMessage): Promise<Record<string, unknown>> {
+  if (!(req.headers['content-type'] ?? '').startsWith('application/json')) {
+    throw new OperationalError('JSON content type required.', 415);
+  }
+  let text = '';
+  for await (const chunk of req) {
+    text += String(chunk);
+    if (Buffer.byteLength(text) > 16_384) {
+      throw new OperationalError('Fixture body is too large.', 413);
+    }
+  }
+  try {
+    const value: unknown = JSON.parse(text);
+    if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('object required');
+    return value as Record<string, unknown>;
+  } catch {
+    throw new OperationalError('Malformed JSON object.', 400);
+  }
+}
+
+function fixtureRole(req: IncomingMessage, token: string): StaffRole {
+  if (req.headers['x-spike-test-token'] !== token) {
+    throw new OperationalError('Test-only staff fixture token required.', 403);
+  }
+  const role = req.headers['x-spike-role'];
+  if (role !== 'cashier' && role !== 'kitchen') {
+    throw new OperationalError('Valid fixture role required.', 403);
+  }
+  return role;
+}
+
+export async function startLocalSimulation(pool: Pool): Promise<{
+  baseUrl: string;
+  fixtureToken: string;
+  close: () => Promise<void>;
+}> {
+  verifyDisposableLocalDatabase();
+  const fixtureToken = randomUUID();
+  const server = createServer(async (req, res) => {
+    const url = new URL(req.url ?? '/', 'http://127.0.0.1');
+    const method = req.method ?? 'GET';
+    try {
+      if (method === 'POST' && url.pathname === '/api/orders') {
+        const body = await readJson(req);
+        const order = await submitOrder(pool, body.requestKey as string, body.items as CartLine[]);
+        json(res, 200, { id: order.id, status: order.status, subtotal_cents: order.subtotal_cents });
+        return;
+      }
+      const tracking = /^\/api\/orders\/([0-9a-f-]+)\/tracking$/i.exec(url.pathname);
+      if (method === 'GET' && tracking) {
+        json(res, 200, await trackOrder(pool, tracking[1]));
+        return;
+      }
+      const action = /^\/api\/(staff|kitchen)\/orders\/([0-9a-f-]+)\/(decision|progress|handoff)$/i.exec(url.pathname);
+      if (method === 'POST' && action) {
+        const role = fixtureRole(req, fixtureToken);
+        const body = await readJson(req);
+        const requested = body.action;
+        const allowedForRoute: Record<string, string[]> = {
+          'staff/decision': ['accept', 'reject'],
+          'kitchen/progress': ['start', 'ready'],
+          'staff/handoff': ['deliver'],
+        };
+        const route = action[1] + '/' + action[3];
+        if (!allowedForRoute[route]?.includes(String(requested))) {
+          throw new OperationalError('Operation not valid for this route.', 400);
+        }
+        const result = await advanceOrder(pool, action[2], requested as StaffAction, role);
+        json(res, 200, result);
+        return;
+      }
+      json(res, 404, { error: 'Simulation route not found.' });
+    } catch (error) {
+      const status = error instanceof OperationalError ? error.httpStatus
+        : error instanceof RequestKeyCollision ? 409
+        : error instanceof SyntaxError || error instanceof TypeError ? 400
+        : error instanceof Error && /Expected 1|Invalid SKU|Request key format|Unavailable or unknown/.test(error.message) ? 400
+        : 500;
+      json(res, status, { error: error instanceof Error ? error.message : 'Unexpected simulation error.' });
+    }
+  });
+
+  // No caller-provided host/port: the ephemeral fixture cannot bind to a LAN IP.
+  await new Promise<void>((resolve, reject) => {
+    server.once('error', reject);
+    server.listen(0, '127.0.0.1', () => {
+      server.removeListener('error', reject);
+      resolve();
+    });
+  });
+  const address = server.address() as AddressInfo;
+  return {
+    baseUrl: 'http://127.0.0.1:' + address.port,
+    fixtureToken,
+    close: () => new Promise<void>((resolve, reject) =>
+      server.close(error => error ? reject(error) : resolve())),
+  };
+}
