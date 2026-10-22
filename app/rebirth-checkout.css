@@ -120,3 +120,51 @@
   .t-checkout-quicknav{gap:7px;padding:10px 9px}
   .t-checkout-quicknav a{min-width:100px;padding:9px 5px}
 }
+
+/* T01 / A receipt for a return customer, not a second cinematic Home.
+   Keep the full expressive hero on empty carts; populated checkout goes
+   straight to reviewing choices, customer details and the final total. */
+.t-checkout-edit{
+  display:inline-flex;align-items:center;justify-content:center;min-height:42px;
+  font-size:13px;font-weight:900;text-decoration:none;
+  border-bottom:2px solid var(--red);color:var(--ink);white-space:nowrap
+}
+.t-checkout-edit:hover{color:var(--red)}
+.t-checkout-edit:focus-visible,.t-checkout-stepper button:focus-visible,
+.t-checkout-remove:focus-visible,.t-checkout-quicknav a:focus-visible{
+  outline:3px solid #287bd6;outline-offset:3px
+}
+@media(max-width:720px){
+  .t-checkout-page--filled .t-checkout-hero{padding-block:9px 11px}
+  .t-checkout-page--filled .t-checkout-hero__overline{padding-bottom:7px}
+  .t-checkout-page--filled .t-checkout-hero__overline span:last-child{display:none}
+  .t-checkout-page--filled .t-checkout-hero__headline{
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(135px,.8fr);
+    align-items:center;gap:12px;padding-block:8px
+  }
+  .t-checkout-page--filled .t-checkout-hero__headline h1{
+    font-size:clamp(31px,8.5vw,46px);line-height:1.18
+  }
+  .t-checkout-page--filled .t-checkout-hero__headline h1 br{display:none}
+  .t-checkout-page--filled .t-checkout-hero__headline h1 em{margin-inline-start:.18em}
+  .t-checkout-page--filled .t-checkout-hero__headline .t-index{display:none}
+  .t-checkout-page--filled .t-checkout-hero__headline p{
+    margin:0;font-size:12px;line-height:1.5
+  }
+  .t-checkout-page--filled .t-checkout-hero__bottom{
+    justify-content:flex-end;padding-top:7px;font-size:11px
+  }
+  .t-checkout-page--filled .t-checkout-hero__bottom span:first-child{display:none}
+  .t-checkout-page--filled .t-checkout-content{padding-top:10px}
+  .t-checkout-page--filled .t-checkout-quicknav{margin-bottom:15px}
+  .t-checkout-edit{min-height:38px;font-size:12px}
+  .t-checkout-item__controls{gap:8px 11px}
+}
+@media(max-width:350px){
+  .t-checkout-page--filled .t-checkout-hero__headline{
+    grid-template-columns:minmax(0,1fr) minmax(114px,.8fr);
+    gap:7px
+  }
+  .t-checkout-page--filled .t-checkout-hero__headline h1{font-size:30px}
+  .t-checkout-page--filled .t-checkout-hero__headline p{font-size:11px}
+}
