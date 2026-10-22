@@ -150,6 +150,7 @@ jobs:
             if curl -fsS http://127.0.0.1:3099/studio -o /dev/null; then
               node scripts/qa/rebirth-next-studio-integration.mjs
               node scripts/qa/rebirth-studio-two-window-browser.mjs
+              node scripts/qa/rebirth-operator-press-visual.mjs
               exit $?
             fi
             sleep 1
@@ -161,6 +162,9 @@ jobs:
         if: always()
         with:
           name: tuscanini-two-screen-studio-browser
-          path: artifacts/screenshots/studio-*.png
+          path: |
+            artifacts/screenshots/studio-*.png
+            artifacts/screenshots/press-*.png
+            artifacts/screenshots/ticket-rail-*.png
           if-no-files-found: warn
           retention-days: 14
