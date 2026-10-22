@@ -66,3 +66,7 @@ Finish **one authored Tuscanini website**, not a repaired homepage plus disconne
 An accepted change must strengthen an explicit *customer decision across screens* and be accompanied by an actual code diff + 390/1440 browser evidence + correctness/accessible/error-state tests. One good screenshot is not completion. The ten-route website remains **OPEN for owner review**. Do not start another generic Django/POS simulation and do not regenerate all 100 images.
 
 **Current boundaries:** Same Next.js repo and draft PR #59, no Supabase data cutover, no payment terminal work, no live merchant/customer records and no production deployment.
+
+## Specific external validation (targeted research, not a fresh strategy reboot)
+- Baymard, [Checkout Flow UX Optimization](https://baymard.com/blog/checkout-flow-ux-optimization): keep the review summary visible/easily revisitable, preserve input after errors, do not surprise people with late fees. This project keeps one-page full review and a compact non-payable client total; it does not introduce a forced accordion workflow.
+- W3C, [WCAG Status Messages](https://www.w3.org/WAI/WCAG21/Understanding/status-messages): dynamic status content should be programmatically identifiable without an unexpected focus jump. Tracking updates its headline politely, while transport failures remain clear `role=alert` messages. Screen-reader manual testing is still due.
