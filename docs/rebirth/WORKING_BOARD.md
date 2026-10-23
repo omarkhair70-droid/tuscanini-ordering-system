@@ -15,9 +15,9 @@
 | Gate | Desired customer-visible outcome | Exact next deliverable | Verified status |
 |---|---|---|---|
 | G00 | See both designed screens via Vercel | Stable customer/Order Press/Ticket Rail URLs; local 20-ticket interactive demo | **READY-PREVIEW + browser CI PROVED** at `2a48f08e` |
-| G01 | Dedicated Tuscanini data on existing Oracle | Coolify resource using `infra/oracle/postgres.compose.yaml` + volume, DB isolation, PG health and real backup/restore | **COMPOSE COMMITTED — NOT DEPLOYED** |
-| G02 | Durable safe service rather than test fixture | Real API with own migrations, authentication, privacy/tracking and server-authoritative commerce | **OPEN** — old `spike_ts` API may NOT be exposed |
-| G03 | One live shared order between phone and tablet | Vercel server-side integration to G02, operator actions, tracking, real internet roundtrip and rollback toggle | **OPEN**; localhost-only E2E TESTED |
+| G01 | Dedicated Tuscanini data on existing Oracle | Coolify DB+API Compose, unique app user/volume, health and backup/restore | **DB+API COMPOSE COMMITTED — NOT DEPLOYED** |
+| G02 | Durable safe service rather than test fixture | New `services/orders-api` with own migrations, service auth, server pricing/idempotency and event states | **CODE BUILT + POSTGRES CI SUCCESS**; not deployed, hardening open |
+| G03 | One live shared order between phone and tablet | Preview-only Next adapters + operator gate + gated catalog sync, then internet roundtrip | **CODE BUILT / DEFAULT OFF**; remote E2E still OPEN |
 | G04 | Merchant business rules actually true | Approved menu/prices/options/offers, phone/address/hours, delivery region/fee/time, payment and cancellation choices | **MERCHANT** |
 | G05 | Operationally reliable restaurant flow | Real tablet + Android test, foreground sound, sleep/reconnect, 20–50 tickets, retry conflict, data security, backup recovery | **FIELD/OPEN** |
 | G06 | Controlled restaurant web ordering | Pilot, monitoring, final owner signoff, deliberate production cutover & support/rollback | **OPEN** |
@@ -33,8 +33,8 @@
 | C05 | Checkout delivery vs pickup & genuine fee | Honest display, fee unverified | Delivery coverage, current fee/tax/packing charge and actual payable total (MERCHANT/P0) |
 | C06 | Payments: cash on delivery/pickup, on-prem POS | Only research inventory | Owner selects what is accepted; unpaid/collect-at-handoff state clearly recorded (P1) |
 | C07 | Payments: cards, Meeza, wallets, QR, Fawry, InstaPay, Apple/Google Pay, links, deposits, split | U01 P01–P18 documented; no integration | Choose supported provider and merchant account; signed callbacks, failures, reconciliation/refunds (DECIDE; not auto-P0) |
-| C08 | Orders in permanent DB, prices, retries | PostgreSQL tests LOCAL only | Independent Oracle Postgres, schema migrations, atomic price checks, idempotency, monitoring (P0) |
-| C09 | Remote Vercel-to-Oracle transport | No shared remote API | Authenticated Next server routes to isolated Oracle API, no client secrets/CORS leaks (P0) |
+| C08 | Orders in permanent DB, prices, retries | New dedicated PG schema/API + CI tested; Oracle not deployed | Isolated Oracle PG, backup, migrations, API health/metrics (P0) |
+| C09 | Remote Vercel-to-Oracle transport | Preview-only server adapter BUILT, feature flag OFF | Deploy HTTPS API, configure secrets, remote full cycle/abuse testing (P0) |
 | C10 | Operator screen accessible from URL | Public interactive demo PREVIEW 200 | Same design shows **real** orders only for authorized restaurant access (P0) |
 | C11 | Operator workflows: accept/reject/prep/ready/handoff | Local PostgreSQL E2E tested | Remote authorization/conflicts and exact restaurant physical handoff (P0) |
 | C12 | Staff entry/security | Test key and no production login | One minimal protected restaurant gate/session; no shift/employee POS platform (P0) |
@@ -74,6 +74,20 @@
 - A working Coolify/Oracle administration connection is required for actual resource creation, environment variables and deployment. No DB/SSH passwords should be pasted into GitHub, chat or logs.
 
 **Every status update from now on:** Current milestone / changed files + SHA / Build + Browser + PostgreSQL CI / **site preview & order screen links** / what exactly remains and the next unblock. If blocked, mark it honestly and continue independent code/art work.
+
+---
+
+### Execution checkpoint / Oracle transport build (23 Oct 2026)
+
+**Code now built on PR #59** — dedicated `services/orders-api` with separate `tuscanini` SQL schema and additive migration (no `spike_ts` or shared Nova/Plantupia DB), isolated pg pool, authenticated service HTTP routes, server-priced catalog modifiers, idempotent checkout, event log/outbox, operator inbox/actions and PII-minimized customer tracking. The API's test suite proves real PostgreSQL 16 behavior, including identical-cart replay, changed-cart 409, unauthorized inbox/action 403, received→accepted→preparing→ready→delivered and fail-closed default OFF. **No Oracle deployment yet**. Code sources: `services/orders-api/src/`, `services/orders-api/migrations/`, `services/orders-api/Dockerfile`, `services/orders-api/tests/service.test.mjs`, `.github/workflows/tuscanini-orders-service.yml`.
+
+**Same customer site and same order screen:** `lib/oracle-order-api.ts` routes server-to-server only when **both** `VERCEL_ENV=preview` and `ORDER_BACKEND=oracle`; customer `/api/orders`, `/api/orders/track`, and operator `/api/studio/bridge` now have **preview-only** real-service adapters. Staff action/inbox requires a DIFFERENT long passkey in the Next server. For controlled catalog import the new `POST /api/internal/orders/catalog-sync` requires staff passkey, preview flag and `TUSCANINI_ALLOW_CATALOG_SYNC=yes`, plus the isolated service's own `CATALOG_SYNC_ENABLED=yes`. Until all these explicit flags are configured, Vercel remains the same interactive 20-ticket design demo and historical backend. **No public real-order API, no anonymous staff data**.
+
+**Oracle Compose ready for administrator deploy:** `infra/oracle/postgres.compose.yaml` now defines BOTH PostgreSQL and the dedicated Node API, an internal database-only port and its persistent storage. `infra/oracle/README.md` is the single setup/rollback runbook. Actual Coolify project creation, HTTPS API hostname, service secrets, catalog upload, DB backup/restore and remote two-device E2E remain OPEN; do not claim deployment.
+
+**Verification:** dedicated workflow [Tuscanini Dedicated Order API PostgreSQL](https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/workflows/tuscanini-orders-service.yml) **SUCCESS** on technical SHA `157cb024`; [Home/Next TypeScript CI #39883719809](https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39883719809) **SUCCESS** on same code after isolating `services/orders-api/**` into its own TypeScript compilation scope. Additional visual/Backend jobs and documentation-HEAD reruns may still be active; inspect their conclusions before claiming a complete four-gate pass.
+
+**Blocking dependency:** no authorized OCI/Coolify control panel session in the connected tools. A GitHub commit or Vercel READY cannot create an Oracle container or verify DB data. Never take credentials in source or chat. Continue source+CI until Coolify access is available, then publish isolated Postgres/API with fail-closed ingestion and demonstrate same real test order across phone/restaurant tablet.
 
 ---
 
