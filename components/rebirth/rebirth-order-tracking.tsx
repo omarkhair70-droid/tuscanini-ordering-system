@@ -1,5 +1,6 @@
 'use client';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 
 type Order = {
   orderNumber: number | null;
@@ -16,6 +17,24 @@ type StatusKey = 'pending'|'unreachable'|'confirmed'|'preparing'|'ready'|'out'|'
 type Stage = { key: StatusKey; label: string; description: string };
 type Fact = { label: string; value: string; detail: string; state: 'verified'|'waiting'|'attention' };
 const formatMoney = (number: number) => new Intl.NumberFormat('ar-EG', { maximumFractionDigits: 2 }).format(number);
+
+// A prefilled external request is not an order status mutation.
+// Never collect a card number or claim a cancellation/refund succeeded.
+function supportMessage(reference:string,kind:'cancel'|'change'|'help'):string{
+  const intro='مرحبًا توسكانيني، بخصوص الطلب '+reference+'.';
+  if(kind==='cancel')return intro+'\nحابب أستفسر عن إمكانية إلغاء الطلب. عارف إن الإلغاء مش مؤكد لحد ما المطعم يرد ويحدّث الحالة.';
+  if(kind==='change')return intro+'\nحابب أطلب تعديل تفاصيل الطلب إن كان لسه ممكن. برجاء التأكيد قبل أي تغيير.';
+  return intro+'\nمحتاج مساعدة أو توضيح بخصوص حالة الطلب. برجاء التواصل.';
+}
+function validatedWhatsApp(number:string):string|null{
+  const digits=number.replace(/\D/g,'');
+  const international=digits.startsWith('0')?'20'+digits.slice(1):digits;
+  return /^\d{10,15}$/.test(international)?international:null;
+}
+function whatsAppRequest(phone:string,reference:string,kind:'cancel'|'change'|'help'){
+  const digits=validatedWhatsApp(phone);
+  return digits?'https://wa.me/'+digits+'?text='+encodeURIComponent(supportMessage(reference,kind)):null;
+}
 
 function getStatus(order: Order): Stage {
   if (order.confirmationStatus==='rejected'||order.status==='ملغي') return {key:'cancelled',label:'الطلب اتلغى',description:'تواصل مع المطعم للاستفسار عن تفاصيل الإلغاء.'};
@@ -62,6 +81,7 @@ export function RebirthOrderTracking({orderId}:{orderId:string}) {
   const [updating,setUpdating]=useState(false);
   const [error,setError]=useState('');
   const [lastUpdated,setLastUpdated]=useState<string|null>(null);
+  const [supportNumber,setSupportNumber]=useState('');
   const requestRef=useRef<AbortController|null>(null);
   const reload=useCallback(async()=>{
     // Manual refresh and returning from background cancel an older pending poll:
@@ -105,8 +125,28 @@ export function RebirthOrderTracking({orderId}:{orderId:string}) {
     };
   },[reload]);
 
+  useEffect(()=>{
+    const controller=new AbortController();
+    void fetch('/api/public/site-settings',{cache:'no-store',signal:controller.signal})
+      .then(res=>res.ok?res.json():null)
+      .then((data:unknown)=>{
+        if(controller.signal.aborted || !data || typeof data!=='object')return;
+        const settings=(data as {settings?:{whatsappOrderNumber?:unknown}}).settings;
+        if(typeof settings?.whatsappOrderNumber==='string')
+          setSupportNumber(settings.whatsappOrderNumber);
+      }).catch(()=>{ /* Contact page remains the fallback. */ });
+    return ()=>controller.abort();
+  },[]);
+
   const status=order?getStatus(order):null;
   const facts=order?getOrderFacts(order):[];
+  const assistanceKind: 'cancel'|'change'|'help' =
+    status?.key==='pending'||status?.key==='confirmed'?'cancel':
+    status?.key==='preparing'?'change':'help';
+  const supportLink=order?whatsAppRequest(supportNumber,order.reference,assistanceKind):null;
+  const canChange=order&&['pending','confirmed','preparing','unreachable'].includes(status?.key??'');
+  const cancellationLink=canChange?whatsAppRequest(supportNumber,order.reference,'cancel'):null;
+  const changeLink=canChange?whatsAppRequest(supportNumber,order.reference,'change'):null;
   // Decorative editorial seal: textual status is still exclusively backend-derived.
   // A stamp is not a payment receipt, kitchen ticket, ETA or merchant acceptance.
   const statusStamp: Record<StatusKey,string> = {
@@ -174,6 +214,30 @@ export function RebirthOrderTracking({orderId}:{orderId:string}) {
           </div>
         </div>
         <p className="t-order-tracking__cadence">الصفحة بتراجع حالة الطلب كل ١٥ ثانية وهي مفتوحة. من غير وعد بوقت تجهيز أو توصيل مش مؤكد.</p>
+        {order&&<section className="t-order-assist" aria-labelledby="t-order-assist-title">
+          <div className="t-order-assist__head">
+            <span className="t-index">NEED SOMETHING CHANGED?</span>
+            <h3 id="t-order-assist-title">{status?.key==='cancelled'?'طلبك اتلغى؟ خلّينا نوضح.':
+              status?.key==='delivered'?'بعد ما استلمت الطلب.':'فيه حاجة محتاجة تتظبط؟'}</h3>
+          </div>
+          <p>{status?.key==='cancelled'
+            ? 'الطلب مسجل إنه ملغي أو مرفوض. لو كنت دافع خارج الموقع أو محتاج تعرف السبب، اتواصل مع المطعم؛ إحنا مش بنعرض حالة استرداد مالية غير مؤكدة.'
+            : status?.key==='delivered'
+              ? 'لو فيه مشكلة في الطلب بعد الاستلام، ابعت للمطعم مرجع الأوردر ووضح اللي حصل.'
+              : 'تقدر تطلب تعديل أو تستفسر عن الإلغاء مع المطعم. أي طلب مساعدة هنا مش بيغيّر حالة الأوردر تلقائيًا.'}</p>
+          <div className="t-order-assist__actions">
+            {cancellationLink&&<a href={cancellationLink} target="_blank" rel="noopener noreferrer">
+              استفسر عن إمكانية الإلغاء ↗
+            </a>}
+            {changeLink&&<a href={changeLink} target="_blank" rel="noopener noreferrer">
+              اطلب تعديل الأوردر ↗
+            </a>}
+            {supportLink
+              ? <a href={supportLink} target="_blank" rel="noopener noreferrer">راسل المطعم برقم الطلب ↗</a>
+              : <Link href="/contact">شوف طرق التواصل مع المطعم ↗</Link>}
+          </div>
+          <small>الرسالة بتتجهز في واتساب، لكن لازم تراجعها وتضغط إرسال بنفسك. مفيش إلغاء أو رد أموال أو تعديل بيتم من الزر ده.</small>
+        </section>}
       </div>
       <div className="t-order-tracking__details">
         <div className="t-order-ticket__masthead">
@@ -192,7 +256,7 @@ export function RebirthOrderTracking({orderId}:{orderId:string}) {
           <div><dt>الطاولة</dt><dd>{order?.tableReference??'—'}</dd></div>
           <div><dt>وقت التسجيل</dt><dd>{order?.createdAt?new Date(order.createdAt).toLocaleString('ar-EG'):'غير متاح'}</dd></div>
         </dl>
-        <p className="t-order-ticket__disclaimer">الإجمالي حسب الأصناف المسجلة، ومش بالضرورة شامل التوصيل. حالة الدفع والتجهيز بتتأكد مع المطعم.</p>
+        <p className="t-order-ticket__disclaimer">الإجمالي حسب الأصناف المسجلة، ومش بالضرورة شامل التوصيل. مفيش دفع إلكتروني أو استرداد فلوس مؤكَّد من الموقع؛ استفسر من المطعم عن طريقة الدفع أو أي مبلغ مدفوع خارجه.</p>
         <div className="t-order-ticket__footer">
           <span lang="en">KEEP THIS REFERENCE</span>
           <span>دي تذكرة متابعة، مش إيصال دفع.</span>
