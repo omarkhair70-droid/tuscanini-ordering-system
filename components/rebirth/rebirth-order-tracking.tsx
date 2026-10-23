@@ -140,10 +140,9 @@ export function RebirthOrderTracking({orderId}:{orderId:string}) {
 
   const status=order?getStatus(order):null;
   const facts=order?getOrderFacts(order):[];
-  const assistanceKind: 'cancel'|'change'|'help' =
-    status?.key==='pending'||status?.key==='confirmed'?'cancel':
-    status?.key==='preparing'?'change':'help';
-  const supportLink=order?whatsAppRequest(supportNumber,order.reference,assistanceKind):null;
+  // Generic "contact" must always compose a generic message, never
+  // quietly become a cancellation request based on server status.
+  const supportLink=order?whatsAppRequest(supportNumber,order.reference,'help'):null;
   const canChange=order&&['pending','confirmed','preparing','unreachable'].includes(status?.key??'');
   const cancellationLink=canChange?whatsAppRequest(supportNumber,order.reference,'cancel'):null;
   const changeLink=canChange?whatsAppRequest(supportNumber,order.reference,'change'):null;
