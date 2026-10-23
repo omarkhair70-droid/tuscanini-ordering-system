@@ -281,3 +281,13 @@
 @media(max-width:500px){
   .op-remote-preview{padding:10px 12px;margin:4px 0 12px;font-size:12px}
 }
+
+/* One-time, explicitly staff-authorized import of historical menu data.
+   Separate from customer checkout; never implies merchant-approved prices. */
+.op-health__catalog{
+  padding:9px 13px;min-height:42px;border:1px dashed var(--red);
+  background:#fff1d7;color:var(--ink);font-size:12px;font-weight:900;cursor:pointer
+}
+.op-health__catalog:disabled{opacity:.45;cursor:not-allowed}
+.op-health__catalog:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+@media(max-width:500px){.op-health__catalog{grid-column:1/-1;font-size:11px}}
