@@ -296,7 +296,8 @@ try {
         `${width}px unavailable offers backend shows verification failure, not false no-active claim`);
     }
 
-    await check(await page.getByText('صورة من المطعم — مش صورة عرض محدد').count()===1,
+    await check(await page.getByText('من صور توسكانيني',{exact:true}).count()===1 &&
+      await page.locator('.t-offers-hero__photo img[alt*="ليست صورة لعرض معين"]').count()===1,
       `${width}px Offers photograph is not misrepresented as a live discount`);
     await check(await page.locator('.t-offers-hero__foot a[href="/menu"]').count()===1,
       `${width}px Offers immediate menu escape remains available`);
@@ -358,7 +359,7 @@ try {
       `${width}px WhatsApp direct contact is sanitized and opens safely`);
     await check(await page.locator('.t-contact-method__links a[href^="https://www.facebook.com/"]').count()===1,
       `${width}px external Facebook contact uses configured official link`);
-    await check(await page.getByText(/دبوس الخريطة الدقيق لسه محتاجين تأكيد/).count()===1,
+    await check(await page.getByText(/اتصل بينا قبل الزيارة للتأكد من المواعيد/).count()===1,
       `${width}px unverified exact map pin and hours are not fabricated`);
     await check(await page.locator('.t-contact-unknown__links a[href="/complaints"]').count()===1,
       `${width}px Contact exposes real complaints escalation path`);
@@ -371,7 +372,8 @@ try {
       await page.locator('body main').count()===1 &&
       await page.locator('body footer').count()===1,
       `${width}px Reviews has exactly one authored public header/main/footer`);
-    await check(await page.getByText(/مش بنعرض مراجعات داخل الموقع حاليًا/).count()===1,
+    await check(await page.getByText(/ابعت رأيك للمطعم على واتساب/).count()===1 &&
+      await page.locator('[data-testimonial],.t-review-stars').count()===0,
       `${width}px Reviews truthfully shows no unverified testimonials`);
     await check(await page.locator('.t-reviews-explanation__actions a[href^="https://wa.me/"]').count()===1,
       `${width}px Reviews invites outbound WhatsApp only with contact link`);
@@ -523,7 +525,7 @@ try {
     await check((await cart.getByTestId('checkout-delivery-fee').innerText()).trim()==='لسه مش محددة',
       `${width}px delivery checkout never fabricates an approved delivery fee`);
     await check(await cart.getByRole('heading',{name:'الدفع مش بيتم هنا.'}).count()===1 &&
-      await cart.getByText(/مفيش دفع إلكتروني مفعّل/).count()===1,
+      await cart.getByText(/الدفع مش إلكتروني/).count()===1,
       `${width}px checkout exposes payment not collected, without pretending a payment gateway is active`);
     await cart.getByRole('button',{name:/سجّل الطلب للمطعم/}).click();
     await check(await cart.getByText(/اكتب اسمك/).count()===1,`${width}px fixture cart required name validation`);
@@ -699,7 +701,7 @@ try {
       decodeURIComponent(outbound).includes('الطلب #1234') &&
       decodeURIComponent(outbound).includes('الإلغاء مش مؤكد')),
       `${width}px pending ticket prepares a reference-linked cancellation REQUEST, not a cancelled order`);
-    await check(await page.getByText(/مفيش إلغاء أو رد أموال أو تعديل بيتم من الزر/).count()===1,
+    await check(await page.getByText(/التعديل أو الإلغاء محتاج تأكيد من المطعم/).count()===1,
       `${width}px ticket never treats an outbound WhatsApp link as mutation or refund`);
     await check(await page.locator('.t-order-tracking[data-current-status="pending"] .t-order-story__seal-text').getByText('SAVED').count()===1 &&
       await page.locator('.t-order-ticket__footer').getByText(/مش إيصال دفع/).count()===1,
