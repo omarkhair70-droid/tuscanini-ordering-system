@@ -13,7 +13,7 @@ type Order = {
   totalEstimate: number;
 };
 type Reply = { ok: true; order: Order } | { ok: false; error?: string };
-type StatusKey = 'pending'|'unreachable'|'confirmed'|'preparing'|'ready'|'out'|'delivered'|'cancelled'|'unknown';
+type StatusKey = 'pending'|'unreachable'|'confirmed'|'preparing'|'ready'|'out'|'delivered'|'declined'|'cancelled'|'unknown';
 type Stage = { key: StatusKey; label: string; description: string };
 type Fact = { label: string; value: string; detail: string; state: 'verified'|'waiting'|'attention' };
 const formatMoney = (number: number) => new Intl.NumberFormat('ar-EG', { maximumFractionDigits: 2 }).format(number);
@@ -37,7 +37,8 @@ function whatsAppRequest(phone:string,reference:string,kind:'cancel'|'change'|'h
 }
 
 function getStatus(order: Order): Stage {
-  if (order.confirmationStatus==='rejected'||order.status==='ملغي') return {key:'cancelled',label:'الطلب اتلغى',description:'تواصل مع المطعم للاستفسار عن تفاصيل الإلغاء.'};
+  if (order.confirmationStatus==='rejected') return {key:'declined',label:'المطعم اعتذر عن الطلب',description:'المطعم رفض الطلب. ما نفترضش إن العميل لغاه أو إن أي مبلغ مدفوع تم استرداده.'};
+  if (order.status==='ملغي') return {key:'cancelled',label:'الطلب اتلغى',description:'الطلب مسجل كملغي؛ تواصل مع المطعم لمعرفة السبب وأي ترتيبات مالية.'};
   if (order.status==='تم التسليم') return {key:'delivered',label:'الطلب اتسلّم',description:'الطلب مسجل إنه اتسلّم بالفعل.'};
   if (order.status==='خرج للدليفري') return {key:'out',label:'الطلب خرج للدليفري',description:'المطعم سجّل إن الطلب خرج للتوصيل.'};
   if (order.status==='جاهز للاستلام') return {key:'ready',label:order.orderType==='pickup'?'الطلب جاهز للاستلام':'الطلب جاهز عند المطعم',description:order.orderType==='pickup'?'تقدر تتواصل مع المطعم بخصوص الاستلام.':'الطلب جاهز، ولسه مفيش حالة مؤكدة إنه خرج للتوصيل.'};
@@ -68,7 +69,8 @@ function getOrderFacts(order: Order): Fact[] {
   if(order.status==='جاهز للاستلام') progress={label:'التجهيز والتسليم',value:'جاهز',detail:order.orderType==='pickup'?'جاهز للاستلام حسب تحديث المطعم':'جاهز عند المطعم حسب آخر تحديث',state:'verified'};
   if(order.status==='خرج للدليفري') progress={label:'التجهيز والتسليم',value:'خرج للتوصيل',detail:'مسجل أنه خرج من المطعم',state:'verified'};
   if(order.status==='تم التسليم') progress={label:'التجهيز والتسليم',value:'تم التسليم',detail:'المطعم سجّل تسليم الطلب',state:'verified'};
-  if(order.status==='ملغي'||order.confirmationStatus==='rejected') progress={label:'التجهيز والتسليم',value:'الطلب ملغي',detail:'لا تفترض بدء التحضير أو التسليم',state:'attention'};
+  if(order.status==='ملغي') progress={label:'التجهيز والتسليم',value:'الطلب ملغي',detail:'لا تفترض بدء التحضير أو التسليم',state:'attention'};
+  if(order.confirmationStatus==='rejected') progress={label:'التجهيز والتسليم',value:'الطلب لم يُقبل',detail:'المطعم لم يوافق على تحضير هذا الطلب',state:'attention'};
   return [
     {label:'تسجيل الطلب',value:'تم التسجيل',detail:'الطلب محفوظ في نظام الموقع',state:'verified'},
     confirmation,progress,
@@ -151,7 +153,7 @@ export function RebirthOrderTracking({orderId}:{orderId:string}) {
   const statusStamp: Record<StatusKey,string> = {
     pending: 'SAVED', confirmed: 'CONFIRMED', preparing: 'PREPARING',
     ready: 'READY', out: 'ON THE WAY', delivered: 'DELIVERED',
-    cancelled: 'CANCELLED', unreachable: 'CONTACT', unknown: 'CHECKING',
+    declined: 'DECLINED', cancelled: 'CANCELLED', unreachable: 'CONTACT', unknown: 'CHECKING',
   };
   const stampedText=loading?'CHECKING':statusStamp[status?.key??'unknown'];
   return (
@@ -216,11 +218,14 @@ export function RebirthOrderTracking({orderId}:{orderId:string}) {
         {order&&<section className="t-order-assist" aria-labelledby="t-order-assist-title">
           <div className="t-order-assist__head">
             <span className="t-index">NEED SOMETHING CHANGED?</span>
-            <h3 id="t-order-assist-title">{status?.key==='cancelled'?'طلبك اتلغى؟ خلّينا نوضح.':
+            <h3 id="t-order-assist-title">{status?.key==='declined'?'المطعم اعتذر عن الطلب.':
+              status?.key==='cancelled'?'طلبك اتلغى؟ خلّينا نوضح.':
               status?.key==='delivered'?'بعد ما استلمت الطلب.':'فيه حاجة محتاجة تتظبط؟'}</h3>
           </div>
-          <p>{status?.key==='cancelled'
-            ? 'الطلب مسجل إنه ملغي أو مرفوض. لو كنت دافع خارج الموقع أو محتاج تعرف السبب، اتواصل مع المطعم؛ إحنا مش بنعرض حالة استرداد مالية غير مؤكدة.'
+          <p>{status?.key==='declined'
+            ? 'المطعم رفض الطلب، وده مش معناه إنك طلبت إلغاءه. لو فيه مبلغ اتدفع خارج الموقع، استفسر من المطعم عن وضعه من غير افتراض حصول استرداد.'
+            : status?.key==='cancelled'
+            ? 'الطلب مسجل كملغي. اسأل المطعم عن سبب الإلغاء وأي مبلغ كان اتدفع خارج الموقع؛ مفيش استرداد مالي مؤكَّد هنا.'
             : status?.key==='delivered'
               ? 'لو فيه مشكلة في الطلب بعد الاستلام، ابعت للمطعم مرجع الأوردر ووضح اللي حصل.'
               : 'تقدر تطلب تعديل أو تستفسر عن الإلغاء مع المطعم. أي طلب مساعدة هنا مش بيغيّر حالة الأوردر تلقائيًا.'}</p>
