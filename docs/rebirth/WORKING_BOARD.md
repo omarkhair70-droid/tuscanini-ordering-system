@@ -93,6 +93,49 @@
 - **Current blockers:** need new Vercel deployment picking up env changes, then verify /api/studio/bridge unauthorized 403 and signed remote requests; confirm actual menu/catalog, test one deliberately marked synthetic order with approved temporary prices and no real customer PII, then enable intake only when staff-screen behavior is verified. A deployment from `main` won't gain the branch's new functionality just because env targets match.
 - **Security:** sharing secrets into the Preview environment means they can be present in other Preview deployments of this project, not only this branch. Restrict Preview to approved branches or use per-branch credentials before adding untrusted PR contributors. Do not put keys in browser URLs, screenshots, client bundles, or the board.
 
+## 2026-10-23 — COMPREHENSIVE REMAINING PRODUCT REVIEW (CURRENT)
+
+User requested a single, complete review with external UX/visual/restaurant-operations references, NOT more isolated Terminal tests or starting a second product. ONE Tuscanini customer website, ONE operator screen (Press/Rail), ONE dedicated Oracle Postgres/API. PR #59 remains DRAFT.
+
+**EVIDENCE:** Real Oracle API Healthy + HTTPS, authenticated staff inbox success and anonymous 403, 113 historical SKUs imported, first synthetic 145 EGP order shown in live Vercel Operator Press, user-reported accept→prep→ready→deliver; test gates user-reported off. Four GitHub Actions suites at last audited PR HEAD passed; latest public branch Vercel pages Home, Menu, Cart, Tracking empty state, Offers, Finder, About, Contact, Complaints and Operator all returned 200. Public isOrderingOpen=false. Separate actual CUSTOMER cart submit has NOT been proved, nor field tablets or current owner-approved prices.
+
+### NAMED FINISH TRACKS (clear outcomes)
+
+| Track | What is left | Gate |
+|---|---|---|
+| F01 Guest checkout | Home/Menu→customise→Cart→post to Oracle→receipt; prevent accidental public test orders and duplicate submits | P0 OPEN |
+| F02 Customer tracking | One saved order ID follows staff transitions; pending/rejected/ready/delivered, refreshing/offline errors; truthful statuses | P0 OPEN REMOTE |
+| F03 Menu truth | Owner-approved 113 prices, stock, sizes/addons, offer math and delivery fee; server price authoritative | P0 OWNER DATA |
+| F04 Creative art direction | Coherent authored Home→Menu→Dialog→Cart→Ticket world; hierarchy, punchy copy, bespoke layout | P1 REFINEMENT |
+| F05 Food images | Retain 100 generated + 12 actual photos, verify 17 unmatched SKU identities and accurate disclosure/cropping/alt | P1 REVIEW |
+| F06 Motion | Keep original FLIP and add useful Add-to-cart/Ticket/state cues with reduced-motion fallback | P1 PARTIAL |
+| F07 Responsive & accessibility | 320/390/768/1024/1440, real keyboard/touch/landscape, 200% zoom, focus, RTL, long item names | P1 FIELD |
+| F08 One operator experience | Private staff entry, order alerts/sound/reconnect, stage conflict handling, 30+ tickets and durable receipts | P0/P1 PARTIAL |
+| F09 Merchant operations | Pickup/delivery coverage and hours, fee, offline/cancel/reject policy, actual contacts and payment terms | P0 OWNER |
+| F10 Other customer pages | Offers, Finder, About, Contact, Reviews, Complaints, nav/footer; distinct, truthful empty/failure/outbound actions | P1 BUILT/REVIEW |
+| F11 Production safety | Auth/rate limits/tracking privacy, backups+restore, monitoring/rollback, SEO/asset weight/offline cache | RELEASE BLOCKER |
+| F12 Real deployment & handoff | Two separate physical devices, owner signoff and menu, staff rehearsals, deliberate PR merge/deploy | RELEASE BLOCKER |
+| OPTIONAL | Preorder ETA, push, loyalty/reorder, payment gateway/wallets, expanded POS/printing/analytics | NOT AUTOMATIC SCOPE |
+
+### Curated comparison references with application to Tuscanini
+
+- FarmGrill https://elegantsquirrel.com/case-study-farmgrill — black/red/yellow lively street-food visual identity and fast mobile menu; reference for F04/05, never direct copy.
+- Thunderbird Fried Chicken https://riseandamplify.co.uk/experience/thunderbird-fried-chicken/ — strong appetite-led brand site, striking hierarchy + quick order path; F04/F06.
+- Pastaria https://www.atomicdust.com/work/pastaria/ — distinct crafted identity across website/packaging; preserve Tuscanini's own authored grammar.
+- Toast official 2026 online ordering https://support.toasttab.com/en/article/Getting-Started-Online-Ordering — menu visibility, order acceptance mode, hours/payment readiness, test order; F08/F09/F12.
+- Square KDS https://squareup.com/help/us/en/article/7944-get-started-with-square-kds-android — readable modifier/ticket layouts; F08.
+- Baymard https://baymard.com/industries/food-delivery-and-takeout-ux and https://baymard.com/research-articles/current-state-of-checkout-ux — ingredient/option search, clear guest checkout, correct pickup/delivery, targeted validation; F01/F02/F07.
+- Al-Asala Arabic restaurant https://phillote.com/portfolio/alasala — contextual RTL pickup/delivery entry; comparison only, not unapproved redesign.
+
+### No-detours integrated sequence
+
+**PASS 1 / P0:** F01+F02, safely restricted customer test with independent backend intake lock maintained until approved, full transaction from customer's UI; no new payment processor.
+**PASS 2 / Creative quality:** F03/F04/F05/F06/F07/F10 design, text, photos, motion and responsive UX across whole website in one coherent batch; retain generated assets.
+**PASS 3 / Pilot & release:** F08/F09/F11/F12 owner data, production staff gate, real tablet/phone behavior, backup/rollback and deliberate release; PR still Draft.
+
+**Two meanings of DONE:** *technical* means real client cart/order/tracking works against Oracle securely; *merchant-ready* also means current prices/stock/payment/fee/contact plus actual device and backup validation. Today only the internal operator order loop is validated, not merchant-ready launch.
+
+---
 ## CONTROL ROOM — complete remaining-work radar (23 Oct 2026)
 
 **This is the at-a-glance execution map you requested.** There is ONE product: the Vercel Tuscanini website and its ONE accessible restaurant order screen. Everything below is visible even if not the current sprint. The detailed U01–U12 ideas and P01–P18 payment possibilities in sections 9–12 remain attached to this same board. Do not hide or silently turn these into unapproved code.
@@ -104,9 +147,9 @@
 | Gate | Desired customer-visible outcome | Exact next deliverable | Verified status |
 |---|---|---|---|
 | G00 | See both designed screens via Vercel | Stable customer/Order Press/Ticket Rail URLs; local 20-ticket interactive demo | **READY-PREVIEW + browser CI PROVED** at `2a48f08e` |
-| G01 | Dedicated Tuscanini data on existing Oracle | Coolify DB+API Compose, unique app user/volume, health and backup/restore | **DB+API COMPOSE COMMITTED — NOT DEPLOYED** |
-| G02 | Durable safe service rather than test fixture | New `services/orders-api` with own migrations, service auth, server pricing/idempotency and event states | **CODE BUILT + POSTGRES CI SUCCESS**; not deployed, hardening open |
-| G03 | One live shared order between phone and tablet | Preview-only Next adapters + operator gate + gated catalog sync, then internet roundtrip | **CODE BUILT / DEFAULT OFF**; remote E2E still OPEN |
+| G01 | Dedicated Tuscanini data on existing Oracle | Coolify DB+API Compose, unique app user/volume, health and backup/restore | **ORACLE PG+API LIVE / HTTPS HEALTHY / BACKUP RESTORE OPEN** |
+| G02 | Durable safe service rather than test fixture | New `services/orders-api` with own migrations, service auth, server pricing/idempotency and event states | **API DEPLOYED + POSTGRES CI SUCCESS; hardening open** |
+| G03 | One live shared order between phone and tablet | Preview-only Next adapters + operator gate + gated catalog sync, then internet roundtrip | **REAL STAFF TICKET AND REMOTE ORACLE INBOX PROVED; CUSTOMER CART E2E OPEN** |
 | G04 | Merchant business rules actually true | Approved menu/prices/options/offers, phone/address/hours, delivery region/fee/time, payment and cancellation choices | **MERCHANT** |
 | G05 | Operationally reliable restaurant flow | Real tablet + Android test, foreground sound, sleep/reconnect, 20–50 tickets, retry conflict, data security, backup recovery | **FIELD/OPEN** |
 | G06 | Controlled restaurant web ordering | Pilot, monitoring, final owner signoff, deliberate production cutover & support/rollback | **OPEN** |
@@ -122,9 +165,9 @@
 | C05 | Checkout delivery vs pickup & genuine fee | Honest display, fee unverified | Delivery coverage, current fee/tax/packing charge and actual payable total (MERCHANT/P0) |
 | C06 | Payments: cash on delivery/pickup, on-prem POS | Only research inventory | Owner selects what is accepted; unpaid/collect-at-handoff state clearly recorded (P1) |
 | C07 | Payments: cards, Meeza, wallets, QR, Fawry, InstaPay, Apple/Google Pay, links, deposits, split | U01 P01–P18 documented; no integration | Choose supported provider and merchant account; signed callbacks, failures, reconciliation/refunds (DECIDE; not auto-P0) |
-| C08 | Orders in permanent DB, prices, retries | New dedicated PG schema/API + CI tested; Oracle not deployed | Isolated Oracle PG, backup, migrations, API health/metrics (P0) |
-| C09 | Remote Vercel-to-Oracle transport | Preview-only server adapter BUILT, feature flag OFF | Deploy HTTPS API, configure secrets, remote full cycle/abuse testing (P0) |
-| C10 | Operator screen accessible from URL | Public interactive demo PREVIEW 200 | Same design shows **real** orders only for authorized restaurant access (P0) |
+| C08 | Orders in permanent DB, prices, retries | Dedicated Oracle PG+API and 113 historical SKUs imported; one synthetic live order proved | Isolated Oracle PG, backup, migrations, API health/metrics (P0) |
+| C09 | Remote Vercel-to-Oracle transport | HTTPS Oracle adapter in Preview and Production code; Preview operator connection proved | Deploy HTTPS API, configure secrets, remote full cycle/abuse testing (P0) |
+| C10 | Operator screen accessible from URL | Preview operator screen displays private real PostgreSQL tickets after staff key | Same design shows **real** orders only for authorized restaurant access (P0) |
 | C11 | Operator workflows: accept/reject/prep/ready/handoff | Local PostgreSQL E2E tested | Remote authorization/conflicts and exact restaurant physical handoff (P0) |
 | C12 | Staff entry/security | Test key and no production login | One minimal protected restaurant gate/session; no shift/employee POS platform (P0) |
 | C13 | New order visibility and alert | Opt-in browser sound; mock ticket load | Sleep/visibility/reconnect/new arrivals, audio on actual tablet (P0/P1) |
@@ -140,7 +183,7 @@
 | C23 | Performance/SEO/PWA | Shell and cache built | LCP/CLS/INP, offline boundaries, cache exclusions, metadata, sitemap, install behavior (P1/P2) |
 | C24 | Security, rate limits and privacy | Test protections partially | Tracking capability, staff auth, bot resistance, no PII in logs, retention/deletion (P0) |
 | C25 | Database migrations/backups/restore | Only disposable migrations proven | Isolated Oracle PG, persistent volume, tested backups, restores, upgrade/runbook (P0) |
-| C26 | Server deploy and observability | Vercel READY; Oracle Tuscanini not deployed | Coolify real API health/logs/TLS/restarts, deploy gate, explicit rollback (P0) |
+| C26 | Server deploy and observability | Vercel Preview READY; Oracle dedicated API + Postgres live | Coolify real API health/logs/TLS/restarts, deploy gate, explicit rollback (P0) |
 | C27 | Staff/merchant training and launch | Not run with actual restaurant | Tablet orientation, 2-minute walkthrough, support contacts, live supervised rehearsal (FIELD) |
 | C28 | Analytics, privacy-safe conversion insight | No confirmed production tracking | Event map and consent, no order contact/PII to third parties (P2) |
 | C29 | Loyalty, reorder, gifts, referrals, CRM, expanded delivery/print/POS integrations | Idea universe U01–U12, not built | Evaluate each against demand, costs and owner approval; not silently added (LATER/DECIDE) |
