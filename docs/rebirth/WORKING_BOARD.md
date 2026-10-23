@@ -77,6 +77,12 @@
 
 ---
 
+### DuckDNS hostname added in Coolify (23 Oct 2026)
+
+- User screenshot shows `tuscanini-orders-api.duckdns.org` registered at DuckDNS, then Coolify `tuscanini-orders-api → Domains` lists HTTPS root hostname on internal port **8080**, an additional `www.` hostname on port **8080**, and prior generated HTTP `sslip.io` hostname. **All DNS statuses were `Not checked`; `Changes pending` showed deployment configuration not applied yet.**
+- No independent proof of a functioning public TLS endpoint as of screenshot. The DuckDNS domain initially resolved to an unrelated client public IP; confirm its A record is corrected to Oracle `158.101.254.30` before calling DNS complete.
+- Next: delete just the unnecessary `www.` row unless explicitly DNS-configured; mark temporary API domain `Noindex`; run Check All DNS and correct IP if needed; deploy pending routing changes; open HTTPS `/readyz` and require trusted TLS plus `200 {"ok":true}` before entering `ORDER_API_ORIGIN` on Vercel. Keep existing generated HTTP hostname temporarily for rollback, order intake off.
+
 ### Oracle live health and DuckDNS setup (23 Oct 2026)
 
 - User states **Coolify reports Healthy** after corrected `curl` runtime image and IPv4 loopback HTTP `/readyz` probe. Prior runtime Terminal screenshot recorded `200 {"ok":true}`. Healthy is user-confirmed; no current public HTTPS test yet.
