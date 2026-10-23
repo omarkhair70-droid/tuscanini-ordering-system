@@ -5,7 +5,7 @@ import { isLocalStudioRequest } from '@/lib/studio-bridge';
 import { submitStagedRebirthOrder, StudioMenuError } from '@/lib/studio-menu-orders';
 import { parseCreateOrderPayloadOrThrow } from '@/lib/orders/order-validation';
 import { getRuntimePublicSiteSettings } from '@/lib/site-settings-runtime';
-import { oraclePreviewEnabled, submitOracleOrder, OracleOrderError } from '@/lib/oracle-order-api';
+import { oracleOrdersEnabled, submitOracleOrder, OracleOrderError } from '@/lib/oracle-order-api';
 
 export async function POST(request: Request) {
   try {
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
         subtotal:Number(saved.subtotal_cents)/100,studioMode:true});
     }
 
-    if (oraclePreviewEnabled()) {
+    if (oracleOrdersEnabled()) {
       const settings = await getRuntimePublicSiteSettings();
       if (!settings.isOrderingOpen) {
         return NextResponse.json({ok:false,code:'ORDERING_CLOSED',
