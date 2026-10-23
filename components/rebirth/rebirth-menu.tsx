@@ -103,7 +103,7 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
       <ExperienceHeader />
       <main className="t-menu-main">
         <header className="t-menu-intro t-shell">
-          <div className="t-menu-intro__label"><span>THE REAL MENU / TUSCANINI</span><span>اختياراتك من توسكانيني — بني سويف</span></div>
+          <div className="t-menu-intro__label"><span>MENU / TUSCANINI</span><span>اختياراتك من توسكانيني — بني سويف</span></div>
           <div className="t-menu-intro__headline">
             <div className="t-menu-intro__copy">
               <span className="t-index">FIND YOUR FOOD / TUSCANINI</span>
@@ -149,7 +149,7 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
           </section>
           <section className="t-menu-items" aria-labelledby="t-menu-items-title">
             <div className="t-menu-items__heading">
-              <div><span className="t-index">02 — CHOOSE WITH CLARITY</span><h2 id="t-menu-items-title">{category === 'all' ? 'الاختيارات' : categories.find(x=>x.slug===category)?.name}</h2></div>
+              <div><span className="t-index">الأصناف</span><h2 id="t-menu-items-title">{category === 'all' ? 'الاختيارات' : categories.find(x=>x.slug===category)?.name}</h2></div>
               <span role="status" aria-live="polite">{filtered.length} صنف مطابق</span>
             </div>
 
@@ -163,7 +163,7 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
             )}
             {!catalogPresent ? (
               <div className="t-menu-unavailable" role="status">
-                <p className="t-index">MENU DATA / MISSING</p><h3>حصلت مشكلة في تحميل المنيو.</h3>
+                <p className="t-index">المنيو</p><h3>حصلت مشكلة في تحميل المنيو.</h3>
                 <p>تواصل مع المطعم علشان تتأكد من الأصناف والأسعار.</p>
                 <Link href="/contact">تواصل مع توسكانيني ↗</Link>
               </div>
@@ -214,7 +214,7 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
             )}
           </section>
           <footer className="t-menu-footer">
-            <p>من جوا الأكل للتفاصيل اللي تهمك. اختار على راحتك، وكل إضافة وسعر ظاهر قبل ما تكمل الطلب.</p>
+            <p>اختار الحجم والإضافات وشوف السعر قبل ما تضيف للسلة.</p>
             <div><Link href="/cart">راجع السلة ↗</Link><Link href="/contact">محتاج مساعدة؟ ↗</Link></div>
           </footer>
         </div>
