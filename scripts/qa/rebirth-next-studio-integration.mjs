@@ -103,6 +103,24 @@ assert.equal(savedLine.customer_snapshot.generalNotes,'من غير بصل');
 assert.equal(savedLine.items[0]?.selection.size.id,'small');
 assert.equal(savedLine.items[0]?.selection.addons[0]?.id,'addon-mozzarella');
 assert.equal(savedLine.items[0]?.notes,'مستوي زيادة');
+// The simplest cancellation reality: only restaurant rejection is a
+// durable status mutation. A customer's WhatsApp inquiry is NOT an action.
+const rejectedCandidate=await fullOrder({...rebirthBody,requestKey:'studio-'+crypto.randomUUID()});
+assert.equal(rejectedCandidate.status,200,'Staging saves a separate candidate for rejection');
+const rejectedId=rejectedCandidate.payload.orderId;
+const declined=await request('action',{id:rejectedId,key:operatorKey,body:{action:'reject'}});
+assert.equal(declined.response.status,200,'Operator can reject an unaccepted order');
+assert.equal(declined.payload.status,'rejected');
+const rejectedTicket=await fetch(base+'/api/orders/track?orderId='+rejectedId).then(x=>x.json());
+assert.equal(rejectedTicket.ok,true);
+assert.equal(rejectedTicket.order.status,'ملغي','Customer ticket reports actual rejected order as cancelled');
+assert.equal(rejectedTicket.order.confirmationStatus,'rejected','No fabricated merchant acceptance');
+const rejectAgain=await request('action',{id:rejectedId,key:operatorKey,body:{action:'reject'}});
+assert.equal(rejectAgain.response.status,409,'Second rejection must not create duplicate status events');
+const rejectedEvents=await request('events',{id:rejectedId});
+assert.deepEqual(rejectedEvents.payload.events.map(e=>e.status),['received','rejected']);
+console.log('PASS: operator reject → persisted event → truthful Rebirth cancelled customer ticket; duplicate reject denied.');
+
 const deliveryAddress='عنوان توصيل اختبار - بني سويف';
 const delivery=await fullOrder({...rebirthBody,requestKey:'studio-'+crypto.randomUUID(),
   customer:{...rebirthCustomer,orderType:'delivery',address:deliveryAddress}});
