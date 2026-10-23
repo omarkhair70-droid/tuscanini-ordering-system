@@ -37,15 +37,15 @@ function whatsAppRequest(phone:string,reference:string,kind:'cancel'|'change'|'h
 }
 
 function getStatus(order: Order): Stage {
-  if (order.confirmationStatus==='rejected') return {key:'declined',label:'المطعم اعتذر عن الطلب',description:'المطعم رفض الطلب. ما نفترضش إن العميل لغاه أو إن أي مبلغ مدفوع تم استرداده.'};
+  if (order.confirmationStatus==='rejected') return {key:'declined',label:'المطعم اعتذر عن الطلب',description:'المطعم اعتذر عن تنفيذ الطلب. لو دفعت مبلغ، كلمه بخصوصه.'};
   if (order.status==='ملغي') return {key:'cancelled',label:'الطلب اتلغى',description:'الطلب مسجل كملغي؛ تواصل مع المطعم لمعرفة السبب وأي ترتيبات مالية.'};
   if (order.status==='تم التسليم') return {key:'delivered',label:'الطلب اتسلّم',description:'الطلب مسجل إنه اتسلّم بالفعل.'};
-  if (order.status==='خرج للدليفري') return {key:'out',label:'الطلب خرج للدليفري',description:'المطعم سجّل إن الطلب خرج للتوصيل.'};
+  if (order.status==='خرج للدليفري') return {key:'out',label:'الطلب خرج للدليفري',description:'طلبك خرج للتوصيل حسب آخر تحديث من المطعم.'};
   if (order.status==='جاهز للاستلام') return {key:'ready',label:order.orderType==='pickup'?'الطلب جاهز للاستلام':'الطلب جاهز عند المطعم',description:order.orderType==='pickup'?'تقدر تتواصل مع المطعم بخصوص الاستلام.':'الطلب جاهز، ولسه مفيش حالة مؤكدة إنه خرج للتوصيل.'};
-  if (order.status==='جاري التحضير') return {key:'preparing',label:'الطلب بيتحضّر',description:'المطعم حدّث حالة الطلب إلى جاري التحضير.'};
+  if (order.status==='جاري التحضير') return {key:'preparing',label:'الطلب بيتحضّر',description:'أكلك بيتجهّز دلوقتي.'};
   if (order.confirmationStatus==='unreachable') return {key:'unreachable',label:'المطعم حاول يتواصل معاك',description:'ما قدرش يتأكد من تفاصيل الطلب. تواصل مع المطعم.'};
-  if (order.confirmationStatus==='confirmed') return {key:'confirmed',label:'المطعم أكّد الطلب',description:'تم تأكيد طلبك. تابع الحالة هنا للتحديثات.'};
-  if (order.confirmationStatus==='pending') return {key:'pending',label:'بانتظار تأكيد المطعم',description:'الطلب محفوظ، لكنه لسه مش متأكد ومش معناه إن التحضير بدأ.'};
+  if (order.confirmationStatus==='confirmed') return {key:'confirmed',label:'المطعم أكّد الطلب',description:'طلبك اتأكد، وتقدر تتابع التحضير من هنا.'};
+  if (order.confirmationStatus==='pending') return {key:'pending',label:'بانتظار تأكيد المطعم',description:'طلبك اتسجّل، وبنستنى تأكيد المطعم.'};
   return {key:'unknown',label:'حالة الطلب غير معروفة',description:'المطعم ما قدّمش حالة مفهومة دلوقتي؛ تواصل معاه للتأكد.'};
 }
 
@@ -65,14 +65,14 @@ function getOrderFacts(order: Order): Fact[] {
       confirmation={label:'تأكيد المطعم',value:'بانتظار التأكيد',detail:'لم تُسجل موافقة المطعم بعد',state:'waiting'};
   }
   let progress: Fact={label:'التجهيز والتسليم',value:'في انتظار تحديث',detail:'مفيش حالة تجهيز أو تسليم مسجلة',state:'waiting'};
-  if(order.status==='جاري التحضير') progress={label:'التجهيز والتسليم',value:'جاري التحضير',detail:'حالة مسجلة في نظام المطعم',state:'verified'};
+  if(order.status==='جاري التحضير') progress={label:'التجهيز والتسليم',value:'جاري التحضير',detail:'حسب آخر تحديث من المطعم',state:'verified'};
   if(order.status==='جاهز للاستلام') progress={label:'التجهيز والتسليم',value:'جاهز',detail:order.orderType==='pickup'?'جاهز للاستلام حسب تحديث المطعم':'جاهز عند المطعم حسب آخر تحديث',state:'verified'};
   if(order.status==='خرج للدليفري') progress={label:'التجهيز والتسليم',value:'خرج للتوصيل',detail:'مسجل أنه خرج من المطعم',state:'verified'};
   if(order.status==='تم التسليم') progress={label:'التجهيز والتسليم',value:'تم التسليم',detail:'المطعم سجّل تسليم الطلب',state:'verified'};
-  if(order.status==='ملغي') progress={label:'التجهيز والتسليم',value:'الطلب ملغي',detail:'لا تفترض بدء التحضير أو التسليم',state:'attention'};
+  if(order.status==='ملغي') progress={label:'التجهيز والتسليم',value:'الطلب ملغي',detail:'كلم المطعم لو محتاج تفاصيل',state:'attention'};
   if(order.confirmationStatus==='rejected') progress={label:'التجهيز والتسليم',value:'الطلب لم يُقبل',detail:'المطعم لم يوافق على تحضير هذا الطلب',state:'attention'};
   return [
-    {label:'تسجيل الطلب',value:'تم التسجيل',detail:'الطلب محفوظ في نظام الموقع',state:'verified'},
+    {label:'تسجيل الطلب',value:'تم التسجيل',detail:'طلبك اتسجّل بنجاح',state:'verified'},
     confirmation,progress,
   ];
 }
@@ -207,7 +207,7 @@ export function RebirthOrderTracking({orderId}:{orderId:string}) {
             ))}
           </div>
         )}
-        {!order&&<div className="t-order-story__loading" role="status">بنراجع الرقم مع النظام. مش هنقول إن الطلب وصل إلا لما نلاقيه مسجل.</div>}
+        {!order&&<div className="t-order-story__loading" role="status">بنتأكد من رقم طلبك…</div>}
         {error&&<p role="alert" className="t-order-tracking__error">{error}</p>}
         <div className="t-order-tracking__controls">
           <button type="button" disabled={updating} onClick={()=>void reload()} className="t-order-tracking__refresh">
@@ -232,12 +232,12 @@ export function RebirthOrderTracking({orderId}:{orderId:string}) {
               status?.key==='delivered'?'بعد ما استلمت الطلب.':'فيه حاجة محتاجة تتظبط؟'}</h3>
           </div>
           <p>{status?.key==='declined'
-            ? 'المطعم رفض الطلب، وده مش معناه إنك طلبت إلغاءه. لو فيه مبلغ اتدفع خارج الموقع، استفسر من المطعم عن وضعه من غير افتراض حصول استرداد.'
+            ? 'المطعم اعتذر عن تنفيذ الطلب. لو دفعت أي مبلغ، كلمه علشان تعرف وضعه.'
             : status?.key==='cancelled'
-            ? 'الطلب مسجل كملغي. اسأل المطعم عن سبب الإلغاء وأي مبلغ كان اتدفع خارج الموقع؛ مفيش استرداد مالي مؤكَّد هنا.'
+            ? 'طلبك اتلغى. كلم المطعم لو محتاج تعرف السبب أو تسأل عن أي مبلغ دفعته.'
             : status?.key==='delivered'
               ? 'لو فيه مشكلة في الطلب بعد الاستلام، ابعت للمطعم مرجع الأوردر ووضح اللي حصل.'
-              : 'تقدر تطلب تعديل أو تستفسر عن الإلغاء مع المطعم. أي طلب مساعدة هنا مش بيغيّر حالة الأوردر تلقائيًا.'}</p>
+              : 'عايز تعدل طلبك أو تلغيه؟ ابعت للمطعم، واستنى تأكيده.'}</p>
           <div className="t-order-assist__actions">
             {cancellationLink&&<a href={cancellationLink} target="_blank" rel="noopener noreferrer">
               استفسر عن إمكانية الإلغاء ↗
@@ -273,13 +273,13 @@ export function RebirthOrderTracking({orderId}:{orderId:string}) {
         <dl>
           <div><dt>نوع الطلب</dt><dd>{order?.orderType==='delivery'?'دليفري':order?.orderType==='pickup'?'استلام':'غير متاح'}</dd></div>
           <div><dt>إجمالي الأصناف المسجل</dt><dd>{order?formatMoney(order.totalEstimate)+' ج.م':'غير متاح'}</dd></div>
-          <div><dt>الطاولة</dt><dd>{order?.tableReference??'—'}</dd></div>
+          {order?.tableReference&&<div><dt>الطاولة</dt><dd>{order.tableReference}</dd></div>}
           <div><dt>وقت التسجيل</dt><dd>{order?.createdAt?new Date(order.createdAt).toLocaleString('ar-EG'):'غير متاح'}</dd></div>
         </dl>
-        <p className="t-order-ticket__disclaimer">الإجمالي حسب الأصناف المسجلة، ومش بالضرورة شامل التوصيل. مفيش دفع إلكتروني أو استرداد فلوس مؤكَّد من الموقع؛ استفسر من المطعم عن طريقة الدفع أو أي مبلغ مدفوع خارجه.</p>
+        <p className="t-order-ticket__disclaimer">ده إجمالي الأصناف المسجلة. أي رسوم توصيل وطريقة الدفع بيأكدها المطعم؛ الموقع مش بيحصّل فلوس إلكترونيًا.</p>
         <div className="t-order-ticket__footer">
           <span lang="en">KEEP THIS REFERENCE</span>
-          <span>دي تذكرة متابعة، مش إيصال دفع.</span>
+          <span>احتفظ بمرجع الطلب. دي تذكرة متابعة، مش إيصال دفع.</span>
         </div>
       </div>
     </section>
