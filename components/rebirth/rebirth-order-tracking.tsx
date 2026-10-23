@@ -84,6 +84,7 @@ export function RebirthOrderTracking({orderId}:{orderId:string}) {
   const [error,setError]=useState('');
   const [lastUpdated,setLastUpdated]=useState<string|null>(null);
   const [supportNumber,setSupportNumber]=useState('');
+  const [shareMessage,setShareMessage]=useState('');
   const requestRef=useRef<AbortController|null>(null);
   const reload=useCallback(async()=>{
     // Manual refresh and returning from background cancel an older pending poll:
@@ -140,6 +141,14 @@ export function RebirthOrderTracking({orderId}:{orderId:string}) {
     return ()=>controller.abort();
   },[]);
 
+  const copyTrackingLink=async()=>{
+    try{
+      await navigator.clipboard.writeText(window.location.href);
+      setShareMessage('رابط متابعة الأوردر اتنسخ. شاركه بس مع صاحب الطلب.');
+    }catch{
+      setShareMessage('انسخ رابط الصفحة من شريط العنوان عشان تتابع نفس الطلب.');
+    }
+  };
   const status=order?getStatus(order):null;
   const facts=order?getOrderFacts(order):[];
   // Generic "contact" must always compose a generic message, never
@@ -252,6 +261,13 @@ export function RebirthOrderTracking({orderId}:{orderId:string}) {
           <span>مرجع طلبك</span>
           <strong>{order?.reference??'لا يوجد مرجع مؤكد بعد'}</strong>
           <small>احتفظ بالرقم لو احتجت تتواصل مع المطعم.</small>
+          {order&&<div className="t-order-ticket__share">
+            <button type="button" onClick={()=>{void copyTrackingLink();}}>
+              انسخ رابط متابعة الأوردر ↗
+            </button>
+            <small>الرابط مرتبط بطلبك، ما تنشرهوش علنًا.</small>
+            {shareMessage&&<span role="status" aria-live="polite">{shareMessage}</span>}
+          </div>}
         </div>
         <div className="t-order-ticket__perforation" aria-hidden="true"><span>✳</span></div>
         <dl>
