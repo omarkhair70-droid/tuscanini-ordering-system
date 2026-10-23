@@ -81,6 +81,9 @@ try{
   await realCard.getByRole('button',{name:'اقبل الأوردر'}).click();
   await realCard.getByRole('button',{name:'ابدأ التحضير'}).waitFor({timeout:10000});
   await realCard.getByRole('button',{name:'ابدأ التحضير'}).click();
+  // Do not race the operator's async POST with the customer's explicit refresh.
+  // The next permitted action appears only after server-backed status is committed.
+  await realCard.getByRole('button',{name:'الطلب جاهز'}).waitFor({state:'visible',timeout:12000});
   await real.getByRole('button',{name:/حدّث الحالة/}).click();
   await real.getByRole('heading',{name:'الطلب بيتحضّر'}).waitFor({timeout:12000});
   assert.equal(await real.locator('.t-order-tracking[data-current-status="preparing"]').count(),1);

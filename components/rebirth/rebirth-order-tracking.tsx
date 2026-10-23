@@ -37,7 +37,7 @@ function whatsAppRequest(phone:string,reference:string,kind:'cancel'|'change'|'h
 }
 
 function getStatus(order: Order): Stage {
-  if (order.confirmationStatus==='rejected') return {key:'declined',label:'المطعم اعتذر عن الطلب',description:'المطعم اعتذر عن تنفيذ الطلب. لو دفعت مبلغ، كلمه بخصوصه.'};
+  if (order.confirmationStatus==='rejected') return {key:'declined',label:'المطعم اعتذر عن الطلب',description:'المطعم اعتذر عن تنفيذ الطلب. ده مش إلغاء من ناحيتك. لو دفعت مبلغ، اتواصل معاه بخصوصه.'};
   if (order.status==='ملغي') return {key:'cancelled',label:'الطلب اتلغى',description:'الطلب مسجل كملغي؛ تواصل مع المطعم لمعرفة السبب وأي ترتيبات مالية.'};
   if (order.status==='تم التسليم') return {key:'delivered',label:'الطلب اتسلّم',description:'الطلب مسجل إنه اتسلّم بالفعل.'};
   if (order.status==='خرج للدليفري') return {key:'out',label:'الطلب خرج للدليفري',description:'طلبك خرج للتوصيل حسب آخر تحديث من المطعم.'};
@@ -45,7 +45,7 @@ function getStatus(order: Order): Stage {
   if (order.status==='جاري التحضير') return {key:'preparing',label:'الطلب بيتحضّر',description:'أكلك بيتجهّز دلوقتي.'};
   if (order.confirmationStatus==='unreachable') return {key:'unreachable',label:'المطعم حاول يتواصل معاك',description:'ما قدرش يتأكد من تفاصيل الطلب. تواصل مع المطعم.'};
   if (order.confirmationStatus==='confirmed') return {key:'confirmed',label:'المطعم أكّد الطلب',description:'طلبك اتأكد، وتقدر تتابع التحضير من هنا.'};
-  if (order.confirmationStatus==='pending') return {key:'pending',label:'بانتظار تأكيد المطعم',description:'طلبك اتسجّل، وبنستنى تأكيد المطعم.'};
+  if (order.confirmationStatus==='pending') return {key:'pending',label:'بانتظار تأكيد المطعم',description:'طلبك اتسجّل. لسه مستنيين تأكيد المطعم قبل ما يبدأ التحضير.'};
   return {key:'unknown',label:'حالة الطلب غير معروفة',description:'المطعم ما قدّمش حالة مفهومة دلوقتي؛ تواصل معاه للتأكد.'};
 }
 

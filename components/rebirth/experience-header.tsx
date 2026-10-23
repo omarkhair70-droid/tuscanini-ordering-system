@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useCart } from '@/components/cart/cart-provider';
 import { customerUtilityNavigation, primaryExperienceNavigation } from '@/lib/rebirth/site-map';
@@ -18,14 +18,37 @@ export function ExperienceHeader() {
   const pathname = usePathname();
   const { itemsCount } = useCart();
   const [open, setOpen] = useState(false);
+  const menuToggle = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!open) return;
-    const onEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const panel = document.getElementById('t-navigation-panel');
+    const links = Array.from(panel?.querySelectorAll<HTMLAnchorElement>('a[href]') ?? []);
+    links[0]?.focus();
+    const onKeydown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setOpen(false);
+        menuToggle.current?.focus();
+      } else if (event.key === 'Tab' && links.length) {
+        const first = links[0];
+        const last = links[links.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
     };
-    window.addEventListener('keydown', onEscape);
-    return () => window.removeEventListener('keydown', onEscape);
+    window.addEventListener('keydown', onKeydown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', onKeydown);
+    };
   }, [open]);
 
   return (
@@ -54,6 +77,7 @@ export function ExperienceHeader() {
               type="button"
               className="t-mobile-menu__toggle"
               aria-expanded={open}
+              ref={menuToggle}
               aria-controls="t-navigation-panel"
               onClick={() => setOpen((current) => !current)}
             >

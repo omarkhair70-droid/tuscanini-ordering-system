@@ -403,3 +403,9 @@
  .t-menu-page .t-menu-categories__scroller button:hover .t-menu-category-glyph{transform:rotate(-10deg) scale(1.1)}
 }
 @media(prefers-reduced-motion:reduce){.t-menu-page .t-menu-category-glyph{transition:none}}
+
+/* Search speaks to the entire menu, even after a family was selected. */
+.t-menu-search__scope{display:inline-flex;align-items:center;gap:9px;margin-top:16px;font-size:12px;font-weight:800;line-height:1.8;color:#5a4334}
+.t-menu-search__scope:before{content:"";width:7px;height:7px;background:var(--red);transform:rotate(45deg);flex:none}
+.t-menu-search input:focus-visible{outline:3px solid #257ae8;outline-offset:5px}
+@media(max-width:420px){.t-menu-search__scope{font-size:11px}.t-menu-items__heading{align-items:start;flex-wrap:wrap}}

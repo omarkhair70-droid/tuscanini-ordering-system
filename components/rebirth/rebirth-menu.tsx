@@ -8,7 +8,6 @@ import { useRouter } from 'next/navigation';
 import { useCart } from '@/components/cart/cart-provider';
 import { FloatingCartCta } from '@/components/cart/floating-cart-cta';
 import { RebirthProductDialog } from '@/components/rebirth/rebirth-product-dialog';
-import { ActiveOrderBanner } from '@/components/shared/active-order-banner';
 import { ExperienceHeader } from '@/components/rebirth/experience-header';
 import type { MenuCategory, MenuItem } from '@/types/menu';
 import type { ProductCartItem } from '@/types/cart';
@@ -96,6 +95,18 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
     else url.searchParams.set('category', slug);
     window.history.replaceState({}, '', url.pathname + url.search + url.hash);
   }
+  function searchAcrossMenu(value: string) {
+    setQuery(value);
+    setLimit(PAGE_SIZE);
+    // Typed search always spans the menu. A previously chosen category must
+    // never silently hide the food a guest explicitly asked for by name.
+    if (value.trim() && category !== 'all') {
+      setCategory('all');
+      const url = new URL(window.location.href);
+      url.searchParams.delete('category');
+      window.history.replaceState({}, '', url.pathname + url.search + url.hash);
+    }
+  }
 
   return (
     <div className="t-page t-menu-page" dir="rtl">
@@ -129,13 +140,13 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
           <div className="t-menu-intro__bottom"><span>اختار الأكل اللي على مزاجك.</span><Link href="/food-finder">مش عارف تختار؟ <span aria-hidden>↗</span></Link></div>
         </header>
         <div className="t-shell t-menu-content">
-          <ActiveOrderBanner />
           <section aria-label="ابحث عن الأصناف" className="t-menu-search" id="t-menu-search">
             <label htmlFor="t-menu-query">دور على أكلك بالاسم</label>
             <div className="t-menu-search__inputrow">
-              <input id="t-menu-query" type="search" autoComplete="off" value={query} onChange={event=>{setQuery(event.target.value);setLimit(PAGE_SIZE);}} placeholder="تشيكن فاير، بيتزا، كريب..." />
+              <input id="t-menu-query" type="search" autoComplete="off" maxLength={80} value={query} onChange={event=>searchAcrossMenu(event.target.value)} placeholder="تشيكن فاير، بيتزا، كريب..." />
               {query && <button type="button" onClick={()=>{setQuery('');setLimit(PAGE_SIZE);}}>امسح البحث</button>}
             </div>
+            {query.trim() && <p className="t-menu-search__scope">البحث في المنيو كله، مش في قسم واحد.</p>}
           </section>
           <p className="t-menu-source-note" role="note" data-visual-disclosure="menu">{source.note}</p>
           <section id="t-menu-categories" aria-label="أقسام المنيو" className="t-menu-categories">
@@ -149,8 +160,8 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
           </section>
           <section className="t-menu-items" aria-labelledby="t-menu-items-title">
             <div className="t-menu-items__heading">
-              <div><span className="t-index">الأصناف</span><h2 id="t-menu-items-title">{category === 'all' ? 'الاختيارات' : categories.find(x=>x.slug===category)?.name}</h2></div>
-              <span role="status" aria-live="polite">{filtered.length} صنف مطابق</span>
+              <div><span className="t-index">الأصناف</span><h2 id="t-menu-items-title">{query.trim() ? 'نتائج البحث' : category === 'all' ? 'الاختيارات' : categories.find(x=>x.slug===category)?.name}</h2></div>
+              <span role="status" aria-live="polite">{filtered.length} صنف مطابق · ظاهر {displayed.length}</span>
             </div>
 
             {catalogPresent && contextPhoto && (
@@ -169,7 +180,7 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
               </div>
             ) : filtered.length === 0 ? (
               <div className="t-menu-unavailable" role="status">
-                <h3>مفيش أصناف مطابقة.</h3><p>جرّب اسم تاني أو ارجع لكل الأصناف.</p>
+                <h3>ملقيناش الصنف ده.</h3><p>جرّب جزء من الاسم، أو ارجع للمنيو كله.</p>
                 <button type="button" onClick={()=>{setQuery('');chooseCategory('all')}}>اعرض كل الأصناف ↗</button>
               </div>
             ) : (

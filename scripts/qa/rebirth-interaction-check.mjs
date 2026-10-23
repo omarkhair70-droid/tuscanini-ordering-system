@@ -720,7 +720,7 @@ try {
       await page.locator('.t-order-fact[data-state="verified"]').count()===1 &&
       await page.locator('.t-order-fact[data-state="waiting"]').count()===2,
       `${width}px tracking confirms saved order while leaving restaurant acceptance/preparation unverified`);
-    await check(await page.getByText(/لسه مش متأكد/).count()>0,`${width}px stored order clearly awaits restaurant confirmation`);
+    await check(await page.getByText(/لسه مستنيين تأكيد المطعم قبل ما يبدأ التحضير/).count()===1,`${width}px stored order clearly awaits restaurant confirmation`);
     if(width===390)await page.screenshot({path:'artifacts/screenshots/customer-journey-tracking-pending-390.png',fullPage:true,animations:'disabled'});
     restaurantStage='جاري التحضير';
     await page.getByRole('button',{name:/حدّث الحالة/}).click();
@@ -774,7 +774,7 @@ try {
       }
       if(item.stamp==='DECLINED'){
         await check(await page.locator('.t-order-fact').getByText('الطلب لم يُقبل').count()===1 &&
-          await page.getByText(/مش معناه إنك طلبت إلغاءه/).count()===1,
+          await page.getByText(/ده مش إلغاء من ناحيتك/).count()===1,
           `${width}px restaurant rejection is not misrepresented as customer cancellation`);
       }
       if(width===390 && ['READY','DELIVERED','DECLINED','CANCELLED'].includes(item.stamp)){
