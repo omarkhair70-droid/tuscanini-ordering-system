@@ -77,6 +77,14 @@
 
 ---
 
+### Coolify handoff / production-image verification (23 Oct 2026)
+
+- User provided an authenticated screenshot of **Coolify v4.4.7** at `https://coolify.158.101.254.30.sslip.io/projects`, displaying four existing projects. This confirms the control-panel URL, **not** that our connected automation is authenticated or that Tuscanini services exist.
+- A separate authorized browser-profile login handoff has been generated; **user must open it, sign in if needed and press Save profile** before authenticated browser actions can run. Do not collect credentials in chat or assume their personal Chrome session transfers automatically.
+- CI specifically checks `docker compose -f infra/oracle/postgres.compose.yaml config -q` and builds the real `services/orders-api/Dockerfile` production container. [Dedicated API/Compose check #39884814448](https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39884814448) **SUCCESS** at technical SHA `76bb9cfe`. This proves build/compose syntax, **not** a deployed Oracle service, database backups or actual Vercel round trip.
+- **Next authorized Coolify actions:** inspect server health/resources without modifying current projects; create the separate `Tuscanini` project and environment; configure secret variables in the UI; deploy new Compose at `infra/oracle/postgres.compose.yaml` on PR #59's review branch; verify Postgres ready/API ready/TLS and isolation. Do **not** enable `TUSCANINI_ACCEPT_ORDERS=yes` or `ORDER_BACKEND=oracle` until the operator gate, reviewed catalog and private remote test pass.
+- Keep all previous projects unchanged. Do not expose `5432` or install a fictitious shared client DB.
+
 ### Execution checkpoint / Oracle transport build (23 Oct 2026)
 
 **Code now built on PR #59** — dedicated `services/orders-api` with separate `tuscanini` SQL schema and additive migration (no `spike_ts` or shared Nova/Plantupia DB), isolated pg pool, authenticated service HTTP routes, server-priced catalog modifiers, idempotent checkout, event log/outbox, operator inbox/actions and PII-minimized customer tracking. The API's test suite proves real PostgreSQL 16 behavior, including identical-cart replay, changed-cart 409, unauthorized inbox/action 403, received→accepted→preparing→ready→delivered and fail-closed default OFF. **No Oracle deployment yet**. Code sources: `services/orders-api/src/`, `services/orders-api/migrations/`, `services/orders-api/Dockerfile`, `services/orders-api/tests/service.test.mjs`, `.github/workflows/tuscanini-orders-service.yml`.
