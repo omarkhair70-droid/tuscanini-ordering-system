@@ -106,7 +106,7 @@ User requested a single, complete review with external UX/visual/restaurant-oper
 | F01 Guest checkout | Home/Menu→customise→Cart→post to Oracle→receipt; prevent accidental public test orders and duplicate submits | P0 OPEN |
 | F02 Customer tracking | One saved order ID follows staff transitions; pending/rejected/ready/delivered, refreshing/offline errors; truthful statuses | P0 OPEN REMOTE |
 | F03 Menu truth | Owner-approved 113 prices, stock, sizes/addons, offer math and delivery fee; server price authoritative | P0 OWNER DATA |
-| F04 Creative art direction | Coherent authored Home→Menu→Dialog→Cart→Ticket world; hierarchy, punchy copy, bespoke layout | P1 REFINEMENT |
+| F04 Creative art direction | Review Home→Menu→Dialog→Cart→Ticket against original INSIDE / OUT thesis; current red/yellow/black/cream palette is deployed but **not owner-approved final identity**; test clarity and non-repetition | P1 DIRECTION OPEN |
 | F05 Food images | Retain 100 generated + 12 actual photos, verify 17 unmatched SKU identities and accurate disclosure/cropping/alt | P1 REVIEW |
 | F06 Motion | Keep original FLIP and add useful Add-to-cart/Ticket/state cues with reduced-motion fallback | P1 PARTIAL |
 | F07 Responsive & accessibility | 320/390/768/1024/1440, real keyboard/touch/landscape, 200% zoom, focus, RTL, long item names | P1 FIELD |
@@ -117,6 +117,12 @@ User requested a single, complete review with external UX/visual/restaurant-oper
 | F12 Real deployment & handoff | Two separate physical devices, owner signoff and menu, staff rehearsals, deliberate PR merge/deploy | RELEASE BLOCKER |
 | OPTIONAL | Preorder ETA, push, loyalty/reorder, payment gateway/wallets, expanded POS/printing/analytics | NOT AUTOMATIC SCOPE |
 
+### Original user Library creative brief, not merely external design references
+
+- Re-read original 18 Oct Tuscanini research: TUSCANINI_CREATIVE_SYNTHESIS_PASS_06 and TUSCANINI_CREATIVE_DEVELOPMENT_LAB_05B. The historical 113-SKU catalog is **not verified current inventory**. Actual social screenshots show open stuffed-food interiors, staff-held food/scale, red takeaway packaging, black staff tops; neither real portion sizes nor preparation ritual can be presumed.
+- The selected working **INSIDE / OUT** creative engine (restrained exterior vs rich interior) was expressly approved for **editorial exploration only**, NOT a fixed logo, colors, typography or final visual identity. Alternatives ONE FLAVOR/MANY FORMS and MADE/HELD/HANDED OVER remain conditional product/service hypotheses.
+- Protect a direct Menu/Cart route. Don't repeat the same red-black editorial mask reveal on every page; transactional pages need calm legibility, with real prices/ingredients plainly visible. The brief explicitly prioritizes authentic serving, honest photo pairing whole/cut/handheld/wrapper, non-illusory ingredient/portion claims, and no mandatory animation.
+- Preserve all existing generated assets and code, but label their evidentiary limits and compare them to original research before declaring art direction approved.
 ### Curated comparison references with application to Tuscanini
 
 - FarmGrill https://elegantsquirrel.com/case-study-farmgrill — black/red/yellow lively street-food visual identity and fast mobile menu; reference for F04/05, never direct copy.
