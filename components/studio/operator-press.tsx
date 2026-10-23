@@ -21,6 +21,9 @@ const STATUS:Record<string,{label:string;marker:string;index:string}>={
   delivered:{label:'اتسلّم',marker:'DONE',index:'05'},
   rejected:{label:'اترفض',marker:'DECLINED',index:'06'},
 };
+const DEMO_NEXT_STATE:Record<string,Phase>={
+  accept:'accepted',reject:'rejected',start:'preparing',ready:'ready',deliver:'delivered',
+};
 const ACTIONS:Record<string,Array<{key:string;label:string}>>={
   received:[{key:'accept',label:'اقبل الأوردر'},{key:'reject',label:'اعتذر عن الأوردر'}],
   accepted:[{key:'start',label:'ابدأ التحضير'}],
@@ -141,12 +144,13 @@ function AllDay({orders}:{orders:Order[]}){
     <small>تجميع من الأوردرات المقبولة أو قيد التحضير فقط</small>
   </div>;
 }
-export function OperatorPress(){
+export function OperatorPress({publicDemo=false}:{publicDemo?:boolean}){
   const [key,setKey]=useState('');
   const [orders,setOrders]=useState<Order[]>([]);
   const [layout,setLayout]=useState<Layout>('press');
   const [filter,setFilter]=useState<Filter>('all');
-  const [preview,setPreview]=useState(false);
+  const [preview,setPreview]=useState(publicDemo);
+  const [demoStatuses,setDemoStatuses]=useState<Record<string,Phase>>({});
   const [selectedId,setSelectedId]=useState('');
   const [message,setMessage]=useState('');
   const [lastSync,setLastSync]=useState('');
@@ -163,10 +167,10 @@ export function OperatorPress(){
   const railTrack=useRef<HTMLDivElement|null>(null);
 
   useEffect(()=>{
-    if(new URLSearchParams(window.location.search).get('preview')==='20')setPreview(true);
+    if(publicDemo || new URLSearchParams(window.location.search).get('preview')==='20')setPreview(true);
     const timer=window.setInterval(()=>setClock(v=>v+1),30000);
     return ()=>{window.clearInterval(timer);void audioContext.current?.close();audioContext.current=null;};
-  },[]);
+  },[publicDemo]);
   const toggleSound=async()=>{
     if(audioArmed.current){audioArmed.current=false;setSoundOn(false);return;}
     try{
@@ -211,7 +215,9 @@ export function OperatorPress(){
       window.removeEventListener('online',wake);};
   },[key,preview,sync]);
 
-  const data=useMemo(()=>preview?makePreviewOrders():orders,[orders,preview,clock]);
+  const data=useMemo(()=>preview?makePreviewOrders().map(o=>({
+    ...o,status:demoStatuses[o.id]??o.status,
+  })):orders,[orders,preview,clock,demoStatuses]);
   const filtered=useMemo(()=>data.filter(o=>matching(o,filter)&&(
     !search||[o.id,o.customer_snapshot?.name,...o.items.map(i=>i.name)].join(' ').toLocaleLowerCase().includes(search.toLocaleLowerCase())
   )),[data,filter,search]);
@@ -225,6 +231,17 @@ export function OperatorPress(){
     done:data.filter(o=>o.status==='delivered'||o.status==='rejected').length,
   };
   const apply=async(id:string,action:string)=>{
+    if(publicDemo&&preview){
+      const order=data.find(o=>o.id===id);
+      const valid=ACTIONS[order?.status??'']?.some(a=>a.key===action);
+      if(!order||!valid)return;
+      // Public interactions change ONLY synthetic state in this React view.
+      // They NEVER call the restaurant API or persist real orders.
+      setDemoStatuses(previous=>({...previous,[id]:DEMO_NEXT_STATE[action]}));
+      setSelectedId(id);
+      setMessage('تم تحديث '+short(id)+' داخل التجربة فقط');
+      return;
+    }
     if(preview||pendingId||!key)return;
     // Keep this ticket in focus as it advances stages; otherwise another
     // incoming order would steal the canvas while staff are mid-task.
@@ -250,12 +267,16 @@ export function OperatorPress(){
           <button type="button" aria-pressed={layout==='rail'} onClick={()=>setLayout('rail')}>شريط التذاكر</button>
         </div>
         <button type="button" className="op-preview" aria-pressed={preview} onClick={()=>{
-          setPreview(v=>!v);setFilter('all');setSelectedId('');setMessage('');setNewArrivals(0);
-        }}>{preview?'العودة للأوردرات':'جرّب ضغط 20 طلبًا'}</button>
+          if(publicDemo){setDemoStatuses({});setMessage('رجّعنا الـ٢٠ أوردر لحالتهم الأولى');}
+          else setPreview(v=>!v);
+          setFilter('all');setSelectedId('');setNewArrivals(0);
+        }}>{publicDemo?'إعادة ضبط ٢٠ طلبًا':preview?'العودة للأوردرات':'جرّب ضغط 20 طلبًا'}</button>
       </div>
     </div>
     <div className="op-health">
-      {preview?<span className="op-health__mark">عرض تصميم · ٢٠ طلبًا تجريبيًا · الأزرار غير مفعّلة</span>:
+      {preview?<span className="op-health__mark">{publicDemo
+        ?'تجربة تفاعلية · ٢٠ طلبًا خياليًا · لا يوجد اتصال بالمطعم'
+        :'عرض تصميم · ٢٠ طلبًا تجريبيًا · الأزرار غير مفعّلة'}</span>:
         <label className="op-health__key"><span>مفتاح تجربة الموظف</span><input type="password" placeholder="Studio operator key"
           value={key} onChange={e=>setKey(e.target.value)} autoComplete="off"/></label>}
       <button type="button" className="op-health__sound" aria-pressed={soundOn}
@@ -291,7 +312,7 @@ export function OperatorPress(){
       layout==='press'?<div className="op-stage" data-testid="order-press">
         <div className="op-stage__focus">
           <div className="op-section-title"><span>01 / NOW ON STAGE</span><strong>الأوردر تحت إيدك</strong></div>
-          {focus&&<OrderTicket key={focus.id} order={focus} preview={preview} pending={pendingId===focus.id} onAction={apply}/>}
+          {focus&&<OrderTicket key={focus.id} order={focus} preview={preview&&!publicDemo} pending={pendingId===focus.id} onAction={apply}/>}
         </div>
         <div className="op-stage__queue">
           <div className="op-section-title"><span>02 / NEXT IN LINE</span><strong>الطابور <em>{queue.length.toLocaleString('ar-EG')}</em></strong></div>
@@ -309,7 +330,7 @@ export function OperatorPress(){
             <button type="button" onClick={()=>moveRail('next')} aria-label="التذاكر التالية">←</button>
           </div>
         </div>
-        <div className="op-rail__track" ref={railTrack} tabIndex={0} aria-label="اسحب أفقيًا لمراجعة التذاكر">{filtered.map(o=><OrderTicket key={o.id} order={o} preview={preview}
+        <div className="op-rail__track" ref={railTrack} tabIndex={0} aria-label="اسحب أفقيًا لمراجعة التذاكر">{filtered.map(o=><OrderTicket key={o.id} order={o} preview={preview&&!publicDemo}
           pending={pendingId===o.id} onAction={apply} compact/>)}</div>
       </div>}
     <AllDay orders={data}/>
