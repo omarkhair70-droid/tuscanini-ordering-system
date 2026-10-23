@@ -32,21 +32,21 @@ export function getCategoryContextPhoto(category: MenuCategorySlug): {src:string
     return {
       src:'/images/rebirth/food-07.jpg',
       alt:'صورة أصلية لثلاثة كريبات مفتوحة من توسكانيني، وليست صورة لأي صنف باسمه',
-      credit:'TSC-07 / صورة عامة للكريب من المطعم',
+      credit:'صورة من توسكانيني',
     };
   }
   if(category.startsWith('pizza-')){
     return {
       src:'/images/rebirth/food-10.jpg',
       alt:'صورة أصلية لبيتزا توسكانيني من أعلى، وليست صورة لأي بيتزا مسماة في المنيو',
-      credit:'TSC-10 / صورة عامة للبيتزا من المطعم',
+      credit:'صورة من توسكانيني',
     };
   }
   if(category.startsWith('sandwiches-')){
     return {
       src:'/images/rebirth/food-08.jpg',
       alt:'صورة أصلية لساندوتشات وتغليف توسكانيني، وليست صورة لأي ساندوتش محدد',
-      credit:'TSC-08 / صور عامة للساندوتشات والتغليف',
+      credit:'صورة من توسكانيني',
     };
   }
   return null;
