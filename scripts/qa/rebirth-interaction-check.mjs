@@ -546,6 +546,12 @@ try {
       `${width}px changing pickup back to delivery invalidates previous review`);
     await fixtureContext.close();
     // Isolated tracking fixture validates state semantics, not a real restaurant order.
+    // All WhatsApp actions are captured as URL attributes, NEVER opened or sent.
+    // A successful page view must not mutate a restaurant order.
+    await page.route('**/api/public/site-settings',route=>route.fulfill({
+      status:200,contentType:'application/json',
+      body:JSON.stringify({ok:true,settings:{isOrderingOpen:true,whatsappOrderNumber:'01012345678'}}),
+    }));
     let restaurantStage='جديد';
     let restaurantConfirmation='pending';
     let restaurantOrderType='pickup';
@@ -563,6 +569,15 @@ try {
     }));
     await page.goto(baseUrl+'/order-success?orderId=123e4567-e89b-42d3-a456-426614174000',{waitUntil:'networkidle',timeout:30000});
     await page.getByRole('heading',{name:'بانتظار تأكيد المطعم'}).waitFor({state:'visible',timeout:8000});
+    const cancellation=page.getByRole('link',{name:/استفسر عن إمكانية الإلغاء/});
+    await cancellation.waitFor({state:'visible',timeout:8000});
+    const outbound=await cancellation.getAttribute('href');
+    await check(Boolean(outbound?.startsWith('https://wa.me/201012345678?text=') &&
+      decodeURIComponent(outbound).includes('الطلب #1234') &&
+      decodeURIComponent(outbound).includes('الإلغاء مش مؤكد')),
+      `${width}px pending ticket prepares a reference-linked cancellation REQUEST, not a cancelled order`);
+    await check(await page.getByText(/مفيش إلغاء أو رد أموال أو تعديل بيتم من الزر/).count()===1,
+      `${width}px ticket never treats an outbound WhatsApp link as mutation or refund`);
     await check(await page.locator('.t-order-tracking[data-current-status="pending"] .t-order-story__seal-text').getByText('SAVED').count()===1 &&
       await page.locator('.t-order-ticket__footer').getByText(/مش إيصال دفع/).count()===1,
       `${width}px editorial living ticket shows saved state but never claims payment`);
@@ -615,6 +630,13 @@ try {
       await page.locator('.t-order-story__seal-text').getByText(item.stamp,{exact:true}).waitFor({state:'visible',timeout:8000});
       await check(await page.locator('.t-order-fact[data-state="attention"]').count()===item.attention,
         `${width}px ${item.stamp} is a truthful receipt status without inventing confirmation/payment`);
+      if(item.stamp==='CANCELLED'||item.stamp==='DELIVERED'){
+        await check(await page.getByRole('link',{name:/استفسر عن إمكانية الإلغاء/}).count()===0 &&
+          await page.getByRole('link',{name:/اطلب تعديل الأوردر/}).count()===0,
+          `${width}px terminal ${item.stamp} ticket does not offer an active cancellation/change request`);
+        await check(await page.getByRole('link',{name:/راسل المطعم برقم الطلب/}).count()===1,
+          `${width}px terminal ${item.stamp} ticket preserves a reference-linked support path`);
+      }
       if(width===390 && ['READY','DELIVERED'].includes(item.stamp)){
         await page.evaluate(()=>window.scrollTo(0,0));
         await page.screenshot({path:`artifacts/screenshots/tracking-ticket-${item.stamp.toLowerCase()}-390.png`,fullPage:true,animations:'disabled'});
