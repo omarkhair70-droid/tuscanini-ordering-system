@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getLocalStudioOrigin, isLocalStudioRequest, studioOperatorAllowed } from '@/lib/studio-bridge';
-import {oraclePreviewEnabled,operatorPasskeyAllowed,fetchOracleInbox,changeOracleOrder,OracleOrderError} from '@/lib/oracle-order-api';
+import {oracleOrdersEnabled,operatorPasskeyAllowed,fetchOracleInbox,changeOracleOrder,OracleOrderError} from '@/lib/oracle-order-api';
 
 export const runtime='nodejs';
 export const dynamic='force-dynamic';
@@ -11,7 +11,7 @@ function uuid(input:string|null):string|null {
 }
 
 async function relay(request:NextRequest):Promise<NextResponse>{
-  if (oraclePreviewEnabled()) {
+  if (oracleOrdersEnabled()) {
     const resource=request.nextUrl.searchParams.get('resource');
     const id=uuid(request.nextUrl.searchParams.get('orderId'));
     if (!operatorPasskeyAllowed(request))return result({error:'مفتاح المطعم غير صالح.'},403);
