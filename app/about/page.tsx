@@ -40,7 +40,7 @@ export default function AboutPage() {
             </div>
             <figure className="t-about-hero__photograph">
               <Image src="/images/rebirth/food-06.jpg" alt="شخص من توسكانيني يعرض مجموعة كريبات محشوة في المطعم" fill priority sizes="(max-width: 720px) 90vw, 40vw" />
-              <figcaption><span lang="en">TSC-06</span> / من صور توسكانيني الحقيقية</figcaption>
+              <figcaption>من صور توسكانيني</figcaption>
             </figure>
           </div>
         </section>
@@ -56,11 +56,11 @@ export default function AboutPage() {
           <div className="t-about-observed__photos t-shell">
             <figure className="t-about-observed__scene t-about-observed__scene--place">
               <Image src="/images/rebirth/food-01.jpg" loading="eager" alt="مجموعة كريبات حقيقية أمام شعار توسكانيني داخل المكان" fill sizes="(max-width: 720px) 92vw, 55vw" />
-              <figcaption><strong>في المكان</strong><span lang="en">TSC / 01</span></figcaption>
+              <figcaption><strong>في المطعم</strong></figcaption>
             </figure>
             <figure className="t-about-observed__scene t-about-observed__scene--wrap">
               <Image src="/images/rebirth/food-08.jpg" loading="eager" alt="ساندوتشات بجانب عبوات توسكانيني الحمراء وورق التغليف المطبوع" fill sizes="(max-width: 720px) 74vw, 34vw" />
-              <figcaption><strong>على العلبة</strong><span lang="en">TSC / 08</span></figcaption>
+              <figcaption><strong>التغليف</strong></figcaption>
             </figure>
           </div>
           <p className="t-about-observed__note t-shell">عايز تشوف الأصناف والأسعار؟ هتلاقيهم في المنيو.</p>
