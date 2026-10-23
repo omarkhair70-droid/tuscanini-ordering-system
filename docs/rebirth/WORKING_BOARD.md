@@ -4,6 +4,29 @@
 
 > **Start here in every new chat, and update this SAME FILE after every meaningful feature/review.** This is the current execution and coverage index; historical `00–38`, original research, the HTML reference and technical handoffs remain evidence, not competing "next task" lists. Use the current GitHub PR HEAD and Actions results if newer; never assume this snapshot is the HEAD forever.
 
+## Live preview links and session rhythm (23 Oct 2026)
+
+**One recurring check-in:** every implementation response should include **what changed / working code HEAD / three CI statuses / Vercel preview link / next two tasks / blockers**. Continue updates in this board rather than separate handoff files. Vercel deployment `READY` is proof the build is hosted, **not** proof of a shared remotely connected restaurant data engine or merchant acceptance.
+
+**Stable branch preview alias** (deployment is replaced by each successful Git push to PR #59):
+- Customer site: https://tuscanini-ordering-syste-git-6bc29f-omarkhair70-droids-projects.vercel.app/
+- Restaurant screen: https://tuscanini-ordering-syste-git-6bc29f-omarkhair70-droids-projects.vercel.app/operator/orders
+- Checkout: https://tuscanini-ordering-syste-git-6bc29f-omarkhair70-droids-projects.vercel.app/cart
+- PR: https://github.com/omarkhair70-droid/tuscanini-ordering-system/pull/59
+- Native Vercel branch Preview requires Vercel access or a **temporary Vercel share link**; generate the latter directly rather than committing expiring bypass tokens to GitHub.
+
+**Scope correction confirmed by owner:** The restaurant screen should **open normally from the URL**, not return 404 because the local PostgreSQL fixture is disabled. Implemented on branch:
+- `app/operator/orders/page.tsx` always renders this real interface, without a `notFound()` check. With localhost staging disabled (normal Vercel builds), it displays 20 **synthetic** tickets and a prominent truthful notice.
+- `components/studio/operator-press.tsx` exposes Order Press and Ticket Rail, search, queue, filters, and **clickable local demo actions** (accept/reject/prepare/ready/complete). Demo state is kept in browser React state ONLY; resets with a button; no real order API calls, no real customer names/phone/address, no payments. This is much more useful for judging actual operator interaction than static screenshot or inert buttons.
+- Real staging with `getLocalStudioOrigin()` still shows real Postgres-backed tickets and requires the existing operator key for server mutations. Its separate `?preview=20` mode remains strictly inert for localhost visual fixture tests.
+- `scripts/qa/rebirth-interaction-check.mjs`: at 320/390/768/1440, assert the public operator route HTTP 200, 20 synthetic tickets, local accept→prepare, rail switch, reset, and ZERO calls to `/api/studio/bridge`; write screenshots at 390/1440.
+- **Proof:** Vercel project deployment `READY` for technical SHA `2a48f08e`. Verified branch alias GET `/operator/orders` returned **HTTP 200**, replacing previous 404. GitHub Home CI and Backend V2 Postgres CI **SUCCESS** at `2a48f08e`; browser screenshot/interaction workflow `#39878775509` was still in progress when this entry was initially added, so check final result before claiming that specific browser test passed.
+- **Not implemented:** A public *real-time* shared production order queue and merchant-ready checkout. Do not misrepresent the open demo as real order intake or loosen server authorization on any future real shared instance.
+
+Next: close browser test and screenshot review; continue T03 merchant-controlled prep estimate and T05 connection/touch/audio field tests. All payment/cancellation/refund and catalog questions still remain in section 9.
+
+---
+
 ## 0. The whole product, without scope creep
 
 **Only TWO customer-facing systems:**
