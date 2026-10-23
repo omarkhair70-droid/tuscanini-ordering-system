@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { getPublicOrderTrackingOrThrow } from '@/lib/orders/track-order';
 import { isLocalStudioRequest } from '@/lib/studio-bridge';
 import { getStagedRebirthTracking, StudioMenuError } from '@/lib/studio-menu-orders';
+import {oraclePreviewEnabled,trackOracleOrder,OracleOrderError} from '@/lib/oracle-order-api';
 
 export async function GET(request: Request) {
   try {
@@ -10,6 +11,7 @@ export async function GET(request: Request) {
     const orderId = requestUrl.searchParams.get('orderId') ?? '';
 
     const tracking = isLocalStudioRequest(request) ? await getStagedRebirthTracking(orderId)
+      : oraclePreviewEnabled() ? await trackOracleOrder(orderId)
       : await getPublicOrderTrackingOrThrow(orderId);
 
     return NextResponse.json({
@@ -27,7 +29,7 @@ export async function GET(request: Request) {
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'تعذر تحميل تتبع الطلب.';
-    if(error instanceof StudioMenuError)return NextResponse.json({ok:false,error:message},{status:error.status});
+    if(error instanceof StudioMenuError || error instanceof OracleOrderError)return NextResponse.json({ok:false,error:message},{status:error.status});
     const isValidationError = message.includes('غير صالح');
     const isNotFound = message.includes('غير موجود');
 
