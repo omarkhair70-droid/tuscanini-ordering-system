@@ -4,6 +4,13 @@
 
 > **Start here in every new chat, and update this SAME FILE after every meaningful feature/review.** This is the current execution and coverage index; historical `00–38`, original research, the HTML reference and technical handoffs remain evidence, not competing "next task" lists. Use the current GitHub PR HEAD and Actions results if newer; never assume this snapshot is the HEAD forever.
 
+### Test intake gates closed after first ticket lifecycle (23 Oct 2026)
+
+- User confirms both temporary Oracle test switches have been turned OFF after first full synthetic staff ticket lifecycle: `ORDER_API_ACCEPT_ORDERS=no` and `CATALOG_SYNC_ENABLED=no`. This is **user-reported**; no admin console screenshot or fresh runtime check was performed.
+- Independent public-site setting from the latest fetched Preview was `isOrderingOpen:false`; Vercel `TUSCANINI_ALLOW_CATALOG_SYNC=no` as previously set. Preserve all these OFF values until a controlled, explicitly approved merchant go-live.
+- The remaining customer-flow work is the regular Home/Menu→Cart→Checkout→`POST /api/orders`→Oracle→Order Success/Tracking path. Existing code checks `isOrderingOpen` in both the customer UI and the Next route; don't relax the public gate or turn on real intake without a private, authenticated, isolated test path and owner signoff. Current validated result is the database-backed staff order flow, **not** a confirmed cart checkout.
+- Next work should be a focused code/review sprint and one consolidated branch Preview deploy, not repeated user-driven Terminal checks. PR #59 stays Draft. Avoid misrepresenting historic 113-item prices as approved.
+
 ### Full synthetic order operator lifecycle reported successful (23 Oct 2026)
 
 - **User now reports `Success`** after being asked to click the four steps on the real Vercel `Operator Press` for the PostgreSQL-backed trial ticket: `accept → start → ready → deliver`. Treat staff-side lifecycle as **user-reported successful**. Order persistence after a hard browser refresh and the PostgreSQL event ledger are **not independently audited**; verify with a read-only query if needed.
