@@ -23,25 +23,25 @@ export default async function OffersPage() {
       <ExperienceHeader/>
       <main>
         <header className="t-offers-hero t-shell">
-          <div className="t-offers-hero__meta"><span>OFFERS / THE REAL ONES</span><span>توسكانيني — بني سويف</span></div>
+          <div className="t-offers-hero__meta"><span>OFFERS / TUSCANINI</span><span>توسكانيني — بني سويف</span></div>
           <div className="t-offers-hero__title">
             <div className="t-offers-hero__words">
-              <span className="t-index">OFFERS / WHEN THEY'RE REAL</span>
+              <span className="t-index">العروض الحالية</span>
               <h1>على<br/><em>الجاهز.</em></h1>
-              <p>العروض اللي متاحة دلوقتي بس. من غير خصم قديم ولا سعر مش مؤكد.</p>
+              <p>شوف العروض المتاحة واختار اللي على مزاجك.</p>
             </div>
             <figure className="t-offers-hero__photo">
               <Image src="/images/rebirth/food-11.jpg" alt="صورة أصلية لوجبة من توسكانيني بجانب عبوات الطعام، ليست صورة لعرض معين" fill priority sizes="(max-width: 720px) 88vw, 36vw" />
-              <figcaption>صورة من المطعم — مش صورة عرض محدد</figcaption>
+              <figcaption>من صور توسكانيني</figcaption>
               <span className="t-offers-hero__photo-index" lang="en" aria-hidden="true">TSC / 11</span>
             </figure>
           </div>
           <div className="t-offers-hero__foot"><span>{sourceError ? 'تعذر التحقق من العروض' : offers.length ? `${offers.length} عرض متاح` : 'مفيش عروض سارية مؤكدة دلوقتي'}</span><Link href="/menu">روح للمنيو ↗</Link></div>
         </header>
         <section className="t-shell t-offers-list" id="t-offers-list" aria-labelledby="t-offers-heading">
-          <div className="t-offers-list__heading"><span className="t-index">01 — FROM THE RESTAURANT</span><h2 id="t-offers-heading">اللي متاح.</h2></div>
+          <div className="t-offers-list__heading"><span className="t-index">العروض</span><h2 id="t-offers-heading">اللي متاح.</h2></div>
           {sourceError ? (
-            <div className="t-offers-empty" role="status"><h3>مش قادرين نتحقق من العروض.</h3><p>مفيش أي عرض أو سعر هنخمنه. جرّب المنيو أو تواصل مع المطعم.</p><Link href="/contact">تواصل معانا ↗</Link></div>
+            <div className="t-offers-empty" role="status"><h3>مش قادرين نتحقق من العروض.</h3><p>جرّب تفتح المنيو، أو كلم المطعم علشان تعرف المتاح.</p><Link href="/contact">تواصل معانا ↗</Link></div>
           ) : offers.length ? (
             <div className="t-offers-grid">{offers.map((offer,index)=>(
               <article key={offer.id} className="t-offers-card" id={`offer-${offer.id}`}>
@@ -56,8 +56,8 @@ export default async function OffersPage() {
             ))}</div>
           ) : (
             <div className="t-offers-empty" role="status">
-              <span className="t-index">NO ACTIVE OFFERS</span><h3>مفيش عروض<br/>مؤكدة دلوقتي.</h3>
-              <p>بنظهر هنا العروض السارية بس. تقدر تشوف الأصناف المتاحة في المنيو.</p><Link href="/menu">افتح المنيو ↗</Link>
+              <span className="t-index">العروض</span><h3>مفيش عروض<br/>مؤكدة دلوقتي.</h3>
+              <p>تقدر تختار طلبك من المنيو لحد ما يبقى فيه عروض جديدة.</p><Link href="/menu">افتح المنيو ↗</Link>
             </div>
           )}
         </section>
