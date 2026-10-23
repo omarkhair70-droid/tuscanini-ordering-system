@@ -7,6 +7,9 @@ COPY migrations ./migrations
 RUN npm run build
 
 FROM node:22-alpine
+# Coolify's HTTP healthcheck uses curl/wget inside the runtime container.
+# Provide curl explicitly; the base Alpine image alone is not sufficient.
+RUN apk add --no-cache curl
 ENV NODE_ENV=production
 WORKDIR /app
 COPY package.json ./
