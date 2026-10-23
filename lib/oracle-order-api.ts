@@ -51,7 +51,7 @@ async function call(path:string,method:'GET'|'POST'='GET',payload?:unknown):Prom
   if(!reply.ok){
     const publicMessage=reply.status===503?'تسجيل الطلبات غير متاح حاليًا.':
       reply.status===409?'الطلب اتغير أو مكرر، راجع البيانات وحاول تاني.':
-      reply.status===400?'تفاصيل الأوردر محتاجة مراجعة.':
+      reply.status===400?'راجع السلة والأسعار قبل تسجيل الطلب. لو السعر اتغير، ارجع للمنيو وحدّث الصنف.':
       reply.status===404?'الطلب غير موجود.':'تعذّر التواصل مع المطعم.';
     throw new OracleOrderError(publicMessage,reply.status>=500?503:reply.status);
   }
@@ -68,6 +68,7 @@ export async function submitOracleOrder(requestKey:string,payload:ValidatedOrder
   });
   const data=await call('/v1/orders','POST',{
     requestKey,items,customer:payload.customer,tableReference:payload.tableReference,
+    expectedSubtotalCents:Math.round(payload.subtotal*100),
   });
   if(typeof data.id!=='string'||typeof data.subtotal_cents!=='string')
     throw new OracleOrderError('تعذّر تأكيد حفظ الطلب.',502);
