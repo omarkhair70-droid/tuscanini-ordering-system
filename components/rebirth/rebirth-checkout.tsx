@@ -255,11 +255,11 @@ export function RebirthCheckout() {
                 <section className="t-checkout-payment-note" aria-label="التكلفة وطريقة الدفع">
                   <span className="t-index">PAYMENT / NOT CHARGED</span>
                   <h3>الدفع مش بيتم هنا.</h3>
-                  <p>دي خطوة تسجيل طلب، مش تحصيل فلوس. طريقة الدفع المتاحة هتتأكد مع المطعم؛ مفيش دفع إلكتروني مفعّل على الموقع حاليًا.</p>
+                  <p>هتسجّل طلبك هنا، لكن الدفع مش إلكتروني. اتأكد من طريقة الدفع مع المطعم.</p>
                   <p>{customer.orderType==='pickup'
                     ? 'الاستلام من المطعم، من غير رسوم توصيل. الإجمالي ده للأصناف بس.'
                     : 'رسوم الدليفري والمنطقة المتاحة محتاجين تأكيد المطعم؛ إجمالي الأصناف مش السعر النهائي شامل التوصيل.'}</p>
-                  <p>أسعار الأصناف حسب المنيو السابق ومحتاجة تأكيد من المطعم.</p>
+                  <p>الأسعار المعروضة محتاجة تأكيد من المطعم.</p>
                 </section>
                 {tableReference && <p className="t-checkout-summary__table">مرجع الطاولة: {tableReference}</p>}
                 <label className="t-checkout-confirm"><input id="t-checkout-confirm" type="checkbox" checked={customer.confirmedAccurateDetails}
