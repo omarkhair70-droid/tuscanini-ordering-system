@@ -4,6 +4,79 @@
 
 > **Start here in every new chat, and update this SAME FILE after every meaningful feature/review.** This is the current execution and coverage index; historical `00–38`, original research, the HTML reference and technical handoffs remain evidence, not competing "next task" lists. Use the current GitHub PR HEAD and Actions results if newer; never assume this snapshot is the HEAD forever.
 
+## CONTROL ROOM — complete remaining-work radar (23 Oct 2026)
+
+**This is the at-a-glance execution map you requested.** There is ONE product: the Vercel Tuscanini website and its ONE accessible restaurant order screen. Everything below is visible even if not the current sprint. The detailed U01–U12 ideas and P01–P18 payment possibilities in sections 9–12 remain attached to this same board. Do not hide or silently turn these into unapproved code.
+
+**Evidence terms:** `TESTED-LOCAL` = GitHub actions + disposable local Postgres; `READY-PREVIEW` = Vercel website builds/serves pages; `OPEN` = not implemented; `MERCHANT` = decision/data outside verified code; `FIELD` = requires actual phone/tablet/restaurant.
+
+### Milestones — real dependencies, not a new environment for its own sake
+
+| Gate | Desired customer-visible outcome | Exact next deliverable | Verified status |
+|---|---|---|---|
+| G00 | See both designed screens via Vercel | Stable customer/Order Press/Ticket Rail URLs; local 20-ticket interactive demo | **READY-PREVIEW + browser CI PROVED** at `2a48f08e` |
+| G01 | Dedicated Tuscanini data on existing Oracle | Coolify resource using `infra/oracle/postgres.compose.yaml` + volume, DB isolation, PG health and real backup/restore | **COMPOSE COMMITTED — NOT DEPLOYED** |
+| G02 | Durable safe service rather than test fixture | Real API with own migrations, authentication, privacy/tracking and server-authoritative commerce | **OPEN** — old `spike_ts` API may NOT be exposed |
+| G03 | One live shared order between phone and tablet | Vercel server-side integration to G02, operator actions, tracking, real internet roundtrip and rollback toggle | **OPEN**; localhost-only E2E TESTED |
+| G04 | Merchant business rules actually true | Approved menu/prices/options/offers, phone/address/hours, delivery region/fee/time, payment and cancellation choices | **MERCHANT** |
+| G05 | Operationally reliable restaurant flow | Real tablet + Android test, foreground sound, sleep/reconnect, 20–50 tickets, retry conflict, data security, backup recovery | **FIELD/OPEN** |
+| G06 | Controlled restaurant web ordering | Pilot, monitoring, final owner signoff, deliberate production cutover & support/rollback | **OPEN** |
+
+### ALL remaining core workstreams (not a list of automatically approved add-ons)
+
+| ID | Front / backend / operations | Current reality | Finish condition and priority |
+|---|---|---|---|
+| C01 | Home editorial and visual direction | BUILT preview; visual approval open | Whole Home→Menu flow and imagery signed off (P1) |
+| C02 | Menu/catalog/search/categories/finder | BUILT with old sample/historical menu | Correct 113-item inventory/availability and alternatives, search empty/error, approved food identities (P0/P1) |
+| C03 | Product modifiers/photos/notes/qty | Browser tested | Real sizes/addon pricing, stock combinations, photos matching SKU, keyboard accessibility (P0/P1) |
+| C04 | Cart editing, duplicate prevention, saved review | Browser tested | Long-order + field/input/zoom/offline/address/pickup replay edge acceptance (P1) |
+| C05 | Checkout delivery vs pickup & genuine fee | Honest display, fee unverified | Delivery coverage, current fee/tax/packing charge and actual payable total (MERCHANT/P0) |
+| C06 | Payments: cash on delivery/pickup, on-prem POS | Only research inventory | Owner selects what is accepted; unpaid/collect-at-handoff state clearly recorded (P1) |
+| C07 | Payments: cards, Meeza, wallets, QR, Fawry, InstaPay, Apple/Google Pay, links, deposits, split | U01 P01–P18 documented; no integration | Choose supported provider and merchant account; signed callbacks, failures, reconciliation/refunds (DECIDE; not auto-P0) |
+| C08 | Orders in permanent DB, prices, retries | PostgreSQL tests LOCAL only | Independent Oracle Postgres, schema migrations, atomic price checks, idempotency, monitoring (P0) |
+| C09 | Remote Vercel-to-Oracle transport | No shared remote API | Authenticated Next server routes to isolated Oracle API, no client secrets/CORS leaks (P0) |
+| C10 | Operator screen accessible from URL | Public interactive demo PREVIEW 200 | Same design shows **real** orders only for authorized restaurant access (P0) |
+| C11 | Operator workflows: accept/reject/prep/ready/handoff | Local PostgreSQL E2E tested | Remote authorization/conflicts and exact restaurant physical handoff (P0) |
+| C12 | Staff entry/security | Test key and no production login | One minimal protected restaurant gate/session; no shift/employee POS platform (P0) |
+| C13 | New order visibility and alert | Opt-in browser sound; mock ticket load | Sleep/visibility/reconnect/new arrivals, audio on actual tablet (P0/P1) |
+| C14 | Order ticket and stage changes | Local/Postgres tested, preview states | Remote real UUID capability, PII protection, long-lived ticket/recovery and reconciliation (P0) |
+| C15 | Restaurant-set prep ETA | NOT BUILT | Save staff-entered estimate in order event, show timestamp as estimate, not guarantee (P1) |
+| C16 | Pickup and delivery handoff | Partial UI | Wrong zone, courier, failed pickup, closed time/late order, route-specific terminal wording (MERCHANT/P1) |
+| C17 | Cancellation/change/support | WhatsApp REQUEST and rejected status built | Actual owner cutoff, edit/reject protocol, refunds outside/inside payment provider (MERCHANT/P1) |
+| C18 | Notifications | Foreground sound only; no Web Push | User opt-in + push subscription/event/deep link; actual device test if commissioned (P2) |
+| C19 | Promotions/offers/coupons | Existing offers page; unverified validity | Eligibility, expired offers, bundle/modifier math, one code per order, honest promo T&Cs (MERCHANT/P1/P2) |
+| C20 | Contact, About, Reviews, Complaints | Built pages, WhatsApp handoffs not a stored CRM | Numbers/maps/hours, blocked WhatsApp, permission/validation; decide persisted forms (P1) |
+| C21 | Mobile UX, motion, accessibility | Desktop/mobile screenshot CI | Real 320/390/768/1024/1440 devices, virtual keyboard, focus, RTL, contrast and reduced-motion (P1) |
+| C22 | Images and typography | 12 restaurant + 100 generated illustrations on repo | Exact SKU photo trust, 17 unmatched items, image crop/asset/performance signoff (P1) |
+| C23 | Performance/SEO/PWA | Shell and cache built | LCP/CLS/INP, offline boundaries, cache exclusions, metadata, sitemap, install behavior (P1/P2) |
+| C24 | Security, rate limits and privacy | Test protections partially | Tracking capability, staff auth, bot resistance, no PII in logs, retention/deletion (P0) |
+| C25 | Database migrations/backups/restore | Only disposable migrations proven | Isolated Oracle PG, persistent volume, tested backups, restores, upgrade/runbook (P0) |
+| C26 | Server deploy and observability | Vercel READY; Oracle Tuscanini not deployed | Coolify real API health/logs/TLS/restarts, deploy gate, explicit rollback (P0) |
+| C27 | Staff/merchant training and launch | Not run with actual restaurant | Tablet orientation, 2-minute walkthrough, support contacts, live supervised rehearsal (FIELD) |
+| C28 | Analytics, privacy-safe conversion insight | No confirmed production tracking | Event map and consent, no order contact/PII to third parties (P2) |
+| C29 | Loyalty, reorder, gifts, referrals, CRM, expanded delivery/print/POS integrations | Idea universe U01–U12, not built | Evaluate each against demand, costs and owner approval; not silently added (LATER/DECIDE) |
+| C30 | Rollout, maintainability, operational cost | PR Draft; no merchant release | Preview QA→pilot→approval→guarded deploy, monitoring, documentation and handoff (P0) |
+
+### What's next IN ORDER (keep execution moving)
+
+1. **FIRST — G01/G02:** inspect Oracle/Coolify resources *without touching the Nova/Plantupia deployment*, create **isolated** database and a proper real order API with migrations and secure staff authorization; don't connect the dangerous localhost simulation.
+2. **THEN — G03:** connect Vercel `/api/orders`, `/api/orders/track` and the existing `/operator/orders` to the same Oracle order engine behind server-only credentials, with a visible demo/live distinction and safe fallback switch.
+3. **PROVE — G05:** two physically separated devices, price retry/restart/decline, Android/tablet audio/reconnect, protected order ticket, operator success/reject.
+4. **THEN — G04/G06:** merchant truth (fees, price, payment choice, contacts) and explicit pilot go/no-go, backups/restore and rollout.
+5. **PARALLEL creative route:** C01–C04, C20–C23 can continue without pretending those assets finish commerce. Web Push/loyalty/POS/payments beyond agreed merchant methods remain separate decisions.
+
+### Oracle deployment status & live access boundaries
+
+- Existing Oracle VM with Coolify can **potentially host** the isolated Tuscanini service and PostgreSQL. **Do not** point it at the Nova database, existing production media, or Redis. Capacity/permissions are unverified; no new Tuscanini Oracle service is claimed.
+- **NEW FILES COMMITTED:** `infra/oracle/postgres.compose.yaml` (DB container/healthcheck/persistent storage, **no** exposed 5432) and `infra/oracle/README.md` (detailed secure rollout, exact gates and configuration). **NO Oracle deployment has occurred yet.**
+- The experiment's `db.ts` explicitly refuses remote DB and `http.ts` has **fixture-only auth**; removing guards and publishing that API would be unsafe. Build G02 separately.
+- Vercel's branch preview itself is functioning; site and operator visual demo being ready are distinct from real database order intake.
+- A working Coolify/Oracle administration connection is required for actual resource creation, environment variables and deployment. No DB/SSH passwords should be pasted into GitHub, chat or logs.
+
+**Every status update from now on:** Current milestone / changed files + SHA / Build + Browser + PostgreSQL CI / **site preview & order screen links** / what exactly remains and the next unblock. If blocked, mark it honestly and continue independent code/art work.
+
+---
+
 ## Live preview links and session rhythm (23 Oct 2026)
 
 **One recurring check-in:** every implementation response should include **what changed / working code HEAD / three CI statuses / Vercel preview link / next two tasks / blockers**. Continue updates in this board rather than separate handoff files. Vercel deployment `READY` is proof the build is hosted, **not** proof of a shared remotely connected restaurant data engine or merchant acceptance.
