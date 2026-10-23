@@ -77,6 +77,12 @@
 
 ---
 
+### Coolify healthcheck rollback / corrected runtime image (23 Oct 2026)
+
+- User-provided actual deploy log confirms **migration completed and API ready on port 8080**, but Coolify aborted its rolling replacement after HTTP healthcheck returned unhealthy five times: `curl: not found`; `wget: can't connect to remote host: Connection refused`. The original container was preserved by automatic rollback.
+- **Root causes to eliminate:** final Node Alpine runtime image lacked `curl`; `localhost` can resolve to an unreachable loopback family depending on container resolver. `services/orders-api/Dockerfile` updated at `4008a67d` to explicitly `apk add --no-cache curl` in final runtime stage. User-facing HTTP healthcheck should set Host=`127.0.0.1`, Port=`8080`, Path=`/readyz`, Scheme=HTTP, Method=GET, expected response code 200, response text empty, start period 30 seconds.
+- **Required action:** GitHub Docker-image CI success, then **Deploy** from the updated branch (not merely Restart of cached old image), verify Coolify Healthy and `200 {"ok":true}` inside resulting live app. This does not alter the existing PostgreSQL DB. Keep order intake disabled until secure remote Vercel integration is tested.
+
 ### Oracle backend readiness verified from live container (23 Oct 2026)
 
 - User supplied Coolify's `tuscanini-orders-api` container Terminal screenshot showing `node -e "fetch('http://127.0.0.1:8080/readyz')..."` returned `200 {"ok":true}`.
