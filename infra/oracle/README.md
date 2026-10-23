@@ -24,7 +24,7 @@ second tracker. Keep statuses, all feature work and evidence in
   checking free resources. Keep Tuscanini's DB, user, volume, API, backups and
   domain **separate from Nova and Plantupia**, without restarting them.
 - No OCI / Coolify administrative session is available from the current
-  GitHub/Vercel connection. The file below is **committed but not deployed**.
+  GitHub/Vercel connection. The Compose + separate backend service are **committed but not deployed**.
 
 ## Final topology
 
@@ -71,16 +71,19 @@ second tracker. Keep statuses, all feature work and evidence in
 - Test backup AND restore on an isolated scratch database before live orders.
 - DB container `READY` is only a database gate, **not** end-to-end readiness.
 
-### OCI-03: Build a real, isolated order API — NOT the local fixture
-- Separate migration-managed app schema (e.g. `tuscanini`, not `spike_ts`)
-  with catalog, prices/addons, order/idempotency, event ledger/outbox, staff
-  state transitions, delivery/pickup, no false payment success.
+### OCI-03: Build and verify the isolated order API — source implemented, launch pending
+- **Code now exists** at `services/orders-api`: independent Node/TypeScript/pg,
+  `tuscanini` schema, additive SQL migrations, atomic DB-priced order and
+  outbox writes, idempotent retry, staff state transitions and tracking.
+  It is NOT the local fixture, nor currently running on Oracle.
 - Use separate runtime identity with least privilege, parameterized SQL,
   constraints, transactions, bounded queries, expiry/retention and repeatable
   migrations; provide health, readiness and database liveness routes.
-- Auth: Vercel server-to-Oracle signed service calls, and protected
-  **restaurant action** session/key. Never trust user-supplied role headers,
-  never expose Vercel-to-Oracle shared secret or PG URL in client JavaScript.
+- Auth implemented at transport: a long constant-time compared service key
+  on **every** /v1 route, plus a distinct long staff passkey checked in
+  the Next.js `/api/studio/bridge` before it will relay inbox or actions.
+  Neither key appears in client build variables. Cookie/session/expiry,
+  rate limiting and dedicated real-device abuse audit still pending.
 - Customer tracking must carry a private unguessable capability or equivalent
   access check; enforce no-cache for PII, request limits, origin validation.
 - Only **approved**, current merchant catalog/prices may activate real order
@@ -89,6 +92,9 @@ second tracker. Keep statuses, all feature work and evidence in
   open DB transactions; replay must be idempotent.
 
 ### OCI-04: Ship API via Coolify to Oracle
+- The existing `infra/oracle/postgres.compose.yaml` contains a dedicated
+  PostgreSQL container and the `tuscanini-orders-api` build, internal
+  networking, persistent database and separate fail-closed feature flags.
 - New Git-backed application; deploy **reviewed code and migrations only**.
 - Bind service on internal `0.0.0.0` port and use Coolify's HTTPS proxy on an
   independent API hostname. Restrict accessible routes; do not expose DB.
@@ -99,8 +105,10 @@ second tracker. Keep statuses, all feature work and evidence in
 - Verify resource limits, restart behavior and DB persistent volume.
 
 ### OCI-05: Connect the existing site
-- Next `/api/orders`, `/api/orders/track` and restaurant inbox/actions
-  choose the new server-to-server API **only when a reviewed feature flag is on**.
+- Code routes now select the Oracle server-side API **only** if
+  `VERCEL_ENV=preview` AND `ORDER_BACKEND=oracle`. Without that flag, the
+  existing site/legacy backend and 20-ticket interactive visual demo remain
+  unchanged; no automatic live-traffic cutover.
 - Preserve existing URLs, cart, tracking and Order Press/Ticket Rail design.
   The 20-demo mode remains explicit and disabled in live-operator mode.
 - A customer browser **never accesses PostgreSQL directly**.
@@ -132,13 +140,26 @@ second tracker. Keep statuses, all feature work and evidence in
 - A `READY` deployment in Vercel or Coolify is **not** proof of merchant
   acceptance. Keep PR #59 Draft until the user approves merge/release.
 
+
+### Source checkpoints to verify before remote activation
+
+- [Dedicated API integration CI](https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/workflows/tuscanini-orders-service.yml):
+  PostgreSQL 16 ephemeral DB, migration, HTTP request authentication,
+  catalog sync, immutable order/retry, real status actions, order event
+  integrity, PII-safe tracking, default-off switches.
+- Vercel project must be on the same branch/commit as API/Next adapters.
+  Neither 200 OK nor READY alone demonstrates a shared real-order flow.
+- Initial Oracle capacity, secrets, Coolify deploy history and endpoint
+  are **not** yet available through the connected tools; manual Coolify
+  access/authorized remote-control connection is needed for actual deployment.
+
 ## Zero-secret configuration inventory
 
 | Where | Variable / setting | State |
 |---|---|---|
 | Coolify DB | `TUSCANINI_DB_NAME`, `TUSCANINI_DB_USER`, `TUSCANINI_DB_PASSWORD` | Compose source prepared; values NOT set here |
-| Coolify app | `DATABASE_URL`, `PORT`, app key, HTTPS domain | Real API must be built; NOT configured |
-| Vercel Preview | `ORDER_API_ORIGIN`, server-only auth and opt-in flag | Future contract; NOT configured |
+| Coolify app | `PGHOST/PGDATABASE/PGUSER/PGPASSWORD`, `TUSCANINI_ORDER_API_SERVICE_KEY`, `TUSCANINI_ACCEPT_ORDERS`, `TUSCANINI_CATALOG_SYNC`, `PORT` + HTTPS proxy | Code and Compose prepared, NOT configured/deployed |
+| Vercel Preview | `ORDER_BACKEND`, `ORDER_API_ORIGIN`, `ORDER_API_SERVICE_KEY`, `TUSCANINI_OPERATOR_KEY`, optional `TUSCANINI_ALLOW_CATALOG_SYNC` | Adapter code built, env NOT configured |
 | Merchant | Approved menu + options, delivery policy, collection/refund policy | Missing owner sign-off |
 | Backups | Database snapshot schedule + restore exercise | Not yet verified |
 
