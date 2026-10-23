@@ -1,8 +1,8 @@
 /* Tuscanini / Order in Motion — the living ticket
    One editorial tracking object, not three generic dashboard tiles. */
-.t-order-hero{max-width:none;background:var(--ink);color:var(--paper);padding-block:clamp(33px,5vw,72px)}
+.t-order-hero{max-width:none;background:var(--ink);color:var(--paper);padding-block:clamp(25px,3.8vw,54px)}
 .t-order-hero>*{max-width:1390px;margin-inline:auto}
-.t-order-hero h1{font-size:clamp(67px,9vw,140px);line-height:1.04;margin:12px 0}
+.t-order-hero h1{font-size:clamp(58px,8vw,112px);line-height:1.16;margin:12px 0}
 .t-order-hero h1 em{color:var(--yellow)}
 .t-order-hero>p{font-size:clamp(15px,1.3vw,19px);max-width:620px;font-weight:700;line-height:1.8}
 .t-order-page__content{padding-block:clamp(24px,4vw,60px) 95px}
@@ -90,8 +90,8 @@
   .t-order-next{grid-template-columns:1fr}
 }
 @media(max-width:720px){
-  .t-order-hero{padding-block:22px 28px}
-  .t-order-hero h1{font-size:clamp(45px,11.2vw,73px);margin:9px 0}
+  .t-order-hero{padding-block:18px 24px}
+  .t-order-hero h1{font-size:clamp(42px,10vw,62px);line-height:1.23;margin:7px 0}
   .t-order-hero>p{font-size:14px;line-height:1.65}
   .t-order-page__content{padding-top:17px}
   .t-order-tracking__main{padding:22px 16px 24px}

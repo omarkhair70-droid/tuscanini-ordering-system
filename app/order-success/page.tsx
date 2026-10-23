@@ -29,20 +29,22 @@ export default async function OrderSuccessPage({searchParams}: Props) {
       <main id="t-order-content">
         <header className="t-order-hero t-shell">
           <span className="t-index">YOUR ORDER / TUSCANINI</span>
-          <h1>الطلب<br/><em>له حكاية.</em></h1>
-          <p>من تسجيل الطلب لتأكيد المطعم. كل مرحلة بنعرضها لما تكون متسجلة فعلًا.</p>
+          <h1>تابع <em>طلبك.</em></h1>
+          <p>هنا آخر حالة سجّلها المطعم لطلبك. الصفحة بتتحدّث تلقائيًا وهي مفتوحة.</p>
         </header>
         <div className="t-shell t-order-page__content">
           {valid && <CustomerJourney stage="tracking" />}
           {valid ? <RebirthOrderTracking orderId={orderId} /> :
             <section className="t-order-missing" role="status">
-              <span className="t-index">NO VERIFIED ORDER REFERENCE</span>
-              <h2>معندناش مرجع<br/>طلب نقدر نتبعه.</h2>
-              <p>فتح الصفحة لوحده مش دليل إن فيه طلب اتسجل. ارجع للسلة أو تواصل مع المطعم للتأكد.</p>
+              <span className="t-index">ORDER LINK / TUSCANINI</span>
+              <h2>مفيش رقم<br/>طلب صالح هنا.</h2>
+              <p>افتح رابط المتابعة اللي ظهر لك بعد تسجيل طلبك، أو تواصل مع المطعم لو محتاج مساعدة.</p>
             </section>}
           <section className="t-order-next">
-            <div><span className="t-index">WHAT HAPPENS NEXT</span><h2>بعد كده؟</h2>
-              <p>التسجيل وتأكيد المطعم والتجهيز حالات منفصلة؛ بنعرض كل واحدة لما تتسجل فعلًا. لو دليفري، ممكن المطعم يتواصل معاك لتحديد المكان.</p></div>
+            <div><span className="t-index">CAN WE HELP?</span><h2>محتاج مساعدة؟</h2>
+              <p>{valid
+                ? 'لو عندك سؤال عن الاستلام أو تفاصيل الأوردر، كلم المطعم واذكر مرجع الطلب.'
+                : 'لو رابط المتابعة مش شغال معاك، افتح المنيو أو تواصل مع المطعم.'}</p></div>
             <div className="t-order-next__links"><Link href="/menu">ارجع للمنيو ↗</Link><Link href="/contact">تواصل مع المطعم ↗</Link></div>
           </section>
         </div>
