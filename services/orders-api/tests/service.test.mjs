@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
+import {readFile} from 'node:fs/promises';
 import {once} from 'node:events';
 import test from 'node:test';
 import {createPool} from '../dist/db.js';
@@ -28,6 +29,19 @@ test('dedicated Tuscanini service has authenticated intake, durable orders and s
       products:[{productId:'TUSC_CI_01',name:'تجربة حقيقية آمنة',categorySlug:'qa',priceFromCents:12500,
         available:true,sizes:[],addons:[]}],
     })).status,200);
+    // Same 113-item historical JSON served for one-time Oracle trial import.
+    // Prices are samples, not an assertion of a merchant-approved current menu.
+    const fixture=JSON.parse(await readFile(
+      new URL('../fixtures/historical-menu-2026-10-23.json',import.meta.url),'utf8'));
+    assert.equal(fixture.products.length,113);
+    const imported=await req('/v1/catalog/sync','POST',fixture);
+    assert.equal(imported.status,200,JSON.stringify(imported.body));
+    assert.equal(imported.body.count,113);
+    const menuCount=await pool.query('SELECT count(*)::int AS n FROM tuscanini.menu_catalog WHERE product_id != $1',
+      ['TUSC_CI_01']);
+    assert.equal(menuCount.rows[0].n,113);
+    assert.ok(fixture.products.some(v=>v.productId==='ct3'&&v.sizes[0]?.price_cents===12500),
+      'historical chicken-fire size is included in cents');
     const requestKey='studio-'+randomUUID();
     const input={requestKey,tableReference:null,
       customer:{name:'عميل تجربة',phone:'01012345678',
