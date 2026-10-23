@@ -77,6 +77,13 @@
 
 ---
 
+### Oracle backend readiness verified from live container (23 Oct 2026)
+
+- User supplied Coolify's `tuscanini-orders-api` container Terminal screenshot showing `node -e "fetch('http://127.0.0.1:8080/readyz')..."` returned `200 {"ok":true}`.
+- The API's `/readyz` runs `SELECT 1` on its configured PostgreSQL pool, so this demonstrates live app-process responsiveness AND a successful database query from the deployed Oracle container. This is stronger evidence than Docker image build or `Running` alone.
+- Coolify currently labels this application `Running (no healthcheck)`. Configure GET localhost:8080/readyz, ensure the container includes curl/wget if using Coolify's HTTP check, enable, and restart/redeploy to apply. Do not infer it is Healthy until Coolify confirms that.
+- Production order intake remains disabled (`ORDER_API_ACCEPT_ORDERS=no`); the Oracle API is not yet connected to Vercel Preview for real shared orders, and no customer checkout test from external devices has been done.
+
 ### Oracle Coolify first API deployment (23 Oct 2026)
 
 - User reports Coolify deployment of `tuscanini-orders-api` **Success** from the application deployment screen, on Oracle `localhost` server in Tuscanini/production. Earlier screenshot of in-progress deployment showed source branch `redesign/tuscanini-authored-experience-20261018`, commit `f23d2cef`.
