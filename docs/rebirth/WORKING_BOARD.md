@@ -77,6 +77,12 @@
 
 ---
 
+### Coolify post-fix deploy reported success (23 Oct 2026)
+
+- User confirmed `Success` after deploying the Dockerfile fix which adds runtime `curl` and configuring the loopback HTTP healthcheck. This is user-reported successful **Coolify deployment**, following the earlier unhealthy/rollback event.
+- Prior independent live `/readyz` evidence returned `200 {"ok":true}` and proved Postgres SELECT 1. **Do not mark the latest container `Running (healthy)` until visually confirmed via Coolify status**.
+- Next steps: confirm app health in Coolify; provision user-owned/free DNS name (e.g. DuckDNS) resolving to Oracle, configure Coolify application's `https://` domain proxy → internal port 8080 and validate a public TLS-protected `/readyz` response. Do not use auto-generated `sslip.io` HTTPS (Coolify docs warn of shared-zone certificate rate limits). Keep `ORDER_API_ACCEPT_ORDERS=no` and no Vercel preview activation until HTTPS + authentication checked.
+
 ### Coolify healthcheck rollback / corrected runtime image (23 Oct 2026)
 
 - User-provided actual deploy log confirms **migration completed and API ready on port 8080**, but Coolify aborted its rolling replacement after HTTP healthcheck returned unhealthy five times: `curl: not found`; `wget: can't connect to remote host: Connection refused`. The original container was preserved by automatic rollback.
