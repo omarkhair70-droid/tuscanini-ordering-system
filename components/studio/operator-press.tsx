@@ -144,7 +144,7 @@ function AllDay({orders}:{orders:Order[]}){
     <small>تجميع من الأوردرات المقبولة أو قيد التحضير فقط</small>
   </div>;
 }
-export function OperatorPress({publicDemo=false}:{publicDemo?:boolean}){
+export function OperatorPress({publicDemo=false,canSyncCatalog=false}:{publicDemo?:boolean;canSyncCatalog?:boolean}){
   const [key,setKey]=useState('');
   const [orders,setOrders]=useState<Order[]>([]);
   const [layout,setLayout]=useState<Layout>('press');
@@ -156,6 +156,7 @@ export function OperatorPress({publicDemo=false}:{publicDemo?:boolean}){
   const [lastSync,setLastSync]=useState('');
   const [pendingId,setPendingId]=useState('');
   const [connecting,setConnecting]=useState(false);
+  const [catalogSyncing,setCatalogSyncing]=useState(false);
   const [search,setSearch]=useState('');
   const [clock,setClock]=useState(0);
   const [soundOn,setSoundOn]=useState(false);
@@ -182,6 +183,28 @@ export function OperatorPress({publicDemo=false}:{publicDemo?:boolean}){
     }catch{
       setSyncError(true);setMessage('الصوت مش متاح في المتصفح ده');
     }
+  };
+  const syncCatalog=async()=>{
+    if(publicDemo||preview||!canSyncCatalog||!key||catalogSyncing)return;
+    // Historical catalog prices are not yet confirmed by the restaurant.
+    const agreed=window.confirm('تحميل ١١٣ صنف من المنيو الموجود في الريبو إلى PostgreSQL؟ الأسعار الحالية للتجربة فقط وليست معتمدة من المطعم.');
+    if(!agreed)return;
+    setCatalogSyncing(true);
+    try{
+      const response=await fetch('/api/internal/orders/catalog-sync',{
+        method:'POST',cache:'no-store',
+        headers:{'x-studio-operator-key':key},
+      });
+      const result=await response.json() as {ok?:boolean;count?:number;error?:string};
+      if(!response.ok||!result.ok||typeof result.count!=='number')
+        throw Error(result.error??'لم يتم نسخ المنيو');
+      setSyncError(false);
+      setMessage('تم نسخ '+result.count.toLocaleString('ar-EG')+
+        ' صنف للتجربة في Oracle · الأسعار لم يعتمدها المطعم بعد');
+    }catch(error){
+      setSyncError(true);
+      setMessage(error instanceof Error?error.message:'تعذر نسخ منيو التجربة');
+    }finally{setCatalogSyncing(false);}
   };
   const moveRail=(direction:'next'|'previous')=>{
     railTrack.current?.scrollBy({
@@ -283,6 +306,10 @@ export function OperatorPress({publicDemo=false}:{publicDemo?:boolean}){
         onClick={()=>{void toggleSound();}} title="تنبيه صوتي عند وصول طلب جديد">
         {soundOn?'♪ الصوت شغال':'♪ فعّل تنبيه الأوردر'}
       </button>
+      {canSyncCatalog&&!preview&&<button type="button" className="op-health__catalog"
+        disabled={!key||catalogSyncing} onClick={()=>{void syncCatalog();}}>
+        {catalogSyncing?'بننسخ المنيو…':'حمّل منيو الاختبار (113 صنف)'}
+      </button>}
       <button type="button" className="op-health__sync" disabled={preview||!key||connecting} onClick={async()=>{
         setConnecting(true);await sync(key);setConnecting(false);
       }}>حدّث الأوردرات ↻</button>
