@@ -28,7 +28,7 @@
 .t-hero__grid{width:100%;max-width:1600px;margin:auto;display:grid;grid-template-columns:1.07fr 1fr;align-items:center;gap:clamp(24px,4vw,70px);padding:clamp(28px,3vw,60px) clamp(22px,4.7vw,80px) 55px;flex:1}
 .t-hero__words{position:relative;z-index:2;min-width:0}
 .t-overline{font-size:clamp(14px,1.3vw,18px);font-weight:900;margin-bottom:24px!important}
-.t-hero h1{font-size:clamp(90px,12.7vw,208px);font-weight:1000;line-height:.83;letter-spacing:-.09em;white-space:nowrap}
+.t-hero h1{font-size:clamp(84px,12.2vw,195px);font-weight:800;line-height:1.06;letter-spacing:0;white-space:nowrap}
 .t-hero h1 span,.t-hero h1 em{display:block}
 .t-hero h1 em{color:var(--red);margin-top:13px}
 .t-hero__sub{font-size:clamp(15px,1.6vw,21px);line-height:1.95;max-width:390px;margin-top:43px!important;font-weight:700}
@@ -274,4 +274,21 @@
 }
 @media(prefers-reduced-motion:reduce){
  .t-mobile-menu__panel,.t-mobile-menu__toggle-glyph,.t-mobile-menu__group a svg{transition:none!important;animation:none!important}
+}
+
+/* Rebirth finish / legibility pass: Arabic is not a condensed Latin display
+   face. Preserve joined glyph shapes and give labels, buttons and focus
+   states consistent room on touch screens. */
+.t-page .t-index:lang(ar){font-family:"IBM Plex Sans Arabic",Tahoma,Arial,sans-serif;letter-spacing:0;line-height:1.6}
+.t-page :is(button,[role="button"],summary):focus-visible{
+  outline:3px solid #267fe2;outline-offset:3px
+}
+.t-page :is(input,textarea,select):focus-visible{
+  outline:3px solid #267fe2;outline-offset:2px
+}
+.t-page h1,.t-page h2,.t-page h3{text-wrap:balance}
+.t-page p{text-wrap:pretty}
+@media(max-width:720px){
+  .t-page .t-index:lang(ar){font-size:12px}
+  .t-hero h1{line-height:1.05;letter-spacing:0}
 }
