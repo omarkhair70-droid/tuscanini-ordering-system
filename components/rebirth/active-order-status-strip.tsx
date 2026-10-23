@@ -97,7 +97,7 @@ export function ActiveOrderStatusStrip() {
       <span className="t-order-strip__dot" aria-hidden="true"/>
       <span className="t-order-strip__caption">أوردرِك</span>
       <span className="t-order-strip__status" aria-live="polite">
-        {stale ? 'آخر حالة محفوظة · افتح المتابعة للتحديث' : status}
+        {stale ? 'تعذّر تحديث حالة الطلب · افتح المتابعة' : status}
       </span>
       <Link href={'/order-success?orderId=' + encodeURIComponent(active.orderId)}
         className="t-order-strip__link">
