@@ -580,6 +580,61 @@ try {
     await check(!(await cart.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).isChecked()),
       `${width}px changing pickup back to delivery invalidates previous review`);
     await fixtureContext.close();
+
+    // Browser integration proof of the customer's ACTUAL Menu/Cart form contract
+    // through redirect and status polling. Network is fully stubbed: never
+    // creates a merchant order or opens intake on Oracle or Vercel.
+    if(width===390){
+      const completed=await browser.newContext({viewport:{width,height:844},reducedMotion:'reduce'});
+      const receiptId='123e4567-e89b-42d3-a456-426614174765';
+      await completed.addInitScript(()=>{
+        localStorage.setItem('tuscanini-cart-v1',JSON.stringify({
+          items:[{lineId:'browser-e2e-test',kind:'product',productId:'ct3',productName:'تشيكن فاير',
+            selectedSize:{id:'single',label:'سعر واحد',price:125},
+            selectedAddons:[{id:'addon-mozzarella',label:'موتزاريلا',price:20}],
+            quantity:1,unitPrice:145,totalItemPrice:145,itemNotes:'اختبار فقط'}],
+          customer:{name:'اختبار توسكانيني - لا تحضر',phone:'01000000000',
+            address:'',orderType:'pickup',generalNotes:'تجربة تقنية فقط - لا تحضر أي طعام',
+            confirmedAccurateDetails:true},tableReference:null,
+        }));
+      });
+      await completed.route('**/api/public/site-settings',route=>route.fulfill({
+        status:200,contentType:'application/json',
+        body:JSON.stringify({ok:true,settings:{isOrderingOpen:true,whatsappOrderNumber:''}}),
+      }));
+      let browserSubmits=0;
+      let finalPayload=null;
+      await completed.route('**/api/orders',route=>{
+        browserSubmits++;
+        finalPayload=route.request().postDataJSON();
+        return route.fulfill({status:200,contentType:'application/json',
+          body:JSON.stringify({ok:true,orderId:receiptId,
+            reference:'#123E4567',orderNumber:null,subtotal:145})});
+      });
+      await completed.route('**/api/orders/track**',route=>route.fulfill({
+        status:200,contentType:'application/json',body:JSON.stringify({ok:true,order:{
+          orderNumber:null,reference:'#123E4567',status:'جديد',
+          confirmationStatus:'pending',createdAt:'2026-10-23T07:00:00.000Z',
+          tableReference:null,orderType:'pickup',totalEstimate:145,
+        }})}));
+      const buyer=await completed.newPage();
+      await buyer.goto(baseUrl+'/cart',{waitUntil:'networkidle',timeout:30000});
+      await buyer.getByRole('button',{name:/سجّل الطلب للمطعم/}).click();
+      await buyer.waitForURL('**/order-success?orderId='+receiptId,{timeout:15000});
+      await buyer.getByRole('heading',{name:'بانتظار تأكيد المطعم'}).waitFor({timeout:10000});
+      const hasEmptyCart=await buyer.evaluate(()=>{
+        const saved=localStorage.getItem('tuscanini-cart-v1');
+        try{return JSON.parse(saved).items.length===0}catch{return false}
+      });
+      await check(browserSubmits===1 && hasEmptyCart &&
+        finalPayload?.items?.[0]?.productId==='ct3' &&
+        finalPayload?.items?.[0]?.selectedAddons?.[0]?.id==='addon-mozzarella' &&
+        finalPayload?.subtotal===145 && /^studio-[0-9a-f-]{36}$/.test(finalPayload?.requestKey??''),
+        '390px complete mocked customer Cart → POST → order-success → tracking uses selected variants, stable request key, clears cart');
+      await check(await buyer.getByRole('button',{name:/انسخ رابط متابعة الأوردر/}).count()===1,
+        '390px saved customer order exposes a private tracking-link copy control');
+      await completed.close();
+    }
     // Isolated tracking fixture validates state semantics, not a real restaurant order.
     // All WhatsApp actions are captured as URL attributes, NEVER opened or sent.
     // A successful page view must not mutate a restaurant order.
