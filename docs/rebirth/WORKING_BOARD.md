@@ -4,6 +4,14 @@
 
 > **Start here in every new chat, and update this SAME FILE after every meaningful feature/review.** This is the current execution and coverage index; historical `00–38`, original research, the HTML reference and technical handoffs remain evidence, not competing "next task" lists. Use the current GitHub PR HEAD and Actions results if newer; never assume this snapshot is the HEAD forever.
 
+### Pinned full-catalog fixture CI + Oracle one-shot Terminal path (23 Oct 2026)
+
+- Added **immutable-source** fixture `services/orders-api/fixtures/historical-menu-2026-10-23.json`, generated strictly from `lib/mock-data.ts` `featuredItems`. File has **113 unique product IDs**, current repo historical sizes/addons/price cents, `37286` compact JSON bytes (<150000 service API body limit), and no secrets or customers. Example SKU `ct3` (تشيكن فاير) single-size 12500 cents, mozzarella option 2000 cents. **Test prices, not merchant-approved live prices**.
+- Added PostgreSQL 16 CI that POSTS this exact JSON to the isolated catalog-sync API on disposable DB, asserts 113 imported and verifies total rows and example prices. [Tuscanini Dedicated Order API PostgreSQL #39899072518](https://github.com/omarkhair70-droid/tuscanini-ordering-system/actions/runs/39899072518) **SUCCESS** at code SHA `d524cb43`.
+- **No need to wait for new Vercel deployment to seed Oracle**: user may temporarily set `CATALOG_SYNC_ENABLED=yes` in **only** the existing `tuscanini-orders-api` Coolify resource (Save + Restart), then from its terminal use Node `fetch` to retrieve pinned public GitHub raw JSON at commit `9b72a954ceb7d4a36607a5f8560e92c1c53baca4` and POST to the **loopback** `/v1/catalog/sync` with the existing runtime `process.env.ORDER_API_SERVICE_KEY`. First assert Oracle `tuscanini.menu_catalog` still has **0** rows so this cannot overwrite a merchant-entered catalog, then import and SELECT count=113. Never print the service key.
+- Immediately set Coolify `CATALOG_SYNC_ENABLED=no` and **Restart** to close the temporary import gate. Leave `ORDER_API_ACCEPT_ORDERS=no` and website ordering `isOrderingOpen=false` while testing catalog; do not activate checkout as side effect.
+- Alternatively new staff-gated catalog import UI in `/operator/orders` uses same fixture source but depends on a newer Vercel deployment with `TUSCANINI_ALLOW_CATALOG_SYNC=yes`; Terminal approach requires no Vercel change. Disable the Vercel admin sync flag after any import as defense-in-depth.
+
 ### Empty Oracle menu confirmed / one-click gated test catalog import (23 Oct 2026)
 
 - User ran read-only live SQL in Oracle `tuscanini-orders-api` Terminal: `SELECT count(*)::int AS total,count(*) FILTER (WHERE available)::int AS available FROM tuscanini.menu_catalog` → **`Menu: { total: 0, available: 0 }`**. Backend cannot price or accept any SKU until catalogue is seeded. Staff inbox Vercel→Oracle had already succeeded with 0 orders.
