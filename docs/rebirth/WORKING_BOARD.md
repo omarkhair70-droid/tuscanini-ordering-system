@@ -4,6 +4,14 @@
 
 > **Start here in every new chat, and update this SAME FILE after every meaningful feature/review.** This is the current execution and coverage index; historical `00–38`, original research, the HTML reference and technical handoffs remain evidence, not competing "next task" lists. Use the current GitHub PR HEAD and Actions results if newer; never assume this snapshot is the HEAD forever.
 
+### Current Vercel branch deployment recovered and verified (23 Oct 2026)
+
+- Despite the earlier **402 Hobby manual create-deployment** error, Vercel now shows a **READY** deployment at commit `fde12d471fd88e8bac50fcbcee972608a5134213`: `https://tuscanini-ordering-system-bwmwi45xj-omarkhair70-droids-projects.vercel.app/`. The deployment was already created automatically; no fresh manual deployment was needed.
+- Direct connected Vercel HTTP fetch verified on that immutable deployment URL: `/operator/orders` HTTP **200**; `/api/studio/bridge?resource=inbox` unauthenticated HTTP **403**; `/api/internal/orders/connection` unauthenticated HTTP **403**. Thus unified Oracle switch is loaded in this Preview deployment and unauthorized requests fail closed, but protected end-to-end server connection has NOT yet been validated with the staff passkey.
+- `GET /api/public/site-settings` responded HTTP **200** with `isOrderingOpen:false`. Combined with Oracle's independent `ORDER_API_ACCEPT_ORDERS=no`, **customer checkout is intentionally disabled** until controlled catalog/price and private operator test. Do not treat 200 from Vercel page as permission to intake production orders.
+- At deployment SHA `fde12d47`, Home CI, Dedicated API/PostgreSQL CI and Backend Spike CI are SUCCESS; Browser Screenshot/Asset Gate was still in progress at last check. Later board-only HEAD commits are NOT themselves evidence of a new READY deployment.
+- Next user action: on the latest Preview `/operator/orders` enter the separately-generated Vercel `TUSCANINI_OPERATOR_KEY` into the masked staff-key input (do **not** share in chat/screenshot) and click sync. Expected empty real Oracle queue if secret matches; wrong/missing key must remain 403. If the remote call returns 403/503 inspect Vercel secret consistency with Coolify `ORDER_API_SERVICE_KEY`, never paste the secret. Later move to a single approved production release intentionally; do not merge Draft PR #59 automatically.
+
 ### Public anonymous operator API gate verified (23 Oct 2026)
 
 - **User-confirmed external Chrome test:** visiting `https://tuscanini-orders-api.duckdns.org/v1/operator/orders` without an `x-tuscanini-service-key` header returned **HTTP 403 Forbidden**. Earlier **live container test** with service key returned **HTTP 200, Orders: 0**. Together they confirm basic service-key protection from anonymous internet callers and successful authorized Oracle DB read.
