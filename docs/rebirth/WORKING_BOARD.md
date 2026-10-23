@@ -77,6 +77,13 @@
 
 ---
 
+### Oracle Coolify first API deployment (23 Oct 2026)
+
+- User reports Coolify deployment of `tuscanini-orders-api` **Success** from the application deployment screen, on Oracle `localhost` server in Tuscanini/production. Earlier screenshot of in-progress deployment showed source branch `redesign/tuscanini-authored-experience-20261018`, commit `f23d2cef`.
+- This is a **user-reported successful deploy**, NOT independent verification of migration completion, `GET /readyz`, PostgreSQL connectivity, container logs, HTTPS endpoint, operator key or real order delivery.
+- **NEXT GATE:** open app Runtime Logs; look for `Tuscanini additive migrations complete` and `Tuscanini order API ready on port 8080`. Then from container terminal request `http://127.0.0.1:8080/readyz` and require `{"ok":true}`; verify protected API rejects unauthenticated calls. Preserve intake disabled (`ORDER_API_ACCEPT_ORDERS=no`) and catalog sync disabled until verified.
+- If logs show restart/PG auth issues, recheck PGHOST derived from internal Coolify URL (no passwords in chat), PGDATABASE=`tuscanini_orders` PGUSER=`tuscanini_app`, and common Docker network, without changing other projects.
+
 ### Oracle Coolify manual database milestone (23 Oct 2026)
 
 **USER-CONFIRMED ON LIVE COOLIFY, not merely a CI simulation:** User created standalone PostgreSQL resource in Tuscanini/production on the `localhost` server, `postgres:18-alpine` (psql reported 18.6), and executed inside that new isolated container:
