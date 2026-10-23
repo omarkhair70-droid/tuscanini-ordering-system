@@ -134,3 +134,36 @@
 @media(prefers-reduced-motion:reduce){
   .t-order-story__seal,.t-order-tracking__refresh-mark{animation:none!important;transition:none!important}
 }
+
+/* PASS / post-order care belongs inside the living ticket, not a fake
+   cancellation/payment button. All external actions require user send. */
+.t-order-assist{
+  margin-top:clamp(23px,3vw,37px);padding:clamp(18px,3vw,28px);
+  background:var(--yellow);color:var(--ink);
+  border:2px solid var(--ink);position:relative
+}
+.t-order-assist:before{
+  content:"";position:absolute;top:-8px;inset-inline-end:18px;
+  width:48px;height:14px;background:var(--cream);border:2px solid var(--ink);
+  transform:rotate(8deg)
+}
+.t-order-assist__head h3{
+  font-size:clamp(24px,3.1vw,37px);line-height:1.35;
+  margin:10px 0 13px;letter-spacing:-.025em
+}
+.t-order-assist>p{font-size:14px;font-weight:750;line-height:1.85;max-width:630px}
+.t-order-assist__actions{display:flex;flex-wrap:wrap;gap:10px;margin-block:20px 12px}
+.t-order-assist__actions>a{
+  min-height:46px;padding:10px 13px;display:inline-flex;align-items:center;
+  justify-content:center;background:var(--ink);color:var(--paper);
+  font-size:13px;font-weight:900;text-decoration:none
+}
+.t-order-assist__actions>a:first-child{background:var(--red)}
+.t-order-assist__actions>a:hover{filter:brightness(1.13)}
+.t-order-assist__actions>a:focus-visible{outline:3px solid #1860a7;outline-offset:3px}
+.t-order-assist>small{font-size:11px;font-weight:750;line-height:1.8;display:block}
+@media(max-width:720px){
+  .t-order-assist{margin-top:23px;padding:18px 13px}
+  .t-order-assist__actions{flex-direction:column}
+  .t-order-assist__actions>a{width:100%;min-height:48px}
+}
