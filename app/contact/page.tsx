@@ -51,7 +51,7 @@ export default async function ContactPage() {
               <div>
                 <span className="t-index">01 — FIND US / TALK TO US</span>
                 <h1 id="t-contact-title">تعالى<br/><em>لحد عندنا.</em></h1>
-                <p>عنوان توسكانيني وطرق التواصل المباشرة. اختار اللي يناسبك من غير لفّ ولا خطوات زيادة.</p>
+                <p>ده مكاننا وطرق التواصل معانا.</p>
               </div>
               <a className="t-contact-hero__jump" href="#t-contact-methods">كل طرق التواصل <span aria-hidden="true">↓</span></a>
             </div>
@@ -63,7 +63,7 @@ export default async function ContactPage() {
                 <p>{address}</p>
               </div>
               <div className="t-contact-hero__place-foot">
-                <span>ده العنوان المسجّل عندنا، مش دبوس خريطة دقيق.</span>
+                <span>لو محتاج تتأكد من الطريق، كلمنا قبل ما تتحرك.</span>
                 <Link href="/about">شوف حكاية المكان <span aria-hidden="true">↗</span></Link>
               </div>
               <span className="t-contact-hero__mark" lang="en" aria-hidden="true">T.</span>
@@ -74,7 +74,7 @@ export default async function ContactPage() {
           <div className="t-contact-methods__head">
             <span className="t-index" lang="en">02 / DIRECT CONTACT</span>
             <div><h2 id="t-contact-methods-title">كل الطرق <em>مباشرة.</em></h2>
-              <p>لو بتسأل عن طلب، عنوان، أو أي تفصيلة، دي وسائل التواصل المسجلة للمطعم.</p>
+              <p>سؤال عن طلبك أو عن المكان؟ كلمنا بالطريقة الأنسب ليك.</p>
             </div>
           </div>
           <div className="t-contact-methods__rows">
@@ -107,7 +107,7 @@ export default async function ContactPage() {
             <div>
               <span className="t-index" lang="en">BEFORE YOU GO</span>
               <h2 id="t-contact-before-title">قبل ما تتحرك.</h2>
-              <p>مواعيد العمل ونطاق التوصيل ودبوس الخريطة الدقيق لسه محتاجين تأكيد. اسأل المطعم مباشرة قبل الزيارة.</p>
+              <p>اتصل بينا قبل الزيارة للتأكد من المواعيد، واسألنا عن التوصيل لو محتاجه.</p>
             </div>
             <div className="t-contact-unknown__links">
               <Link href="/menu">المنيو <span aria-hidden="true">↗</span></Link>
