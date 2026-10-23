@@ -267,3 +267,17 @@
   .op-rail__navigation{width:100%;justify-content:flex-end}
   .op-rail__navigation button{min-height:38px}
 }
+
+/* Open demonstration of the real Order Press interface. Synthetic orders
+   are editable locally; no production order database is attached here. */
+.op-remote-preview{
+  display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline;
+  max-width:1450px;margin:4px auto 17px;padding:13px 18px;
+  border:2px solid var(--ink);border-inline-start:7px solid var(--red);
+  background:var(--yellow);color:var(--ink);
+  font-size:13px;font-weight:720;line-height:1.85
+}
+.op-remote-preview strong{font-weight:950}
+@media(max-width:500px){
+  .op-remote-preview{padding:10px 12px;margin:4px 0 12px;font-size:12px}
+}
