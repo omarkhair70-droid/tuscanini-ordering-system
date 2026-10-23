@@ -635,6 +635,16 @@ try {
         '390px complete mocked customer Cart → POST → order-success → tracking uses selected variants, stable request key, clears cart');
       await check(await buyer.getByRole('button',{name:/انسخ رابط متابعة الأوردر/}).count()===1,
         '390px saved customer order exposes a private tracking-link copy control');
+
+      // Returning to the menu keeps a small real order strip in the sticky
+      // navigation. This is in-site polling, never an OS/live notification.
+      await buyer.goto(baseUrl+'/menu',{waitUntil:'domcontentloaded'});
+      const strip=buyer.getByRole('region',{name:'متابعة طلبك الحالي'});
+      await strip.waitFor({state:'visible',timeout:10000});
+      await strip.getByText('طلبك مستني تأكيد المطعم').waitFor({timeout:10000});
+      await check((await strip.getByRole('link',{name:/تابع الطلب/}).getAttribute('href'))===
+        '/order-success?orderId='+receiptId && browserSubmits===1,
+        '390px saved order appears as a live header strip throughout browsing without resubmitting');
       await completed.close();
     }
     // Fail-closed merchant fulfilment: an old persisted delivery draft must
