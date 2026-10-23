@@ -93,6 +93,12 @@
 - **Current blockers:** need new Vercel deployment picking up env changes, then verify /api/studio/bridge unauthorized 403 and signed remote requests; confirm actual menu/catalog, test one deliberately marked synthetic order with approved temporary prices and no real customer PII, then enable intake only when staff-screen behavior is verified. A deployment from `main` won't gain the branch's new functionality just because env targets match.
 - **Security:** sharing secrets into the Preview environment means they can be present in other Preview deployments of this project, not only this branch. Restrict Preview to approved branches or use per-branch credentials before adding untrusted PR contributors. Do not put keys in browser URLs, screenshots, client bundles, or the board.
 
+### Pass A — browser client end-to-end verification added (23 Oct 2026)
+
+- Added **390px Chromium integration fixture** to `scripts/qa/rebirth-interaction-check.mjs` using a **product** (`ct3` chicken fire + mozzarella) instead of legacy mock offer: full customer Cart with valid synthetic pickup details → one `/api/orders` POST → synthetic HTTP 200 → `/order-success?orderId=<UUID>` → server tracking response → empty persisted cart → accessible private tracking link. Intercepts every order and tracking network request; **no real backend intake and no customer data**.
+- This proves the browser handoff *with mocked server responses*, not public Checkout→Oracle production proof. Actual customer ordering remains closed both in Vercel site settings and Coolify flags per user.
+- The existing CI PostgreSQL order API succeeded after strict reviewed-subtotal price lock patch; run the latest screenshot/browser gate separately to confirm entire mobile new fixture passed.
+
 ### Pass A — real customer ticket linking and price-safe checkout code (23 Oct 2026)
 
 - **User said proceed; implemented Pass A work on PR #59 Draft branch, not merged/main.** Kept Oracle test flags user-reported OFF: `ORDER_API_ACCEPT_ORDERS=no`, `CATALOG_SYNC_ENABLED=no`; public `isOrderingOpen=false`. No production customer order was submitted and no merchant data or secrets changed.
