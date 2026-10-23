@@ -1,0 +1,23 @@
+# Tuscanini ONLY — isolated PostgreSQL database for Oracle VM / Coolify.
+# Git-based Docker Compose resource: do not add a public domain or ports.
+# Never connect this database to Nova/Plantupia volumes, users, or containers.
+# This database alone DOES NOT turn the Next.js site into real-order mode.
+services:
+  tuscanini-postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${TUSCANINI_DB_NAME:-tuscanini_orders}
+      POSTGRES_USER: ${TUSCANINI_DB_USER:-tuscanini_app}
+      POSTGRES_PASSWORD: ${TUSCANINI_DB_PASSWORD:?Configure an isolated database password in Coolify}
+    volumes:
+      - tuscanini_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+      start_period: 15s
+    stop_grace_period: 30s
+volumes:
+  tuscanini_pgdata:
