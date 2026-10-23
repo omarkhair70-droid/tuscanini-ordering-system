@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { RebirthHome } from '@/components/home/rebirth-home';
-import { ActiveOrderBanner } from '@/components/shared/active-order-banner';
 import './rebirth-home.css';
 import './rebirth-exploration.css';
 import './rebirth-creative.css';
@@ -15,5 +14,5 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
-  return <RebirthHome activeOrderSlot={<ActiveOrderBanner />} />;
+  return <RebirthHome />;
 }
