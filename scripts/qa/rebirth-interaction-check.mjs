@@ -21,7 +21,42 @@ try {
     const page = await context.newPage();
     const runtimeErrors = [];
     page.on('pageerror', err => runtimeErrors.push(err.message));
-    await page.goto(baseUrl + '/', { waitUntil: 'networkidle', timeout: 30000 });
+
+    // Public operator page must OPEN, not 404. Its twenty synthetic tickets
+    // are actually interactive, but may never issue a real mutation API call.
+    const demo=await context.newPage();
+    let demoApiCalls=0;
+    const demoErrors=[];
+    demo.on('pageerror',e=>demoErrors.push(e.message));
+    await demo.route('**/api/studio/bridge**',route=>{
+      demoApiCalls++;
+      return route.fulfill({status:403,contentType:'application/json',
+        body:JSON.stringify({error:'Demo tried to call a real studio API'})});
+    });
+    const operatorResponse=await demo.goto(baseUrl+'/operator/orders',{waitUntil:'networkidle',timeout:30000});
+    await demo.locator('.op-root[data-preview="true"]').waitFor({timeout:10000});
+    await check(operatorResponse?.status()===200 &&
+      await demo.locator('.op-stage .op-ticket').count()===1 &&
+      await demo.locator('.op-queue-row').count()===19,
+      `${width}px public operator page immediately opens the full 20-order interactive design`);
+    await demo.getByRole('button',{name:'اقبل الأوردر'}).click();
+    await demo.getByRole('button',{name:'ابدأ التحضير'}).waitFor({timeout:5000});
+    await demo.getByRole('button',{name:'ابدأ التحضير'}).click();
+    await demo.getByRole('button',{name:'الطلب جاهز'}).waitFor({timeout:5000});
+    await demo.getByRole('button',{name:'شريط التذاكر'}).click();
+    await check(await demo.locator('.op-rail .op-ticket').count()===20,
+      `${width}px public demo supports real rail navigation while retaining local state`);
+    await demo.getByRole('button',{name:'إعادة ضبط ٢٠ طلبًا'}).click();
+    await demo.getByRole('button',{name:'المسرح الرئيسي'}).click();
+    await demo.getByRole('button',{name:'اقبل الأوردر'}).waitFor({timeout:5000});
+    await check(demoApiCalls===0&&demoErrors.length===0,
+      `${width}px interactive operator demo never calls real order APIs and has no runtime exceptions`);
+    if([390,1440].includes(width)){
+      await demo.screenshot({path:`artifacts/screenshots/public-operator-press-${width}.png`,
+        fullPage:true,animations:'disabled'});
+    }
+    await demo.close();
+    await page.goto(baseUrl + '/', { waitUntil:'networkidle',timeout:30000 });
     await page.locator('.t-hero__photo img').waitFor({ state:'visible', timeout:15000 });
     const heroLoaded = await page.locator('.t-hero__photo img').evaluate(img => img.complete && img.naturalWidth > 0);
     await check(heroLoaded, `${width}px original restaurant hero image loaded`);
