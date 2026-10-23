@@ -482,7 +482,8 @@ try {
     const cartOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
     await check(cartOverflow<=3, `${width}px Cart no significant horizontal overflow (${cartOverflow}px)`);
     await page.goto(baseUrl + '/order-success', { waitUntil:'networkidle', timeout:30000 });
-    await check(await page.getByText(/معندناش مرجع/).count()===1, `${width}px direct tracking URL does not falsely confirm an order`);
+    await check(await page.getByRole('heading',{name:/مفيش رقم\s*طلب صالح هنا/}).count()===1 &&
+       await page.locator('.t-order-tracking').count()===0, `${width}px direct tracking URL does not falsely confirm an order`);
     const trackingOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
     await check(trackingOverflow<=3, `${width}px Tracking no significant horizontal overflow (${trackingOverflow}px)`);
     // Isolated browser fixture: checks form behavior without contacting the restaurant DB.
