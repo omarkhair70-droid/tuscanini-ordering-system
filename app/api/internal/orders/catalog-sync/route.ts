@@ -1,12 +1,12 @@
 import {NextResponse} from 'next/server';
-import {oraclePreviewEnabled,operatorPasskeyAllowed,publishCurrentCatalogToOracle,OracleOrderError} from '@/lib/oracle-order-api';
+import {oracleOrdersEnabled,operatorPasskeyAllowed,publishCurrentCatalogToOracle,OracleOrderError} from '@/lib/oracle-order-api';
 
 export const runtime='nodejs';
 export const dynamic='force-dynamic';
 
 export async function POST(request:Request){
   const headers={'Cache-Control':'no-store'};
-  if(!oraclePreviewEnabled())return NextResponse.json({error:'Unavailable'},{status:404,headers});
+  if(!oracleOrdersEnabled())return NextResponse.json({error:'Unavailable'},{status:404,headers});
   if(!operatorPasskeyAllowed(request))return NextResponse.json({error:'Forbidden'},{status:403,headers});
   try{
     const saved=await publishCurrentCatalogToOracle();
