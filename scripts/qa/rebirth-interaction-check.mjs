@@ -508,7 +508,7 @@ try {
       }));
     });
     await fixtureContext.route('**/api/public/site-settings',route=>route.fulfill({
-      status:200,contentType:'application/json',body:JSON.stringify({ok:true,settings:{isOrderingOpen:true,whatsappOrderNumber:''}}),
+      status:200,contentType:'application/json',body:JSON.stringify({ok:true,settings:{isOrderingOpen:true,deliveryEnabled:true,whatsappOrderNumber:''}}),
     }));
     let submits=0;
     const submittedChoices=[];
@@ -600,7 +600,7 @@ try {
       });
       await completed.route('**/api/public/site-settings',route=>route.fulfill({
         status:200,contentType:'application/json',
-        body:JSON.stringify({ok:true,settings:{isOrderingOpen:true,whatsappOrderNumber:''}}),
+        body:JSON.stringify({ok:true,settings:{isOrderingOpen:true,deliveryEnabled:true,whatsappOrderNumber:''}}),
       }));
       let browserSubmits=0;
       let finalPayload=null;
@@ -640,7 +640,7 @@ try {
     // A successful page view must not mutate a restaurant order.
     await page.route('**/api/public/site-settings',route=>route.fulfill({
       status:200,contentType:'application/json',
-      body:JSON.stringify({ok:true,settings:{isOrderingOpen:true,whatsappOrderNumber:'01012345678'}}),
+      body:JSON.stringify({ok:true,settings:{isOrderingOpen:true,deliveryEnabled:true,whatsappOrderNumber:'01012345678'}}),
     }));
     let restaurantStage='جديد';
     let restaurantConfirmation='pending';
