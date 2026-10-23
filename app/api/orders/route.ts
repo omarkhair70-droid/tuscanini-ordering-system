@@ -23,6 +23,14 @@ export async function POST(request: Request) {
 
     if (oracleOrdersEnabled()) {
       const settings = await getRuntimePublicSiteSettings();
+      // No delivery order may enter Oracle while real service coverage
+      // and fee handling remain unapproved. This is independent of UI.
+      if (payload.customer.orderType === 'delivery' && !settings.deliveryEnabled) {
+        return NextResponse.json({
+          ok:false,code:'DELIVERY_UNAVAILABLE',
+          error:'الدليفري مش متاح من الموقع حاليًا. اختار الاستلام من المطعم.',
+        },{status:409,headers:{'Cache-Control':'no-store'}});
+      }
       if (!settings.isOrderingOpen) {
         return NextResponse.json({ok:false,code:'ORDERING_CLOSED',
           error:'الطلبات متوقفة حاليًا. برجاء المحاولة لاحقًا.'},{status:409});
