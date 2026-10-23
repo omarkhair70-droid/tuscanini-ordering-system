@@ -5,6 +5,7 @@ import { isLocalStudioRequest } from '@/lib/studio-bridge';
 import { submitStagedRebirthOrder, StudioMenuError } from '@/lib/studio-menu-orders';
 import { parseCreateOrderPayloadOrThrow } from '@/lib/orders/order-validation';
 import { getRuntimePublicSiteSettings } from '@/lib/site-settings-runtime';
+import { oraclePreviewEnabled, submitOracleOrder, OracleOrderError } from '@/lib/oracle-order-api';
 
 export async function POST(request: Request) {
   try {
@@ -18,6 +19,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ok:true,orderId:saved.id,orderNumber:null,
         reference:'#'+saved.id.slice(0,8).toUpperCase(),tableReference:payload.tableReference,
         subtotal:Number(saved.subtotal_cents)/100,studioMode:true});
+    }
+
+    if (oraclePreviewEnabled()) {
+      const settings = await getRuntimePublicSiteSettings();
+      if (!settings.isOrderingOpen) {
+        return NextResponse.json({ok:false,code:'ORDERING_CLOSED',
+          error:'الطلبات متوقفة حاليًا. برجاء المحاولة لاحقًا.'},{status:409});
+      }
+      const key=typeof body.requestKey==='string'?body.requestKey:'';
+      const saved=await submitOracleOrder(key,payload);
+      return NextResponse.json({ok:true,orderId:saved.id,orderNumber:null,
+        reference:'#'+saved.id.slice(0,8).toUpperCase(),tableReference:payload.tableReference,
+        subtotal:saved.subtotal});
     }
 
     const settings = await getRuntimePublicSiteSettings();
@@ -43,7 +57,7 @@ export async function POST(request: Request) {
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'تعذر حفظ الطلب الآن.';
-    if(error instanceof StudioMenuError)return NextResponse.json({ok:false,error:message},{status:error.status});
+    if(error instanceof StudioMenuError || error instanceof OracleOrderError)return NextResponse.json({ok:false,error:message},{status:error.status});
     const isValidationError =
       message.includes('مطلوب') ||
       message.includes('غير صالح') ||
