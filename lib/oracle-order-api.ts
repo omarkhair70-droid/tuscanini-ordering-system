@@ -3,9 +3,14 @@ import {createHash,timingSafeEqual} from 'node:crypto';
 import type {ValidatedOrderPayload} from '@/lib/orders/order-validation';
 import {featuredItems} from '@/lib/mock-data';
 
-/** Preview-only until explicit signoff. The production main website is untouched. */
-export function oraclePreviewEnabled():boolean{
-  return process.env.VERCEL_ENV==='preview' && process.env.ORDER_BACKEND==='oracle';
+/** One Oracle order engine regardless of Vercel's deployment environment.
+ * Never auto-enable based on the presence of credentials. The single explicit
+ * server-side switch must be set independently on whichever deployment serves
+ * customers; missing/unknown values preserve the historical backend/demo.
+ */
+export function oracleOrdersEnabled():boolean{
+  return process.env.ORDER_BACKEND==='oracle' &&
+    (process.env.VERCEL_ENV==='preview'||process.env.VERCEL_ENV==='production');
 }
 export class OracleOrderError extends Error{
   constructor(message:string,public status:number){super(message);}
@@ -98,11 +103,11 @@ export async function changeOracleOrder(orderId:string,action:string){
   return call('/v1/operator/orders/'+encodeURIComponent(orderId)+'/action','POST',{action});
 }
 
-/** Manual, authenticated PREVIEW-ONLY catalog publication. No auto-overwrite
+/** Manual, authenticated gated catalog publication. No auto-overwrite
  * during customer checkout. The owner must approve real item data before
  * activating intake; historical sample prices are never called approved. */
 export async function publishCurrentCatalogToOracle(){
-  if(!oraclePreviewEnabled() || process.env.TUSCANINI_ALLOW_CATALOG_SYNC!=='yes')
+  if(!oracleOrdersEnabled() || process.env.TUSCANINI_ALLOW_CATALOG_SYNC!=='yes')
     throw new OracleOrderError('نشر المنيو غير مفعّل.',403);
   const cents=(value:number)=>Math.round(value*100);
   const products=featuredItems.map(item=>({
