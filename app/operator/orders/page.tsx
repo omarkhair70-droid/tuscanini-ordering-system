@@ -7,10 +7,22 @@ import '../../operator-press.css';
 
 export const dynamic='force-dynamic';
 export default function OperatorOrdersPage(){
-  if(!getLocalStudioOrigin())notFound();
+  const localStudio=Boolean(getLocalStudioOrigin());
+  // A Vercel branch Preview may show ONLY 20 synthetic, non-actionable
+  // tickets. The live operator still needs a private staging connection
+  // and never becomes public on the production deployment.
+  const readOnlyPreview=!localStudio&&process.env.VERCEL_ENV==='preview';
+  if(!localStudio&&!readOnlyPreview)notFound();
   return <div className="t-studio" dir="rtl">
     <header className="t-studio__top"><Link href="/" className="t-studio__logo">TUSCANINI.</Link>
-      <span>ORDER ROOM / OPERATOR</span><Link href="/studio">واجهة العميل ↗</Link></header>
-    <main className="op-page"><OperatorPress /></main>
+      <span>{readOnlyPreview?'ORDER ROOM / DESIGN PREVIEW':'ORDER ROOM / OPERATOR'}</span>
+      <Link href={readOnlyPreview?'/menu':'/studio'}>واجهة العميل ↗</Link></header>
+    <main className="op-page">
+      {readOnlyPreview&&<p className="op-remote-preview" role="note">
+        <strong>معاينة التصميم فقط — ٢٠ طلبًا خياليًا.</strong> التبديل والبحث شغّالين،
+        لكن الأزرار لا تنفذ طلبات حقيقية، ومفيش اتصال ببيانات المطعم أو تحصيل فلوس.
+      </p>}
+      <OperatorPress readOnlyPreview={readOnlyPreview}/>
+    </main>
   </div>;
 }
