@@ -4,6 +4,13 @@
 
 > **Start here in every new chat, and update this SAME FILE after every meaningful feature/review.** This is the current execution and coverage index; historical `00–38`, original research, the HTML reference and technical handoffs remain evidence, not competing "next task" lists. Use the current GitHub PR HEAD and Actions results if newer; never assume this snapshot is the HEAD forever.
 
+### Public anonymous operator API gate verified (23 Oct 2026)
+
+- **User-confirmed external Chrome test:** visiting `https://tuscanini-orders-api.duckdns.org/v1/operator/orders` without an `x-tuscanini-service-key` header returned **HTTP 403 Forbidden**. Earlier **live container test** with service key returned **HTTP 200, Orders: 0**. Together they confirm basic service-key protection from anonymous internet callers and successful authorized Oracle DB read.
+- This does **not** replace staff authentication/abuse tests, rate limits, private order-tracking capability checks, real merchant price review or end-to-end order creation.
+- Vercel checked again: latest branch Preview **READY** is still SHA `aaa80d67ee` (before the unified Production/Preview Oracle connection code). Fresh deployment API is blocked by Hobby quota `api-deployments-free-per-day`; do not claim current public UI talks to Oracle yet. New code is on GitHub PR #59 (Draft).
+- **Next gate:** when Vercel build quota is available, deploy current branch source with existing Production/Preview server-only variables; verify private read-only `/api/internal/orders/connection` and separate staff passkey, then sync reviewed trial catalog and submit a clearly marked fictional order. Oracle intake remains OFF until the controlled transition.
+
 ### Verified live Oracle authenticated inbox (23 Oct 2026)
 
 - **New USER-CONFIRMED live container test:** inside the running Oracle `tuscanini-orders-api` container, Node `fetch('http://127.0.0.1:8080/v1/operator/orders',{headers:{'x-tuscanini-service-key':process.env.ORDER_API_SERVICE_KEY}})` returned `HTTP: 200 Orders: 0`. This verifies **runtime service-key authentication**, successful operator inbox query against deployed Oracle PostgreSQL, and no existing orders. No sensitive key or customer data was printed.
