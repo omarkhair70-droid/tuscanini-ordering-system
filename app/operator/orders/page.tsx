@@ -8,6 +8,10 @@ import '../../operator-press.css';
 export const dynamic='force-dynamic';
 export default function OperatorOrdersPage(){
   const publicDemo=!getLocalStudioOrigin()&&!oracleOrdersEnabled();
+  // This is a time-limited, explicitly authorized historical-menu import,
+  // NOT an automatic publication of merchant-approved live prices.
+  const canSyncCatalog=!publicDemo&&oracleOrdersEnabled()&&
+    process.env.TUSCANINI_ALLOW_CATALOG_SYNC==='yes';
   // One operator screen in both Vercel environments. When Oracle is selected,
   // it shows the private authenticated real queue; otherwise the exact same
   // UI presents local synthetic examples, never real customer data.
@@ -21,7 +25,7 @@ export default function OperatorOrdersPage(){
         وتغيّر بين المسرح الرئيسي وشريط التذاكر. التعديلات في متصفحك بس؛
         مش أوردرات عملاء حقيقية.
       </p>}
-      <OperatorPress publicDemo={publicDemo}/>
+      <OperatorPress publicDemo={publicDemo} canSyncCatalog={canSyncCatalog}/>
     </main>
   </div>;
 }
