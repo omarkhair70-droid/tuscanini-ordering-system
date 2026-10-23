@@ -185,6 +185,22 @@ Automated evidence exists for **some**, not all, of these; never automatically t
 
 ---
 
+### T03 / NEW CARE LOOP — linked changes, rejection and cancellation clarity (23 Oct 2026)
+
+**Scope:** The same live ticket on `/order-success` and the same existing restaurant order screen. NO auto-cancel, automatic refund, separate CRM/POS product or invented merchant policy.
+
+- `components/rebirth/rebirth-order-tracking.tsx`: new **post-order assistance** printed-paper section. Once a server-confirmed order exists, it offers *request cancellation*, *request an edit* and *generic support* as **distinct** WhatsApp draft links with actual order reference and correct explanatory text. It retrieves the publicly configured WhatsApp number through `/api/public/site-settings`, validates it before forming an external URL and falls back to `/contact` if unavailable. No UI action mutates order state or guarantees messages were sent: user must review and send in WhatsApp. No phone/address or payment details are automatically shared in the prefilled message.
+- **Status correctness:** `confirmationStatus=rejected` now has its own `declined` visual/semantic state ("المطعم اعتذر عن الطلب", `DECLINED`), distinct from generic `status='ملغي'` (`cancelled`). A restaurant rejection is NOT an indication that the customer chose to cancel. For terminal delivered, rejected or canceled states, action links for changing/canceling the order disappear but a support route remains. All modes explicitly state refund/payment outcomes are **not verified** by this system.
+- `app/rebirth-tracking.css`: compact paper/stamp support language, keyboard focus and phone column layout; maintains the authentic printed-ticket metaphor.
+- `scripts/qa/rebirth-interaction-check.mjs`: at 320/390/768/1440, mock a valid configured business WhatsApp, validate request cancellation link text/ref and never open/send it, assure generic help remains neutral and terminal states don't offer an active cancel/edit. Rejected and cancelled are independently verified, with screenshots for 390px declined/cancelled/ready/delivered.
+- `scripts/qa/rebirth-next-studio-integration.mjs`: physically separate synthetic order rejected via authorized operator action, persists one `received → rejected` event and returns `ملغي` + `confirmationStatus=rejected` from the **original** Rebirth tracking endpoint. Repeating reject returns 409; no duplicate event. These stages remain synthetic staging, not live restaurant deployment.
+
+**Status at documentation write:** code & tests committed on PR #59 (technical checkpoint `c4305b3d`), full CI proof is pending; DO NOT mark as verified until the matching successful Home, Backend/Postgres + Browser Visual workflow run has completed. There is **no** settled merchant cancellation/refund policy or payment provider, so customer self-service cancel/refund APIs remain unbuilt.
+
+**Next if this pass succeeds:** inspect actual 390px declined/cancelled screenshots, fix legibility or any test failures, then prioritize merchant prep estimate + real tablet/connection testing and real cash/prepay/refund policy as explicit decisions. Stage photos don't imply field approval.
+
+---
+
 ## 9. THE UNEXPLORED PRODUCT UNIVERSE — discovered, not commissioned
 
 **User scope correction (22 Oct 2026):** This board must also remember the **big questions never previously discussed or built**: every practical payment route, fulfillment variants, post-order lifecycle, support/reputation, retention, commercial terms, responsive edge cases, operational failure modes, strategic creative ideas and launch infrastructure. The previous T01–T12 are the **immediate execution shortlist**, **not the entire conceivable product**.
