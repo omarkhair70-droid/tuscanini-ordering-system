@@ -1,6 +1,7 @@
 import 'server-only';
 import {createHash,timingSafeEqual} from 'node:crypto';
 import type {ValidatedOrderPayload} from '@/lib/orders/order-validation';
+import {featuredItems} from '@/lib/mock-data';
 
 /** Preview-only until explicit signoff. The production main website is untouched. */
 export function oraclePreviewEnabled():boolean{
@@ -90,4 +91,21 @@ export async function changeOracleOrder(orderId:string,action:string){
     !['accept','reject','start','ready','deliver'].includes(action))
     throw new OracleOrderError('إجراء مش متاح.',400);
   return call('/v1/operator/orders/'+encodeURIComponent(orderId)+'/action','POST',{action});
+}
+
+/** Manual, authenticated PREVIEW-ONLY catalog publication. No auto-overwrite
+ * during customer checkout. The owner must approve real item data before
+ * activating intake; historical sample prices are never called approved. */
+export async function publishCurrentCatalogToOracle(){
+  if(!oraclePreviewEnabled() || process.env.TUSCANINI_ALLOW_CATALOG_SYNC!=='yes')
+    throw new OracleOrderError('نشر المنيو غير مفعّل.',403);
+  const cents=(value:number)=>Math.round(value*100);
+  const products=featuredItems.map(item=>({
+    productId:item.id,name:item.name,categorySlug:item.categorySlug,
+    priceFromCents:cents(item.priceFrom),available:item.availability!=='unavailable',
+    sizes:(item.sizes??[]).map(size=>({id:size.id,label:size.label,price_cents:cents(size.price)})),
+    addons:(item.addons??[]).map(addon=>({id:addon.id,label:addon.label,price_cents:cents(addon.price)})),
+  }));
+  const response=await call('/v1/catalog/sync','POST',{products});
+  return {count:response.count};
 }
