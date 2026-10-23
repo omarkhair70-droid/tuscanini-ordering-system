@@ -77,6 +77,17 @@
 
 ---
 
+### Oracle Coolify manual database milestone (23 Oct 2026)
+
+**USER-CONFIRMED ON LIVE COOLIFY, not merely a CI simulation:** User created standalone PostgreSQL resource in Tuscanini/production on the `localhost` server, `postgres:18-alpine` (psql reported 18.6), and executed inside that new isolated container:
+
+- Existing administrative database/user remain `postgres`; do not overwrite Coolify's database resource General credentials.
+- Created a distinct `tuscanini_app` LOGIN role with a password entered directly through interactive `\\password` (never copy it into this board or chat).
+- Created `tuscanini_orders` owned by `tuscanini_app`, confirmed via `SELECT datname,pg_get_userbyid(datdba)...` returning exactly `tuscanini_orders | tuscanini_app`.
+- **The PostgreSQL container is Running and DB+role exist on Oracle.** This does *not* yet prove application network reachability, migrations, backup/restore or any order receipt.
+- **Deployment strategy adjusted:** because Coolify's one-click PostgreSQL resource already exists, **DO NOT deploy `infra/oracle/postgres.compose.yaml` unchanged**; its additional `tuscanini-postgres` service would create a redundant second PostgreSQL database. Deploy **only** `services/orders-api/Dockerfile` as a separate Git-backed application on the same Coolify destination, using internal database host from this resource's network details, port 5432, database `tuscanini_orders`, user `tuscanini_app`, and the password saved directly into the API application's Secret environment variable in Coolify.
+- Secure initial API config: service key 32+ characters in Coolify only; `ORDER_API_ACCEPT_ORDERS=no`, `CATALOG_SYNC_ENABLED=no`. Next verify migrations, `/readyz`, Docker network and isolated persistence; then configure HTTPS proxy and server-only Vercel Preview credentials, run two-device flow, and obtain merchant approval. No automatic real customer intake.
+
 ### Coolify handoff / production-image verification (23 Oct 2026)
 
 - User provided an authenticated screenshot of **Coolify v4.4.7** at `https://coolify.158.101.254.30.sslip.io/projects`, displaying four existing projects. This confirms the control-panel URL, **not** that our connected automation is authenticated or that Tuscanini services exist.
