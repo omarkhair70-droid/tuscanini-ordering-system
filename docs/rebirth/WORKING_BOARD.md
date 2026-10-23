@@ -139,6 +139,58 @@
 - **Controlled deployment requirement:** code changes to `services/orders-api/src/menu-orders.ts` are committed but NOT on the already running Coolify image until Tuscanini app is explicitly rebuilt/redeployed (while intake remains NO). Do **NOT** assume the live old API yet enforces subtotal match. New Vercel branch Preview also needs an updated READY build to render the new ticket link/share UI.
 - **Customer cart→Oracle live proof still OPEN**: since both public website `isOrderingOpen=false` and Oracle `ORDER_API_ACCEPT_ORDERS=no` remain closed intentionally, the new additions do not bypass merchant closure. Final test is a separately approved guarded synthetic QA/pilot with a proper server-side control; no accountless public intake.
 
+## 2026-10-23 — CREATIVE / UX FINISH: FIRST ACTUAL SOURCE PASS
+
+### Guest-facing editorial clean-up SHIPPED TO PR SOURCE (not yet visually signed off)
+
+- Owner feedback: public site still contained internal designer self-commentary, defensive copy and cringe repetitive clauses; wants comprehensive human-first design on Home/Menu/Cart/Tracking/Operator/secondary routes, not another infrastructure sprint. Maintain INSIDE / OUT as an exploratory brand grammar rather than brand approval.
+- **Applied actual copy changes** in 9 source surfaces: `app/offers/page.tsx`, `app/about/page.tsx`, `app/contact/page.tsx`, `app/reviews/page.tsx`, `app/complaints/page.tsx`, `components/rebirth/rebirth-food-finder.tsx`, `components/rebirth/rebirth-menu.tsx`, `components/rebirth/rebirth-checkout.tsx`, `components/rebirth/rebirth-order-tracking.tsx`. Replaced internal mastheads such as `NO INVENTED RATINGS`, `MENU DATA / MISSING`, `PREVIOUS MENU / REAL PRICES`, overly long negative disclaimers, with concise Arabic guest guidance. Retained required factual caveats: non-electronic payment, previous-menu unapproved prices, WhatsApp handoff and order/cancellation semantics.
+- **Cleaned image captions** in `app/about/page.tsx`, `app/offers/page.tsx`, and `lib/rebirth/verified-menu-photographs.ts`: internal labels `TSC-06`, `TSC / 11`, `TSC-07` are not public-facing value. Source photo context remains explicit. `ProductArtwork` displays generated illustrative food pictures with accurate alt/accessibility labels; exactly verified SKU real photo manifest **remains EMPTY** pending merchant photo/recipe approval; DO NOT misrepresent generated food or original restaurant category photos as specific served items.
+- **Typography and keyboard pass:** `app/rebirth-home.css` protects Changa Arabic hero joining by eliminating severe negative Arabic letter spacing and clipped `.83` line-height, mildly reducing largest headline size, and unifies focus-visible on interactive elements; Arabic tag font treatment uses IBM Plex Sans Arabic and ordinary wrapping. Existing Anton remains the Latin display accent. This is a CSS change, NOT a finished manually screenshot-audited design system.
+- **Test contract updated to preserve guest language:** `scripts/qa/rebirth-interaction-check.mjs` now verifies semantic facts through guest-language copy/alt/links rather than forcing retired explanatory prose. Old browser smoke temporarily failed five assumptions repeated across 320/390/768/1440 widths; updated assertions are in commit `89af0cea` but newest CI verdict must be checked. Never revert the human-facing copy merely to satisfy obsolete phrase-matching tests.
+
+### Refined experience principles / final choices to critique in screenshots
+
+| Route/surface | One clear guest job | Visual/editing direction | Proof of finish |
+|---|---|---|---|
+| Home | Understand cuisine/place and get to menu instantly | 1 distinct INSIDE/OUT moment in hero, visible menu CTA, real photo credibility, no repeated expositional sections | User can reach menu with one obvious action on 390px |
+| Menu | Find a specific product or browse meaningful categories | Search/category compactness before excessive editorials, photo honesty, available price and direct dialog action | 113 items never lose prices/options; one-hand category/search and fast scroll |
+| Product detail | Decide size/extra/quantity with price clarity | Keep single FLIP detail transition, legible choice controls and image crop; no unexpected ingredient assertions | Choices remain through cart edit, keyboard and reduced motion |
+| Cart/Checkout | Correct order once, no hidden cost surprise | Calm, concise transactional hierarchy; explicit pickup/delivery/due-amount, contact reason and no auto-paid impression | Validate complete customer request and server pricing; accurate fees |
+| Tracking | Know saved/accepted/cooking/ready/delivered | Living paper receipt remains, 1 strong status label, link private and copyable, no invented ETA | Updates reflect actual Oracle staff actions, refresh failure still truthful |
+| Operator | See, accept and move kitchen queue | Two stable views Press/Rail; legible critical mods, distinctive urgency, staff-only entry | Tablet 768/1024; sleep/resume/sound and >20 tickets rehearsal |
+| Offers | See genuinely active promotions | Photo is contextual restaurant image, never pretend it depicts current offer; quick menu route if none | Real active offer prices/validity or honest empty |
+| Finder | Get help selecting by budget and food type | Friendly compact controls, few words, real available SKU basis | Links back into filtered menu preserve intent |
+| About | Feel actual restaurant/place | Short authentic photo essay rather than unverifiable origin/myth or internal evidence narration | Shows original restaurant images and visit/menu CTAs |
+| Contact | Call, WhatsApp or locate restaurant | Useful address/phone first, avoid internal data verification language | Correct official numbers and confirmed hours/map when owner supplies |
+| Reviews | Share sincere feedback | No fabricated testimonials or rating stars; direct outbound action | WhatsApp drafting not mistaken for saved review |
+| Complaints | Get help and send clear details | Short explanation, private field reminders, direct WhatsApp handoff | User understands they must send message, no invented ticket receipt |
+
+### Typography, illustration, interaction and motion
+
+- Keep **Changa** for expressive Arabic titles, **IBM Plex Sans Arabic** for all running Arabic/interface copy, **Anton** only for small meaningful Latin wordmarks/numbering. Arabic joins should not use Latin negative letter-spacing. Aim ≥16px transactional input text, reasonable line-height and hierarchy, 44px touch targets, one obvious primary action/viewport, visible keyboard focus. Verify actual pixel layout, iPhone keyboard and Arabic numerals; CSS changes are not the final screenshot QA.
+- Retain original **MaterialGlyph** SVG icon family (fold, cut, box, pizza, crepe, etc.), avoid mixing emojis/assorted external icon sets in branded navigation. Icons never replace accessible text for essential actions; UI icon stroke, baseline and direction all reviewed together.
+- Keep 100 existing consistent editorial generated food WebPs and 12 original restaurant source images. Inspect 113 SKU↔art relationships; prohibit false exact-item claims, duplicate family mismatches and poor crop, record remaining unmatched items. Don't regenerate assets as a reflex or show a soda as a milkshake. UI needs one honest source-label convention, not a disclaimer over every photograph.
+- Motion: ONE story-bearing hero interaction and purposeful product FLIP/cart feedback, simple predictable ticket-stage change, ~150–280ms utility motion; `prefers-reduced-motion` eliminates parallax/scroll-bound effects and FLIP fallback. Don't add animation just because GSAP exists.
+
+### 2026 research references applied, not cloned
+
+- Baymard **2026 food-delivery benchmark** https://baymard.com/research-articles/food-delivery-and-takeout-ux-benchmark-2026 — menu orientation, options, clear return paths and completion are still major pain points even on large brands; prioritize functional navigation over random animations.
+- Baymard menu/cart customisation usability https://baymard.com/research-articles/food-delivery-takeout-launch — editing toppings from basket shouldn't require removal/recreation.
+- Pasta Evangelists professional design-system / food photography and basket reference https://www.sean.london/work/pasta-evangelists — compare product/basket information architecture, NOT copy visuals.
+- W3C Arabic typography requirements https://www.w3.org/TR/alreq/ — Arabic connecting glyphs, spacing/line-height/RTL numeral handling.
+- W3C motion accessibility https://www.w3.org/WAI/WCAG22/Techniques/css/C39 — reduce requested nonessential motion.
+
+### Notification / lock-screen progress feasibility (separate dependency)
+
+- Existing browser `/order-success` already polls current status while open. Web Push for opted-in installed iOS Home Screen web apps and compatible Android browsers is possible via service worker and browser permissions (Apple https://developer.apple.com/documentation/usernotifications/sending-web-push-notifications-in-web-apps-and-browsers). **No implementation or notifications permission yet.**
+- Persistent iPhone **Dynamic Island / native Live Activity** is **not the same as PWA Web Push or WebView**; Apple documents ActivityKit + native WidgetKit/SwiftUI extension (https://developer.apple.com/documentation/activitykit/displaying-live-data-with-live-activities). Never sell it as browser-only 'easy notification strip'. Design in-site order progress first; implement native only with separate product scope.
+
+### Release status
+
+**User requested full polish, but this is an initial code/brand/copy pass, NOT completed visual approval.** PR #59 stays DRAFT. Operator/Oracle proof established earlier; public order intake is OFF. Before production launch still require owner menu/price/fee/hours signoff, physical browser/device checks, browser→Oracle real checkout proof, approved payment method, backups and staff auth. New Vercel/Oracle deployments require separate confirmation and should not be inferred from committed sources.
+
+---
 ## 2026-10-23 — COMPREHENSIVE REMAINING PRODUCT REVIEW (CURRENT)
 
 User requested a single, complete review with external UX/visual/restaurant-operations references, NOT more isolated Terminal tests or starting a second product. ONE Tuscanini customer website, ONE operator screen (Press/Rail), ONE dedicated Oracle Postgres/API. PR #59 remains DRAFT.
