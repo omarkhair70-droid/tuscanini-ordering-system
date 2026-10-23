@@ -54,6 +54,7 @@ export function RebirthCheckout() {
     if (!customer.name.trim()) next.name = 'اكتب اسمك عشان المطعم يقدر يتواصل معاك.';
     if (!/^01\d{9}$/.test(customer.phone.replace(/\D/g, ''))) next.phone = 'اكتب رقم موبايل مصري من 11 رقم يبدأ بـ 01.';
     if (customer.orderType === 'delivery' && !customer.address.trim()) next.address = 'العنوان مطلوب للدليفري.';
+    else if (customer.orderType === 'delivery' && customer.address.trim().length > 300) next.address = 'العنوان أطول من الحد المسموح (٣٠٠ حرف).';
     if (!customer.confirmedAccurateDetails) next.confirmedAccurateDetails = 'أكد صحة البيانات قبل الإرسال.';
     return next;
   }
@@ -227,7 +228,7 @@ export function RebirthCheckout() {
                         : 'اكتب عنوان واضح. المطعم محتاج يتأكد من إمكانية التوصيل وأي رسوم قبل تأكيد الطلب.'}
                     </p>
                     {customer.orderType==='delivery' && <><label>عنوان التوصيل <textarea id="t-checkout-address" rows={3} value={customer.address} aria-invalid={!!errors.address} aria-describedby={errors.address?'t-error-address':undefined}
-                      onChange={e=>{updateCustomer({address:e.target.value});setErrors(x=>({...x,address:undefined}))}} placeholder="الشارع، المنطقة، علامة مميزة" maxLength={500}/></label>
+                      onChange={e=>{updateCustomer({address:e.target.value});setErrors(x=>({...x,address:undefined}))}} placeholder="الشارع، المنطقة، علامة مميزة" maxLength={300}/></label>
                       {errors.address && <p id="t-error-address" className="t-checkout-error">{errors.address}</p>}</>}
                     <label>ملاحظات عامة (اختياري) <textarea rows={2} value={customer.generalNotes} onChange={e=>updateCustomer({generalNotes:e.target.value})} maxLength={500} placeholder="أي تفاصيل تساعد المطعم"/></label>
                   </div>
