@@ -28,9 +28,9 @@ export default async function ReviewsPage() {
     <ExperienceHeader />
     <main id="t-feedback-main">
       <section className="t-feedback-hero t-shell" aria-labelledby="t-feedback-title">
-        <div className="t-feedback-hero__meta"><span>توسكانيني / صوتك مهم</span><span lang="en">REAL PEOPLE / REAL WORDS</span></div>
+        <div className="t-feedback-hero__meta"><span>توسكانيني / صوتك مهم</span><span lang="en">TUSCANINI / YOUR VOICE</span></div>
         <div className="t-feedback-hero__content">
-          <span className="t-index">01 / YOUR OWN WORDS</span>
+          <span className="t-index">رأيك</span>
           <h1 id="t-feedback-title">قولنا<br/><em>رأيك.</em></h1>
           <div className="t-feedback-hero__aside">
             <p>جربت أكل توسكانيني؟ رأيك يهم، سواء عجبتك التجربة أو في حاجة شايف إنها محتاجة تتظبط.</p>
@@ -39,15 +39,15 @@ export default async function ReviewsPage() {
         </div>
       </section>
       <section className="t-reviews-explanation t-shell" aria-labelledby="t-reviews-heading" id="t-reviews-action">
-        <span className="t-index">02 / NO INVENTED RATINGS</span>
+        <span className="t-index">شارك تجربتك</span>
         <div>
-          <h2 id="t-reviews-heading">من غير كلام<br/><em>على لسان حد.</em></h2>
-          <p>إحنا مش بنعرض مراجعات داخل الموقع حاليًا، ومش هنحط اقتباسات أو نجوم من غير مصدر واضح. لكن تقدر توصل رأيك للمطعم مباشرة.</p>
+          <h2 id="t-reviews-heading">رأيك<br/><em>يوصلنا.</em></h2>
+          <p>ابعت رأيك للمطعم على واتساب، سواء في حاجة عجبتك أو شايف إنها محتاجة تتظبط.</p>
           <div className="t-reviews-explanation__actions">
             {outbound ? <a className="t-reviews-explanation__cta" href={outbound} target="_blank" rel="noopener noreferrer">ابعت رأيك على واتساب <span aria-hidden="true">↗</span></a> : <Link className="t-reviews-explanation__cta" href="/contact">تواصل مع المطعم <span aria-hidden="true">↗</span></Link>}
             <Link href="/complaints">لو عندك مشكلة عايز تتابعها <span aria-hidden="true">↗</span></Link>
           </div>
-          <p className="t-reviews-explanation__note">الزر بيفتح رسالة واتساب عندك؛ إرسال الرسالة بيتم من تطبيقك، مش تلقائيًا من الموقع.</p>
+          <p className="t-reviews-explanation__note">هيفتح واتساب برسالة جاهزة. راجعها وابعتها.</p>
         </div>
       </section>
     </main>
