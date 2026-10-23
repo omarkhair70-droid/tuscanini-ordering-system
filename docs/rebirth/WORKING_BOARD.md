@@ -4,6 +4,12 @@
 
 > **Start here in every new chat, and update this SAME FILE after every meaningful feature/review.** This is the current execution and coverage index; historical `00–38`, original research, the HTML reference and technical handoffs remain evidence, not competing "next task" lists. Use the current GitHub PR HEAD and Actions results if newer; never assume this snapshot is the HEAD forever.
 
+### Verified live Oracle authenticated inbox (23 Oct 2026)
+
+- **New USER-CONFIRMED live container test:** inside the running Oracle `tuscanini-orders-api` container, Node `fetch('http://127.0.0.1:8080/v1/operator/orders',{headers:{'x-tuscanini-service-key':process.env.ORDER_API_SERVICE_KEY}})` returned `HTTP: 200 Orders: 0`. This verifies **runtime service-key authentication**, successful operator inbox query against deployed Oracle PostgreSQL, and no existing orders. No sensitive key or customer data was printed.
+- Does NOT verify Vercel's separate copy of the secret matches, an external caller's HTTPS connection, unauthorized-visitor 403, catalog sync, order creation, or UI end-to-end. Keep user-visible claims precise.
+- NEXT: verify anonymous public HTTPS `/v1/operator/orders` returns 403; when Vercel Hobby deployment quota resets deploy the reviewed redesign branch with shared Oracle env and exercise protected `/api/internal/orders/connection` via staff passkey; reconcile catalog/current prices and run controlled sample order through tablet. Oracle `ORDER_API_ACCEPT_ORDERS=no` and `CATALOG_SYNC_ENABLED=no` remain OFF until explicit cutover.
+
 ### Vercel shared Oracle settings / deployment quota gate (23 Oct 2026)
 
 - Vercel env metadata confirmed: `ORDER_API_ORIGIN`, `ORDER_API_SERVICE_KEY`, `TUSCANINI_OPERATOR_KEY` remain Sensitive and now have **both** Production/Preview targets. New server-only selector `ORDER_BACKEND=oracle` also targets both. Secrets were never read, decrypted, printed or placed in code. Other preview branches may receive these secrets while targeting Preview; revisit branch scoping when collaborator workflow broadens.
