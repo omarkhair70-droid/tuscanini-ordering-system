@@ -57,7 +57,12 @@ try{
   await real.goto(base+'/cart',{waitUntil:'networkidle'});
   await real.getByPlaceholder('الاسم').fill('عميل اختبار من الموقع');
   await real.getByPlaceholder('01xxxxxxxxx').fill('01012345678');
-  await real.getByPlaceholder('الشارع، المنطقة، علامة مميزة').fill('عنوان محلي للتجربة فقط');
+  // Storefront now defaults to pickup unless delivery has been approved.
+  // Keep this two-device flow aligned with the production-safe default,
+  // without waiting for a delivery address control that should be absent.
+  await real.getByRole('radio',{name:'استلام من المطعم'}).check();
+  assert.equal(await real.getByPlaceholder('الشارع، المنطقة، علامة مميزة').count(),0,
+    'Pickup order must not request or transmit a delivery address');
   await real.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).check();
   await real.getByRole('button',{name:/سجّل الطلب للمطعم/}).click();
   await real.waitForURL(/\/order-success\?orderId=/,{timeout:15000});
