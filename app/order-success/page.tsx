@@ -12,6 +12,7 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: 'متابعة الطلب | توسكانيني',
   description: 'شوف حالة طلبك المسجلة من المطعم، من انتظار التأكيد لحد الاستلام.',
+  robots: { index: false, follow: false, noarchive: true },
 };
 
 type Props = { searchParams?: Promise<{ orderId?: string }> };
