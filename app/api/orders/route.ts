@@ -43,6 +43,12 @@ export async function POST(request: Request) {
     }
 
     const settings = await getRuntimePublicSiteSettings();
+    if (payload.customer.orderType === 'delivery' && !settings.deliveryEnabled) {
+      return NextResponse.json({
+        ok:false,code:'DELIVERY_UNAVAILABLE',
+        error:'الدليفري مش متاح من الموقع حاليًا. اختار الاستلام من المطعم.',
+      },{status:409,headers:{'Cache-Control':'no-store'}});
+    }
     if (!settings.isOrderingOpen) {
       return NextResponse.json(
         {
