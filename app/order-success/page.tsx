@@ -20,7 +20,7 @@ export default async function OrderSuccessPage({searchParams}: Props) {
   const query = searchParams ? await searchParams : {};
   const orderId = typeof query.orderId==='string' ? query.orderId.trim() : '';
   // Do not infer an order exists just because this route opens.
-  const valid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(orderId);
+  const valid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(orderId);
   return (
     <div className="t-page t-order-page" dir="rtl">
       <a className="t-skip" href="#t-order-content">انتقل إلى حالة الطلب</a>
