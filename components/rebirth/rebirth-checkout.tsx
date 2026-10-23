@@ -10,7 +10,7 @@ import { ActiveOrderBanner } from '@/components/shared/active-order-banner';
 import { CustomerJourney } from '@/components/rebirth/customer-journey';
 import { saveActiveOrder } from '@/lib/active-order-storage';
 
-type RuntimeSettings = { isOrderingOpen: boolean; whatsappOrderNumber: string; studioMode?: boolean };
+type RuntimeSettings = { isOrderingOpen: boolean; deliveryEnabled: boolean; whatsappOrderNumber: string; studioMode?: boolean };
 type ApiResult = { ok: true; orderId: string; reference?: string; orderNumber?: number | null; tableReference?: string | null }
   | { ok: false; error?: string; code?: string };
 type ErrorField = 'name' | 'phone' | 'address' | 'confirmedAccurateDetails';
@@ -39,7 +39,7 @@ export function RebirthCheckout() {
         const response = await fetch('/api/public/site-settings', { signal: controller.signal, cache: 'no-store' });
         if (!response.ok) throw new Error('settings-unavailable');
         const data = await response.json() as { ok?: boolean; settings?: RuntimeSettings };
-        if (!data.ok || typeof data.settings?.isOrderingOpen !== 'boolean') throw new Error('settings-invalid');
+        if (!data.ok || typeof data.settings?.isOrderingOpen !== 'boolean' || typeof data.settings?.deliveryEnabled !== 'boolean') throw new Error('settings-invalid');
         setSettings(data.settings);
       } catch {
         if (!controller.signal.aborted) setSettingsFailed(true);
@@ -48,6 +48,14 @@ export function RebirthCheckout() {
     void loadSettings();
     return () => controller.abort();
   }, []);
+
+  useEffect(()=>{
+    // Return visits can restore an obsolete delivery selection in localStorage.
+    // Switch to pickup rather than transmitting an unpriced delivery request.
+    if(settings && !settings.deliveryEnabled && customer.orderType==='delivery'){
+      updateCustomer({orderType:'pickup'});
+    }
+  },[settings,customer.orderType,updateCustomer]);
 
   function validate(): Errors {
     const next: Errors = {};
@@ -219,12 +227,12 @@ export function RebirthCheckout() {
                       onChange={e=>{updateCustomer({phone:e.target.value});setErrors(x=>({...x,phone:undefined}))}} placeholder="01xxxxxxxxx" maxLength={20}/></label>
                     {errors.phone && <p id="t-error-phone" className="t-checkout-error">{errors.phone}</p>}
                     <fieldset className="t-checkout-type" aria-describedby="t-checkout-service-note"><legend>هتستلم أوردرِك إزاي؟</legend><div>
-                      <label><input type="radio" name="fulfillment" checked={customer.orderType==='delivery'} onChange={()=>updateCustomer({orderType:'delivery'})}/><span>دليفري</span></label>
+                      <label><input type="radio" name="fulfillment" checked={customer.orderType==='delivery'} disabled={!settings?.deliveryEnabled} onChange={()=>updateCustomer({orderType:'delivery'})}/><span>{settings?.deliveryEnabled?'دليفري':'دليفري (غير متاح حاليًا)'}</span></label>
                       <label><input type="radio" name="fulfillment" checked={customer.orderType==='pickup'} onChange={()=>{updateCustomer({orderType:'pickup'});setErrors(x=>({...x,address:undefined}))}}/><span>استلام من المطعم</span></label>
                     </div></fieldset>
                     <p className="t-checkout-service-note" id="t-checkout-service-note" role="status">
                       {customer.orderType==='pickup'
-                        ? 'هتستلم بنفسك من المطعم. مش محتاجين عنوان توصيل، وتقدر تتابع حالة التجهيز بعد تسجيل الطلب.'
+                        ? (settings?.deliveryEnabled?'هتستلم بنفسك من المطعم. مش محتاجين عنوان توصيل، وتقدر تتابع حالة التجهيز بعد تسجيل الطلب.':'الطلب متاح للاستلام من المطعم فقط حاليًا. الدليفري هيتفتح بعد تحديد المناطق والرسوم.')
                         : 'اكتب عنوان واضح. المطعم محتاج يتأكد من إمكانية التوصيل وأي رسوم قبل تأكيد الطلب.'}
                     </p>
                     {customer.orderType==='delivery' && <><label>عنوان التوصيل <textarea id="t-checkout-address" rows={3} value={customer.address} aria-invalid={!!errors.address} aria-describedby={errors.address?'t-error-address':undefined}
