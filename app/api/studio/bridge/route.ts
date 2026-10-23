@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getLocalStudioOrigin, isLocalStudioRequest, studioOperatorAllowed } from '@/lib/studio-bridge';
+import {oraclePreviewEnabled,operatorPasskeyAllowed,fetchOracleInbox,changeOracleOrder,OracleOrderError} from '@/lib/oracle-order-api';
 
 export const runtime='nodejs';
 export const dynamic='force-dynamic';
@@ -10,6 +11,25 @@ function uuid(input:string|null):string|null {
 }
 
 async function relay(request:NextRequest):Promise<NextResponse>{
+  if (oraclePreviewEnabled()) {
+    const resource=request.nextUrl.searchParams.get('resource');
+    const id=uuid(request.nextUrl.searchParams.get('orderId'));
+    if (!operatorPasskeyAllowed(request))return result({error:'مفتاح المطعم غير صالح.'},403);
+    try{
+      if(request.method==='GET'&&resource==='inbox'){
+        return result(await fetchOracleInbox());
+      }
+      if(request.method==='POST'&&resource==='action'&&id){
+        const data=await request.json().catch(()=>null) as {action?:unknown}|null;
+        if(!data||typeof data.action!=='string')return result({error:'إجراء غير صالح.'},400);
+        return result(await changeOracleOrder(id,data.action));
+      }
+      return result({error:'Endpoint not available.'},404);
+    }catch(error){
+      if(error instanceof OracleOrderError)return result({error:error.message},error.status);
+      return result({error:'اتصال المطعم غير متاح حاليًا.'},503);
+    }
+  }
   const origin=getLocalStudioOrigin();
   if(!origin || !isLocalStudioRequest(request))return result({error:'Studio not available.'},404);
   const resource=request.nextUrl.searchParams.get('resource');
