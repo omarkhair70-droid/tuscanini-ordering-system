@@ -33,7 +33,7 @@ export default async function OffersPage() {
             <figure className="t-offers-hero__photo">
               <Image src="/images/rebirth/food-11.jpg" alt="صورة أصلية لوجبة من توسكانيني بجانب عبوات الطعام، ليست صورة لعرض معين" fill priority sizes="(max-width: 720px) 88vw, 36vw" />
               <figcaption>من صور توسكانيني</figcaption>
-              <span className="t-offers-hero__photo-index" lang="en" aria-hidden="true">TSC / 11</span>
+
             </figure>
           </div>
           <div className="t-offers-hero__foot"><span>{sourceError ? 'تعذر التحقق من العروض' : offers.length ? `${offers.length} عرض متاح` : 'مفيش عروض سارية مؤكدة دلوقتي'}</span><Link href="/menu">روح للمنيو ↗</Link></div>
