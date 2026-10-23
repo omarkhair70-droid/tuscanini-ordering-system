@@ -615,7 +615,7 @@ try {
     simulateTrackingOffline=false;
     const visualStates=[
       {status:'جديد',confirmation:'unreachable',type:'pickup',headline:'المطعم حاول يتواصل معاك',stamp:'CONTACT',attention:1},
-      {status:'جديد',confirmation:'rejected',type:'pickup',headline:'الطلب اتلغى',stamp:'CANCELLED',attention:2},
+      {status:'جديد',confirmation:'rejected',type:'pickup',headline:'المطعم اعتذر عن الطلب',stamp:'DECLINED',attention:2},
       {status:'جاهز للاستلام',confirmation:'confirmed',type:'pickup',headline:'الطلب جاهز للاستلام',stamp:'READY',attention:0},
       {status:'خرج للدليفري',confirmation:'confirmed',type:'delivery',headline:'الطلب خرج للدليفري',stamp:'ON THE WAY',attention:0},
       {status:'تم التسليم',confirmation:'confirmed',type:'delivery',headline:'الطلب اتسلّم',stamp:'DELIVERED',attention:0},
@@ -630,12 +630,17 @@ try {
       await page.locator('.t-order-story__seal-text').getByText(item.stamp,{exact:true}).waitFor({state:'visible',timeout:8000});
       await check(await page.locator('.t-order-fact[data-state="attention"]').count()===item.attention,
         `${width}px ${item.stamp} is a truthful receipt status without inventing confirmation/payment`);
-      if(item.stamp==='CANCELLED'||item.stamp==='DELIVERED'){
+      if(['CANCELLED','DECLINED','DELIVERED'].includes(item.stamp)){
         await check(await page.getByRole('link',{name:/استفسر عن إمكانية الإلغاء/}).count()===0 &&
           await page.getByRole('link',{name:/اطلب تعديل الأوردر/}).count()===0,
           `${width}px terminal ${item.stamp} ticket does not offer an active cancellation/change request`);
         await check(await page.getByRole('link',{name:/راسل المطعم برقم الطلب/}).count()===1,
           `${width}px terminal ${item.stamp} ticket preserves a reference-linked support path`);
+      }
+      if(item.stamp==='DECLINED'){
+        await check(await page.locator('.t-order-fact').getByText('الطلب لم يُقبل').count()===1 &&
+          await page.getByText(/مش معناه إنك طلبت إلغاءه/).count()===1,
+          `${width}px restaurant rejection is not misrepresented as customer cancellation`);
       }
       if(width===390 && ['READY','DELIVERED'].includes(item.stamp)){
         await page.evaluate(()=>window.scrollTo(0,0));
