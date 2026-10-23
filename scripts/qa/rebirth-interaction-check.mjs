@@ -642,7 +642,7 @@ try {
           await page.getByText(/مش معناه إنك طلبت إلغاءه/).count()===1,
           `${width}px restaurant rejection is not misrepresented as customer cancellation`);
       }
-      if(width===390 && ['READY','DELIVERED'].includes(item.stamp)){
+      if(width===390 && ['READY','DELIVERED','DECLINED','CANCELLED'].includes(item.stamp)){
         await page.evaluate(()=>window.scrollTo(0,0));
         await page.screenshot({path:`artifacts/screenshots/tracking-ticket-${item.stamp.toLowerCase()}-390.png`,fullPage:true,animations:'disabled'});
       }
