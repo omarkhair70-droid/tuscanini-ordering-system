@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { useCart } from '@/components/cart/cart-provider';
 import { customerUtilityNavigation, primaryExperienceNavigation } from '@/lib/rebirth/site-map';
 import { MaterialGlyph, routeMaterialGlyph } from '@/components/rebirth/material-glyph';
+import { ActiveOrderStatusStrip } from '@/components/rebirth/active-order-status-strip';
 
 /**
  * The same navigation will be used across every new public experience.
@@ -92,6 +93,7 @@ export function ExperienceHeader() {
           </div>
         </div>
       </div>
+      <ActiveOrderStatusStrip />
     </header>
   );
 }
