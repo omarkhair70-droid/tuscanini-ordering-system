@@ -4,6 +4,12 @@
 
 > **Start here in every new chat, and update this SAME FILE after every meaningful feature/review.** This is the current execution and coverage index; historical `00–38`, original research, the HTML reference and technical handoffs remain evidence, not competing "next task" lists. Use the current GitHub PR HEAD and Actions results if newer; never assume this snapshot is the HEAD forever.
 
+### Oracle synthetic live order visible in Vercel operator UI (23 Oct 2026)
+
+- **User screenshot confirmed first end-to-end API-to-operator ticket:** hosted Preview `/operator/orders` rendered **LIVE QUEUE 1**, **INCOMING 1**, and real ticket customer name `اختبار توسكانيني - لا تحضر`, note `تجربة تقنية فقط - لا تحضر أي طعام`, product `تشيكن فاير` x1 with selected size `سعر واحد` and `موتزاريلا`, `145 ج.م` subtotal from Oracle DB catalog. This is the *real PostgreSQL-backed order* created directly through authenticated API from the deployed container, not client-side synthetic 20-order preview.
+- User says `خلصانه` and screenshot shows action buttons `اقبل الأوردر` / `اعتذر عن الأوردر` active. **Not yet verified**: staff accept→start→ready→deliver transitions, persisted event ledger, remote customer tracking, user website Checkout→Oracle creation, and mobile/tablet foreground/background.
+- **Immediate request:** click `اقبل الأوردر` then `ابدأ التحضير` then `الطلب جاهز` then `تم التسليم` in same Vercel operator screen; check counts move and reload preserves final order state. Run read-only server SQL for one synthetic order status and status events after, then switch Oracle `ORDER_API_ACCEPT_ORDERS=no` and redeploy until full merchant rollout. Disable catalog sync flag `CATALOG_SYNC_ENABLED=no` if not yet returned to no. The 113 SKUs and prices remain sample/historical until owner approval. Production/main website is still separately gated; preview success is not release approval.
+
 ### Oracle production-hosted test catalog successfully populated (23 Oct 2026)
 
 - **User-provided live Coolify Terminal output confirms successful catalog import:** `SYNC: 200 {"ok":true,"count":113}` and `MENU: { total: 113, available: 113 }`. The 113 pinned GitHub historical menu items were written to **actual Oracle-hosted** `tuscanini.menu_catalog`, NOT just disposable GitHub CI PostgreSQL. This closes initial catalog seeding for TEST; not a declaration of restaurant-approved prices.
