@@ -43,11 +43,23 @@ test('dedicated Tuscanini service has authenticated intake, durable orders and s
     assert.ok(fixture.products.some(v=>v.productId==='ct3'&&v.sizes[0]?.price_cents===12500),
       'historical chicken-fire size is included in cents');
     const requestKey='studio-'+randomUUID();
-    const input={requestKey,tableReference:null,
+    const input={requestKey,tableReference:null,expectedSubtotalCents:25000,
       customer:{name:'عميل تجربة',phone:'01012345678',
         address:'PRIVATE OLD DELIVERY ADDRESS',orderType:'pickup',generalNotes:''},
       items:[{kind:'product',productId:'TUSC_CI_01',sizeId:null,addonIds:[],quantity:2,itemNotes:''}],
     };
+    // Do not save an order when the amount the guest reviewed differs
+    // from the server's locked authoritative catalog price.
+    const mismatch=await req('/v1/orders','POST',{
+      ...input,requestKey:'studio-'+randomUUID(),expectedSubtotalCents:25001,
+    });
+    assert.equal(mismatch.status,400,'price mismatch must not create an order');
+    const missing=await req('/v1/orders','POST',{
+      ...input,requestKey:'studio-'+randomUUID(),expectedSubtotalCents:undefined,
+    });
+    assert.equal(missing.status,400,'missing reviewed amount fails closed');
+    const noOrder=await pool.query('SELECT count(*)::int AS n FROM tuscanini.orders');
+    assert.equal(noOrder.rows[0].n,0,'price rejection never creates order rows');
     assert.equal((await req('/v1/orders','POST',input,false)).status,403);
     const first=await req('/v1/orders','POST',input);
     assert.equal(first.status,200,JSON.stringify(first.body));
