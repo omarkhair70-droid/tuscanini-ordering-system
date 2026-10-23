@@ -60,7 +60,7 @@ export function RebirthFoodFinder({categories,items,catalogReady,priceNote}:Prop
       <main id="t-finder-main">
         <header className="t-finder-hero t-shell">
           <span className="t-index">02 CHOICES / REAL RECORDED MENU</span>
-          <div><h1>تختار<br/><em>إزاي؟</em></h1><p>مش لازم تحفظ أسماء الأصناف. اختار نوع الأكل والميزانية، وشوف اختيارات من نفس منيو توسكانيني السابق بأسعاره.</p></div>
+          <div><h1>تختار<br/><em>إزاي؟</em></h1><p>نفسك في إيه؟ اختار نوع الأكل والميزانية، وشوف الأنسب ليك.</p></div>
           <Link href="/menu">عارف طلبك؟ روح للمنيو ↗</Link>
         </header>
         <div className="t-shell t-finder-content">
@@ -88,8 +88,8 @@ export function RebirthFoodFinder({categories,items,catalogReady,priceNote}:Prop
                 <p>السعر الابتدائي من المنيو السابق؛ الأحجام والإضافات ممكن تغيّر الإجمالي، والتوافر النهائي بيتأكد مع المطعم.</p>
               </fieldset>}
               {finished&&<section className="t-finder-results" aria-labelledby="t-finder-result-title">
-                <div className="t-finder-results__top"><div><span className="t-index">PREVIOUS MENU / REAL PRICES</span><h2 id="t-finder-result-title">لقيّنا إيه؟</h2></div><button type="button" onClick={reset}>ابدأ من جديد ↺</button></div>
-                {recommendations.length===0 ? <p className="t-finder-results__empty">مفيش صنف من المنيو السابق بيطابق النوع والميزانية مع بعض. جرّب ميزانية أو نوع تاني.</p>:
+                <div className="t-finder-results__top"><div><span className="t-index">اختيارات ليك</span><h2 id="t-finder-result-title">لقيّنا إيه؟</h2></div><button type="button" onClick={reset}>ابدأ من جديد ↺</button></div>
+                {recommendations.length===0 ? <p className="t-finder-results__empty">مفيش اختيارات مطابقة دلوقتي. جرّب ميزانية أو نوع تاني.</p>:
                   <div className="t-finder-results__grid">{recommendations.map(item=><article key={item.id}>
                     <span>{categories.find(c=>c.slug===item.categorySlug)?.name??'من المنيو'}</span><h3>{item.name}</h3>
                     <p>يبدأ من <strong>{money(item.priceFrom)} ج.م</strong> قبل الإضافات</p>
