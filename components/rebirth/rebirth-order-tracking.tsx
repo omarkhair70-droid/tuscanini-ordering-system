@@ -170,8 +170,8 @@ export function RebirthOrderTracking({orderId}:{orderId:string}) {
       data-current-status={status?.key??'unknown'} data-connection={error?'stale':'fresh'}>
       <div className="t-order-tracking__main">
         <div className="t-order-story__masthead">
-          <span className="t-index">TUSCANINI / ORDER IN MOTION</span>
-          <span className="t-order-story__edition" lang="en">THE LIVING TICKET — 001</span>
+          <span className="t-index">TUSCANINI / ORDER</span>
+          <span className="t-order-story__edition" lang="en">ORDER TRACKING</span>
         </div>
         <div className="t-order-story__hero">
           <div className="t-order-story__headcopy">
@@ -190,7 +190,7 @@ export function RebirthOrderTracking({orderId}:{orderId:string}) {
         <div className="t-order-story__rule" aria-hidden="true"><span>01</span><span>02</span><span>03</span></div>
         <div className="t-order-story__facts-heading">
           <strong>آخر تحديثات طلبك</strong>
-          <span lang="en">ONLY RECORDED FACTS</span>
+          <span lang="en">ORDER STATUS</span>
         </div>
         {order&&(
           <div className="t-order-facts" aria-label="ما الذي تأكد عن طلبك؟">
