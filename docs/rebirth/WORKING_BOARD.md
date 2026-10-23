@@ -77,6 +77,12 @@
 
 ---
 
+### Oracle live health and DuckDNS setup (23 Oct 2026)
+
+- User states **Coolify reports Healthy** after corrected `curl` runtime image and IPv4 loopback HTTP `/readyz` probe. Prior runtime Terminal screenshot recorded `200 {"ok":true}`. Healthy is user-confirmed; no current public HTTPS test yet.
+- User opened DuckDNS account and entered a prospective subdomain; screenshot shows **domains 0/5**, so it has **not yet been created**. Next actions: add domain, validate A record targets Oracle `158.101.254.30` (not the laptop/home IP), add new HTTPS hostname in `tuscanini-orders-api` Domains with internal port `8080`, deploy/proxy-refresh, verify public `/readyz` returns `200` with a trusted TLS certificate. Do not open PostgreSQL externally.
+- **Secret hygiene:** DuckDNS account token is partially visible in conversation screenshot; rotate/regenerate it in DuckDNS and never save/paste it in GitHub, chat or Vercel. Domain name and server IP are safe to share. `ORDER_API_ACCEPT_ORDERS=no` until TLS, staff auth and E2E pass.
+
 ### Coolify post-fix deploy reported success (23 Oct 2026)
 
 - User confirmed `Success` after deploying the Dockerfile fix which adds runtime `curl` and configuring the loopback HTTP healthcheck. This is user-reported successful **Coolify deployment**, following the earlier unhealthy/rollback event.
