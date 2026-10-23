@@ -5,6 +5,7 @@ import { getSupabaseServerAdminClient } from '@/lib/supabase/server-admin';
 
 export type PublicSiteSettings = {
   isOrderingOpen: boolean;
+  deliveryEnabled: boolean;
   whatsappOrderNumber: string;
   phonePrimary: string;
   phoneSecondary: string;
@@ -16,6 +17,8 @@ function getStaticFallbackSettings(): PublicSiteSettings {
   return {
     // Fail closed when dynamic store configuration cannot be verified.
     isOrderingOpen: false,
+    // Until service area and delivery fees are verified, offer pickup only.
+    deliveryEnabled: process.env.TUSCANINI_DELIVERY_ENABLED === 'yes',
     whatsappOrderNumber: siteConfig.whatsappOrderNumber,
     phonePrimary: siteConfig.phonePrimary,
     phoneSecondary: siteConfig.phoneSecondary,
@@ -32,6 +35,7 @@ function normalizeSettingsWithFallback(raw: Record<string, unknown> | null | und
   }
 
   return {
+    deliveryEnabled: process.env.TUSCANINI_DELIVERY_ENABLED === 'yes',
     isOrderingOpen:
       typeof raw.is_ordering_open === 'boolean'
         ? raw.is_ordering_open
