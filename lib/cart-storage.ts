@@ -8,7 +8,8 @@ export const defaultCartState: CartState = {
     name: '',
     phone: '',
     address: '',
-    orderType: 'delivery',
+    // Pickup is the safe default until delivery zones/fees are approved.
+    orderType: 'pickup',
     generalNotes: '',
     confirmedAccurateDetails: false,
   },
