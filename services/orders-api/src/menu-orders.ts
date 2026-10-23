@@ -8,7 +8,7 @@ type CatalogRow={product_id:string;name:string;category_slug:string;price_from_c
   available:boolean;sizes:Choice[];addons:Choice[]};
 type CreateLine={kind:'product';productId:string;sizeId:string|null;addonIds:string[];quantity:number;itemNotes:string};
 type Customer={name:string;phone:string;address:string;orderType:'delivery'|'pickup';generalNotes:string};
-export type MenuOrderPayload={requestKey:string;customer:Customer;items:CreateLine[];tableReference:string|null};
+export type MenuOrderPayload={requestKey:string;customer:Customer;items:CreateLine[];tableReference:string|null;expectedSubtotalCents:number};
 export type MenuProductInput={
  productId:string;name:string;categorySlug:string;priceFromCents:number;available:boolean;
  sizes:Choice[];addons:Choice[];
@@ -68,6 +68,7 @@ function parsePayload(raw:unknown):MenuOrderPayload{
     (customer.orderType!=='delivery'&&customer.orderType!=='pickup')||
     (customer.orderType==='delivery'&&!customer.address.trim())||
     (p.tableReference!==null&&p.tableReference!==undefined&&!short(p.tableReference,40))||
+    (!Number.isSafeInteger(p.expectedSubtotalCents)||Number(p.expectedSubtotalCents)<0||Number(p.expectedSubtotalCents)>20_000_000)||
     !Array.isArray(p.items)||p.items.length===0||p.items.length>30)bad('order contact or size');
   const lines=p.items as unknown[];
   for(const line of lines){
@@ -82,7 +83,8 @@ function parsePayload(raw:unknown):MenuOrderPayload{
        new Set(v.addonIds).size!==v.addonIds.length||!short(v.itemNotes,500))bad('line variant');
   }
   return {requestKey:p.requestKey as string,customer:{...(customer as Customer),address:customer.orderType==='delivery'?String(customer.address).trim():''},
-    items:lines as CreateLine[],tableReference:(p.tableReference as string|null)||null};
+    items:lines as CreateLine[],tableReference:(p.tableReference as string|null)||null,
+    expectedSubtotalCents:p.expectedSubtotalCents as number};
 }
 async function existing(pool:Pool,key:string,hash:string):Promise<RecordedOrder|null>{
   const r=await pool.query<RecordedOrder>('SELECT id,request_key,payload_sha256,status,subtotal_cents FROM tuscanini.orders WHERE request_key=$1',[key]);
@@ -93,7 +95,7 @@ export async function submitMenuOrder(pool:Pool,input:unknown):Promise<RecordedO
   const order=parsePayload(input);
   // Canonical payload binds contact, notes, sizes, add-ons AND quantities to the retry key.
   const canonical={
-    customer:order.customer,tableReference:order.tableReference,
+    customer:order.customer,tableReference:order.tableReference,expectedSubtotalCents:order.expectedSubtotalCents,
     items:order.items.map(v=>({...v,addonIds:[...v.addonIds].sort()})),
   };
   const hash=createHash('sha256').update(JSON.stringify(canonical)).digest('hex');
@@ -124,6 +126,9 @@ export async function submitMenuOrder(pool:Pool,input:unknown):Promise<RecordedO
       if(!Number.isSafeInteger(total)||total>20_000_000)bad('total overflow');
       lines.push({item,product,unit,lineTotal,selection:{size:size??null,addons,categorySlug:product.category_slug}});
     }
+    // Customer confirms the amount shown in Cart. Do not persist a silently
+    // higher/lower server-calculated total when the historical menu changed.
+    if(total!==order.expectedSubtotalCents)bad('Cart subtotal changed; review the menu again');
     const head=await client.query<RecordedOrder>(`INSERT INTO tuscanini.orders
        (request_key,payload_sha256,status,subtotal_cents,customer_snapshot,order_type,table_reference)
        VALUES ($1,$2,'received',$3,$4::jsonb,$5,$6)
