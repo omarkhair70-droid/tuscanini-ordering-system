@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { getPublicOrderTrackingOrThrow } from '@/lib/orders/track-order';
 import { isLocalStudioRequest } from '@/lib/studio-bridge';
 import { getStagedRebirthTracking, StudioMenuError } from '@/lib/studio-menu-orders';
-import {oraclePreviewEnabled,trackOracleOrder,OracleOrderError} from '@/lib/oracle-order-api';
+import {oracleOrdersEnabled,trackOracleOrder,OracleOrderError} from '@/lib/oracle-order-api';
 
 export async function GET(request: Request) {
   try {
@@ -11,7 +11,7 @@ export async function GET(request: Request) {
     const orderId = requestUrl.searchParams.get('orderId') ?? '';
 
     const tracking = isLocalStudioRequest(request) ? await getStagedRebirthTracking(orderId)
-      : oraclePreviewEnabled() ? await trackOracleOrder(orderId)
+      : oracleOrdersEnabled() ? await trackOracleOrder(orderId)
       : await getPublicOrderTrackingOrThrow(orderId);
 
     return NextResponse.json({
