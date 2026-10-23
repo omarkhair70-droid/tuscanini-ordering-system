@@ -77,6 +77,13 @@
 
 ---
 
+### HTTPS API readiness success / Vercel next gate (23 Oct 2026)
+
+- User reports the public `https://tuscanini-orders-api.duckdns.org/readyz` URL returned `{"ok":true}` **successfully** after setting DuckDNS/Coolify domain and deploying route. Previously confirmed Coolify Healthy. This proves success **in the user's browser**, not independent remote verification by this assistant.
+- Vercel project environment inventory (read-only, not decrypted) currently includes Supabase variables but **none** of `ORDER_API_ORIGIN`, `ORDER_API_SERVICE_KEY`, `TUSCANINI_OPERATOR_KEY`, `ORDER_BACKEND`.
+- Next manual Vercel Preview (prefer scoped only to branch `redesign/tuscanini-authored-experience-20261018`): add server-only `ORDER_API_ORIGIN=https://tuscanini-orders-api.duckdns.org/`; copy existing Coolify `ORDER_API_SERVICE_KEY` securely into Vercel (not NEXT_PUBLIC); create a **different** 24+ random character `TUSCANINI_OPERATOR_KEY` for staff routes; leave `ORDER_BACKEND` unset/off and `ORDER_API_ACCEPT_ORDERS=no` until catalog, auth, remote action and an actual live checkout are reviewed. Keep `TUSCANINI_ALLOW_CATALOG_SYNC` unset or `no` until menu is approved.
+- Secrets must never be pasted in chat/screenshots or committed. After adding variables, redeploy preview for env changes to take effect. Confirm unauthorized `/v1/operator/orders` returns 403 and private tracking doesn't leak PII; test staff gate before enabling orders.
+
 ### DuckDNS hostname added in Coolify (23 Oct 2026)
 
 - User screenshot shows `tuscanini-orders-api.duckdns.org` registered at DuckDNS, then Coolify `tuscanini-orders-api → Domains` lists HTTPS root hostname on internal port **8080**, an additional `www.` hostname on port **8080**, and prior generated HTTP `sslip.io` hostname. **All DNS statuses were `Not checked`; `Changes pending` showed deployment configuration not applied yet.**
