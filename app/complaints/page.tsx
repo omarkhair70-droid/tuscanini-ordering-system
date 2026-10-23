@@ -21,20 +21,20 @@ export default async function ComplaintsPage() {
     <ExperienceHeader />
     <main>
       <header className="t-complaints-hero t-shell">
-        <div className="t-complaints-hero__meta"><span>توسكانيني / مساعدة وشكاوى</span><span lang="en">HELP / REACH TUSCANINI</span></div>
+        <div className="t-complaints-hero__meta"><span>توسكانيني / مساعدة وشكاوى</span><span lang="en">TUSCANINI / HELP</span></div>
         <div className="t-complaints-hero__grid">
-          <div><span className="t-index">01 — TELL US WHAT HAPPENED</span><h1>حصلت<br/><em>مشكلة؟</em></h1></div>
+          <div><span className="t-index">مساعدة</span><h1>حصلت<br/><em>مشكلة؟</em></h1></div>
           <div className="t-complaints-hero__aside">
-            <p>قولنا إيه اللي حصل في الطلب أو الخدمة. هنجهزلك رسالة فيها التفاصيل علشان تبعتها للمطعم بنفسك على واتساب.</p>
+            <p>مشكلة في الأوردر أو الخدمة؟ احكيلنا اللي حصل.</p>
             <a href="#t-complaints-form">اكتب التفاصيل <span aria-hidden="true">↓</span></a>
           </div>
         </div>
       </header>
       <section className="t-complaints-body t-shell" aria-labelledby="t-complaints-form-title">
         <div className="t-complaints-body__info">
-          <span className="t-index" lang="en">02 — YOUR MESSAGE</span>
+          <span className="t-index" lang="en">تفاصيل المشكلة</span>
           <h2 id="t-complaints-form-title">كل التفاصيل<br/><em>تفرق.</em></h2>
-          <p>مش هنقول إن الشكوى اتسجلت في نظام المطعم لمجرد إنك كتبتها هنا. الإرسال الفعلي بيتم من واتساب بعد ما تراجع الرسالة.</p>
+          <p>اكتب تفاصيل المشكلة ورقم الأوردر لو معاك. هتراجع الرسالة قبل إرسالها على واتساب.</p>
           <div className="t-complaints-body__side-links">
             <Link href="/contact">عايز تتصل بالمطعم؟ <span aria-hidden="true">↗</span></Link>
             <Link href="/reviews">شارك رأيك عن التجربة <span aria-hidden="true">↗</span></Link>
