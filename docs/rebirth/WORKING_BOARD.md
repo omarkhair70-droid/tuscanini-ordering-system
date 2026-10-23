@@ -93,6 +93,14 @@
 - **Current blockers:** need new Vercel deployment picking up env changes, then verify /api/studio/bridge unauthorized 403 and signed remote requests; confirm actual menu/catalog, test one deliberately marked synthetic order with approved temporary prices and no real customer PII, then enable intake only when staff-screen behavior is verified. A deployment from `main` won't gain the branch's new functionality just because env targets match.
 - **Security:** sharing secrets into the Preview environment means they can be present in other Preview deployments of this project, not only this branch. Restrict Preview to approved branches or use per-branch credentials before adding untrusted PR contributors. Do not put keys in browser URLs, screenshots, client bundles, or the board.
 
+### Production readiness follow-through / deployment limitation (23 Oct 2026)
+
+- New customer carts now default to **pickup** in `lib/cart-storage.ts`; existing stored delivery drafts are automatically converted to pickup by runtime policy if delivery is disabled. Both server route branches reject unapproved delivery even if browser JS bypasses controls.
+- Public `GET /api/public/site-settings` is explicitly dynamic with browser + CDN `no-store` response headers, avoiding stale open/closed state during operations. Customer order tracking is similarly uncacheable/noindex.
+- **Attempted a single Vercel Preview deployment** for latest PR SHA through connected API. Vercel returned **HTTP 402 api-deployments-free-per-day** (Hobby, more than 100 deploys). The code is committed, but this latest change set is NOT YET proven present on a READY deployment. Do not suggest repeated attempts circumventing the quota.
+- PostgreSQL API integration, Home and Backend V2 suites succeeded on immediate prior branch commit; Browser screenshot E2E for modified pickup-only flow was still running at last check. Later commits will require independently checking their own CI.
+- Remaining merchant/go-live requirements unchanged: approved current historical menu/prices, real delivery service area/fee if offered, staff operations, Oracle application rebuild with revised subtotal-lock code, backups, live Cart→Oracle on physical devices, and intentional production cutover. Test intake flags remain user-reported OFF; PR #59 stays Draft.
+
 ### Production readiness: pickup-first and private tracking (23 Oct 2026)
 
 - **Owner explicitly confirmed the goal is a real 100%-ready restaurant ordering site**, not perpetual demo. This sprint improves release suitability while leaving public intake flags unchanged and PR #59 Draft.
