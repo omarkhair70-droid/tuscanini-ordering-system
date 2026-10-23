@@ -4,6 +4,13 @@
 
 > **Start here in every new chat, and update this SAME FILE after every meaningful feature/review.** This is the current execution and coverage index; historical `00–38`, original research, the HTML reference and technical handoffs remain evidence, not competing "next task" lists. Use the current GitHub PR HEAD and Actions results if newer; never assume this snapshot is the HEAD forever.
 
+### Vercel-to-Oracle authenticated operator screen live (23 Oct 2026)
+
+- **User confirmed real two-service roundtrip:** on latest branch Preview `/operator/orders`, they entered their distinct staff key privately and the connected queue returned **0 orders / success**, consistent with the earlier authenticated Oracle API inbox returning `HTTP 200 Orders: 0`. This is the first user-confirmed **Vercel operator UI → Next.js authenticated bridge → HTTPS Oracle API → dedicated PostgreSQL** connection, not a demo queue.
+- Previous negative tests also returned unauthenticated `403` from both the public Oracle inbox and Vercel bridge. These are basic positive/negative authorization proofs; not a substitute for long-session, credentials rotation, throttling, replay, access expiry and real hardware tests.
+- **NEXT ORDER TEST STILL OPEN:** historical menu data must be explicitly seeded/verified inside `tuscanini.menu_catalog`; main public site settings currently `isOrderingOpen:false`, Oracle `ORDER_API_ACCEPT_ORDERS=no` and catalog sync `CATALOG_SYNC_ENABLED=no`. Do not imply customer checkout works just because staff inbox shows zero.
+- Controlled next test should use a **clearly marked synthetic fixture**, fake contact information, and server-calculated price. Demonstrate order create/retry/tracking and staff accept→prep→ready→handoff, and prevent accidental real customer orders; remove/archive demo fixtures afterward. Only then review owner-approved catalog/fees/payment policy before real intake.
+
 ### Current Vercel branch deployment recovered and verified (23 Oct 2026)
 
 - Despite the earlier **402 Hobby manual create-deployment** error, Vercel now shows a **READY** deployment at commit `fde12d471fd88e8bac50fcbcee972608a5134213`: `https://tuscanini-ordering-system-bwmwi45xj-omarkhair70-droids-projects.vercel.app/`. The deployment was already created automatically; no fresh manual deployment was needed.
