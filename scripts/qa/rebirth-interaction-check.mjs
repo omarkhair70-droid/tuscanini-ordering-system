@@ -635,6 +635,39 @@ try {
         '390px saved customer order exposes a private tracking-link copy control');
       await completed.close();
     }
+    // Fail-closed merchant fulfilment: an old persisted delivery draft must
+    // never become a new unpriced delivery order when delivery is not approved.
+    if(width===390){
+      const pickupOnly=await browser.newContext({viewport:{width,height:844},reducedMotion:'reduce'});
+      await pickupOnly.addInitScript(()=>{
+        localStorage.setItem('tuscanini-cart-v1',JSON.stringify({
+          items:[{lineId:'pickup-fallback',kind:'product',productId:'ct3',productName:'تشيكن فاير',
+            selectedSize:{id:'single',label:'سعر واحد',price:125},selectedAddons:[],
+            quantity:1,unitPrice:125,totalItemPrice:125,itemNotes:''}],
+          customer:{name:'عميل قديم',phone:'01000000000',
+            address:'عنوان محفوظ من دليفري قديم',orderType:'delivery',
+            generalNotes:'',confirmedAccurateDetails:true},tableReference:null,
+        }));
+      });
+      await pickupOnly.route('**/api/public/site-settings',route=>route.fulfill({
+        status:200,contentType:'application/json',
+        body:JSON.stringify({ok:true,settings:{
+          isOrderingOpen:true,deliveryEnabled:false,whatsappOrderNumber:'',
+        }}),
+      }));
+      const guarded=await pickupOnly.newPage();
+      await guarded.goto(baseUrl+'/cart',{waitUntil:'networkidle',timeout:30000});
+      const deliveryRadio=guarded.getByRole('radio',{name:/دليفري/});
+      const pickupRadio=guarded.getByRole('radio',{name:'استلام من المطعم'});
+      await pickupRadio.waitFor({state:'visible',timeout:8000});
+      await check(await deliveryRadio.isDisabled() && await pickupRadio.isChecked() &&
+        await guarded.getByText(/الطلب متاح للاستلام من المطعم فقط/).count()===1 &&
+        await guarded.locator('#t-checkout-address').count()===0,
+        '390px stored delivery order converts to pickup when merchant delivery is disabled');
+      await check(!(await guarded.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).isChecked()),
+        '390px changing delivery to pickup invalidates a previously checked order review');
+      await pickupOnly.close();
+    }
     // Isolated tracking fixture validates state semantics, not a real restaurant order.
     // All WhatsApp actions are captured as URL attributes, NEVER opened or sent.
     // A successful page view must not mutate a restaurant order.
