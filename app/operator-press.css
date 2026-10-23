@@ -291,3 +291,13 @@
 .op-health__catalog:disabled{opacity:.45;cursor:not-allowed}
 .op-health__catalog:focus-visible{outline:3px solid var(--red);outline-offset:3px}
 @media(max-width:500px){.op-health__catalog{grid-column:1/-1;font-size:11px}}
+
+/* The same real ticket is viewable from the customer's existing order-tracking screen.
+   Never offer a public tracking link for local synthetic display orders. */
+.op-ticket__customer-view{
+  display:inline-flex;align-items:center;min-height:40px;margin-top:11px;
+  padding:6px 1px;color:var(--ink);border-bottom:2px solid var(--red);
+  font-size:12px;font-weight:900;text-decoration:none
+}
+.op-ticket__customer-view:hover{color:var(--red)}
+.op-ticket__customer-view:focus-visible{outline:3px solid #287bd6;outline-offset:3px}
