@@ -127,6 +127,13 @@ function OrderTicket({order,preview,pending,onAction,compact=false}:{
       {order.customer_snapshot?.phone&&<span>☎ {order.customer_snapshot.phone}</span>}
       {order.customer_snapshot?.address&&<span>{order.customer_snapshot.address}</span>}
     </div>}
+    {!preview && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(order.id) &&
+      <a className="op-ticket__customer-view"
+        href={'/order-success?orderId='+encodeURIComponent(order.id)}
+        target="_blank" rel="noopener noreferrer"
+        aria-label={'افتح متابعة العميل للطلب '+short(order.id)}>
+        افتح تذكرة متابعة العميل ↗
+      </a>}
     <div className="op-ticket__bottom"><strong>{money(order.subtotal_cents)}</strong><OrderActions order={order}
       preview={preview} pending={pending} onAction={onAction}/></div>
   </article>;
