@@ -4,11 +4,13 @@ on:
   pull_request:
     paths:
       - "services/orders-api/**"
+      - "infra/oracle/postgres.compose.yaml"
       - ".github/workflows/tuscanini-orders-service.yml"
   push:
     branches: ["redesign/**"]
     paths:
       - "services/orders-api/**"
+      - "infra/oracle/postgres.compose.yaml"
       - ".github/workflows/tuscanini-orders-service.yml"
   workflow_dispatch:
 
@@ -51,6 +53,15 @@ jobs:
         run: |
           npm run typecheck --prefix services/orders-api
           npm run build --prefix services/orders-api
+      - name: Validate exact Coolify Compose and production container build
+        env:
+          TUSCANINI_DB_NAME: tuscanini_orders
+          TUSCANINI_DB_USER: tuscanini_app
+          TUSCANINI_DB_PASSWORD: only-a-ci-placeholder-not-a-production-secret
+          TUSCANINI_ORDER_API_SERVICE_KEY: only-a-ci-placeholder-very-long-not-live
+        run: |
+          docker compose -f infra/oracle/postgres.compose.yaml config -q
+          docker build -f services/orders-api/Dockerfile -t tuscanini-orders-api:ci services/orders-api
       - name: Apply additive Tuscanini schema on disposable CI Postgres
         run: npm run migrate --prefix services/orders-api
       - name: Assert authenticated HTTP actions, cart idempotency and private tracking
