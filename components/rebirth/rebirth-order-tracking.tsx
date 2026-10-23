@@ -175,11 +175,11 @@ export function RebirthOrderTracking({orderId}:{orderId:string}) {
         </div>
         <div className="t-order-story__hero">
           <div className="t-order-story__headcopy">
-            <span className="t-order-story__eyebrow">اللي نعرفه عن طلبك دلوقتي</span>
+            <span className="t-order-story__eyebrow">حالة طلبك</span>
             <h2 id="t-order-track-title" aria-live="polite" aria-atomic="true">
               {loading?'بنتحقق من الطلب…':status?.label??'محتاجين نتأكد.'}
             </h2>
-            <p>{status?.description??'هنعرض الحالة اللي المطعم سجّلها، من غير ما نفترض إنه بدأ يجهز الطلب.'}</p>
+            <p>{status?.description??'تابع آخر حالة سجّلها المطعم لطلبك.'}</p>
           </div>
           <div key={stampedText} className="t-order-story__seal" aria-hidden="true">
             <span className="t-order-story__seal-mark">T<span aria-hidden="true">✳</span></span>
@@ -189,7 +189,7 @@ export function RebirthOrderTracking({orderId}:{orderId:string}) {
 
         <div className="t-order-story__rule" aria-hidden="true"><span>01</span><span>02</span><span>03</span></div>
         <div className="t-order-story__facts-heading">
-          <strong>ورقة الطلب بتتحرّك مع كل تحديث حقيقي.</strong>
+          <strong>آخر تحديثات طلبك</strong>
           <span lang="en">ONLY RECORDED FACTS</span>
         </div>
         {order&&(
@@ -223,7 +223,7 @@ export function RebirthOrderTracking({orderId}:{orderId:string}) {
             </span>
           </div>
         </div>
-        <p className="t-order-tracking__cadence">الصفحة بتراجع حالة الطلب كل ١٥ ثانية وهي مفتوحة. من غير وعد بوقت تجهيز أو توصيل مش مؤكد.</p>
+        <p className="t-order-tracking__cadence">حالة الطلب بتتحدّث تلقائيًا كل ١٥ ثانية والصفحة مفتوحة.</p>
         {order&&<section className="t-order-assist" aria-labelledby="t-order-assist-title">
           <div className="t-order-assist__head">
             <span className="t-index">NEED SOMETHING CHANGED?</span>
@@ -249,7 +249,7 @@ export function RebirthOrderTracking({orderId}:{orderId:string}) {
               ? <a href={supportLink} target="_blank" rel="noopener noreferrer">راسل المطعم برقم الطلب ↗</a>
               : <Link href="/contact">شوف طرق التواصل مع المطعم ↗</Link>}
           </div>
-          <small>الرسالة بتتجهز في واتساب، لكن لازم تراجعها وتضغط إرسال بنفسك. مفيش إلغاء أو رد أموال أو تعديل بيتم من الزر ده.</small>
+          <small>الرسالة بتتجهز في واتساب، لكن لازم تراجعها وتضغط إرسال بنفسك. التعديل أو الإلغاء محتاج تأكيد من المطعم.</small>
         </section>}
       </div>
       <div className="t-order-tracking__details">
