@@ -4,6 +4,13 @@
 
 > **Start here in every new chat, and update this SAME FILE after every meaningful feature/review.** This is the current execution and coverage index; historical `00–38`, original research, the HTML reference and technical handoffs remain evidence, not competing "next task" lists. Use the current GitHub PR HEAD and Actions results if newer; never assume this snapshot is the HEAD forever.
 
+### Full synthetic order operator lifecycle reported successful (23 Oct 2026)
+
+- **User now reports `Success`** after being asked to click the four steps on the real Vercel `Operator Press` for the PostgreSQL-backed trial ticket: `accept → start → ready → deliver`. Treat staff-side lifecycle as **user-reported successful**. Order persistence after a hard browser refresh and the PostgreSQL event ledger are **not independently audited**; verify with a read-only query if needed.
+- Import had already succeeded on deployed Oracle: `SYNC: 200 {"ok":true,"count":113}`; `MENU: { total: 113, available: 113 }`. Both 113-SKU menu prices and this 145 EGP order are **synthetic/historical test data**, not merchant-accepted revenue.
+- **Immediate security/operational shutdown after test:** in only Tuscanini Coolify app set `ORDER_API_ACCEPT_ORDERS=no`, `CATALOG_SYNC_ENABLED=no`; Save and Deploy, confirm Healthy. Do not assume toggles are OFF without user confirmation. Vercel `TUSCANINI_ALLOW_CATALOG_SYNC=no` was already set server-side. The store's `isOrderingOpen` setting is still `false` in previously fetched deployed Preview.
+- **Next G03 checkout gate:** the ordinary customer Checkout reads `GET /api/public/site-settings` and disables submission when `isOrderingOpen=false`, and `/api/orders` independently requires ordering open. Therefore a real customer Cart→Checkout→Oracle test cannot currently be run without a controlled staff-only test bypass of BOTH guards, or opening the public store. Prefer **staff-authenticated temporary QA checkout** that never flips the public storefront ordering flag, never uses real customer contact information, and never claims restaurant readiness. Do not open live checkout to all visitors simply to demonstrate one test.
+
 ### Oracle synthetic live order visible in Vercel operator UI (23 Oct 2026)
 
 - **User screenshot confirmed first end-to-end API-to-operator ticket:** hosted Preview `/operator/orders` rendered **LIVE QUEUE 1**, **INCOMING 1**, and real ticket customer name `اختبار توسكانيني - لا تحضر`, note `تجربة تقنية فقط - لا تحضر أي طعام`, product `تشيكن فاير` x1 with selected size `سعر واحد` and `موتزاريلا`, `145 ج.م` subtotal from Oracle DB catalog. This is the *real PostgreSQL-backed order* created directly through authenticated API from the deployed container, not client-side synthetic 20-order preview.
