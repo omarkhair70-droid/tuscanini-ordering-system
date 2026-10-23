@@ -93,6 +93,13 @@
 - **Current blockers:** need new Vercel deployment picking up env changes, then verify /api/studio/bridge unauthorized 403 and signed remote requests; confirm actual menu/catalog, test one deliberately marked synthetic order with approved temporary prices and no real customer PII, then enable intake only when staff-screen behavior is verified. A deployment from `main` won't gain the branch's new functionality just because env targets match.
 - **Security:** sharing secrets into the Preview environment means they can be present in other Preview deployments of this project, not only this branch. Restrict Preview to approved branches or use per-branch credentials before adding untrusted PR contributors. Do not put keys in browser URLs, screenshots, client bundles, or the board.
 
+### Oracle Coolify deployment success confirmed / studio CI regression addressed (23 Oct 2026)
+
+- **User reports Coolify `tuscanini-orders-api` Deploy completed `Success`** after being instructed to keep `ORDER_API_ACCEPT_ORDERS=no` and `CATALOG_SYNC_ENABLED=no` and use Deploy (not Restart) to rebuild image from the branch. This confirms successful deployment as reported; `Healthy` **was not separately confirmed** in this turn. Database was not touched, secrets unmodified, and this was not an authorization to enable real order intake.
+- On latest board HEAD `b99d95e4`, three GitHub suites SUCCESS (Home, Dedicated API PostgreSQL, Browser Screenshots), while **Backend V2 PostgreSQL Spike** failed in `studio-next-integration` browser at `scripts/qa/rebirth-studio-two-window-browser.mjs:60`: Playwright waited for a delivery-address placeholder after checkout default changed to pickup. Prior backend/DB portion **passed**; a test assumption about the old default caused the failure, not PostgreSQL data loss.
+- Fixed that regression in commit `bd5d7e63` by explicitly selecting and confirming `pickup` and asserting the delivery-address field is absent, while preserving the actual two-window customer↔tablet flow. **Fix committed, must verify new CI run conclusion before calling suite green.**
+- Latest Vercel Preview READY observed at SHA `1ff953d6` while code edits are ahead; do not infer current Preview contains all new production-readiness behavior. Public `isOrderingOpen=false` previously verified; merchant menu prices remain historical/unapproved. PR #59 Draft.
+
 ### Production readiness follow-through / deployment limitation (23 Oct 2026)
 
 - New customer carts now default to **pickup** in `lib/cart-storage.ts`; existing stored delivery drafts are automatically converted to pickup by runtime policy if delivery is disabled. Both server route branches reject unapproved delivery even if browser JS bypasses controls.
