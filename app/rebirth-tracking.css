@@ -18,6 +18,7 @@
 .t-order-story__seal-mark{font:clamp(40px,6vw,76px)/.85 Anton,Impact,sans-serif;direction:ltr;letter-spacing:-.09em}
 .t-order-story__seal-mark span{font-size:.38em;vertical-align:top;letter-spacing:0}
 .t-order-story__seal-text{font:clamp(10px,1.6vw,17px)/1.2 Anton,Impact,sans-serif;letter-spacing:.04em;direction:ltr;max-width:90%;overflow-wrap:anywhere}
+.t-order-tracking[data-current-status="declined"] .t-order-story__seal,
 .t-order-tracking[data-current-status="cancelled"] .t-order-story__seal,
 .t-order-tracking[data-current-status="unreachable"] .t-order-story__seal{border-color:#a71714;color:#a71714}
 .t-order-tracking[data-current-status="delivered"] .t-order-story__seal{border-color:#386642;color:#386642}
