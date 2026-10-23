@@ -26,13 +26,13 @@ export default function AboutPage() {
         <section className="t-about-hero t-shell" aria-labelledby="t-about-title">
           <div className="t-about-hero__meta">
             <span>توسكانيني / بني سويف</span>
-            <span lang="en">THE PEOPLE / THE FOOD / THE PLACE</span>
+            <span lang="en">TUSCANINI / BENI SUEF</span>
           </div>
           <div className="t-about-hero__grid">
             <div className="t-about-hero__copy">
-              <span className="t-index">مش مجرد صورة للأكل</span>
+              <span className="t-index">توسكانيني / بني سويف</span>
               <h1 id="t-about-title">ناس، أكل،<br/><em>ومكان.</em></h1>
-              <p>هنا توسكانيني في بني سويف. أكل ظاهر على حقيقته، ناس بتقدمه، وتفاصيل تقدر تشوفها بعينك.</p>
+              <p>ده توسكانيني في بني سويف. أكلنا، مكاننا، والناس اللي بتقابلك عندنا.</p>
               <div className="t-about-hero__links">
                 <Link href="/menu">شوف المنيو <span aria-hidden="true">↗</span></Link>
                 <Link href="/contact">المكان والتواصل <span aria-hidden="true">↗</span></Link>
@@ -50,7 +50,7 @@ export default function AboutPage() {
             <span className="t-index">01 / FROM THE RESTAURANT</span>
             <div>
               <h2 id="t-about-observed-title">بص للتفاصيل.</h2>
-              <p>الأكل اللي قدامك، الشعار اللي في المكان، والعلب المطبوعة. كل صورة هنا بتوريك جانب مختلف من توسكانيني.</p>
+              <p>صور من داخل توسكانيني، من الأكل للتفاصيل اللي بتشوفها عندنا.</p>
             </div>
           </div>
           <div className="t-about-observed__photos t-shell">
@@ -63,7 +63,7 @@ export default function AboutPage() {
               <figcaption><strong>على العلبة</strong><span lang="en">TSC / 08</span></figcaption>
             </figure>
           </div>
-          <p className="t-about-observed__note t-shell">الصور من المطعم نفسه، ومش بديل عن وصف الصنف أو سعره في المنيو.</p>
+          <p className="t-about-observed__note t-shell">عايز تشوف الأصناف والأسعار؟ هتلاقيهم في المنيو.</p>
         </section>
 
         <section className="t-about-visit" aria-labelledby="t-about-visit-title">
