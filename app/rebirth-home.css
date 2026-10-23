@@ -292,3 +292,31 @@
   .t-page .t-index:lang(ar){font-size:12px}
   .t-hero h1{line-height:1.05;letter-spacing:0}
 }
+
+/* Active order: a compact shared on-site status strip, not native notification
+   chrome. The status comes from the same authenticated-by-order-id tracking
+   endpoint as the full customer ticket. Never display invented ETAs. */
+.t-order-strip{
+  display:flex;align-items:center;justify-content:flex-start;gap:12px;
+  min-height:47px;padding:5px clamp(22px,4.7vw,80px);
+  border-top:1px solid #ffffff22;background:var(--ink);color:var(--paper);
+  font:700 13px/1.5 "IBM Plex Sans Arabic",Tahoma,Arial,sans-serif
+}
+.t-order-strip__dot{
+  flex:0 0 9px;width:9px;height:9px;border-radius:50%;
+  background:var(--yellow);box-shadow:0 0 0 3px #f5cd4e25
+}
+.t-order-strip__caption{white-space:nowrap;opacity:.76}
+.t-order-strip__status{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.t-page .t-order-strip__link{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  flex-shrink:0;min-height:42px;padding-inline:14px;
+  background:var(--yellow);color:var(--ink);font-weight:900;text-decoration:none
+}
+.t-page .t-order-strip__link:hover{background:var(--paper)}
+.t-page .t-order-strip__link:focus-visible{outline:3px solid #67a6ff;outline-offset:2px}
+@media(max-width:720px){
+  .t-order-strip{gap:8px;padding:4px 12px;font-size:12px}
+  .t-order-strip__caption{display:none}
+  .t-page .t-order-strip__link{padding-inline:10px;min-height:42px;font-size:12px}
+}
