@@ -31,9 +31,14 @@ export function operatorPasskeyAllowed(request:Request):boolean{
 async function call(path:string,method:'GET'|'POST'='GET',payload?:unknown):Promise<Record<string,unknown>>{
   const {url,serviceKey}=connection();
   const destination=new URL(path.replace(/^\//,''),url);
-  const reply=await fetch(destination,{method,cache:'no-store',
-    headers:{'x-tuscanini-service-key':serviceKey,...(payload===undefined?{}:{'content-type':'application/json'})},
-    body:payload===undefined?undefined:JSON.stringify(payload),signal:AbortSignal.timeout(10000)});
+  let reply:Response;
+  try{
+    reply=await fetch(destination,{method,cache:'no-store',
+      headers:{'x-tuscanini-service-key':serviceKey,...(payload===undefined?{}:{'content-type':'application/json'})},
+      body:payload===undefined?undefined:JSON.stringify(payload),signal:AbortSignal.timeout(10000)});
+  }catch{
+    throw new OracleOrderError('خدمة الطلبات مش متاحة دلوقتي.',503);
+  }
   let json:unknown;
   try{json=await reply.json()}catch{throw new OracleOrderError('خدمة الطلبات مش متاحة دلوقتي.',503)}
   if(!json||typeof json!=='object'||Array.isArray(json))throw new OracleOrderError('استجابة الطلب مش واضحة.',502);
