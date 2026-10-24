@@ -114,7 +114,6 @@ export function getRepresentativeMenuPhoto(id:string,category:MenuCategorySlug,n
   else if(category.startsWith('sandwiches-'))photos=samples.sandwich;
   else if(category==='pasta')photos=samples.pasta;
   else if(category==='waffle')photos=samples.waffle;
-  else if(category==='drinks')photos=samples.drinks;
   else if(category==='appetizers')photos=samples.sides;
   else return null;
   return photos[consistentIndex(id,photos.length)];
