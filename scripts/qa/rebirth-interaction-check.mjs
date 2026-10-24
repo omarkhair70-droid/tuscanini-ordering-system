@@ -171,6 +171,8 @@ try {
     await check(await page.locator('.t-menu-intro__photo').count()===2,
       `${width}px Menu photo context does not imply named products`);
 
+    await check(await page.locator('.t-menu-intro__copy #t-menu-search #t-menu-query').count()===1 && await page.locator('.t-menu-content #t-menu-search').count()===0,
+      `${width}px direct search is accessible in the first menu scene, before the photo pair`);
     await check(await page.getByRole('searchbox', { name: /دور على أكلك/ }).count() === 1, `${width}px direct menu search exposed`);
     await check(await page.getByRole('button', { name: 'كل الأصناف' }).count() === 1, `${width}px food filter exposed`);
     await check(await page.locator('.t-menu-categories__scroller button .t-menu-category-glyph').count()===17,
@@ -222,6 +224,9 @@ try {
        `${width}px product options open from food imagery without motion when reduced`);
      await page.getByRole('button',{name:'إغلاق تفاصيل المنتج'}).click();
      await page.getByRole('searchbox',{name:/دور على أكلك/}).fill('تشيكن فاير');
+    await check(await page.locator('.t-menu-search__feedback').getByText(/نتيجة من المنيو كله/).count()===1 &&
+      await page.locator('.t-menu-search__feedback button').count()===1,
+      `${width}px typed menu search gives inline result count and a direct results jump`);
     const duplicateFlavors=await page.locator('.t-menu-product h3').allInnerTexts();
     await check(duplicateFlavors.length>=2 &&
       duplicateFlavors.every(name=>name==='تشيكن فاير'),

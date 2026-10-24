@@ -409,3 +409,51 @@
 .t-menu-search__scope:before{content:"";width:7px;height:7px;background:var(--red);transform:rotate(45deg);flex:none}
 .t-menu-search input:focus-visible{outline:3px solid #257ae8;outline-offset:5px}
 @media(max-width:420px){.t-menu-search__scope{font-size:11px}.t-menu-items__heading{align-items:start;flex-wrap:wrap}}
+
+/* First useful action shares the Menu intro with the restaurant's own photos.
+   The photos remain documentary; the search is no longer one scroll below them. */
+.t-menu-page .t-menu-intro .t-menu-search{
+  margin-top:clamp(18px,2.4vw,28px);
+  max-width:540px;
+  padding:clamp(14px,1.8vw,24px);
+  background:var(--paper);
+  color:var(--ink);
+  border:2px solid var(--yellow)
+}
+.t-menu-page .t-menu-intro .t-menu-search label{
+  font:800 clamp(18px,2.05vw,25px)/1.35 "Changa",Tahoma,sans-serif;
+  margin-bottom:7px
+}
+.t-menu-page .t-menu-intro .t-menu-search__inputrow{border-bottom-width:2px}
+.t-menu-page .t-menu-intro .t-menu-search input{
+  font-size:16px;
+  min-height:42px;
+  padding:8px 0 10px
+}
+.t-menu-page .t-menu-intro .t-menu-search__feedback{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px 14px;
+  padding-top:12px;
+  font:800 12px/1.6 "IBM Plex Sans Arabic",Tahoma,sans-serif
+}
+.t-menu-page .t-menu-intro .t-menu-search__feedback button{
+  background:var(--yellow);
+  color:var(--ink);
+  padding:9px 12px;
+  min-height:42px;
+  font-size:12px;
+  font-weight:800
+}
+.t-menu-page .t-menu-items__heading{scroll-margin-top:112px}
+@media(max-width:720px){
+  .t-menu-page .t-menu-intro .t-menu-search{margin-top:15px;padding:12px 14px}
+  .t-menu-page .t-menu-intro .t-menu-search label{font-size:18px;margin-bottom:4px}
+  .t-menu-page .t-menu-intro__photo-pair{height:clamp(165px,47vw,210px)}
+}
+@media(max-width:370px){
+  .t-menu-page .t-menu-intro .t-menu-search{padding:10px 12px}
+  .t-menu-page .t-menu-intro__photo-pair{height:170px}
+}

@@ -119,11 +119,19 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
             <div className="t-menu-intro__copy">
               <span className="t-index">FIND YOUR FOOD / TUSCANINI</span>
               <h1>كل اللي<br/><em>نفسك فيه.</em></h1>
-              <p>عارف طلبك؟ دوّر عليه بالاسم. لسه بتختار؟ ابدأ من قسم الأكل اللي على مزاجك.</p>
+              <p>عارف أكلك؟ دوّر عليه بالاسم. ولسه بتختار؟ ابدأ من الأقسام.</p>
               <nav className="t-menu-intro__actions" aria-label="اختصارات المنيو">
                 <a className="t-menu-intro__jump" href="#t-menu-search">دور بالاسم <span aria-hidden="true">↓</span></a>
                 <a className="t-menu-intro__jump t-menu-intro__jump--secondary" href="#t-menu-categories">تصفح الأقسام <span aria-hidden="true">↓</span></a>
               </nav>
+              <section aria-label="ابحث عن الأصناف" className="t-menu-search" id="t-menu-search">
+                <label htmlFor="t-menu-query">دور على أكلك بالاسم</label>
+                <div className="t-menu-search__inputrow">
+                  <input id="t-menu-query" type="search" autoComplete="off" maxLength={80} value={query} onChange={event=>searchAcrossMenu(event.target.value)} onKeyDown={event=>{if(event.key==='Enter' && !event.nativeEvent.isComposing){event.preventDefault();document.getElementById('t-menu-items-title')?.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});}}} placeholder="تشيكن فاير، بيتزا، كريب..." />
+                  {query && <button type="button" onClick={()=>{setQuery('');setLimit(PAGE_SIZE);}}>امسح البحث</button>}
+                </div>
+                {query.trim() && <div className="t-menu-search__feedback"><span role="status" aria-live="polite">{filtered.length} نتيجة من المنيو كله</span><button type="button" onClick={()=>document.getElementById('t-menu-items-title')?.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}>شوف النتائج ↓</button></div>}
+              </section>
             </div>
             <div className="t-menu-intro__photo-pair" aria-label="صور حقيقية عامة من المطعم، وليست صور أصناف محددة في المنيو">
               <figure className="t-menu-intro__photo t-menu-intro__photo--main">
@@ -140,14 +148,6 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
           <div className="t-menu-intro__bottom"><span>اختار الأكل اللي على مزاجك.</span><Link href="/food-finder">مش عارف تختار؟ <span aria-hidden>↗</span></Link></div>
         </header>
         <div className="t-shell t-menu-content">
-          <section aria-label="ابحث عن الأصناف" className="t-menu-search" id="t-menu-search">
-            <label htmlFor="t-menu-query">دور على أكلك بالاسم</label>
-            <div className="t-menu-search__inputrow">
-              <input id="t-menu-query" type="search" autoComplete="off" maxLength={80} value={query} onChange={event=>searchAcrossMenu(event.target.value)} placeholder="تشيكن فاير، بيتزا، كريب..." />
-              {query && <button type="button" onClick={()=>{setQuery('');setLimit(PAGE_SIZE);}}>امسح البحث</button>}
-            </div>
-            {query.trim() && <p className="t-menu-search__scope">البحث في المنيو كله، مش في قسم واحد.</p>}
-          </section>
           <p className="t-menu-source-note" role="note" data-visual-disclosure="menu">{source.note}</p>
           <section id="t-menu-categories" aria-label="أقسام المنيو" className="t-menu-categories">
             <div className="t-menu-categories__heading"><span className="t-index">01 — PICK A FOOD FAMILY</span><span>{categories.length} قسم</span></div>

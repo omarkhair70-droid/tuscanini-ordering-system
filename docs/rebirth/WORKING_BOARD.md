@@ -4,6 +4,13 @@
 
 > **Start here in every new chat, and update this SAME FILE after every meaningful feature/review.** This is the current execution and coverage index; historical `00–38`, original research, the HTML reference and technical handoffs remain evidence, not competing "next task" lists. Use the current GitHub PR HEAD and Actions results if newer; never assume this snapshot is the HEAD forever.
 
+### Creative Finish — Menu quick-find moves into first scene (24 Oct 2026)
+
+- Kept the authentic restaurant photo pair and editorial type, but moved the ONE existing menu search (not a duplicate form) into the first hero's copy so finding food does not require scrolling beyond documentary photography. It continues to search across all 16 food families and preserves deep-linked category semantics.
+- When a term is typed, show a live cross-menu result count and an explicit button to jump to the results; pressing Enter also takes the guest to those results, with reduced-motion respect. The original source/price disclaimer, all original 113 products, quantity/customization, and cart remain untouched.
+- Made the search card compact and legible against the black photo-led intro on 320/390, with mobile images shortened modestly to offset its new position, keeping two genuine photography sources. Browser QA updated to assert that exactly one search lives in the first scene and results have a visible quick jump.
+- This is a focused UI code change pending independent CI and fresh screenshots; not a completed visual signoff or production-ready menu. **No customer intake flags, Oracle catalog, merchant prices, or images changed.**
+
 ### New-chat exact resume checkpoint — 23 Oct 2026 (last reviewed)
 
 **User instruction:** Continue the actual existing Tuscanini Rebirth work, NOT a new design/codebase. User wants holistic creative/experience finishing, full on-site editorial pass, typography/illustrations/icons/photography, menu/cart/checkout/operator/tracking, all route copy free of cringe developer commentary, UI at desktop/mobile/tablet, contextual motion, references, and restaurant production-readiness, with no repeat image generation of the 100 generated images. Do not ask them to repeat goals or reintroduce 20 isolated Terminal tests.
