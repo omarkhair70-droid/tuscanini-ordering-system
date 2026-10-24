@@ -7,7 +7,7 @@ import type { MenuItem } from '@/types/menu';
 import { MaterialGlyph, categoryMaterialGlyph } from '@/components/rebirth/material-glyph';
 import { getVerifiedMenuPhoto } from '@/lib/rebirth/verified-menu-photographs';
 import { getRepresentativeMenuPhoto } from '@/lib/rebirth/representative-menu-photos';
-import { getGeneratedMenuPhoto } from '@/lib/rebirth/generated-menu-media';
+import { GENERATED_MEDIA_READY, getGeneratedMenuPhoto } from '@/lib/rebirth/generated-menu-media';
 
 /**
  * The 113 original menu entries deserve individually composed identities,
@@ -18,7 +18,7 @@ import { getGeneratedMenuPhoto } from '@/lib/rebirth/generated-menu-media';
  * category-specific forms, custom printed-label system and purposeful motion.
  *
  * The verified path only renders an approved exact SKU photo in local assets.
- * No stock photos, fabricated ingredients or generic-family-photo masquerading.
+ * No fabricated ingredients or generic-family-photo masquerading as verified dishes.
  */
 type Props = { item: Pick<MenuItem,'id'|'name'|'categorySlug'>; size?: 'compact'|'large'; className?:string; visualMode?:'art'|'representative' };
 function stableHash(text:string):number{
@@ -33,7 +33,10 @@ export function ProductArtwork({item,size='compact',className='',visualMode='art
   const [failedUrl,setFailedUrl]=useState<string|null>(null);
   const photo=getVerifiedMenuPhoto(item.id);
   const generated=visualMode==='representative'&&!photo?getGeneratedMenuPhoto(item.id,item.name,item.categorySlug):null;
-  const representative=visualMode==='representative'&&!photo&&!generated?getRepresentativeMenuPhoto(item.id,item.categorySlug):null;
+  // Once the committed 100-image archive is active, unmatched SKUs get branded
+  // graphic art instead of inaccurate remote stock food photos.
+  const representative=visualMode==='representative'&&!photo&&!generated&&!GENERATED_MEDIA_READY
+    ?getRepresentativeMenuPhoto(item.id,item.categorySlug,item.name):null;
   useEffect(()=>{setFailedUrl(null)},[item.id,representative?.src,generated?.src]);
   if(photo) return <div className={`t-product-art t-product-art--photo t-product-art--${size} ${className}`}>
     <Image src={photo.imagePath} alt={photo.altAr} fill sizes={size==='compact'?'(max-width:720px) 84px, 116px':'(max-width:720px) 160px, 230px'} />

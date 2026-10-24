@@ -187,8 +187,9 @@ try {
        await page.locator('.t-menu-view-switch').count()===0,
        `${width}px one food menu, not a three-mode graphic/gallery switch`);
     const expectedKind=generatedMediaReady?'generated-illustrative':'representative-stock';
-    await check(await page.locator('.t-menu-items__grid--photo [data-kind="'+expectedKind+'"]').count()===20,
-      `${width}px first 20 food cards use ${expectedKind} images with explicit source provenance`);
+    await check(await page.locator('.t-menu-items__grid--photo [data-kind="'+expectedKind+'"]').count()===19 &&
+      await page.locator('.t-menu-product [data-kind="original-graphic"][data-product-id="cx4"]').count()===1,
+      `${width}px 19 family-safe photo examples and a truthful custom tuna-crepe graphic`);
     await check(await page.locator('[data-visual-disclosure="menu"]').count()===1 &&
        (await page.locator('[data-visual-disclosure="menu"]').innerText()).includes('الصور للتوضيح') &&
        await page.locator('.t-menu-product .t-product-art__representative-label').count()===0,
@@ -208,9 +209,9 @@ try {
       },null,{timeout:12000});
       const distinct=[...new Set(imageSrcs)];
       const responses=await Promise.all(distinct.map(src=>page.request.get(new URL(src,baseUrl).toString())));
-      const loaded=imageSrcs.length===20&&distinct.length>=5&&
+      const loaded=imageSrcs.length===19&&distinct.length>=5&&
         responses.every(r=>r.status()===200&&(r.headers()['content-type']||'').includes('image/webp'));
-      await check(loaded,`${width}px all 20 generated food asset URLs return real local WebP files; lazy loading of offscreen cards stays intact`);
+      await check(loaded,`${width}px all 19 matching illustrative asset URLs return local WebP; unsupported tuna uses drawn art`);
     }
     const menuArt=await page.locator('.t-menu-product__identity .t-product-art').evaluateAll(elements=>({
        count:elements.length,

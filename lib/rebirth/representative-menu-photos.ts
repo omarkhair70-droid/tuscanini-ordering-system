@@ -99,10 +99,14 @@ function consistentIndex(value:string,limit:number):number{
   return hash%limit;
 }
 
-export function getRepresentativeMenuPhoto(id:string,category:MenuCategorySlug):RepresentativeMenuPhoto|null{
-  // "Crepe addons" are modifiers, not complete photographed meals.
-  // A generic stock food photograph would be actively misleading here.
-  if(category==='crepe-addons')return null;
+export function getRepresentativeMenuPhoto(id:string,category:MenuCategorySlug,name=''):RepresentativeMenuPhoto|null{
+  // Keep historical-photo fallbacks truthful even if generated media is explicitly disabled.
+  const normalized=name.normalize('NFKC').replace(/[إأآ]/g,'ا');
+  if(category==='crepe-addons'||category==='drinks')return null;
+  if(category==='crepe-mixed'&&/تونه|تونة/.test(normalized))return null;
+  if(category==='pizza-mixed'&&/تونه|تونة/.test(normalized))return null;
+  if(category==='sandwiches-french'&&/بوم فريت/.test(normalized))return null;
+  if(category==='appetizers'&&!/بطاطس|فرايز/.test(normalized))return null;
   let photos: readonly RepresentativeMenuPhoto[];
   if(category==='crepe-sweet')photos=samples.crepeSweet;
   else if(category.startsWith('crepe-'))photos=samples.crepeSavory;

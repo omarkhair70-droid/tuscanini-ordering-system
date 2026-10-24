@@ -43,7 +43,7 @@ function series(batch:number,start=1,end=10) {
   return Array.from({length:end-start+1},(_,i)=>image(batch,start+i));
 }
 const bank={
-  crepeBeef:[image(1,1),image(2,3),...series(4)],
+  crepeBeef:[...series(4)],
   crepeChicken:[image(1,2),image(2,2),image(2,4),...series(3)],
   crepeOther:[image(2,9),...series(5)],
   crepeSweet:[image(1,3),...series(6,1,6)],
@@ -52,8 +52,9 @@ const bank={
   pizzaMixed:[image(7,1),image(7,2),image(7,8),image(7,10)],
   pizzaSpecial:[image(1,4),image(1,5),image(2,1),...series(7)],
   pasta:[image(1,8),image(2,8),...series(9,1,5)],
-  frenchSandwich:[image(1,6),image(1,7),...series(8,5,10)],
+  frenchSandwich:[image(1,6),image(1,7),...series(8,8,10)],
   kaiserBurger:[image(2,7),...series(8,1,4)],
+  kaiserChicken:[image(8,5),image(8,6),image(8,7)],
   waffle:[image(1,9),image(2,6),...series(6,7,10)],
   fries:[image(1,10),image(2,10),...series(9,6,8)],
   appetizers:[image(9,9),image(9,10),...series(10,1,4)],
@@ -76,7 +77,11 @@ export function getGeneratedMenuPhoto(
   let group:GeneratedMenuPhoto[]|null=null;
   if(category==='crepe-meat')group=bank.crepeBeef;
   else if(category==='crepe-chicken')group=bank.crepeChicken;
-  else if(category==='crepe-mixed')group=bank.crepeOther;
+  else if(category==='crepe-mixed') {
+    // There is no truthful tuna-crepe study in the 100-photo archive.
+    if(includesAny(n,['تونه','تونة']))return null;
+    group=bank.crepeOther;
+  }
   else if(category==='crepe-tuscanini') {
     group=includesAny(n,['تشيكن','فراخ','كرانشي','زينجر'])?bank.crepeChicken:
       includesAny(n,['بيف','كباب','لحوم','برجر','تركي'])?bank.crepeBeef:bank.crepeOther;
@@ -102,10 +107,15 @@ export function getGeneratedMenuPhoto(
       includesAny(n,['بيف','كباب','سجق'])?bank.pizzaMeat:bank.pizzaSpecial;
   } else if(category==='pasta')group=bank.pasta;
   else if(category==='sandwiches-french'){
-    group=includesAny(n,['بيف','لحم','سوسيس'])?[
-      image(1,7),image(8,8),image(8,9),image(8,10)
-    ]:bank.frenchSandwich;
-  } else if(category==='sandwiches-kaiser')group=bank.kaiserBurger;
+    // French bread differs materially from the burger-bun studies B08-05..07.
+    if(n.includes('بوم فريت')||(n.includes('فراخ')&&n.includes('لحم')))return null;
+    if(n.includes('سوسيس'))return image(8,10);
+    if(includesAny(n,['بيف','لحم']))group=[image(1,7),image(8,8),image(8,9)];
+    else if(includesAny(n,['فراخ','شيش','زينجر']))return image(1,6);
+    else group=bank.frenchSandwich;
+  } else if(category==='sandwiches-kaiser'){
+    group=includesAny(n,['تشيكن','فراخ','زينجر','كرسبي'])?bank.kaiserChicken:bank.kaiserBurger;
+  }
   else if(category==='waffle'){
     if(n.includes('لوتس'))return image(6,8);
     group=bank.waffle;

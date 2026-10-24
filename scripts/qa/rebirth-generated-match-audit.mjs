@@ -39,8 +39,17 @@ for(const item of items){
     throw Error('Bad generated visual provenance for '+item.id);
   if(['drinks','crepe-addons'].includes(item.category)&&photo)
     throw Error('Unverified milkshake/meal falsely used for packaged drinks/addons: '+item.id);
-  if(item.category==='pizza-mixed'&&item.name==='تونة'&&photo)
+  if(['pizza-mixed','crepe-mixed'].includes(item.category)&&item.name==='تونة'&&photo)
     throw Error('Invented tuna pizza photo: '+item.id);
+  if(item.category==='crepe-meat'&&photo&&['B01-01','B02-03'].includes(photo.assetId))
+    throw Error('Chicken study assigned to beef crepe '+item.id);
+  if(item.category==='sandwiches-french'&&photo&&['B08-05','B08-06','B08-07'].includes(photo.assetId))
+    throw Error('Burger bun study used for French bread '+item.id);
+  if(item.category==='sandwiches-french'&&item.name==='بوم فريت'&&photo)
+    throw Error('Unverified fries sandwich reference '+item.id);
+  if(item.category==='sandwiches-kaiser'&&['سموكي زينجر','تشيكن فاير'].includes(item.name)&&photo&&
+     !['B08-05','B08-06','B08-07'].includes(photo.assetId))
+    throw Error('Beef burger image assigned to named chicken burger '+item.id);
   if(photo)used.add(photo.assetId);
   entries.push({...item,assetId:photo?.assetId??null,photoKind:photo?.kind??'original-drawn-or-stock-fallback'});
 }
