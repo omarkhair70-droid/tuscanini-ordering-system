@@ -11,6 +11,12 @@
 - Made the search card compact and legible against the black photo-led intro on 320/390, with mobile images shortened modestly to offset its new position, keeping two genuine photography sources. Browser QA updated to assert that exactly one search lives in the first scene and results have a visible quick jump.
 - This is a focused UI code change pending independent CI and fresh screenshots; not a completed visual signoff or production-ready menu. **No customer intake flags, Oracle catalog, merchant prices, or images changed.**
 
+### Missing named-SKU visual production — 20-image inventory (24 Oct 2026)
+
+- Exhaustively identified 20 currently unmatched SKU image IDs (4 savory dishes, 4 appetizers, 6 drinks, 6 crepe additions), see `docs/rebirth/MISSING_SKU_IMAGE_SHOTLIST_2026-10-24.md`.
+- ImageGen returned **menu poster composites rather than twenty standalone product photographs**. A 20-file experimental WebP candidate ZIP and an HTML preview were prepared in the originating conversation, but those extracts have low source resolution and several dish/brand mismatches. They are **not an approved asset delivery and are not published to the customer site**. No broken image asset is implied: each missing SKU still has unique branded SVG art in `ProductArtwork`.
+- Exact single-SKU generation, quality inspection and owner verification remain OPEN. The 100 original generated WebPs are still intact. Do not change pricing, launch flags, or branch merge state to address art.
+
 ### Creative Finish — source-truth photo selection (24 Oct 2026)
 
 - Browser Screenshot & Asset Gate **SUCCESS** on quick-find commit `b314438`, alongside Home CI, PostgreSQL API and Backend V2 suites; the same SHA was Vercel READY. New photo-review changes below require fresh independent CI.
