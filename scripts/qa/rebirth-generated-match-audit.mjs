@@ -58,3 +58,22 @@ await writeFile('artifacts/screenshots/generated-menu-source-match-audit.json',
   JSON.stringify({previousMenuItems:items.length,mediaPool:100,menuMediaMapped:entries.filter(x=>x.assetId).length,usedUniqueImagesInMenu:used.size,generatedMediaActiveByDefault:false,exactMerchantDishPhotos:0,nonMenuImagesAccessibleInVisualAtlas:100,items:entries},null,2));
 console.log('GENERATED IMAGE / ORIGINAL 113 MENU AUDIT: '+entries.filter(x=>x.assetId).length+
   '/113 category-safe representative matches, '+used.size+' unique generated images among named menu items; all 100 available as visual art atlas after binary install. No change in previous price records.');
+
+// Supplemental twenty local SKUs are concept photos, not additions to the owner
+// 100-media atlas and not exact merchant photo approvals.
+const supplements=['cx4','px3','sf5','sf6','ap3','ap7','ap9','ap10','dr1','dr2','dr3','dr4','dr5','dr6','ca1','ca2','ca3','ca4','ca5','ca6'];
+if(new Set(supplements).size!==20)throw Error('Supplemental SKU images not unique');
+const supplementalSHA=new Set();
+for(const id of supplements){
+  const raw=await readFile('public/images/rebirth/supplemental/'+id+'.webp');
+  if(raw.length<4000||raw.length>32000||
+     raw.toString('ascii',0,4)!=='RIFF'||raw.toString('ascii',8,12)!=='WEBP')
+    throw Error('Supplemental '+id+' not a valid compact local WebP');
+  const fingerprint=raw.toString('base64');
+  if(supplementalSHA.has(fingerprint))throw Error('Reused supplemental SKU photo binary for '+id);
+  supplementalSHA.add(fingerprint);
+}
+const supplementalSource=await readFile('lib/rebirth/supplemental-menu-media.ts','utf8');
+for(const id of supplements)if(!supplementalSource.includes("'"+id+"'"))
+  throw Error('Supplemental photo exists but has no explicit SKU mapping '+id);
+console.log('SUPPLEMENTAL MENU ART: 20 unique SKU-keyed local WebPs; original 100 owner studies untouched; all conceptual.');

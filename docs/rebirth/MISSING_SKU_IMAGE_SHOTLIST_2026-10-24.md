@@ -1,10 +1,10 @@
 # Tuscanini / 20 SKU-specific image gaps — 24 October 2026
 
-**NOT OWNER-APPROVED IMAGERY. DO NOT ASSIGN AN UNRELATED GENERIC PHOTO TO THESE SKU IDS.**
+**CONCEPT ART NOW AVAILABLE IN DRAFT. NOT OWNER-APPROVED DISH PHOTOGRAPHS. Six SKUs still need exact-product rework/approval.**
 
-Previous menu records: **113**. On `41cefb4` generated matching intentionally returns `null` for **20 specific rows**. The 100 previously committed illustrative WebPs and authentic 12 restaurant/context photos were not removed and must not be regenerated. `ProductArtwork` renders original graphic art for unmatched rows; this is not a broken network image.
+Previous menu records: **113**. Previously all 20 rows returned drawn art; the current draft adds separately keyed conceptual artwork for those rows. The 100 previously committed illustrative WebPs and authentic 12 restaurant/context photos were not removed and must not be regenerated. `ProductArtwork` renders original graphic art for unmatched rows; this is not a broken network image.
 
-An experimental 20-image WebP review ZIP was created *in the originating ChatGPT conversation*, by extracting tiles from ImageGen-produced composite menu posters. It has a JSON provenance manifest and an HTML preview; **the images are not in GitHub and are not production quality**. The model returned composite menu posters instead of separate dedicated dish photographs, and some crops misrepresent dish identity. Never activate these candidates as customer-ready photos. Actual isolated SKU generation and owner checking remain OPEN.
+The two user-requested batches have now been materialized as 20 individually named WebP concept assets under `public/images/rebirth/supplemental/`. The first ten are editorial crops from a composite generation; the second ten originate from distinct generated images. They are visibly **conceptual illustration previews** in the draft menu, not authenticated photographs of exact products. Six still need real product clarification/rework (`sf5`, `sf6`, `dr5`, `dr6`, `ca4`, `ca5`) before any live customer menu sign-off. No prior 100 original generated images were removed.
 
 | SKU | اسم الصنف | القسم | Specific image requirement |
 |---|---|---|---|
@@ -31,4 +31,4 @@ An experimental 20-image WebP review ZIP was created *in the originating ChatGPT
 
 **Acceptance for each image**: individually generated (not a crop from a menu poster); original 1:1 WebP at ≥720×720 actual detail; no illegible text or invented brand logos; dish class and ingredients visually plausible; category and source disclosure truthful; SKU-specific semantic check and merchant review. Drink brands must use verified packaging assets if exact brand is shown. For ambiguous `ca4/ca5`, request merchant clarification before rendering exact items.
 
-**Do not touch**: previous menu prices/records, Oracle API, checkout flag, production/main, or PR draft status. Upload and map images only after actual art-quality review and a GitHub screenshot/browser validation.
+**Preserved**: previous menu prices/records, Oracle API, checkout flag, production/main and PR draft status. All 20 visuals are review-stage concepts behind the existing illustrative-media toggle; browser/screenshot CI must validate their availability. Live product photo approval remains outstanding.

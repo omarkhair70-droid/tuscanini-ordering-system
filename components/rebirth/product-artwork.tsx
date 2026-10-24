@@ -8,6 +8,7 @@ import { MaterialGlyph, categoryMaterialGlyph } from '@/components/rebirth/mater
 import { getVerifiedMenuPhoto } from '@/lib/rebirth/verified-menu-photographs';
 import { getRepresentativeMenuPhoto } from '@/lib/rebirth/representative-menu-photos';
 import { GENERATED_MEDIA_READY, getGeneratedMenuPhoto } from '@/lib/rebirth/generated-menu-media';
+import { getSupplementalMenuPhoto } from '@/lib/rebirth/supplemental-menu-media';
 
 /**
  * The 113 original menu entries deserve individually composed identities,
@@ -32,7 +33,9 @@ function stableHash(text:string):number{
 export function ProductArtwork({item,size='compact',className='',visualMode='art'}:Props){
   const [failedUrl,setFailedUrl]=useState<string|null>(null);
   const photo=getVerifiedMenuPhoto(item.id);
-  const generated=visualMode==='representative'&&!photo?getGeneratedMenuPhoto(item.id,item.name,item.categorySlug):null;
+  const generated=visualMode==='representative'&&!photo
+    ?(getSupplementalMenuPhoto(item.id)??getGeneratedMenuPhoto(item.id,item.name,item.categorySlug))
+    :null;
   // Once the committed 100-image archive is active, unmatched SKUs get branded
   // graphic art instead of inaccurate remote stock food photos.
   const representative=visualMode==='representative'&&!photo&&!generated&&!GENERATED_MEDIA_READY

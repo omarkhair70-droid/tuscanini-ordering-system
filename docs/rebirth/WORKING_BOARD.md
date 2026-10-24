@@ -4,6 +4,14 @@
 
 > **Start here in every new chat, and update this SAME FILE after every meaningful feature/review.** This is the current execution and coverage index; historical `00–38`, original research, the HTML reference and technical handoffs remain evidence, not competing "next task" lists. Use the current GitHub PR HEAD and Actions results if newer; never assume this snapshot is the HEAD forever.
 
+### Creative Finish — 20 additional conceptual SKU visuals committed (24 Oct 2026)
+
+- **User request:** install both ten-image batches on the Tuscanini Rebirth draft, not just hand over ZIPs. Twenty WebP assets stored as Git binary blobs under `public/images/rebirth/supplemental/<SKU>.webp`, 512×512 optimized, mapped by stable original catalog IDs in `lib/rebirth/supplemental-menu-media.ts` and rendered through existing `ProductArtwork` with `data-kind=generated-illustrative`. They do not enter the original 100 WebP atlas nor overwrite a verified photograph.
+- All twenty concept assets are selectable on the **draft** Menu and product dialog when the preexisting generated-media gate is active. `NEXT_PUBLIC_REBIRTH_GENERATED_IMAGES=off/not-ready` still disables ALL unverified locally generated media and returns original safe graphics/stock. First-page tuna illustration, 6 drinks and 6 crepe add-ons now have stable separately auditable illustration IDs.
+- **Visual truth and launch gate:** all concepts are not merchant photos. Six are flagged for more exact artist/restaurant verification: `sf5` (mixed beef/chicken not evidenced), `sf6` (fries but not fries *baguette*), `dr5` (Twist packaging/flavor unknown), `dr6` (Fayrouz packaging/flavor unknown), `ca4` ('كونو' meaning unknown), `ca5` ('رول' meaning unknown). Site uses the preexisting note 'الصور للتوضيح'; exact-product photos not approved. Keep flagged concepts out of owner-approved production claims until reviewed.
+- Visual/browser QA expanded to request all 20 distinct WebPs, assert new SKU image and named drink/add-on mappings. Source audit validates local RIFF/WEBP files and 100 originals remain separate. Same catalog, all 113 products, previous prices, modifier logic, store operations and intake flags.
+- New CI and Vercel screenshot review **pending** on this commit. PR #59 remains Draft; main/production unchanged.
+
 ### Creative Finish — Menu quick-find moves into first scene (24 Oct 2026)
 
 - Kept the authentic restaurant photo pair and editorial type, but moved the ONE existing menu search (not a duplicate form) into the first hero's copy so finding food does not require scrolling beyond documentary photography. It continues to search across all 16 food families and preserves deep-linked category semantics.
