@@ -1,0 +1,51 @@
+# Tuscanini ONLY — isolated PostgreSQL database for Oracle VM / Coolify.
+# Git-based Docker Compose resource: do not add a public domain or ports.
+# Never connect this database to Nova/Plantupia volumes, users, or containers.
+# This database alone DOES NOT turn the Next.js site into real-order mode.
+services:
+  tuscanini-postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${TUSCANINI_DB_NAME:-tuscanini_orders}
+      POSTGRES_USER: ${TUSCANINI_DB_USER:-tuscanini_app}
+      POSTGRES_PASSWORD: ${TUSCANINI_DB_PASSWORD:?Configure an isolated database password in Coolify}
+    volumes:
+      - tuscanini_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+      start_period: 15s
+    stop_grace_period: 30s
+  tuscanini-orders-api:
+    build:
+      context: ../../services/orders-api
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      tuscanini-postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: "8080"
+      PGHOST: tuscanini-postgres
+      PGPORT: "5432"
+      PGDATABASE: ${TUSCANINI_DB_NAME:-tuscanini_orders}
+      PGUSER: ${TUSCANINI_DB_USER:-tuscanini_app}
+      PGPASSWORD: ${TUSCANINI_DB_PASSWORD:?Configure an isolated database password in Coolify}
+      ORDER_API_SERVICE_KEY: ${TUSCANINI_ORDER_API_SERVICE_KEY:?Configure a dedicated 32+ character API key in Coolify}
+      ORDER_API_ACCEPT_ORDERS: ${TUSCANINI_ACCEPT_ORDERS:-no}
+      CATALOG_SYNC_ENABLED: ${TUSCANINI_CATALOG_SYNC:-no}
+    expose:
+      - "8080"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8080/readyz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 4
+      start_period: 30s
+
+volumes:
+  tuscanini_pgdata:

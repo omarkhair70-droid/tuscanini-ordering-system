@@ -1,0 +1,177 @@
+/* Tuscanini / Order in Motion — the living ticket
+   One editorial tracking object, not three generic dashboard tiles. */
+.t-order-hero{max-width:none;background:var(--ink);color:var(--paper);padding-block:clamp(25px,3.8vw,54px)}
+.t-order-hero>*{max-width:1390px;margin-inline:auto}
+.t-order-hero h1{font-size:clamp(58px,8vw,112px);line-height:1.16;margin:12px 0}
+.t-order-hero h1 em{color:var(--yellow)}
+.t-order-hero>p{font-size:clamp(15px,1.3vw,19px);max-width:620px;font-weight:700;line-height:1.8}
+.t-order-page__content{padding-block:clamp(24px,4vw,60px) 95px}
+.t-order-tracking{display:grid;grid-template-columns:minmax(0,1.17fr) minmax(295px,.64fr);gap:clamp(10px,2vw,25px);align-items:start}
+.t-order-tracking__main{min-width:0;position:relative;background:var(--cream);border-top:7px solid var(--red);padding:clamp(24px,4vw,54px)}
+.t-order-story__masthead{display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:10px;border-bottom:1px solid #bbb09c;padding-bottom:15px}
+.t-order-story__edition{font:13px/1.45 Anton,Impact,sans-serif;letter-spacing:.065em;direction:ltr;color:#66594b}
+.t-order-story__hero{display:grid;grid-template-columns:minmax(0,1fr) clamp(104px,14vw,172px);gap:clamp(14px,2vw,30px);padding-block:clamp(22px,3vw,42px);align-items:center}
+.t-order-story__eyebrow{display:inline-block;font-size:13px;font-weight:850;margin-bottom:10px}
+.t-order-story__headcopy h2{font-size:clamp(43px,5.3vw,84px);line-height:1.16;margin:0 0 17px;letter-spacing:-.035em}
+.t-order-story__headcopy>p{font-size:clamp(15px,1.4vw,20px);line-height:1.85;font-weight:700;max-width:530px}
+.t-order-story__seal{height:clamp(105px,14vw,173px);aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;border:4px double #b32820;border-radius:50%;color:#ad3025;transform:rotate(-9deg);text-align:center;min-width:0}
+.t-order-story__seal-mark{font:clamp(40px,6vw,76px)/.85 Anton,Impact,sans-serif;direction:ltr;letter-spacing:-.09em}
+.t-order-story__seal-mark span{font-size:.38em;vertical-align:top;letter-spacing:0}
+.t-order-story__seal-text{font:clamp(10px,1.6vw,17px)/1.2 Anton,Impact,sans-serif;letter-spacing:.04em;direction:ltr;max-width:90%;overflow-wrap:anywhere}
+.t-order-tracking[data-current-status="declined"] .t-order-story__seal,
+.t-order-tracking[data-current-status="cancelled"] .t-order-story__seal,
+.t-order-tracking[data-current-status="unreachable"] .t-order-story__seal{border-color:#a71714;color:#a71714}
+.t-order-tracking[data-current-status="delivered"] .t-order-story__seal{border-color:#386642;color:#386642}
+.t-order-story__rule{display:flex;justify-content:space-between;padding:12px 3px;border-top:2px solid var(--ink);border-bottom:1px solid #a79b89;direction:ltr}
+.t-order-story__rule span{font:13px Anton,Impact,sans-serif;letter-spacing:.04em}
+.t-order-story__facts-heading{display:flex;align-items:baseline;justify-content:space-between;gap:13px;margin-block:20px 8px;flex-wrap:wrap}
+.t-order-story__facts-heading strong{font-size:clamp(15px,1.45vw,19px);line-height:1.6}
+.t-order-story__facts-heading>span{font:12px Anton,Impact,sans-serif;color:#736351;direction:ltr;letter-spacing:.04em}
+.t-order-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-block:1px dashed #968675;margin-top:12px}
+.t-order-fact{position:relative;display:flex;gap:13px;padding:18px 16px;min-width:0;border-inline-end:1px dashed #968675}
+.t-order-fact:first-child{border-inline-end:0}
+.t-order-fact__number{font:clamp(21px,2.4vw,34px)/1 Anton,Impact,sans-serif;direction:ltr;color:#b42a23}
+.t-order-fact__copy{display:flex;flex-direction:column;gap:6px;min-width:0;padding-bottom:17px}
+.t-order-fact__label{font-size:12px;font-weight:800;color:#64584c}
+.t-order-fact strong{font-size:clamp(17px,1.75vw,23px);line-height:1.5;overflow-wrap:anywhere}
+.t-order-fact small{font-size:12px;line-height:1.75;color:#645648;font-weight:650}
+.t-order-fact__signal{width:8px;height:8px;border-radius:50%;position:absolute;bottom:14px;inset-inline-start:16px;background:#a59a8c;box-shadow:0 0 0 3px #e3d6c5}
+.t-order-fact[data-state="verified"] .t-order-fact__signal{background:#2d6a46;box-shadow:0 0 0 3px #c4dbc9}
+.t-order-fact[data-state="attention"] .t-order-fact__signal{background:#b0221f;box-shadow:0 0 0 3px #ebc8ba}
+.t-order-tracking__error{padding:13px 15px;border-right:4px solid var(--red);background:#fff1e7;margin-top:18px;font-size:14px;font-weight:750;line-height:1.8}
+.t-order-story__loading{padding:20px 15px;border-block:1px dashed #af9e8b;font-size:14px;font-weight:750;line-height:1.8}
+.t-order-tracking__controls{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:25px}
+.t-order-tracking__refresh{display:inline-flex;gap:13px;align-items:center;justify-content:center;min-height:48px;padding:11px 19px;background:var(--ink);color:#fff8e8;border:0;cursor:pointer;font:850 14px "IBM Plex Sans Arabic",Tahoma,sans-serif}
+.t-order-tracking__refresh:disabled{opacity:.62;cursor:wait}
+.t-order-tracking__refresh:hover:not(:disabled){background:var(--red)}
+.t-order-tracking__refresh:focus-visible{outline:3px solid #1671c5;outline-offset:3px}
+.t-order-tracking__refresh-mark{font:29px/1 Anton,Impact,sans-serif;direction:ltr}
+.t-order-tracking__connection{display:flex;align-items:center;gap:10px;min-width:0}
+.t-order-tracking__connection-dot{width:9px;height:9px;flex:none;border-radius:50%;background:#2d6a46}
+.t-order-tracking[data-connection="stale"] .t-order-tracking__connection-dot{background:#b42b22}
+.t-order-tracking__time{font-size:12px;line-height:1.6;font-weight:750;color:#514334}
+.t-order-tracking__cadence{font-size:11px;line-height:1.7;font-weight:650;color:#655848;margin-top:16px}
+/* A paper ticket detached from, but visibly related to, the order record. */
+.t-order-tracking__details{background:#ead8bc;padding:0;position:relative;min-width:0;box-shadow:7px 8px 0 #17151116;overflow:hidden}
+.t-order-tracking__details:before{content:"";height:11px;display:block;background:repeating-linear-gradient(135deg,var(--paper) 0 7px,#ead8bc 7px 14px)}
+.t-order-ticket__masthead{display:flex;justify-content:space-between;gap:10px;border-bottom:2px solid var(--ink);padding:clamp(20px,2.5vw,35px) clamp(18px,2.8vw,35px) 17px;direction:ltr}
+.t-order-ticket__masthead>span{font:13px/1.3 Anton,Impact,sans-serif;letter-spacing:.045em}
+.t-order-ticket__reference{padding:clamp(19px,2.5vw,34px) clamp(18px,2.8vw,35px)}
+.t-order-ticket__reference>span{display:block;font-size:14px;font-weight:850;margin-bottom:10px}
+.t-order-ticket__reference>strong{display:block;font-size:clamp(32px,3.8vw,54px);line-height:1.2;overflow-wrap:anywhere}
+.t-order-ticket__reference>small{display:block;margin-top:13px;font-size:12px;line-height:1.7;font-weight:700}
+.t-order-ticket__perforation{position:relative;display:flex;align-items:center;justify-content:center;margin:0 10px;color:var(--red)}
+.t-order-ticket__perforation:before{content:"";height:2px;width:100%;position:absolute;inset-inline:0;top:50%;background:repeating-linear-gradient(90deg,var(--ink) 0 9px,transparent 9px 17px);opacity:.75}
+.t-order-ticket__perforation>span{z-index:1;background:#ead8bc;padding:0 10px;font-size:24px}
+.t-order-tracking__details dl{display:grid;gap:0;margin:0;padding:24px clamp(18px,2.8vw,35px) 0}
+.t-order-tracking__details dl>div{display:flex;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid #9f8e76}
+.t-order-tracking__details dt,.t-order-tracking__details dd{font-size:13px;line-height:1.7}
+.t-order-tracking__details dt{font-weight:700}
+.t-order-tracking__details dd{font-weight:850;margin:0;text-align:left}
+.t-order-ticket__disclaimer{font-size:12px;font-weight:650;line-height:1.85;padding:22px clamp(18px,2.8vw,35px) 25px}
+.t-order-ticket__footer{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;background:var(--ink);color:var(--paper);padding:16px clamp(18px,2.8vw,35px);font-size:11px;font-weight:750}
+.t-order-ticket__footer span[lang="en"]{font:12px Anton,Impact,sans-serif;direction:ltr;letter-spacing:.04em}
+.t-order-next{display:grid;grid-template-columns:1.1fr .7fr;gap:35px;align-items:end;border-top:2px solid var(--ink);margin-top:clamp(50px,7vw,110px);padding-top:32px}
+.t-order-next h2{font-size:clamp(38px,5vw,75px);margin:19px 0}
+.t-order-next p{max-width:620px;font-size:16px;font-weight:700;line-height:2}
+.t-order-next__links{display:flex;flex-direction:column;align-items:start;gap:15px}
+.t-order-next__links a{padding:13px;border-bottom:2px solid var(--ink);font-weight:800}
+.t-order-missing{background:var(--cream);border-top:5px solid var(--red);padding:clamp(25px,5vw,68px)}
+.t-order-missing h2{font-size:clamp(35px,5vw,65px);line-height:1.25;margin:20px 0}
+.t-order-missing p{font-weight:750;line-height:2;max-width:620px}
+@media(min-width:851px) and (max-width:1240px){
+  .t-order-tracking{grid-template-columns:minmax(0,1.08fr) minmax(290px,.74fr)}
+  .t-order-facts{grid-template-columns:1fr}
+  .t-order-fact{border-inline-end:0;border-bottom:1px dashed #968675}
+  .t-order-fact:last-child{border-bottom:0}
+}
+@media(max-width:850px){
+  .t-order-tracking{grid-template-columns:1fr}
+  .t-order-next{grid-template-columns:1fr}
+}
+@media(max-width:720px){
+  .t-order-hero{padding-block:18px 24px}
+  .t-order-hero h1{font-size:clamp(42px,10vw,62px);line-height:1.23;margin:7px 0}
+  .t-order-hero>p{font-size:14px;line-height:1.65}
+  .t-order-page__content{padding-top:17px}
+  .t-order-tracking__main{padding:22px 16px 24px}
+  .t-order-story__masthead{padding-bottom:10px}
+  .t-order-story__edition{font-size:10px}
+  .t-order-story__hero{grid-template-columns:minmax(0,1fr) 93px;gap:9px;padding-block:17px 22px}
+  .t-order-story__eyebrow{font-size:12px}
+  .t-order-story__headcopy h2{font-size:clamp(29px,7.9vw,48px);line-height:1.3;margin-bottom:9px}
+  .t-order-story__headcopy>p{font-size:13px;line-height:1.7}
+  .t-order-story__seal{width:91px;height:91px;border-width:3px;gap:4px}
+  .t-order-story__seal-mark{font-size:42px}
+  .t-order-story__seal-text{font-size:10px}
+  .t-order-story__facts-heading{margin-block:17px 4px}
+  .t-order-story__facts-heading strong{font-size:14px}
+  .t-order-story__facts-heading>span{font-size:10px}
+  .t-order-facts{grid-template-columns:1fr}
+  .t-order-fact{gap:13px;padding:12px 10px;border-inline-end:0;border-bottom:1px dashed #968675}
+  .t-order-fact:last-child{border-bottom:0}
+  .t-order-fact__number{font-size:25px}
+  .t-order-fact__copy{gap:3px;padding-bottom:8px}
+  .t-order-fact__copy strong{font-size:19px}
+  .t-order-fact__copy small{font-size:11px}
+  .t-order-fact__signal{bottom:11px;inset-inline-start:12px}
+  .t-order-tracking__controls{margin-top:18px}
+  .t-order-tracking__refresh{width:auto;padding:9px 14px}
+  .t-order-ticket__reference>strong{font-size:clamp(31px,9vw,47px)}
+  .t-order-next{margin-top:48px}
+}
+@media(max-width:365px){
+  .t-order-story__hero{grid-template-columns:minmax(0,1fr) 78px}
+  .t-order-story__seal{width:76px;height:76px}
+  .t-order-story__seal-mark{font-size:34px}
+  .t-order-story__seal-text{font-size:9px}
+}
+@media(prefers-reduced-motion:no-preference){
+  .t-order-story__seal{animation:t-order-stamp-arrive .45s cubic-bezier(.18,1.3,.48,1) both}
+  .t-order-tracking__refresh:not(:disabled):hover .t-order-tracking__refresh-mark{transform:rotate(35deg);transition:transform .25s ease}
+  .t-order-tracking__main{transition:border-top-color .25s ease}
+  @keyframes t-order-stamp-arrive{0%{opacity:.3;transform:rotate(-17deg) scale(1.14)}100%{opacity:1;transform:rotate(-9deg) scale(1)}}
+}
+@media(prefers-reduced-motion:reduce){
+  .t-order-story__seal,.t-order-tracking__refresh-mark{animation:none!important;transition:none!important}
+}
+
+/* PASS / post-order care belongs inside the living ticket, not a fake
+   cancellation/payment button. All external actions require user send. */
+.t-order-assist{
+  margin-top:clamp(23px,3vw,37px);padding:clamp(18px,3vw,28px);
+  background:var(--yellow);color:var(--ink);
+  border:2px solid var(--ink);position:relative
+}
+.t-order-assist:before{
+  content:"";position:absolute;top:-8px;inset-inline-end:18px;
+  width:48px;height:14px;background:var(--cream);border:2px solid var(--ink);
+  transform:rotate(8deg)
+}
+.t-order-assist__head h3{
+  font-size:clamp(24px,3.1vw,37px);line-height:1.35;
+  margin:10px 0 13px;letter-spacing:-.025em
+}
+.t-order-assist>p{font-size:14px;font-weight:750;line-height:1.85;max-width:630px}
+.t-order-assist__actions{display:flex;flex-wrap:wrap;gap:10px;margin-block:20px 12px}
+.t-order-assist__actions>a{
+  min-height:46px;padding:10px 13px;display:inline-flex;align-items:center;
+  justify-content:center;background:var(--ink);color:var(--paper);
+  font-size:13px;font-weight:900;text-decoration:none
+}
+.t-order-assist__actions>a:first-child{background:var(--red)}
+.t-order-assist__actions>a:hover{filter:brightness(1.13)}
+.t-order-assist__actions>a:focus-visible{outline:3px solid #1860a7;outline-offset:3px}
+.t-order-assist>small{font-size:11px;font-weight:750;line-height:1.8;display:block}
+@media(max-width:720px){
+  .t-order-assist{margin-top:23px;padding:18px 13px}
+  .t-order-assist__actions{flex-direction:column}
+  .t-order-assist__actions>a{width:100%;min-height:48px}
+}
+
+/* Private order tracking link; explicit sharing is the customer's choice. */
+.t-order-ticket__share{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin-top:18px}
+.t-order-ticket__share button{min-height:44px;cursor:pointer;padding:9px 12px;border:2px solid var(--ink);background:var(--yellow);color:var(--ink);font-size:12px;font-weight:900}
+.t-order-ticket__share button:hover{background:var(--ink);color:var(--paper)}
+.t-order-ticket__share button:focus-visible{outline:3px solid #287bd6;outline-offset:3px}
+.t-order-ticket__share small,.t-order-ticket__share span{font-size:11px;font-weight:700;line-height:1.7;color:#493c2c}

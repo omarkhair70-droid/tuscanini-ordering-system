@@ -1,0 +1,176 @@
+/* Tuscanini Rebirth — documentary About, not an invented founder legend.
+   Paper, real human scale and physical packaging instead of another dark
+   food-hero or decorative motion framework. */
+
+.t-about-page{background:var(--paper)}
+.t-about-hero{
+  max-width:none;
+  background:var(--cream);
+  padding-block:22px clamp(58px,7vw,114px)
+}
+.t-about-hero>*{max-width:1400px;margin-inline:auto}
+.t-about-hero__meta{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  padding-bottom:16px;
+  border-bottom:1px solid #17151140;
+  font:750 12px/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif
+}
+.t-about-hero__meta span:last-child{
+  direction:ltr;
+  font:15px/1.3 "Anton",Impact,sans-serif;
+  letter-spacing:.08em
+}
+.t-about-hero__grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);
+  align-items:center;
+  gap:clamp(36px,5vw,90px);
+  padding-top:clamp(37px,6vw,88px)
+}
+.t-about-hero__copy{min-width:0}
+.t-about-hero__copy .t-index{border-right:4px solid var(--red);padding-right:12px}
+.t-about-hero h1{
+  font:800 clamp(69px,8.3vw,137px)/1.13 "Changa",Tahoma,sans-serif;
+  margin-top:clamp(22px,3vw,40px)
+}
+.t-about-hero h1 em{color:var(--red)}
+.t-about-hero__copy>p{
+  max-width:560px;
+  margin-top:clamp(21px,3vw,40px);
+  font:650 clamp(17px,1.7vw,22px)/1.95 "IBM Plex Sans Arabic",Tahoma,sans-serif
+}
+.t-about-hero__links{display:flex;flex-wrap:wrap;gap:14px;margin-top:clamp(23px,4vw,51px)}
+.t-about-hero__links a{
+  min-height:47px;
+  padding:12px 17px;
+  background:var(--ink);
+  color:var(--paper);
+  font:850 14px/1.6 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  display:inline-flex;
+  align-items:center;
+  gap:20px
+}
+.t-about-hero__links a+ a{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+.t-about-hero__links a:hover{background:var(--red);color:var(--paper)}
+.t-about-hero__photograph{
+  margin:0;
+  height:clamp(375px,43vw,580px);
+  position:relative;
+  background:#813e26;
+  border:clamp(8px,1vw,13px) solid var(--paper);
+  box-shadow:20px 23px 0 var(--yellow);
+  transform:rotate(2deg);
+  isolation:isolate
+}
+.t-about-hero__photograph img{object-fit:cover;object-position:50% 42%}
+.t-about-hero__photograph figcaption{
+  position:absolute;
+  left:0;bottom:0;right:0;
+  padding:11px 15px;
+  background:var(--ink);
+  color:var(--paper);
+  font:700 12px/1.6 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  display:flex;justify-content:space-between;gap:20px
+}
+.t-about-hero__photograph figcaption span{font:13px "Anton",Impact,sans-serif;letter-spacing:.05em}
+
+.t-about-observed{padding-block:clamp(70px,8vw,135px) clamp(75px,10vw,150px)}
+.t-about-observed__heading{
+  display:grid;
+  grid-template-columns:minmax(140px,.45fr) minmax(0,1fr);
+  gap:clamp(20px,5vw,75px);
+  align-items:start;
+  margin-bottom:clamp(33px,6vw,85px)
+}
+.t-about-observed__heading h2{
+  font:800 clamp(48px,7vw,100px)/1.14 "Changa",Tahoma,sans-serif
+}
+.t-about-observed__heading p{
+  margin-top:clamp(14px,2vw,30px);
+  font:650 clamp(16px,1.5vw,21px)/1.85 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  max-width:620px
+}
+.t-about-observed__photos{
+  display:grid;
+  grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);
+  align-items:start;
+  gap:clamp(16px,3vw,45px)
+}
+.t-about-observed__scene{position:relative;min-width:0;margin:0;background:#9c4131}
+.t-about-observed__scene img{object-fit:cover}
+.t-about-observed__scene--place{aspect-ratio:1.18}
+.t-about-observed__scene--wrap{aspect-ratio:.95;margin-top:clamp(20px,7vw,110px)}
+.t-about-observed__scene figcaption{
+  position:absolute;bottom:0;left:0;right:0;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:15px 20px;
+  background:var(--ink);color:var(--paper);gap:20px
+}
+.t-about-observed__scene figcaption strong{font:850 15px "IBM Plex Sans Arabic",Tahoma,sans-serif}
+.t-about-observed__scene figcaption span{font:14px "Anton",Impact,sans-serif;letter-spacing:.07em}
+.t-about-observed__note{
+  margin-top:clamp(17px,4vw,40px);
+  color:#685645;
+  font:650 13px/1.7 "IBM Plex Sans Arabic",Tahoma,sans-serif
+}
+.t-about-visit{background:var(--ink);color:var(--paper);padding-block:clamp(50px,6vw,95px)}
+.t-about-visit__inner{
+  display:grid;
+  grid-template-columns:minmax(110px,.4fr) minmax(0,1.15fr) auto;
+  gap:clamp(18px,3.5vw,55px);
+  align-items:center
+}
+.t-about-visit__inner>.t-index{color:var(--yellow);direction:ltr;text-align:right}
+.t-about-visit h2{font:800 clamp(34px,4.2vw,63px)/1.25 "Changa",Tahoma,sans-serif}
+.t-about-visit h2 em{color:var(--yellow)}
+.t-about-visit p{font:650 16px/1.85 "IBM Plex Sans Arabic",Tahoma,sans-serif;margin-top:12px}
+.t-about-visit a{
+  display:inline-flex;
+  align-items:center;
+  gap:26px;
+  padding:15px 0;
+  border-bottom:2px solid var(--yellow);
+  color:var(--yellow);
+  font:850 14px/1.6 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  white-space:nowrap
+}
+@media(max-width:1000px){
+  .t-about-hero__grid{gap:27px}
+  .t-about-hero h1{font-size:clamp(63px,8.7vw,92px)}
+  .t-about-hero__photograph{height:clamp(350px,43vw,460px)}
+  .t-about-visit__inner{grid-template-columns:1fr auto}
+  .t-about-visit__inner>.t-index{grid-column:1/-1}
+}
+@media(max-width:720px){
+  .t-about-hero{padding-block:17px 67px}
+  .t-about-hero__meta{font-size:10px}
+  .t-about-hero__meta span:last-child{font-size:11px}
+  .t-about-hero__grid{grid-template-columns:1fr;gap:32px;padding-top:39px}
+  .t-about-hero h1{font-size:clamp(58px,13.7vw,89px);line-height:1.16;margin-top:20px}
+  .t-about-hero__copy>p{font-size:16px;margin-top:23px}
+  .t-about-hero__links{margin-top:23px;gap:9px}
+  .t-about-hero__links a{font-size:12px;gap:9px;padding:12px 13px}
+  .t-about-hero__photograph{height:auto;aspect-ratio:1.02;max-width:480px;width:calc(100% - 20px);box-shadow:12px 14px 0 var(--yellow)}
+  .t-about-hero__photograph figcaption{font-size:10px;padding:10px}
+  .t-about-observed{padding-block:66px 81px}
+  .t-about-observed__heading{grid-template-columns:1fr;gap:16px;margin-bottom:35px}
+  .t-about-observed__heading h2{font-size:clamp(44px,10vw,69px)}
+  .t-about-observed__heading p{font-size:16px}
+  .t-about-observed__photos{grid-template-columns:1fr;gap:25px}
+  .t-about-observed__scene--place{aspect-ratio:1.12}
+  .t-about-observed__scene--wrap{aspect-ratio:1.3;margin:0 0 0 16%}
+  .t-about-observed__scene figcaption{padding:12px 14px}
+  .t-about-visit__inner{grid-template-columns:1fr;gap:18px}
+  .t-about-visit__inner>.t-index{grid-column:auto}
+  .t-about-visit h2{font-size:clamp(34px,8vw,49px)}
+  .t-about-visit a{justify-self:start}
+}
+@media(max-width:370px){
+  .t-about-hero h1{font-size:53px}
+  .t-about-hero__meta span:last-child{max-width:130px;text-align:left}
+  .t-about-hero__links a{font-size:11px;padding:11px}
+  .t-about-observed__heading h2{font-size:43px}
+}

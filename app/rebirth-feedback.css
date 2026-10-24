@@ -1,0 +1,47 @@
+/* TUSCANINI / FEEDBACK: room for real words, not unverified testimonials. */
+.t-feedback-page{background:var(--paper)}
+.t-feedback-hero{max-width:none;background:var(--red);color:var(--paper);padding-block:22px clamp(70px,9vw,135px)}
+.t-feedback-hero>*{max-width:1400px;margin-inline:auto}
+.t-feedback-hero__meta{display:flex;justify-content:space-between;align-items:center;gap:20px;border-bottom:1px solid #fff7;padding-bottom:18px;font-weight:800;font-size:12px}
+.t-feedback-hero__meta span[lang=en]{direction:ltr;font:15px "Anton",Impact,sans-serif;letter-spacing:.08em}
+.t-feedback-hero__content{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.65fr);grid-template-rows:auto 1fr;align-items:center;gap:10px clamp(15px,4vw,65px);padding-top:clamp(40px,7vw,95px)}
+.t-feedback-hero__content>.t-index{grid-column:1/-1;color:var(--yellow)}
+.t-feedback-hero h1{font:800 clamp(76px,11vw,174px)/1.08 "Changa",Tahoma,sans-serif;letter-spacing:0}
+.t-feedback-hero h1 em{color:var(--yellow)}
+.t-feedback-hero__aside{align-self:center;padding-top:10px;max-width:460px}
+.t-feedback-hero__aside p{font:650 clamp(16px,1.65vw,22px)/1.9 "IBM Plex Sans Arabic",Tahoma,sans-serif}
+.t-feedback-hero__aside a{display:inline-flex;gap:30px;align-items:center;padding:12px 0;border-bottom:2px solid var(--yellow);color:var(--yellow);font-size:15px;font-weight:850;margin-top:25px}
+.t-reviews-explanation{display:grid;grid-template-columns:minmax(140px,.4fr) minmax(0,1fr);gap:clamp(28px,5vw,80px);align-items:start;padding-block:clamp(80px,9vw,140px)}
+.t-reviews-explanation h2{font:800 clamp(49px,7vw,102px)/1.16 "Changa",Tahoma,sans-serif}
+.t-reviews-explanation h2 em{color:var(--red)}
+.t-reviews-explanation p{font:650 clamp(16px,1.55vw,22px)/1.9 "IBM Plex Sans Arabic",Tahoma,sans-serif;margin-top:clamp(18px,3vw,35px);max-width:730px}
+.t-reviews-explanation__actions{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-top:40px}
+.t-reviews-explanation__actions a{display:inline-flex;align-items:center;gap:25px;padding:14px 0;border-bottom:2px solid var(--ink);font-size:14px;font-weight:850}
+.t-reviews-explanation__actions .t-reviews-explanation__cta{background:var(--ink);color:var(--paper);padding:17px 24px;border:none;min-height:54px}
+.t-reviews-explanation__actions a:hover{color:var(--red);border-color:var(--red)}
+.t-reviews-explanation__actions .t-reviews-explanation__cta:hover{background:var(--red);color:var(--paper)}
+.t-reviews-explanation .t-reviews-explanation__note{font-size:13px;line-height:1.75;color:#514a40;margin-top:22px}
+@media(max-width:850px){
+ .t-feedback-hero__content{grid-template-columns:1fr;gap:20px}
+ .t-feedback-hero h1{font-size:clamp(75px,15vw,126px)}
+ .t-feedback-hero__aside{max-width:620px}
+}
+@media(max-width:720px){
+ .t-feedback-hero{padding-block:20px 60px}
+ .t-feedback-hero__meta{font-size:10px}
+ .t-feedback-hero__meta span[lang=en]{font-size:11px}
+ .t-feedback-hero__content{padding-top:43px;gap:18px}
+ .t-feedback-hero h1{font-size:clamp(71px,16vw,110px)}
+ .t-feedback-hero__aside p{font-size:16px}
+ .t-feedback-hero__aside a{margin-top:19px}
+ .t-reviews-explanation{grid-template-columns:1fr;gap:20px;padding-block:68px 90px}
+ .t-reviews-explanation h2{font-size:clamp(45px,10vw,77px)}
+ .t-reviews-explanation p{font-size:16px}
+ .t-reviews-explanation__actions{margin-top:25px}
+ .t-reviews-explanation__actions a{font-size:13px}
+}
+@media(max-width:370px){
+ .t-feedback-hero h1{font-size:66px}
+ .t-reviews-explanation h2{font-size:44px}
+}
+

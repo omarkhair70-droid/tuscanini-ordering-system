@@ -1,0 +1,200 @@
+/* Rebirth checkout: clear transactional surface, same typography/colors as food discovery. */
+.t-checkout-page{background:var(--paper)}
+.t-checkout-hero{background:var(--ink);color:var(--paper);max-width:none;padding-block:18px clamp(45px,6vw,86px)}
+.t-checkout-hero>*{max-width:1400px;margin-inline:auto}
+.t-checkout-hero__overline,.t-checkout-hero__bottom{display:flex;justify-content:space-between;gap:20px;font-size:12px;font-weight:800;letter-spacing:.04em}
+.t-checkout-hero__overline{padding-bottom:16px;border-bottom:1px solid #fff4}
+.t-checkout-hero__overline span:first-child,.t-checkout-hero__bottom span:first-child{font-family:"Anton",Impact,sans-serif;direction:ltr}
+.t-checkout-hero__headline{display:grid;grid-template-columns:1.3fr .7fr;gap:40px;align-items:end;padding-block:35px}
+.t-checkout-hero__headline h1{font-size:clamp(60px,9vw,136px);line-height:1.05}
+.t-checkout-hero__headline h1 em{color:var(--yellow)}
+.t-checkout-hero__headline p{font-size:clamp(15px,1.5vw,20px);max-width:440px;line-height:1.9;font-weight:650;margin-top:15px}
+.t-checkout-hero__bottom{border-top:1px solid #fff4;padding-top:15px}
+.t-checkout-content{padding-block:clamp(45px,6vw,90px) 110px}
+.t-checkout-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,.8fr);gap:clamp(20px,4vw,60px);align-items:start}
+.t-checkout-column{display:grid;gap:55px;min-width:0}
+.t-checkout-section__head{border-bottom:3px solid var(--ink);padding-bottom:20px}
+.t-checkout-section__head h2{font-size:clamp(40px,5vw,70px);line-height:1.15;margin-top:10px}
+.t-checkout-item{display:grid;grid-template-columns:40px 1fr;gap:clamp(15px,2vw,28px);border-bottom:1px solid var(--line);padding:24px 0}
+.t-checkout-item__number{font:18px "Anton",Impact,sans-serif;padding-top:5px}
+.t-checkout-item__details h3{font-size:clamp(23px,3vw,33px);line-height:1.3}
+.t-checkout-item__details p{color:#675949;font-size:13px;font-weight:600;line-height:1.8;margin-top:6px}
+.t-checkout-item__details strong{display:block;font-size:18px;margin-top:10px}
+.t-checkout-item__controls{display:flex;gap:15px;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap}
+.t-checkout-stepper{display:flex;align-items:center;border:1px solid var(--ink);background:var(--cream)}
+.t-checkout-stepper button{width:44px;height:44px;background:transparent;border:0;font-size:22px;cursor:pointer}
+.t-checkout-stepper button:disabled{opacity:.4;cursor:not-allowed}
+.t-checkout-stepper output{min-width:37px;text-align:center;font-weight:800}
+.t-checkout-remove,.t-checkout-textlink{border:0;border-bottom:1px solid var(--ink);background:transparent;padding:8px 0;font-size:13px;font-weight:800;cursor:pointer}
+.t-checkout-remove:disabled{opacity:.4}
+.t-checkout-textlink{display:inline-block;margin-top:17px}
+.t-checkout-inputs{display:grid;gap:15px;padding-top:23px}
+.t-checkout-inputs>label{display:grid;gap:9px;font-weight:850;font-size:15px}
+.t-checkout-inputs input:not([type="radio"]),.t-checkout-inputs textarea{background:var(--cream);border:1px solid #b7a892;padding:14px 16px;min-width:0;width:100%;font:600 16px "IBM Plex Sans Arabic",Tahoma,sans-serif;resize:vertical}
+.t-checkout-inputs input:focus-visible,.t-checkout-inputs textarea:focus-visible,.t-checkout-type input:focus-visible,.t-checkout-confirm input:focus-visible{outline:3px solid #287bd6;outline-offset:2px}
+.t-checkout-inputs [aria-invalid="true"]{border-color:#b31e1a!important;border-width:2px!important}
+.t-checkout-type{border:0;margin:0;padding:0}
+.t-checkout-type legend{font-weight:850;font-size:15px;padding-bottom:10px}
+.t-checkout-type>div{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.t-checkout-type label{display:flex;gap:9px;align-items:center;background:var(--cream);border:1px solid #c8bba9;padding:14px 12px;font-size:14px;font-weight:800;cursor:pointer;min-height:54px}
+.t-checkout-type input{accent-color:var(--red);width:18px;height:18px}
+.t-checkout-summary{background:var(--cream);padding:clamp(24px,3vw,42px);border-top:6px solid var(--red);position:sticky;top:108px}
+.t-checkout-summary h2{font-size:clamp(38px,5vw,65px);line-height:1.2;margin:12px 0 30px}
+.t-checkout-summary__line{display:flex;justify-content:space-between;gap:14px;padding:15px 0;border-bottom:1px solid #b8aa94;font-size:14px;font-weight:700}
+.t-checkout-summary__line strong{font-size:19px;white-space:nowrap}
+.t-checkout-summary__notice{font-size:13px;font-weight:650;line-height:1.9;padding:20px 0}
+.t-checkout-summary__table{background:var(--yellow);padding:12px;font-weight:750;font-size:13px;margin-bottom:18px}
+.t-checkout-confirm{display:flex;align-items:start;gap:12px;border:1px solid #ae9e86;padding:14px;font-size:14px;line-height:1.75;font-weight:700;cursor:pointer}
+.t-checkout-confirm input{width:20px;height:20px;flex:none;accent-color:var(--red);margin-top:3px}
+.t-checkout-status{font-size:12px;font-weight:750;line-height:1.8;margin-top:18px}
+.t-checkout-error{font-size:13px;color:#a71515;font-weight:800}
+.t-checkout-error--large{background:#fff0ea;padding:14px;margin-top:16px;line-height:1.8;border-right:4px solid #a71515}
+.t-checkout-action{display:inline-flex;align-items:center;justify-content:center;background:var(--ink);color:#fff8e8!important;padding:15px 22px;font-weight:850;font-size:16px;min-height:55px;text-decoration:none}
+.t-checkout-action:hover{background:var(--red)}
+.t-checkout-action:disabled{opacity:.5;cursor:not-allowed}
+.t-checkout-action--full{width:100%;margin-top:18px;border:0;cursor:pointer}
+.t-checkout-summary__support{display:block;text-align:center;margin-top:18px;font-size:13px;font-weight:800;text-decoration:underline!important;text-underline-offset:5px}
+.t-checkout-empty{max-width:780px;padding:clamp(30px,5vw,70px);background:var(--cream);min-height:330px}
+.t-checkout-empty h2{font-size:clamp(50px,8vw,90px);line-height:1.2;margin:20px 0}
+.t-checkout-empty h2 em{color:var(--red)}
+.t-checkout-empty p{font-size:17px;font-weight:700;line-height:1.8;max-width:500px;margin-bottom:25px}
+.t-checkout-message{padding:20px;background:var(--cream);font-weight:850}
+@media(max-width:980px){.t-checkout-grid{grid-template-columns:1fr}.t-checkout-summary{position:static;order:0}.t-checkout-column{order:1}.t-checkout-grid{display:flex;flex-direction:column}.t-checkout-grid>*{width:100%}}
+@media(max-width:720px){.t-checkout-hero__headline{grid-template-columns:1fr;gap:18px}.t-checkout-hero__headline h1{font-size:clamp(66px,16vw,110px)}.t-checkout-hero__headline p{max-width:330px}.t-checkout-content{padding-top:30px}.t-checkout-hero__overline{font-size:10px}.t-checkout-item{grid-template-columns:30px 1fr}.t-checkout-summary{padding:25px}.t-checkout-type>div{grid-template-columns:1fr 1fr}}
+@media(max-width:370px){.t-checkout-type>div{grid-template-columns:1fr}.t-checkout-hero__overline span:last-child{display:none}}
+
+
+/* Pass 12 populated-cart visual proof:
+ * Former phone CSS reversed accessible DOM order with order:0 on summary,
+ * placing totals/submit BEFORE food and customer fields.
+ * Preserve actual decision path: review food -> contact -> final total. */
+@media(max-width:980px){
+  .t-checkout-grid{display:flex;flex-direction:column}
+  .t-checkout-column{order:0;width:100%}
+  .t-checkout-summary{order:1;width:100%;position:static}
+}
+@media(max-width:720px){
+  .t-checkout-hero{padding-block:14px 29px}
+  .t-checkout-hero__headline{padding-block:18px;gap:12px}
+  .t-checkout-hero__headline h1{font-size:clamp(47px,11.5vw,70px);line-height:1.12}
+  .t-checkout-hero__headline p{font-size:14px;line-height:1.8;margin-top:5px}
+  .t-checkout-content{padding-top:26px}
+  .t-checkout-column{gap:42px}
+  .t-checkout-section__head h2{font-size:clamp(36px,8vw,54px)}
+}
+
+/* Journey V2: navigation into the real form, no fake checkout completion.
+   Only shown on small touch screens; the full receipt remains visible below. */
+.t-checkout-quicknav{display:none}
+#t-checkout-summary,#t-checkout-fields{scroll-margin-top:105px}
+@media(max-width:720px){
+  .t-checkout-hero{padding-block:13px 21px}
+  .t-checkout-hero__headline{padding-block:10px 12px}
+  .t-checkout-hero__headline h1{font-size:clamp(43px,10.6vw,58px)}
+  .t-checkout-hero__headline p{font-size:13px;line-height:1.65}
+  .t-checkout-content{padding-top:16px}
+  .t-checkout-quicknav{
+    display:flex;gap:14px;justify-content:space-between;align-items:center;
+    padding:14px 13px;background:var(--yellow);border:2px solid var(--ink);
+    margin-bottom:23px
+  }
+  .t-checkout-quicknav>div{display:flex;flex-direction:column;gap:3px}
+  .t-checkout-quicknav span{font-size:11px;line-height:1.55;font-weight:750}
+  .t-checkout-quicknav strong{font-size:20px;line-height:1.2;font-weight:900}
+  .t-checkout-quicknav a{
+    font-size:12px;font-weight:900;min-height:42px;min-width:120px;
+    padding:10px 9px;display:flex;align-items:center;justify-content:center;
+    gap:7px;background:var(--ink);color:var(--paper)
+  }
+  .t-checkout-column{gap:27px}
+  .t-checkout-section__head{padding-bottom:13px}
+  .t-checkout-item{padding:16px 0;gap:10px}
+  .t-checkout-item__details h3{font-size:clamp(20px,5.2vw,27px)}
+  .t-checkout-inputs{padding-top:18px}
+  .t-checkout-summary{padding:22px 18px}
+  .t-checkout-summary h2{margin-bottom:13px}
+  .t-checkout-summary__line{padding:10px 0}
+  .t-checkout-summary__notice{padding:14px 0;line-height:1.75}
+}
+@media(max-width:350px){
+  .t-checkout-quicknav{gap:7px;padding:10px 9px}
+  .t-checkout-quicknav a{min-width:100px;padding:9px 5px}
+}
+
+/* T01 / A receipt for a return customer, not a second cinematic Home.
+   Keep the full expressive hero on empty carts; populated checkout goes
+   straight to reviewing choices, customer details and the final total. */
+.t-checkout-edit{
+  display:inline-flex;align-items:center;justify-content:center;min-height:42px;
+  font-size:13px;font-weight:900;text-decoration:none;
+  border-bottom:2px solid var(--red);color:var(--ink);white-space:nowrap
+}
+.t-checkout-edit:hover{color:var(--red)}
+.t-checkout-edit:focus-visible,.t-checkout-stepper button:focus-visible,
+.t-checkout-remove:focus-visible,.t-checkout-quicknav a:focus-visible{
+  outline:3px solid #287bd6;outline-offset:3px
+}
+@media(max-width:720px){
+  .t-checkout-page--filled .t-checkout-hero{padding-block:9px 11px}
+  .t-checkout-page--filled .t-checkout-hero__overline{padding-bottom:7px}
+  .t-checkout-page--filled .t-checkout-hero__overline span:last-child{display:none}
+  .t-checkout-page--filled .t-checkout-hero__headline{
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(135px,.8fr);
+    align-items:center;gap:12px;padding-block:8px
+  }
+  .t-checkout-page--filled .t-checkout-hero__headline h1{
+    font-size:clamp(31px,8.5vw,46px);line-height:1.18
+  }
+  .t-checkout-page--filled .t-checkout-hero__headline h1 br{display:none}
+  .t-checkout-page--filled .t-checkout-hero__headline h1 em{margin-inline-start:.18em}
+  .t-checkout-page--filled .t-checkout-hero__headline .t-index{display:none}
+  .t-checkout-page--filled .t-checkout-hero__headline p{
+    margin:0;font-size:12px;line-height:1.5
+  }
+  .t-checkout-page--filled .t-checkout-hero__bottom{
+    justify-content:flex-end;padding-top:7px;font-size:11px
+  }
+  .t-checkout-page--filled .t-checkout-hero__bottom span:first-child{display:none}
+  .t-checkout-page--filled .t-checkout-content{padding-top:10px}
+  .t-checkout-page--filled .t-checkout-quicknav{margin-bottom:15px}
+  .t-checkout-edit{min-height:38px;font-size:12px}
+  .t-checkout-item__controls{gap:8px 11px}
+}
+@media(max-width:350px){
+  .t-checkout-page--filled .t-checkout-hero__headline{
+    grid-template-columns:minmax(0,1fr) minmax(114px,.8fr);
+    gap:7px
+  }
+  .t-checkout-page--filled .t-checkout-hero__headline h1{font-size:30px}
+  .t-checkout-page--filled .t-checkout-hero__headline p{font-size:11px}
+}
+
+/* T01 / truthful service + payment handoff.
+   No fake payment selection or made-up delivery-fee arithmetic. */
+.t-checkout-service-note{
+  background:var(--yellow);color:var(--ink);border-inline-start:3px solid var(--red);
+  padding:11px 14px;font-size:13px;line-height:1.8;font-weight:750
+}
+.t-checkout-summary__food-total{
+  display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;
+  gap:8px 14px;padding:17px 0;border-bottom:2px solid var(--ink)
+}
+.t-checkout-summary__food-total span{font-size:14px;font-weight:900}
+.t-checkout-summary__food-total strong{font-size:clamp(23px,3vw,30px);font-weight:900}
+.t-checkout-payment-note{
+  margin-block:19px 20px;padding:19px;border:1px dashed #8c7e68;
+  background:var(--paper);
+}
+.t-checkout-payment-note h3{
+  font-size:clamp(19px,2.5vw,24px);font-weight:900;line-height:1.4;margin:7px 0 9px;
+}
+.t-checkout-payment-note p{
+  font-size:13px;line-height:1.85;font-weight:650;color:#4a3f33;margin-top:9px
+}
+.t-checkout-payment-note p:last-child{border-top:1px solid #d4c5ae;padding-top:10px}
+.t-checkout-payment-note .t-index{font-size:11px}
+@media(max-width:720px){
+  .t-checkout-summary__food-total{padding:12px 0}
+  .t-checkout-payment-note{margin:12px 0 16px;padding:13px}
+  .t-checkout-payment-note h3{font-size:20px}
+}

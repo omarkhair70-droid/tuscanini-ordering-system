@@ -1,0 +1,821 @@
+import { chromium } from 'playwright';
+
+/**
+ * Real Chromium interaction smoke: no production Supabase credentials.
+ * Does NOT claim that live product checkout, staff permissions or real
+ * order submission have been tested.
+ */
+const baseUrl = process.env.REBIRTH_BASE_URL ?? 'http://127.0.0.1:3000';
+const generatedMediaReady=process.env.NEXT_PUBLIC_REBIRTH_GENERATED_IMAGES==='ready';
+const browser = await chromium.launch({ headless: true });
+let failures = 0;
+
+async function check(ok, message) {
+  console.log(`${ok ? 'PASS' : 'FAIL'} — ${message}`);
+  if (!ok) failures += 1;
+}
+
+try {
+  for (const width of [320, 390, 768, 1440]) {
+    const context = await browser.newContext({ viewport: { width, height: 844 }, reducedMotion: 'reduce' });
+    const page = await context.newPage();
+    const runtimeErrors = [];
+    page.on('pageerror', err => runtimeErrors.push(err.message));
+
+    // Public operator page must OPEN, not 404. Its twenty synthetic tickets
+    // are actually interactive, but may never issue a real mutation API call.
+    const demo=await context.newPage();
+    let demoApiCalls=0;
+    const demoErrors=[];
+    demo.on('pageerror',e=>demoErrors.push(e.message));
+    await demo.route('**/api/studio/bridge**',route=>{
+      demoApiCalls++;
+      return route.fulfill({status:403,contentType:'application/json',
+        body:JSON.stringify({error:'Demo tried to call a real studio API'})});
+    });
+    const operatorResponse=await demo.goto(baseUrl+'/operator/orders',{waitUntil:'networkidle',timeout:30000});
+    await demo.locator('.op-root[data-preview="true"]').waitFor({timeout:10000});
+    await check(operatorResponse?.status()===200 &&
+      await demo.locator('.op-stage .op-ticket').count()===1 &&
+      await demo.locator('.op-queue-row').count()===19,
+      `${width}px public operator page immediately opens the full 20-order interactive design`);
+    await demo.getByRole('button',{name:'اقبل الأوردر'}).click();
+    await demo.getByRole('button',{name:'ابدأ التحضير'}).waitFor({timeout:5000});
+    await demo.getByRole('button',{name:'ابدأ التحضير'}).click();
+    await demo.getByRole('button',{name:'الطلب جاهز'}).waitFor({timeout:5000});
+    await demo.getByRole('button',{name:'شريط التذاكر'}).click();
+    await check(await demo.locator('.op-rail .op-ticket').count()===20,
+      `${width}px public demo supports real rail navigation while retaining local state`);
+    await demo.getByRole('button',{name:'إعادة ضبط ٢٠ طلبًا'}).click();
+    await demo.getByRole('button',{name:'المسرح الرئيسي'}).click();
+    await demo.getByRole('button',{name:'اقبل الأوردر'}).waitFor({timeout:5000});
+    await check(demoApiCalls===0&&demoErrors.length===0,
+      `${width}px interactive operator demo never calls real order APIs and has no runtime exceptions`);
+    if([390,1440].includes(width)){
+      await demo.screenshot({path:`artifacts/screenshots/public-operator-press-${width}.png`,
+        fullPage:true,animations:'disabled'});
+    }
+    await demo.close();
+    await page.goto(baseUrl + '/', { waitUntil:'networkidle',timeout:30000 });
+    await page.locator('.t-hero__photo img').waitFor({ state:'visible', timeout:15000 });
+    const heroLoaded = await page.locator('.t-hero__photo img').evaluate(img => img.complete && img.naturalWidth > 0);
+    await check(heroLoaded, `${width}px original restaurant hero image loaded`);
+    // Route-scale illustrated navigation must work on mobile/tablet, not just
+    // look correct in an isolated screenshot.
+    if(width<=1050){
+      const navToggle=page.getByRole('button',{name:'افتح القائمة'});
+      await navToggle.click();
+      const mobilePanel=page.getByRole('navigation',{name:'قائمة الموبايل'});
+      await check(await mobilePanel.isVisible() &&
+        await mobilePanel.locator('.t-mobile-menu__group a svg').count()===5,
+        `${width}px mobile menu is a five-route illustrated material grid`);
+      if(width===390 || width===768) await page.screenshot({
+        path:`artifacts/screenshots/mobile-material-navigation-${width}.png`,animations:'disabled'
+      });
+      await page.keyboard.press('Escape');
+      await check(await mobilePanel.count()===0 && await page.getByRole('button',{name:'افتح القائمة'}).count()===1,
+        `${width}px mobile illustrated menu dismisses with Escape and restores its toggle`);
+    }
+    const tab = page.getByRole('tab', { name: /البيتزا/ });
+    await tab.click();
+    await check(await tab.getAttribute('aria-selected') === 'true', `${width}px food category tab interaction`);
+    await check(await page.getByRole('tabpanel').getByText('البيتزا', { exact: true }).count() >= 1, `${width}px category content switch`);
+    await page.getByRole('button', { name: /شوف صور المطعم/ }).click();
+    const gallery = page.getByRole('dialog', { name: /صور الطعام الحقيقية/ });
+    await check(await gallery.isVisible(), `${width}px genuine restaurant image gallery opens`);
+    await check(await gallery.locator('figure').count() === 12, `${width}px all twelve original photos are accessible in gallery`);
+    await gallery.getByRole('button', { name: 'إغلاق المعرض' }).click();
+    await check(!(await gallery.isVisible()), `${width}px gallery closes safely`);
+    if ([390, 1440].includes(width)) {
+      await page.locator('.t-material__stage').scrollIntoViewIfNeeded();
+      await page.screenshot({ path: `artifacts/screenshots/home-material-focus-${width}.png` });
+      await page.locator('.t-packaging__content').scrollIntoViewIfNeeded();
+      await page.screenshot({ path: `artifacts/screenshots/home-packaging-focus-${width}.png` });
+    }
+    const materialChoice=page.getByRole('group',{name:'تغيير مشهد الصور الحقيقية'});
+    await check(await materialChoice.getByRole('button',{name:/العلبة والورق/}).getAttribute('aria-pressed')==='true',
+      `${width}px original real-packaging photograph is default`);
+    const insideChoice=materialChoice.getByRole('button',{name:/الأكل من جوا/});
+    await insideChoice.click();
+    await check(await insideChoice.getAttribute('aria-pressed')==='true' &&
+      await page.locator('.t-packaging__photo-img--inside[data-current="true"]').count()===1,
+      `${width}px physical material study changes to distinct genuine opened food photograph`);
+    await check(await page.locator('.t-packaging__photo-img').evaluateAll(images =>
+      images.length===2 && images.every(img=>img.complete&&img.naturalWidth>0)),
+      `${width}px both package and interior photographs decode without fabricated product mapping`);
+    await check(await page.getByText(/مش لنفس الساندوتشات/).count()===1,
+      `${width}px user-controlled inside/out view openly distinguishes two photographed products`);
+    if(width===390 || width===1440){
+      await page.locator('.t-packaging__photo').scrollIntoViewIfNeeded();
+      await page.screenshot({path:`artifacts/screenshots/home-packaging-open-${width}.png`,animations:'disabled'});
+    }
+    await materialChoice.getByRole('button',{name:/العلبة والورق/}).click();
+    await check(await page.locator('.t-packaging__photo-img--package[data-current="true"]').count()===1,
+      `${width}px physical photo study is reversible via real button`);
+    const lens = page.getByRole('slider', {name:/حرّك للمقارنة/});
+    await check(await lens.count()===1, `${width}px one accessible genuine-photo comparison control`);
+    const before = await lens.getAttribute('aria-valuetext');
+    await lens.focus();
+    await lens.press('End');
+    await check((await lens.getAttribute('aria-valuetext')) !== before && (await lens.getAttribute('aria-valuetext'))?.includes('100')===true, `${width}px image detail reveal responds to keyboard End`);
+    const visibleKnob = await page.locator('.t-material__stage').evaluate(stage => {
+      const bounds = stage.getBoundingClientRect();
+      const knob = stage.querySelector('.t-material__handle-knob')?.getBoundingClientRect();
+      return Boolean(knob && knob.left >= bounds.left - 2 && knob.right <= bounds.right + 2);
+    });
+    await check(visibleKnob, `${width}px reveal drag knob stays fully visible at 100%`);
+    await lens.press('Home');
+    await check((await lens.getAttribute('aria-valuetext'))?.includes('0٪')===true, `${width}px image detail reveal resets to full-photo side`);
+    const visibleKnobAtStart = await page.locator('.t-material__stage').evaluate(stage => {
+      const bounds = stage.getBoundingClientRect();
+      const knob = stage.querySelector('.t-material__handle-knob')?.getBoundingClientRect();
+      return Boolean(knob && knob.left >= bounds.left - 2 && knob.right <= bounds.right + 2);
+    });
+    await check(visibleKnobAtStart, `${width}px reveal drag knob stays fully visible at 0%`);
+    const sourcePair = await page.locator('.t-material__image img').evaluateAll(images => images.map(img => new URL(img.currentSrc || img.src).searchParams.get('url') || (img.currentSrc||img.src)));
+    await check(sourcePair.length===2 && sourcePair[0]===sourcePair[1], `${width}px detail comparison uses identical real source pixels`);
+    await check(await page.locator('main#t-main-story > section').count()===5, `${width}px exactly five purposeful Home chapters after editorial cut`);
+    await check(await page.locator('.t-ticker__set').count()===2, `${width}px ticker has two seamless repeating sets`);
+    await check(await page.locator('.t-ticker__track').evaluate(el=>getComputedStyle(el).animationName)==='none', `${width}px marquee respects reduced-motion setting`);
+    await check(await page.locator('.t-photo-archive__samples button:nth-child(2) .t-real-food-photo__img').evaluate(el=>getComputedStyle(el).animationName)==='none', `${width}px documentary scroll drift fully stops under reduced motion`);
+    await check(await page.getByRole('img',{name:/ساندوتشات توسكانيني بجانب العلب الحمراء/}).count()===1, `${width}px real branded packaging scene present`);
+    const packagingLoaded = await page.locator('.t-packaging__photo-img--package').evaluate(img=>img.complete && img.naturalWidth>0);
+    await check(packagingLoaded, `${width}px genuine packaging photograph pixels loaded (not just img element)`);
+    await check(await page.getByRole('heading',{name:/العلبة.*ليها شكل/}).count()===1, `${width}px separate red packaging chapter renders`);
+    await check(await page.getByRole('heading',{name:/تلاقينا.*في بني.*سويف/}).count()===1, `${width}px local yellow place chapter renders`);
+    await check(await page.locator('.t-place-final a[href="/contact"]').count()===1, `${width}px place contact route is available`);
+    await check(await page.locator('.t-intro').count()===0, `${width}px duplicate intro chapter removed`);
+    await check(await page.locator('.t-quick').count()===0, `${width}px redundant large CTA chapter removed`);
+    await check(await page.getByRole('link',{name:/روح للمنيو/}).count()===1, `${width}px bounded menu bridge retained after photo reveal`);
+    await check(await page.locator('.t-material__after').count()===0, `${width}px no repeated enormous inside/out caption scene`);
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    await check(overflow <= 3, `${width}px Home no significant horizontal overflow (${overflow}px)`);
+    await check(runtimeErrors.length === 0, `${width}px Home no uncaught JavaScript errors: ${runtimeErrors.join(' / ') || 'none'}`);
+    await page.goto(baseUrl + '/menu', { waitUntil: 'networkidle', timeout:30000 });
+    await check(await page.locator('.t-menu-intro__jump[href="#t-menu-search"]').count()===1,
+      `${width}px Menu search can be reached directly from first hero scene`);
+    await check(await page.locator('.t-menu-intro__actions[aria-label="اختصارات المنيو"]').count()===1
+      && await page.locator('.t-menu-intro__jump--secondary[href="#t-menu-categories"]').count()===1
+      && await page.locator('#t-menu-categories .t-menu-categories__scroller').count()===1,
+      `${width}px Menu has explicit search/category shortcuts to the real sections`);
+    const menuTitleFits = await page.locator('.t-menu-intro__copy h1').evaluate(el => {
+      const height = el.getBoundingClientRect().height;
+      const line = parseFloat(getComputedStyle(el).lineHeight);
+      return Number.isFinite(line) && height <= line * (window.innerWidth <= 390 ? 2.35 : 2.65);
+    });
+    await check(menuTitleFits, `${width}px Menu Arabic headline stays within two intentional lines`);
+    const menuDocumentaryPhotos = await page.locator('.t-menu-intro__photo img').evaluateAll(images =>
+      images.map(img => img.complete && img.naturalWidth > 0)
+    );
+    await check(menuDocumentaryPhotos.length === 2 && menuDocumentaryPhotos.every(Boolean), `${width}px Menu authentic source photos decoded`);
+    await check(await page.locator('.t-menu-intro__photo').count()===2,
+      `${width}px Menu photo context does not imply named products`);
+
+    await check(await page.locator('.t-menu-intro__copy #t-menu-search #t-menu-query').count()===1 && await page.locator('.t-menu-content #t-menu-search').count()===0,
+      `${width}px direct search is accessible in the first menu scene, before the photo pair`);
+    await check(await page.getByRole('searchbox', { name: /دور على أكلك/ }).count() === 1, `${width}px direct menu search exposed`);
+    await check(await page.getByRole('button', { name: 'كل الأصناف' }).count() === 1, `${width}px food filter exposed`);
+    await check(await page.locator('.t-menu-categories__scroller button .t-menu-category-glyph').count()===17,
+      `${width}px all sixteen authentic categories and All carry drawn SVG family pictograms`);
+    await check(await page.locator('.t-menu-categories__scroller button').count()===17,
+      `${width}px historical Tuscanini menu has 16 original category filters plus All`);
+    await check(await page.locator('[data-visual-disclosure="menu"]').getByText(/الأسعار من المنيو السابق/).count()===1,
+      `${width}px original old-price menu is transparently source-labelled`);
+    await check(await page.locator('.t-menu-product').count()===20,
+      `${width}px 113-item original menu is populated and paginated, not an unavailable dummy`);
+    await check(await page.locator('.t-menu-items__grid--photo').count()===1 &&
+       await page.locator('.t-menu-view-switch').count()===0,
+       `${width}px one food menu, not a three-mode graphic/gallery switch`);
+    const expectedKind=generatedMediaReady?'generated-illustrative':'representative-stock';
+    await check(await page.locator('.t-menu-items__grid--photo [data-kind="'+expectedKind+'"]').count()===(generatedMediaReady?20:19) &&
+      (generatedMediaReady
+        ? await page.locator('.t-menu-product [data-kind="generated-illustrative"][data-product-id="cx4"][data-source-photo-id="SKU-CX4"]').count()===1
+        : await page.locator('.t-menu-product [data-kind="original-graphic"][data-product-id="cx4"]').count()===1),
+      `${width}px all currently photographed menu rows use declared conceptual provenance, including new tuna-crepe study`);
+    await check(await page.locator('[data-visual-disclosure="menu"]').count()===1 &&
+       (await page.locator('[data-visual-disclosure="menu"]').innerText()).includes('الصور للتوضيح') &&
+       await page.locator('.t-menu-product .t-product-art__representative-label').count()===0,
+       `${width}px illustration source disclosed once, without overlays on each food photo`);
+    if(generatedMediaReady){
+      // Image cards deliberately use native lazy-loading. On narrow phones,
+      // offscreen <img> elements MUST NOT all download immediately: that is a
+      // performance feature. Verify all 20 requested paths return real WebP
+      // bytes, and verify the actually visible first image has decoded.
+      const imageSrcs=await page.locator('.t-menu-items__grid--photo [data-kind="generated-illustrative"] img')
+        .evaluateAll(images=>images.map(img=>img.getAttribute('src')));
+      const firstImage=page.locator('.t-menu-items__grid--photo [data-kind="generated-illustrative"] img').first();
+      await firstImage.scrollIntoViewIfNeeded();
+      await page.waitForFunction(()=> {
+        const img=document.querySelector('.t-menu-items__grid--photo [data-kind="generated-illustrative"] img');
+        return Boolean(img&&img.complete&&img.naturalWidth>0);
+      },null,{timeout:12000});
+      const distinct=[...new Set(imageSrcs)];
+      const responses=await Promise.all(distinct.map(src=>page.request.get(new URL(src,baseUrl).toString())));
+      const loaded=imageSrcs.length===20&&distinct.length>=5&&
+        responses.every(r=>r.status()===200&&(r.headers()['content-type']||'').includes('image/webp'));
+      await check(loaded,`${width}px all 20 illustrated first-page assets return local WebP including supplemental tuna`);
+    }
+    if(width===390 && generatedMediaReady){
+      const supplementIds=['cx4','px3','sf5','sf6','ap3','ap7','ap9','ap10','dr1','dr2','dr3','dr4','dr5','dr6','ca1','ca2','ca3','ca4','ca5','ca6'];
+      const got=await Promise.all(supplementIds.map(async id=>{
+        const response=await page.request.get(baseUrl+'/images/rebirth/supplemental/'+id+'.webp');
+        return response.status()===200 && (response.headers()['content-type']||'').includes('image/webp');
+      }));
+      await check(got.length===20 && got.every(Boolean),
+        '390px all twenty individually committed supplemental illustrative WebPs served from this site');
+      await page.getByRole('button',{name:'مشروبات',exact:true}).click();
+      await check(await page.locator('[data-source-photo-id^="SKU-"]').count()===6,
+        '390px all six real historical drink names have local, explicitly fictional illustration previews');
+      await page.getByRole('button',{name:'إضافات كريب',exact:true}).click();
+      await check(await page.locator('[data-source-photo-id^="SKU-"]').count()===6,
+        '390px six crepe-addon named concepts are displayed with separately recorded provenance');
+      await page.getByRole('button',{name:'كل الأصناف',exact:true}).click();
+    }
+    const menuArt=await page.locator('.t-menu-product__identity .t-product-art').evaluateAll(elements=>({
+       count:elements.length,
+       unique:new Set(elements.map(el=>el.getAttribute('data-product-id'))).size,
+     }));
+     await check(menuArt.count===20 && menuArt.unique===20,
+       `${width}px twenty unified cards each identify their actual historical product`);
+     await page.locator('.t-menu-items__grid--photo .t-menu-product__art-trigger').first().click();
+     await check(await page.locator('.t-product-dialog[open]').count()===1 &&
+       await page.locator('.t-product-dialog[data-motion-technique]').count()===0,
+       `${width}px product options open from food imagery without motion when reduced`);
+     await page.getByRole('button',{name:'إغلاق تفاصيل المنتج'}).click();
+     await page.getByRole('searchbox',{name:/دور على أكلك/}).fill('تشيكن فاير');
+    await check(await page.locator('.t-menu-search__feedback').getByText(/نتيجة من المنيو كله/).count()===1 &&
+      await page.locator('.t-menu-search__feedback button').count()===1,
+      `${width}px typed menu search gives inline result count and a direct results jump`);
+    const duplicateFlavors=await page.locator('.t-menu-product h3').allInnerTexts();
+    await check(duplicateFlavors.length>=2 &&
+      duplicateFlavors.every(name=>name==='تشيكن فاير'),
+      `${width}px exact flavor search shows same-named products across distinct old menu families`);
+    await check(await page.getByRole('button',{name:'اختيار تفاصيل كريب توسكانيني — تشيكن فاير'}).count()===1,
+      `${width}px identical flavor names have explicitly distinguishable food-family actions`);
+    await page.getByRole('button',{name:'اختيار تفاصيل كريب توسكانيني — تشيكن فاير'}).click();
+    await page.locator('.t-product-dialog[open]').waitFor({timeout:4000});
+    await check(await page.locator('.t-product-dialog__identity .t-product-art[data-product-id]').count()===1,
+       `${width}px matched named menu item visual and modifiers share a stable SKU ID`);
+
+     if(width===390){
+       const detailPhotoWidth=await page.locator('.t-product-dialog__identity .t-product-art--large').evaluate(
+         el=>el.getBoundingClientRect().width
+       );
+       await check(detailPhotoWidth>=135 && detailPhotoWidth<=160,
+         '390px product detail illustration carries food imagery without hiding size/addon controls');
+     }
+     await check(await page.locator('.t-product-dialog').getByText(/الأسعار حسب المنيو السابق/).count()===1,
+      `${width}px size/addon picker states where its historical prices came from`);
+    await check(await page.locator('.t-product-dialog__options label').count()>1,
+      `${width}px old crepe is populated with real original size and addon controls`);
+    await page.locator('.t-product-dialog__close').click();
+    await page.getByRole('searchbox',{name:/دور على أكلك/}).fill('');
+    await page.getByRole('button',{name:'كريب لحوم',exact:true}).click();
+    await page.waitForFunction(() => document.querySelectorAll('.t-menu-product').length > 0, null, {timeout:8000});
+    await check(await page.locator('.t-menu-family-context img').count()===1&&
+      await page.locator('.t-menu-family-context').getByText(/من جوّه المطعم/).count()===1,
+      `${width}px verified original CREPE image is shown only as a family context photo`);
+    await check(await page.locator('.t-menu-product').count()>0,
+      `${width}px category chips filter legacy catalog and deep link correctly`);
+    await page.getByRole('button',{name:'كل الأصناف',exact:true}).click();
+    await page.getByRole('button',{name:/اعرض أصناف أكتر/}).waitFor({state:'visible',timeout:8000});
+    if(width===390){
+      for(let batch=0;batch<5;batch++){
+        await page.getByRole('button',{name:/اعرض أصناف أكتر/}).click();
+      }
+      const all=await page.locator('.t-menu-product__identity .t-product-art').evaluateAll(arts=>({
+        total:arts.length,
+        unique:new Set(arts.map(art=>art.getAttribute('data-product-id'))).size,
+        validSource:arts.every(art=>['generated-illustrative','representative-stock','original-graphic'].includes(art.dataset.kind)),
+      }));
+      await check(all.total===113&&all.unique===113&&all.validSource,
+        '390px all 113 historical items have distinct source-conscious images or illustrated fallbacks');
+      await page.getByRole('button',{name:'كل الأصناف',exact:true}).click();
+      await page.getByRole('button',{name:/اعرض أصناف أكتر/}).waitFor({state:'visible',timeout:8000});
+    }
+    await page.getByRole('button',{name:/اعرض أصناف أكتر/}).click();
+    await check(await page.locator('.t-menu-product').count()===40,
+      `${width}px full 113-record catalog supports progressive 20-to-40 loading without losing prices`);
+    await check(await page.locator('.t-menu-items__grid--photo').count()===1,
+       `${width}px one customer menu remains intact after searching, filtering and pagination`);
+     await page.locator('.t-menu-items__grid--photo .t-menu-product__art-trigger').first().click();
+    const photoSheet=page.locator('.t-product-dialog[open]');
+    await check(await photoSheet.count()===1 &&
+      (generatedMediaReady
+        ? await photoSheet.locator('[data-kind="generated-illustrative"]').count()===1
+        : await photoSheet.locator('[data-kind="representative-stock"]').count()===1) &&
+        await photoSheet.getByText('الأسعار حسب المنيو السابق.').count()===1 &&
+        await photoSheet.getByText(/مولّدة بالذكاء الاصطناعي|مش تصوير الصنف|Pexels/).count()===0,
+      `${width}px product sheet preserves original size/addons and correctly declares generated versus stock food photography`);
+    await page.getByRole('button',{name:'إغلاق تفاصيل المنتج'}).click();
+    const menuOverflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    await check(menuOverflow <= 3, `${width}px Menu no significant horizontal overflow (${menuOverflow}px)`);
+    await page.goto(baseUrl + '/offers', { waitUntil: 'networkidle', timeout:30000 });
+    const offersDocumentaryPhotoLoaded = await page.locator('.t-offers-hero__photo img').evaluate(img => img.complete && img.naturalWidth > 0);
+    await check(offersDocumentaryPhotoLoaded, `${width}px Offers real non-offer-specific photograph decoded`);
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL === 'https://example.supabase.co') {
+      const sourceFailureShown = await page.getByRole('heading', { name: 'مش قادرين نتحقق من العروض.' }).count();
+      const falselyEmptyShown = await page.getByRole('heading', { name: /مفيش عروض.*مؤكدة/ }).count();
+      await check(sourceFailureShown === 1 && falselyEmptyShown === 0,
+        `${width}px unavailable offers backend shows verification failure, not false no-active claim`);
+    }
+
+    await check(await page.getByText('من صور توسكانيني',{exact:true}).count()===1 &&
+      await page.locator('.t-offers-hero__photo img[alt*="ليست صورة لعرض معين"]').count()===1,
+      `${width}px Offers photograph is not misrepresented as a live discount`);
+    await check(await page.locator('.t-offers-hero__foot a[href="/menu"]').count()===1,
+      `${width}px Offers immediate menu escape remains available`);
+    const offersOverflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    await check(offersOverflow <= 3, `${width}px Offers no significant horizontal overflow (${offersOverflow}px)`);
+
+    await page.goto(baseUrl + '/food-finder', { waitUntil:'networkidle',timeout:30000 });
+    await check(await page.getByRole('heading',{name:/تختار.*إزاي/}).count()===1,
+      `${width}px Finder has distinct functional question, not duplicated Cart headline`);
+    const finderHeroHeight=await page.locator('.t-finder-hero').evaluate(el=>el.getBoundingClientRect().height);
+    await check(finderHeroHeight<=620,
+      `${width}px Finder first-scene priority is bounded (${Math.round(finderHeroHeight)}px)`);
+    await check(await page.locator('.t-finder-form-glyph').count()===8,
+      `${width}px Finder family choices use visual sketches instead of emoji/text-only chips`);
+    await check(await page.locator('.t-finder-progress').getByText('2 STEPS / YOUR FOOD').count()===1,
+      `${width}px Finder uses two actual recorded-data questions rather than unsupported tags`);
+    await page.getByRole('button',{name:'كريب',exact:true}).click();
+    await page.getByRole('button',{name:'لحد 150 ج.م',exact:true}).click();
+    await check(await page.getByRole('heading',{name:'لقيّنا إيه؟'}).count()===1 &&
+      await page.locator('.t-finder-results__grid article').count()===8,
+      `${width}px real previous-price menu returns eight affordable crepe results`);
+    await check(await page.locator('.t-finder-results__grid a[href^="/menu?category="]').count()===8,
+      `${width}px Finder results link to their own exact category without inventing products`);
+    const finderOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+    await check(finderOverflow<=3,`${width}px Finder no significant horizontal overflow (${finderOverflow}px)`);
+    await page.goto(baseUrl + '/about', { waitUntil: 'networkidle', timeout:30000 });
+    await check(await page.getByRole('heading', { name: /ناس، أكل/ }).count()===1,
+      `${width}px About uses verified people and place story`);
+    await check(await page.locator('body header').count()===1 &&
+      await page.locator('body main').count()===1 &&
+      await page.locator('body footer').count()===1,
+      `${width}px About renders exactly one authored header/main/footer without legacy shell`);
+    await check(await page.getByText(/حكاية الأربعة صحاب/).count()===0,
+      `${width}px About does not publish unconfirmed four-founder legend`);
+    const aboutPhotos = await page.locator('.t-about-hero__photograph img, .t-about-observed__scene img')
+      .evaluateAll(images => images.map(img => img.complete && img.naturalWidth > 0));
+    await check(aboutPhotos.length===3 && aboutPhotos.every(Boolean),
+      `${width}px all three documentary About restaurant photos decode`);
+    await check(await page.locator('.t-about-visit a[href="/contact"]').count()===1 &&
+      await page.locator('.t-about-hero__links a[href="/menu"]').count()===1,
+      `${width}px About offers direct verified contact and menu paths`);
+    const aboutOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+    await check(aboutOverflow<=3, `${width}px About no significant horizontal overflow (${aboutOverflow}px)`);
+    await page.goto(baseUrl + '/contact', { waitUntil: 'networkidle', timeout:30000 });
+    await check(await page.getByRole('heading', { name:/تعالى.*لحد عندنا/ }).count() === 1,
+      `${width}px Contact has dedicated wayfinding identity`);
+    await check(await page.locator('body header').count() === 1 &&
+      await page.locator('body main').count() === 1 &&
+      await page.locator('body footer').count() === 1,
+      `${width}px Contact has exactly one authored header/main/footer`);
+    const contactPhones = await page.locator('.t-contact-method__links a[href^="tel:"]').evaluateAll(links =>
+      links.map(a => ({visible: a.getBoundingClientRect().width > 0, href:a.getAttribute('href')})));
+    await check(contactPhones.length===2 && contactPhones.every(a=>a.visible && /^tel:\d{7,15}$/.test(a.href)),
+      `${width}px two directly callable configured restaurant phone numbers`);
+    const whatsappLinks = await page.locator('.t-contact-method__links a[href^="https://wa.me/"]').evaluateAll(links =>
+      links.map(a => ({href:a.getAttribute('href'),rel:a.getAttribute('rel')||''})));
+    await check(whatsappLinks.length===1 && /^https:\/\/wa.me\/\d{10,15}$/.test(whatsappLinks[0].href) &&
+      whatsappLinks[0].rel.includes('noopener'),
+      `${width}px WhatsApp direct contact is sanitized and opens safely`);
+    await check(await page.locator('.t-contact-method__links a[href^="https://www.facebook.com/"]').count()===1,
+      `${width}px external Facebook contact uses configured official link`);
+    await check(await page.getByText(/اتصل بينا قبل الزيارة للتأكد من المواعيد/).count()===1,
+      `${width}px unverified exact map pin and hours are not fabricated`);
+    await check(await page.locator('.t-contact-unknown__links a[href="/complaints"]').count()===1,
+      `${width}px Contact exposes real complaints escalation path`);
+    const contactOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+    await check(contactOverflow<=3,`${width}px Contact no significant horizontal overflow (${contactOverflow}px)`);
+    await page.goto(baseUrl + '/reviews', { waitUntil:'networkidle', timeout:30000 });
+    await check(await page.getByRole('heading',{name:/قولنا.*رأيك/}).count()===1,
+      `${width}px Reviews authored editorial invitation renders`);
+    await check(await page.locator('body header').count()===1 &&
+      await page.locator('body main').count()===1 &&
+      await page.locator('body footer').count()===1,
+      `${width}px Reviews has exactly one authored public header/main/footer`);
+    await check(await page.getByText(/ابعت رأيك للمطعم على واتساب/).count()===1 &&
+      await page.locator('[data-testimonial],.t-review-stars').count()===0,
+      `${width}px Reviews truthfully shows no unverified testimonials`);
+    await check(await page.locator('.t-reviews-explanation__actions a[href^="https://wa.me/"]').count()===1,
+      `${width}px Reviews invites outbound WhatsApp only with contact link`);
+    await check(await page.locator('.t-reviews-explanation__actions a[href="/complaints"]').count()===1,
+      `${width}px Reviews preserves a separate complaint path`);
+    const reviewOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+    await check(reviewOverflow<=3,`${width}px Reviews no significant horizontal overflow (${reviewOverflow}px)`);
+    await page.goto(baseUrl + '/complaints', { waitUntil:'networkidle',timeout:30000 });
+    await check(await page.getByRole('heading',{name:/حصلت.*مشكلة/}).count()===1,
+      `${width}px Complaints authored help route renders`);
+    await check(await page.locator('body .t-header').count()===1 &&
+      await page.locator('body main').count()===1 &&
+      await page.locator('body .t-footer').count()===1,
+      `${width}px Complaints has one public shell header/main/footer, allowing internal section header`);
+    await page.getByRole('button',{name:/جهز الرسالة وافتح واتساب/}).click();
+    await check(await page.getByRole('alert').getByText(/اكتب تفاصيل المشكلة/).count()===1,
+      `${width}px complaint cannot open an empty WhatsApp message`);
+    await page.getByLabel(/إيه اللي حصل/).fill('اختبار شكوى فقط - لا ترسل');
+    await page.evaluate(()=>{window.open=(url)=>{window.__capturedComplaintUrl=String(url);return null;};});
+    await page.getByRole('button',{name:/جهز الرسالة وافتح واتساب/}).click();
+    const capturedComplaint=await page.evaluate(()=>window.__capturedComplaintUrl||'');
+    await check(capturedComplaint.startsWith('https://wa.me/') &&
+      decodeURIComponent(capturedComplaint).includes('اختبار شكوى فقط - لا ترسل'),
+      `${width}px valid complaint opens prefilled WhatsApp URL locally without server POST`);
+    await check(await page.getByRole('status').getByText(/اضغط إرسال بنفسك/).count()===1,
+      `${width}px website never falsely reports complaint as received`);
+    const complaintsOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+    await check(complaintsOverflow<=3,
+      `${width}px Complaints no significant horizontal overflow (${complaintsOverflow}px)`);
+    // Isolated REAL previous-price product/size/addon/cart journey.
+    // Do not send any order: the CI database is deliberately non-production.
+    const catalogContext=await browser.newContext({viewport:{width,height:844},reducedMotion:'reduce'});
+    const shopPage=await catalogContext.newPage();
+    await shopPage.goto(baseUrl+'/menu',{waitUntil:'networkidle',timeout:30000});
+    await shopPage.getByRole('searchbox',{name:/دور على أكلك/}).fill('تشيكن فاير');
+    await shopPage.getByRole('button',{name:'اختيار تفاصيل كريب توسكانيني — تشيكن فاير'}).click();
+    await shopPage.locator('.t-product-dialog[open]').waitFor({timeout:4000});
+    await shopPage.locator('.t-product-dialog__options input[type="checkbox"]').first().check();
+    await shopPage.getByRole('group',{name:'اختر الكمية'}).getByRole('button',{name:'زيادة الكمية'}).click();
+    await shopPage.getByRole('button',{name:/ضيف للسلة/}).click();
+    const selectedLegacy=await shopPage.evaluate(()=>{
+      const cart=JSON.parse(localStorage.getItem('tuscanini-cart-v1')||'{}');
+      return cart.items?.[0] ?? null;
+    });
+    await check(Boolean(selectedLegacy && selectedLegacy.productName==='تشيكن فاير' &&
+      selectedLegacy.unitPrice===145 && selectedLegacy.quantity===2),
+      `${width}px actual recorded 125 + 20 addon, quantity 2, is stored as 290 EGP cart`);
+    await shopPage.goto(baseUrl+'/cart',{waitUntil:'networkidle',timeout:30000});
+    if(width<=720){
+      const cartQuickAmount=(await shopPage.locator('.t-checkout-quicknav strong').textContent())?.trim();
+      const expectedArabicAmount=new Intl.NumberFormat('ar-EG',{maximumFractionDigits:2}).format(290)+' ج.م';
+      await check(cartQuickAmount===expectedArabicAmount &&
+        await shopPage.getByRole('link',{name:/اكمل بياناتك/}).count()===1,
+        `${width}px mobile Cart opens with an accurate estimated product subtotal and a direct customer-form shortcut`);
+    }
+    await check(await shopPage.getByRole('heading',{name:/تشيكن فاير/}).count()===1,
+      `${width}px previous menu item survives into authored populated checkout`);
+    // A real cart LINE edit must preserve the order's identity rather than
+    // adding a second copy of the item. Back to Menu preloads exact choices.
+    const originalLineId=selectedLegacy.lineId;
+    if([390,1440].includes(width)){
+      await shopPage.screenshot({path:`artifacts/screenshots/checkout-before-line-edit-${width}.png`,
+        fullPage:true,animations:'disabled'});
+    }
+    await shopPage.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).check();
+    await shopPage.getByRole('link',{name:/تعديل الحجم والإضافات وملاحظات تشيكن فاير/}).click();
+    await shopPage.locator('.t-product-dialog[open]').waitFor({timeout:8000});
+    await check(await shopPage.getByRole('button',{name:/احفظ التعديلات/}).count()===1,
+      `${width}px cart edit opens same source product in explicit editing mode`);
+    const addonChoice=shopPage.locator('.t-product-dialog__options input[type="checkbox"]').first();
+    await check(await addonChoice.isChecked(),`${width}px chosen mozzarella survives into editor`);
+    await check((await shopPage.getByRole('group',{name:'اختر الكمية'}).locator('output').innerText()).trim()==='2',
+      `${width}px original line quantity is preserved in editor`);
+    await addonChoice.uncheck();
+    await shopPage.getByRole('group',{name:'اختر الكمية'}).getByRole('button',{name:'تقليل الكمية'}).click();
+    await shopPage.locator('#rebirth-product-notes').fill('بدون بصل - تعديل من السلة');
+    await shopPage.getByRole('button',{name:/احفظ التعديلات/}).click();
+    await shopPage.waitForURL(/\/cart(?:#|$)/,{timeout:12000});
+    await shopPage.waitForFunction(id=>{
+      const saved=JSON.parse(localStorage.getItem('tuscanini-cart-v1')||'{}');
+      return saved.items?.length===1&&saved.items[0].lineId===id&&
+        saved.items[0].quantity===1&&saved.items[0].selectedAddons?.length===0;
+    },originalLineId,{timeout:8000});
+    if([390,1440].includes(width)){
+      await shopPage.evaluate(()=>window.scrollTo(0,0));
+      await shopPage.screenshot({path:`artifacts/screenshots/checkout-after-line-edit-${width}.png`,
+        fullPage:true,animations:'disabled'});
+    }
+    const updated=await shopPage.evaluate(()=>{
+      const saved=JSON.parse(localStorage.getItem('tuscanini-cart-v1')||'{}');
+      return {items:saved.items??[],reviewed:!!saved.customer?.confirmedAccurateDetails};
+    });
+    await check(updated.items.length===1&&updated.items[0].lineId===originalLineId&&updated.items[0].quantity===1 &&
+      updated.items[0].unitPrice===125&&updated.items[0].totalItemPrice===125 &&
+      updated.items[0].selectedAddons?.length===0&&updated.items[0].itemNotes==='بدون بصل - تعديل من السلة' && !updated.reviewed,
+      `${width}px saved cart edit updates same receipt line, recalculates price, keeps notes and never duplicates`);
+    await check(await shopPage.getByRole('button',{name:/سجّل الطلب للمطعم/}).isDisabled(),
+      `${width}px historic menu doesn't bypass store-open/live-order validation`);
+    await catalogContext.close();
+    await page.goto(baseUrl + '/cart', { waitUntil: 'networkidle', timeout:30000 });
+    await check(await page.getByRole('heading', { name:/على.*مزاجك/ }).count()===1, `${width}px Checkout authored header renders`);
+    await check(await page.locator('.t-customer-journey [aria-current="step"]').getByText('راجع التفاصيل').count()===1,
+      `${width}px checkout uses the shared journey with current review step`);
+    await check(await page.getByRole('heading', { name:/لسه مفيش/ }).count()===1, `${width}px empty cart is honest and non-orderable`);
+    await check(await page.getByRole('button', { name: /سجّل الطلب للمطعم/ }).count()===0, `${width}px empty cart cannot be submitted`);
+    const cartOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+    await check(cartOverflow<=3, `${width}px Cart no significant horizontal overflow (${cartOverflow}px)`);
+    await page.goto(baseUrl + '/order-success', { waitUntil:'networkidle', timeout:30000 });
+    await check(await page.getByRole('heading',{name:/مفيش رقم\s*طلب صالح هنا/}).count()===1 &&
+       await page.locator('.t-order-tracking').count()===0, `${width}px direct tracking URL does not falsely confirm an order`);
+    const trackingOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+    await check(trackingOverflow<=3, `${width}px Tracking no significant horizontal overflow (${trackingOverflow}px)`);
+    // Isolated browser fixture: checks form behavior without contacting the restaurant DB.
+    if(width===390){
+      const motionContext=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'no-preference'});
+      const motionPage=await motionContext.newPage();
+      await motionPage.goto(baseUrl+'/',{waitUntil:'networkidle',timeout:30000});
+      const name=await motionPage.locator('.t-ticker__track').evaluate(el=>getComputedStyle(el).animationName);
+      await check(name==='t-marquee-continuous', '390px default-motion marquee actually animates');
+      const nativeViewTimeline = await motionPage.evaluate(() => CSS.supports('animation-timeline: view()'));
+      if (nativeViewTimeline) {
+        const archiveMotion = await motionPage.locator('.t-photo-archive__samples button:nth-child(2) .t-real-food-photo__img').evaluate(el=>getComputedStyle(el).animationName);
+        await check(archiveMotion==='t-documentary-photo-drift', '390px scroll-driven real-photo drift engages only where supported');
+      } else {
+        console.log('INFO — browser has no CSS view timeline; archive remains static by design');
+      }
+      await motionContext.close();
+    }
+    const fixtureContext=await browser.newContext({ viewport:{width,height:844},reducedMotion:'reduce' });
+    await fixtureContext.addInitScript(()=>{
+      localStorage.setItem('tuscanini-cart-v1',JSON.stringify({
+        items:[{lineId:'fixture-line',kind:'offer',offerId:'fixture-only',offerTitle:'عرض اختبار غير حقيقي',quantity:1,unitPrice:45,totalItemPrice:45,itemNotes:''}],
+        customer:{name:'',phone:'',address:'',orderType:'delivery',generalNotes:'',confirmedAccurateDetails:false},
+        tableReference:null,
+      }));
+    });
+    await fixtureContext.route('**/api/public/site-settings',route=>route.fulfill({
+      status:200,contentType:'application/json',body:JSON.stringify({ok:true,settings:{isOrderingOpen:true,deliveryEnabled:true,whatsappOrderNumber:''}}),
+    }));
+    let submits=0;
+    const submittedChoices=[];
+    await fixtureContext.route('**/api/orders',route=>{
+      submits++;
+      submittedChoices.push(route.request().postDataJSON());
+      return route.fulfill({status:409,contentType:'application/json',body:JSON.stringify({ok:false,code:'ORDERING_CLOSED',error:'الطلبات متوقفة الآن'}),});
+    });
+    const cart=await fixtureContext.newPage();
+    await cart.goto(baseUrl+'/cart',{waitUntil:'networkidle',timeout:30000});
+    if(width===390)await cart.screenshot({path:'artifacts/screenshots/customer-journey-cart-fixture-390.png',fullPage:true,animations:'disabled'});
+    await check((await cart.getByTestId('checkout-delivery-fee').innerText()).trim()==='لسه مش محددة',
+      `${width}px delivery checkout never fabricates an approved delivery fee`);
+    await check(await cart.getByRole('heading',{name:'الدفع مش بيتم هنا.'}).count()===1 &&
+      await cart.getByText(/الدفع مش إلكتروني/).count()===1,
+      `${width}px checkout exposes payment not collected, without pretending a payment gateway is active`);
+    await cart.getByRole('button',{name:/سجّل الطلب للمطعم/}).click();
+    await check(await cart.getByText(/اكتب اسمك/).count()===1,`${width}px fixture cart required name validation`);
+    await check(await cart.locator('#t-checkout-name').evaluate(el=>document.activeElement===el),
+      `${width}px invalid checkout focuses the actual first missing field`);
+    await check(submits===0,`${width}px invalid checkout never posts order`);
+    await cart.getByPlaceholder('الاسم').fill('عميل اختبار');
+    await cart.getByPlaceholder('01xxxxxxxxx').fill('01012345678');
+    await cart.getByPlaceholder('الشارع، المنطقة، علامة مميزة').fill('عنوان تجريبي');
+    if([390,1440].includes(width)){
+      // Playwright full-page captures can place a sticky header halfway down
+      // the stitched image if the input has auto-scrolled the active viewport.
+      await cart.evaluate(()=>{document.activeElement?.blur();window.scrollTo(0,0);});
+      await cart.screenshot({
+        path:`artifacts/screenshots/checkout-delivery-payment-truth-${width}.png`,fullPage:true,animations:'disabled',
+      });
+    }
+    await cart.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).check();
+    await cart.getByRole('button',{name:/سجّل الطلب للمطعم/}).click();
+    await cart.getByText('الطلبات متوقفة الآن').waitFor({state:'visible',timeout:7000});
+    await check(await cart.getByText('الطلبات متوقفة الآن').count()===1,`${width}px refused order shows exact server closure`);
+    await check(submits===1,`${width}px exactly one mocked checkout request`);
+    await check(submittedChoices[0]?.customer?.orderType==='delivery' &&
+      submittedChoices[0]?.customer?.address==='عنوان تجريبي',
+      `${width}px delivery request retains the explicitly entered address`);
+    await check(await cart.getByText(/عرض اختبار غير حقيقي/).count()>0,`${width}px rejected order keeps items for correction`);
+
+    // Switch an already-addressed delivery draft to pickup. Never leak that
+    // draft address into the restaurant order for an in-store pickup.
+    await cart.getByRole('radio',{name:'استلام من المطعم'}).check();
+    await check(await cart.getByPlaceholder('الشارع، المنطقة، علامة مميزة').count()===0 &&
+      (await cart.getByTestId('checkout-delivery-fee').innerText()).trim()==='لا توجد رسوم توصيل',
+      `${width}px pickup removes irrelevant address entry and does not invent delivery cost`);
+    await check(!(await cart.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).isChecked()),
+      `${width}px changing delivery to pickup requires renewed customer review`);
+    if([390,1440].includes(width)){
+      await cart.evaluate(()=>{document.activeElement?.blur();window.scrollTo(0,0);});
+      await cart.screenshot({
+        path:`artifacts/screenshots/checkout-pickup-payment-truth-${width}.png`,fullPage:true,animations:'disabled',
+      });
+    }
+    await cart.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).check();
+    const secondPost=cart.waitForResponse(resp=>new URL(resp.url()).pathname==='/api/orders');
+    await cart.getByRole('button',{name:/سجّل الطلب للمطعم/}).click();
+    await secondPost;
+    await check(submits===2 && submittedChoices[1]?.customer?.orderType==='pickup' &&
+      submittedChoices[1]?.customer?.address==='' &&
+      submittedChoices[1]?.subtotal===45,
+      `${width}px pickup payload excludes leftover delivery address, preserving original food subtotal`);
+    await cart.getByRole('radio',{name:'دليفري'}).check();
+    await check(await cart.getByPlaceholder('الشارع، المنطقة، علامة مميزة').inputValue()==='عنوان تجريبي' &&
+      (await cart.getByTestId('checkout-delivery-fee').innerText()).trim()==='لسه مش محددة',
+      `${width}px changing back to delivery restores customer draft but shows only unverified fee`);
+    await check(!(await cart.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).isChecked()),
+      `${width}px changing pickup back to delivery invalidates previous review`);
+    await fixtureContext.close();
+
+    // Browser integration proof of the customer's ACTUAL Menu/Cart form contract
+    // through redirect and status polling. Network is fully stubbed: never
+    // creates a merchant order or opens intake on Oracle or Vercel.
+    if(width===390){
+      const completed=await browser.newContext({viewport:{width,height:844},reducedMotion:'reduce'});
+      const receiptId='123e4567-e89b-42d3-a456-426614174765';
+      await completed.addInitScript(()=>{
+        localStorage.setItem('tuscanini-cart-v1',JSON.stringify({
+          items:[{lineId:'browser-e2e-test',kind:'product',productId:'ct3',productName:'تشيكن فاير',
+            selectedSize:{id:'single',label:'سعر واحد',price:125},
+            selectedAddons:[{id:'addon-mozzarella',label:'موتزاريلا',price:20}],
+            quantity:1,unitPrice:145,totalItemPrice:145,itemNotes:'اختبار فقط'}],
+          customer:{name:'اختبار توسكانيني - لا تحضر',phone:'01000000000',
+            address:'',orderType:'pickup',generalNotes:'تجربة تقنية فقط - لا تحضر أي طعام',
+            confirmedAccurateDetails:true},tableReference:null,
+        }));
+      });
+      await completed.route('**/api/public/site-settings',route=>route.fulfill({
+        status:200,contentType:'application/json',
+        body:JSON.stringify({ok:true,settings:{isOrderingOpen:true,deliveryEnabled:true,whatsappOrderNumber:''}}),
+      }));
+      let browserSubmits=0;
+      let finalPayload=null;
+      await completed.route('**/api/orders',route=>{
+        browserSubmits++;
+        finalPayload=route.request().postDataJSON();
+        return route.fulfill({status:200,contentType:'application/json',
+          body:JSON.stringify({ok:true,orderId:receiptId,
+            reference:'#123E4567',orderNumber:null,subtotal:145})});
+      });
+      await completed.route('**/api/orders/track**',route=>route.fulfill({
+        status:200,contentType:'application/json',body:JSON.stringify({ok:true,order:{
+          orderNumber:null,reference:'#123E4567',status:'جديد',
+          confirmationStatus:'pending',createdAt:'2026-10-23T07:00:00.000Z',
+          tableReference:null,orderType:'pickup',totalEstimate:145,
+        }})}));
+      const buyer=await completed.newPage();
+      await buyer.goto(baseUrl+'/cart',{waitUntil:'networkidle',timeout:30000});
+      await buyer.getByRole('button',{name:/سجّل الطلب للمطعم/}).click();
+      await buyer.waitForURL('**/order-success?orderId='+receiptId,{timeout:15000});
+      await buyer.getByRole('heading',{name:'بانتظار تأكيد المطعم'}).waitFor({timeout:10000});
+      const hasEmptyCart=await buyer.evaluate(()=>{
+        const saved=localStorage.getItem('tuscanini-cart-v1');
+        try{return JSON.parse(saved).items.length===0}catch{return false}
+      });
+      await check(browserSubmits===1 && hasEmptyCart &&
+        finalPayload?.items?.[0]?.productId==='ct3' &&
+        finalPayload?.items?.[0]?.selectedAddons?.[0]?.id==='addon-mozzarella' &&
+        finalPayload?.subtotal===145 && /^studio-[0-9a-f-]{36}$/.test(finalPayload?.requestKey??''),
+        '390px complete mocked customer Cart → POST → order-success → tracking uses selected variants, stable request key, clears cart');
+      await check(await buyer.getByRole('button',{name:/انسخ رابط متابعة الأوردر/}).count()===1,
+        '390px saved customer order exposes a private tracking-link copy control');
+
+      // Returning to the menu keeps a small real order strip in the sticky
+      // navigation. This is in-site polling, never an OS/live notification.
+      await buyer.goto(baseUrl+'/menu',{waitUntil:'domcontentloaded'});
+      const strip=buyer.getByRole('region',{name:'متابعة طلبك الحالي'});
+      await strip.waitFor({state:'visible',timeout:10000});
+      await strip.getByText('طلبك مستني تأكيد المطعم').waitFor({timeout:10000});
+      await check((await strip.getByRole('link',{name:/تابع الطلب/}).getAttribute('href'))===
+        '/order-success?orderId='+receiptId && browserSubmits===1,
+        '390px saved order appears as a live header strip throughout browsing without resubmitting');
+      await completed.close();
+    }
+    // Fail-closed merchant fulfilment: an old persisted delivery draft must
+    // never become a new unpriced delivery order when delivery is not approved.
+    if(width===390){
+      const pickupOnly=await browser.newContext({viewport:{width,height:844},reducedMotion:'reduce'});
+      await pickupOnly.addInitScript(()=>{
+        localStorage.setItem('tuscanini-cart-v1',JSON.stringify({
+          items:[{lineId:'pickup-fallback',kind:'product',productId:'ct3',productName:'تشيكن فاير',
+            selectedSize:{id:'single',label:'سعر واحد',price:125},selectedAddons:[],
+            quantity:1,unitPrice:125,totalItemPrice:125,itemNotes:''}],
+          customer:{name:'عميل قديم',phone:'01000000000',
+            address:'عنوان محفوظ من دليفري قديم',orderType:'delivery',
+            generalNotes:'',confirmedAccurateDetails:true},tableReference:null,
+        }));
+      });
+      await pickupOnly.route('**/api/public/site-settings',route=>route.fulfill({
+        status:200,contentType:'application/json',
+        body:JSON.stringify({ok:true,settings:{
+          isOrderingOpen:true,deliveryEnabled:false,whatsappOrderNumber:'',
+        }}),
+      }));
+      const guarded=await pickupOnly.newPage();
+      await guarded.goto(baseUrl+'/cart',{waitUntil:'networkidle',timeout:30000});
+      const deliveryRadio=guarded.getByRole('radio',{name:/دليفري/});
+      const pickupRadio=guarded.getByRole('radio',{name:'استلام من المطعم'});
+      await pickupRadio.waitFor({state:'visible',timeout:8000});
+      await check(await deliveryRadio.isDisabled() && await pickupRadio.isChecked() &&
+        await guarded.getByText(/الطلب متاح للاستلام من المطعم فقط/).count()===1 &&
+        await guarded.locator('#t-checkout-address').count()===0,
+        '390px stored delivery order converts to pickup when merchant delivery is disabled');
+      await check(!(await guarded.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).isChecked()),
+        '390px changing delivery to pickup invalidates a previously checked order review');
+      await pickupOnly.close();
+    }
+    // Isolated tracking fixture validates state semantics, not a real restaurant order.
+    // All WhatsApp actions are captured as URL attributes, NEVER opened or sent.
+    // A successful page view must not mutate a restaurant order.
+    await page.route('**/api/public/site-settings',route=>route.fulfill({
+      status:200,contentType:'application/json',
+      body:JSON.stringify({ok:true,settings:{isOrderingOpen:true,deliveryEnabled:true,whatsappOrderNumber:'01012345678'}}),
+    }));
+    let restaurantStage='جديد';
+    let restaurantConfirmation='pending';
+    let restaurantOrderType='pickup';
+    let simulateTrackingOffline=false;
+    await page.route('**/api/orders/track**',route=>simulateTrackingOffline
+      ? route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({ok:false,error:'الاتصال بالمطعم غير متاح مؤقتًا'})})
+      : route.fulfill({
+      status:200,contentType:'application/json',
+      body:JSON.stringify({ok:true,order:{
+        orderNumber:1234,reference:'#1234',status:restaurantStage,
+        confirmationStatus:restaurantConfirmation,
+        tableReference:null,createdAt:'2026-10-18T14:00:00.000Z',
+        orderType:restaurantOrderType,totalEstimate:85,
+      }}),
+    }));
+    await page.goto(baseUrl+'/order-success?orderId=123e4567-e89b-42d3-a456-426614174000',{waitUntil:'networkidle',timeout:30000});
+    await page.getByRole('heading',{name:'بانتظار تأكيد المطعم'}).waitFor({state:'visible',timeout:8000});
+    const cancellation=page.getByRole('link',{name:/استفسر عن إمكانية الإلغاء/});
+    await cancellation.waitFor({state:'visible',timeout:8000});
+    const outbound=await cancellation.getAttribute('href');
+    await check(Boolean(outbound?.startsWith('https://wa.me/201012345678?text=') &&
+      decodeURIComponent(outbound).includes('الطلب #1234') &&
+      decodeURIComponent(outbound).includes('الإلغاء مش مؤكد')),
+      `${width}px pending ticket prepares a reference-linked cancellation REQUEST, not a cancelled order`);
+    await check(await page.getByText(/التعديل أو الإلغاء محتاج تأكيد من المطعم/).count()===1,
+      `${width}px ticket never treats an outbound WhatsApp link as mutation or refund`);
+    await check(await page.locator('.t-order-tracking[data-current-status="pending"] .t-order-story__seal-text').getByText('SAVED').count()===1 &&
+      await page.locator('.t-order-ticket__footer').getByText(/مش إيصال دفع/).count()===1,
+      `${width}px editorial living ticket shows saved state but never claims payment`);
+    await check(await page.locator('.t-customer-journey [aria-current="step"]').getByText('تابع الطلب').count()===1 &&
+      await page.locator('.t-order-fact[data-state="verified"]').count()===1 &&
+      await page.locator('.t-order-fact[data-state="waiting"]').count()===2,
+      `${width}px tracking confirms saved order while leaving restaurant acceptance/preparation unverified`);
+    await check(await page.getByText(/لسه مستنيين تأكيد المطعم قبل ما يبدأ التحضير/).count()===1,`${width}px stored order clearly awaits restaurant confirmation`);
+    if(width===390)await page.screenshot({path:'artifacts/screenshots/customer-journey-tracking-pending-390.png',fullPage:true,animations:'disabled'});
+    restaurantStage='جاري التحضير';
+    await page.getByRole('button',{name:/حدّث الحالة/}).click();
+    await page.getByRole('heading',{name:'الطلب بيتحضّر'}).waitFor({state:'visible',timeout:8000});
+    await check(await page.getByRole('heading',{name:'الطلب بيتحضّر'}).count()===1,
+      `${width}px order shows preparation only after server status changes`);
+    if(width===390){
+      await page.evaluate(()=>window.scrollTo(0,0));
+      await page.screenshot({path:'artifacts/screenshots/customer-journey-tracking-preparing-unconfirmed-390.png',fullPage:true,animations:'disabled'});
+    }
+    await check(await page.locator('.t-order-fact[data-state="verified"]').count()===2 &&
+      await page.locator('.t-order-fact[data-state="waiting"]').count()===1,
+      `${width}px preparation while confirmation is pending does not invent acceptance`);
+    restaurantConfirmation='confirmed';
+    await page.getByRole('button',{name:/حدّث الحالة/}).click();
+    await page.locator('.t-order-fact[data-state="verified"]').nth(2).waitFor({state:'visible',timeout:8000});
+    await check(await page.locator('.t-order-fact[data-state="verified"]').count()===3,
+      `${width}px independently confirmed order facts become verified only from server response`);
+    simulateTrackingOffline=true;
+    await page.getByRole('button',{name:/حدّث الحالة/}).click();
+    await page.getByText('الاتصال بالمطعم غير متاح مؤقتًا').waitFor({state:'visible',timeout:8000});
+    await check(await page.getByRole('heading',{name:'الطلب بيتحضّر'}).count()===1 &&
+      await page.locator('.t-order-tracking__time').getByText(/البيانات قديمة/).count()===1,
+      `${width}px offline refresh retains last successful status and marks it stale`);
+    // Every invented order-state combination is a browser fixture, not a real
+    // merchant order. Check the visual seal never implies a state not in API data.
+    simulateTrackingOffline=false;
+    const visualStates=[
+      {status:'جديد',confirmation:'unreachable',type:'pickup',headline:'المطعم حاول يتواصل معاك',stamp:'CONTACT',attention:1},
+      {status:'جديد',confirmation:'rejected',type:'pickup',headline:'المطعم اعتذر عن الطلب',stamp:'DECLINED',attention:2},
+      {status:'جاهز للاستلام',confirmation:'confirmed',type:'pickup',headline:'الطلب جاهز للاستلام',stamp:'READY',attention:0},
+      {status:'خرج للدليفري',confirmation:'confirmed',type:'delivery',headline:'الطلب خرج للدليفري',stamp:'ON THE WAY',attention:0},
+      {status:'تم التسليم',confirmation:'confirmed',type:'delivery',headline:'الطلب اتسلّم',stamp:'DELIVERED',attention:0},
+      {status:'ملغي',confirmation:'pending',type:'pickup',headline:'الطلب اتلغى',stamp:'CANCELLED',attention:1},
+    ];
+    for(const item of visualStates){
+      restaurantStage=item.status;
+      restaurantConfirmation=item.confirmation;
+      restaurantOrderType=item.type;
+      await page.getByRole('button',{name:/حدّث الحالة/}).click();
+      await page.getByRole('heading',{name:item.headline,exact:true}).waitFor({state:'visible',timeout:8000});
+      await page.locator('.t-order-story__seal-text').getByText(item.stamp,{exact:true}).waitFor({state:'visible',timeout:8000});
+      await check(await page.locator('.t-order-fact[data-state="attention"]').count()===item.attention,
+        `${width}px ${item.stamp} is a truthful receipt status without inventing confirmation/payment`);
+      if(['CANCELLED','DECLINED','DELIVERED'].includes(item.stamp)){
+        await check(await page.getByRole('link',{name:/استفسر عن إمكانية الإلغاء/}).count()===0 &&
+          await page.getByRole('link',{name:/اطلب تعديل الأوردر/}).count()===0,
+          `${width}px terminal ${item.stamp} ticket does not offer an active cancellation/change request`);
+        await check(await page.getByRole('link',{name:/راسل المطعم برقم الطلب/}).count()===1,
+          `${width}px terminal ${item.stamp} ticket preserves a reference-linked support path`);
+      }
+      if(item.stamp==='DECLINED'){
+        await check(await page.locator('.t-order-fact').getByText('الطلب لم يُقبل').count()===1 &&
+          await page.getByText(/ده مش إلغاء من ناحيتك/).count()===1,
+          `${width}px restaurant rejection is not misrepresented as customer cancellation`);
+      }
+      if(width===390 && ['READY','DELIVERED','DECLINED','CANCELLED'].includes(item.stamp)){
+        await page.evaluate(()=>window.scrollTo(0,0));
+        await page.screenshot({path:`artifacts/screenshots/tracking-ticket-${item.stamp.toLowerCase()}-390.png`,fullPage:true,animations:'disabled'});
+      }
+    }
+    await check(await page.getByText(/وقت وصول متوقع|نسبة التحضير|تم الدفع/).count()===0,
+      `${width}px the creative receipt never displays an invented ETA, cooking percentage or payment claim`);
+    await context.close();
+  }
+} catch (error) {
+  failures += 1;
+  console.error('FAIL — interaction smoke crashed:', error);
+} finally {
+  await browser.close();
+}
+console.log(`Browser interaction smoke finished: ${failures} failures`);
+if (failures) process.exitCode = 1;

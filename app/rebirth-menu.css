@@ -1,0 +1,459 @@
+/* Rebirth Menu: a connected functional ordering surface in the same authored world. */
+.t-menu-page{background:var(--paper)}
+.t-menu-main{min-height:100vh}
+.t-menu-intro{background:var(--ink);color:var(--paper);max-width:none;padding-block:24px clamp(60px,7vw,118px)}
+.t-menu-intro>*{max-width:1400px;margin-inline:auto}
+.t-menu-intro__label{display:flex;justify-content:space-between;border-bottom:1px solid #fff4;padding:0 0 14px;gap:14px;font-size:11px;font-weight:800;letter-spacing:.04em}
+.t-menu-intro__label span:first-child{direction:ltr;font-family:"Anton",Impact,sans-serif;letter-spacing:.07em}
+.t-menu-intro__headline{display:grid;grid-template-columns:1.15fr .6fr;gap:40px;align-items:end;padding-top:clamp(45px,6.5vw,105px)}
+.t-menu-intro__headline h1{font:800 clamp(69px,10vw,167px)/1.15 "Changa",Tahoma,sans-serif;letter-spacing:0;margin-top:14px}
+.t-menu-intro__headline h1 em{color:var(--yellow);font-style:normal}
+.t-menu-intro__headline p{max-width:450px;font-size:clamp(16px,1.65vw,24px);font-weight:650;line-height:1.9;margin-bottom:25px}
+.t-menu-intro__bottom{display:flex;justify-content:space-between;align-items:center;gap:30px;margin-top:55px;font-size:13px;font-weight:800}
+.t-menu-intro__bottom>a{border-bottom:2px solid var(--yellow);padding-bottom:10px;color:var(--yellow)}
+.t-menu-content{padding-top:clamp(55px,7vw,105px);padding-bottom:100px}
+.t-menu-search{background:var(--cream);padding:clamp(24px,4vw,48px);border:1px solid #c8bca9}
+.t-menu-search label{display:block;font:800 clamp(21px,3.1vw,38px)/1.3 "Changa",Tahoma,sans-serif;margin-bottom:15px}
+.t-menu-search__inputrow{display:flex;align-items:center;border-bottom:3px solid var(--ink);gap:10px}
+.t-menu-search input{background:transparent;border:0;min-width:0;flex:1;padding:11px 0 18px;outline:none;font-size:clamp(15px,2vw,22px);font-weight:700}
+.t-menu-search input::placeholder{color:#6f6253;opacity:1}
+.t-menu-search button{border:0;background:var(--ink);color:var(--paper);padding:10px;font-size:12px;cursor:pointer}
+.t-menu-categories{padding-top:48px}
+.t-menu-categories__heading{display:flex;justify-content:space-between;gap:14px;padding-bottom:16px;border-bottom:1px solid var(--line);font-size:13px;font-weight:700}
+.t-menu-categories__scroller{display:flex;gap:9px;overflow-x:auto;scrollbar-width:thin;padding-block:18px 26px}
+.t-menu-categories button{border:1px solid #c8bcaa;background:transparent;padding:12px 16px;white-space:nowrap;min-height:48px;font-size:14px;font-weight:800;cursor:pointer}
+.t-menu-categories button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.t-menu-categories button:focus-visible,.t-menu-page button:focus-visible{outline:3px solid #257ae8;outline-offset:3px}
+.t-menu-items{padding-top:clamp(35px,5vw,80px)}
+.t-menu-items__heading{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:30px}
+.t-menu-items__heading h2{font:800 clamp(42px,6vw,83px)/1.15 "Changa",Tahoma,sans-serif;margin-top:10px}
+.t-menu-items__heading>span{font-weight:800;font-size:14px;text-align:left}
+.t-menu-items__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.t-menu-product{display:flex;flex-direction:column;min-height:290px;padding:clamp(19px,2.4vw,31px);background:var(--cream);border-top:5px solid var(--ink);position:relative}
+.t-menu-product:nth-child(6n+2),.t-menu-product:nth-child(6n+5){background:#e8d8bd}
+.t-menu-product__top{display:flex;justify-content:space-between;gap:20px;font:700 12px "IBM Plex Sans Arabic",Tahoma,sans-serif}
+.t-menu-product__top span:first-child{font:16px "Anton",Impact,sans-serif;letter-spacing:.04em}
+.t-menu-product h3{font:800 clamp(25px,3vw,40px)/1.3 "Changa",Tahoma,sans-serif;margin-top:34px;overflow-wrap:anywhere}
+.t-menu-product__description{font-size:14px;line-height:1.6;font-weight:600;color:#594b3c;margin-top:8px;flex:1}
+.t-menu-product__bottom{display:flex;justify-content:space-between;align-items:end;gap:13px;margin-top:auto;padding-top:30px}
+.t-menu-product__price{display:flex;flex-direction:column;gap:3px}
+.t-menu-product__price span{font-size:12px;font-weight:700}
+.t-menu-product__price strong{font:800 19px "IBM Plex Sans Arabic",Tahoma,sans-serif;white-space:nowrap}
+.t-menu-product__bottom button{font:800 13px "IBM Plex Sans Arabic",Tahoma,sans-serif;border:1px solid var(--ink);background:var(--ink);color:#fff8e8;min-height:46px;padding:11px 13px;cursor:pointer}
+.t-menu-product__bottom button:hover:not(:disabled){background:var(--red);border-color:var(--red)}
+.t-menu-product__bottom button:disabled{background:#807467;border-color:#807467;cursor:not-allowed}
+.t-menu-load-more{display:block;margin:34px auto 0;background:var(--yellow);border:2px solid var(--ink);padding:17px 30px;font-size:15px;font-weight:850;cursor:pointer}
+.t-menu-unavailable{padding:clamp(34px,5vw,75px);min-height:285px;background:var(--cream);border-top:6px solid var(--red)}
+.t-menu-unavailable h3{font:800 clamp(30px,5vw,65px)/1.3 "Changa",Tahoma,sans-serif;margin-top:18px}
+.t-menu-unavailable p{max-width:670px;line-height:1.9;font-size:16px;font-weight:650;margin-top:17px}
+.t-menu-unavailable a,.t-menu-unavailable button{display:inline-block;border:0;border-bottom:2px solid var(--ink);margin-top:20px;padding:12px 0;background:transparent;font-weight:800;cursor:pointer}
+.t-menu-footer{display:flex;justify-content:space-between;gap:30px;align-items:center;border-top:1px solid var(--line);padding-top:35px;margin-top:clamp(60px,8vw,110px)}
+.t-menu-footer p{max-width:520px;font-size:18px;line-height:1.9;font-weight:800}
+.t-menu-footer>div{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.t-menu-footer a{font-weight:900;border-bottom:2px solid var(--ink);padding-bottom:7px}
+@media(max-width:1150px){.t-menu-items__grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:720px){
+ .t-menu-intro__label{font-size:9px}
+ .t-menu-intro__headline{grid-template-columns:1fr;gap:16px;padding-top:48px}
+ .t-menu-intro__headline h1{font-size:clamp(65px,13.2vw,105px)}
+ .t-menu-intro__headline p{font-size:17px;margin-bottom:0}
+ .t-menu-intro__bottom{margin-top:39px;align-items:flex-start;font-size:11px}
+ .t-menu-content{padding-top:40px}
+ .t-menu-search{padding:23px}
+ .t-menu-categories{padding-top:35px}
+ .t-menu-categories__scroller{margin-inline:-20px;padding-inline:20px}
+ .t-menu-items__heading{align-items:flex-start}
+ .t-menu-items__grid{grid-template-columns:1fr;gap:13px}
+ .t-menu-product{min-height:230px;padding:21px}
+ .t-menu-product h3{font-size:clamp(28px,7vw,38px);margin-top:19px}
+ .t-menu-product__bottom{padding-top:20px}
+ .t-menu-footer{display:block}
+ .t-menu-footer>div{margin-top:28px}
+}
+@media(max-width:340px){.t-menu-intro__bottom{display:block}.t-menu-intro__bottom a{display:inline-block;margin-top:17px}.t-menu-product__bottom{flex-direction:column;align-items:stretch}.t-menu-product__bottom button{width:100%}}
+
+
+/* Creative Pass 05: actual restaurant photography is part of finding food,
+   NOT pretend thumbnails for unverified live products. Search stays below
+   this single bounded hero, without adding a mandatory story scene. */
+.t-menu-page .t-menu-intro{padding-bottom:clamp(37px,4vw,64px)}
+.t-menu-page .t-menu-intro__headline{
+  grid-template-columns:minmax(0,1.07fr) minmax(0,.93fr);
+  gap:clamp(18px,3vw,45px);
+  align-items:center;
+  padding-top:clamp(30px,4.4vw,75px)
+}
+.t-menu-intro__copy{min-width:0;position:relative;z-index:2}
+.t-menu-page .t-menu-intro__copy h1{
+  font-size:clamp(59px,8.2vw,130px);
+  line-height:1.13;
+  margin-top:18px
+}
+.t-menu-page .t-menu-intro__copy>p{
+  max-width:450px;
+  font-size:clamp(15px,1.25vw,19px);
+  line-height:1.85;
+  margin-top:clamp(14px,2vw,27px);
+  margin-bottom:0
+}
+.t-menu-intro__photo-pair{
+  position:relative;
+  min-width:0;
+  height:clamp(280px,33vw,460px);
+  isolation:isolate
+}
+.t-menu-intro__photo-pair:before{
+  content:"";
+  position:absolute;
+  width:77%;
+  height:74%;
+  top:9%;
+  right:12%;
+  background:var(--yellow);
+  transform:rotate(5deg)
+}
+.t-menu-intro__photo{margin:0;position:absolute;overflow:hidden;border:6px solid var(--paper);background:#873521}
+.t-menu-intro__photo img{object-fit:cover;object-position:center;transition:transform .55s ease}
+.t-menu-intro__photo--main{width:72%;height:82%;top:0;right:0;transform:rotate(3deg);z-index:1}
+.t-menu-intro__photo--accent{width:46%;height:54%;left:0;bottom:12%;transform:rotate(-6deg);box-shadow:0 15px 38px #0007;z-index:2}
+.t-menu-intro__photo figcaption{
+  position:absolute;
+  bottom:0;
+  left:0;
+  right:0;
+  background:var(--ink);
+  color:var(--paper);
+  font:12px/1.4 "Anton",Impact,sans-serif;
+  letter-spacing:.08em;
+  padding:8px 11px;
+  text-align:left;
+  direction:ltr
+}
+.t-menu-intro__photo-note{
+  position:absolute;
+  bottom:0;
+  right:0;
+  z-index:3;
+  color:var(--paper);
+  background:var(--ink);
+  border-right:3px solid var(--yellow);
+  max-width:76%;
+  padding:9px 12px;
+  font:650 12px/1.7 "IBM Plex Sans Arabic",Tahoma,sans-serif
+}
+.t-menu-page .t-menu-intro__bottom{margin-top:clamp(15px,2.5vw,36px)}
+.t-menu-page .t-menu-intro__jump{
+  display:inline-flex;
+  align-items:center;
+  gap:16px;
+  color:var(--yellow);
+  border-bottom:2px solid var(--yellow);
+  padding:8px 0;
+  margin-top:14px;
+  font:800 14px/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif
+}
+.t-menu-page .t-menu-intro__actions{
+  display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;
+  margin-top:clamp(12px,1.7vw,21px)
+}
+.t-menu-page .t-menu-intro__actions .t-menu-intro__jump{
+  margin-top:0;min-height:42px;justify-content:space-between
+}
+.t-menu-page .t-menu-intro__jump--secondary{
+  color:var(--paper);border-bottom-color:var(--paper)
+}
+.t-menu-page .t-menu-intro__actions a:focus-visible{
+  outline:3px solid #f5cd4e;outline-offset:5px
+}
+.t-menu-page .t-menu-search,.t-menu-page .t-menu-categories{
+  scroll-margin-top:95px
+}
+@media(max-width:720px){
+  /* On a phone the Menu is for finding food, not a second full-height Home.
+     Keep both authentic restaurant photos; expose search/category shortcuts sooner. */
+  .t-menu-page .t-menu-intro{padding-bottom:24px}
+  .t-menu-page .t-menu-intro__headline{padding-top:24px}
+  .t-menu-page .t-menu-intro__copy>p{line-height:1.65}
+  .t-menu-page .t-menu-intro__photo-pair{height:clamp(188px,53vw,245px);margin-top:8px}
+  .t-menu-page .t-menu-intro__bottom{margin-top:14px}
+  .t-menu-page .t-menu-content{padding-top:27px}
+  .t-menu-page .t-menu-categories{padding-top:25px}
+}
+@media(max-width:370px){
+  .t-menu-page .t-menu-intro__photo-pair{height:188px}
+  .t-menu-page .t-menu-intro__actions{gap:7px 16px}
+  .t-menu-page .t-menu-intro__actions a{font-size:12px}
+}
+
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+  .t-menu-intro__photo-pair:hover .t-menu-intro__photo--main img{transform:scale(1.035)}
+  .t-menu-intro__photo-pair:hover .t-menu-intro__photo--accent img{transform:scale(1.035)}
+}
+@media(max-width:900px){
+  .t-menu-page .t-menu-intro__headline{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr)}
+  .t-menu-page .t-menu-intro__copy h1{font-size:clamp(55px,8.3vw,85px)}
+}
+@media(max-width:720px){
+  .t-menu-page .t-menu-intro__headline{grid-template-columns:minmax(0,1fr);gap:10px;padding-top:33px}
+  .t-menu-page .t-menu-intro__copy h1{font-size:clamp(57px,13vw,86px);line-height:1.14}
+  .t-menu-page .t-menu-intro__copy>p{font-size:15px;margin-top:13px;max-width:360px}
+  .t-menu-intro__photo-pair{height:clamp(220px,65vw,300px);margin-top:15px;max-width:430px;width:100%}
+  .t-menu-intro__photo--main{width:66%;height:88%}
+  .t-menu-intro__photo--accent{width:45%;height:62%;bottom:9%}
+  .t-menu-intro__photo-note{font-size:10px;max-width:65%;padding:6px 8px}
+  .t-menu-intro__photo figcaption{font-size:10px;padding:6px 8px}
+  .t-menu-page .t-menu-intro__bottom{margin-top:20px;gap:13px}
+}
+@media(max-width:370px){
+  .t-menu-page .t-menu-intro__copy h1{font-size:49px}
+  .t-menu-intro__photo-pair{height:210px}
+  .t-menu-intro__photo{border-width:4px}
+  .t-menu-page .t-menu-intro__bottom{flex-wrap:wrap}
+}
+@media(prefers-reduced-motion:reduce){
+  .t-menu-intro__photo img{transition:none!important;transform:none!important}
+}
+
+
+/* Owner-directed old menu / Pass 11. Exact historical recorded prices,
+   not a fictional live catalog or an item-photo mapping. These thin strokes
+   deliberately evoke the restaurant's printed take-away labelling while
+   keeping menu/product selection fully legible and utility-first. */
+.t-menu-source-note{
+  display:flex;align-items:start;gap:14px;
+  margin-top:clamp(16px,3vw,28px);
+  padding:15px 18px 16px 20px;
+  border-right:5px solid var(--red);
+  background:var(--cream);
+  font:750 13px/1.85 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  color:var(--ink)
+}
+.t-menu-source-note:before{
+  content:"TUSCANINI / MENU";
+  display:inline-block;align-self:center;flex-shrink:0;
+  padding:7px 9px;background:var(--ink);color:var(--paper);
+  font:12px/1.2 "Anton",Impact,sans-serif;
+  letter-spacing:.055em;direction:ltr
+}
+.t-menu-items__heading:after{content:"";height:5px;width:clamp(30px,5vw,75px);background:var(--yellow);align-self:end}
+.t-menu-product{border-top-color:var(--ink);transition:background .16s ease}
+.t-menu-product:nth-child(6n+2),.t-menu-product:nth-child(6n+5){border-top-color:var(--red)}
+.t-menu-product__top span:first-child{
+  min-width:36px;display:inline-grid;place-items:center;
+  background:var(--ink);color:var(--paper);
+  padding:6px 7px;font:14px/1 "Anton",Impact,sans-serif
+}
+.t-menu-product__price strong{font-variant-numeric:tabular-nums}
+@media(hover:hover){
+  .t-menu-product:hover{background:var(--yellow)}
+}
+@media(max-width:720px){
+  .t-menu-source-note{flex-direction:column;gap:9px;font-size:12px;padding:12px 14px}
+  .t-menu-source-note:before{align-self:start;font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  .t-menu-product{transition:none}
+}
+
+
+/* Populated-menu screenshot Pass 12:
+ * The original 20-per-page 290px photo-less CARDS created 7,000px of
+ * browsing on a 390px phone. Without verified item photographs, editorial
+ * rows (a printed-menu rhythm) give prices and food names proper priority.
+ * Real photos remain in the hero, never falsely assigned to menu SKUs. */
+.t-menu-page .t-menu-items__grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  column-gap:clamp(24px,4vw,62px);
+  row-gap:0;
+  border-top:3px solid var(--ink)
+}
+.t-menu-page .t-menu-product,
+.t-menu-page .t-menu-product:nth-child(6n+2),
+.t-menu-page .t-menu-product:nth-child(6n+5){
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(125px,.38fr);
+  grid-template-rows:auto minmax(0,1fr) auto;
+  align-items:start;
+  min-height:155px;
+  background:transparent;
+  border-top:0;
+  border-bottom:1px solid #ac9b81;
+  padding:clamp(17px,2vw,27px) 0;
+  gap:0 clamp(12px,2vw,30px);
+  transition:background .2s ease
+}
+.t-menu-page .t-menu-product__top{
+  grid-column:1/-1;
+  grid-row:1;
+  align-items:center;
+  gap:14px;
+  padding-bottom:10px
+}
+.t-menu-page .t-menu-product__top span:first-child{
+  background:var(--ink);color:var(--paper);
+  min-width:31px;height:27px;font-size:12px;letter-spacing:.04em
+}
+.t-menu-page .t-menu-product__top span:last-child{color:#665647}
+.t-menu-page .t-menu-product h3{
+  grid-column:1;
+  grid-row:2;
+  font:800 clamp(23px,2.7vw,37px)/1.3 "Changa",Tahoma,sans-serif;
+  align-self:center;
+  margin:6px 0 0;
+  overflow-wrap:anywhere
+}
+.t-menu-page .t-menu-product__description{
+  grid-column:1;grid-row:3;align-self:start;
+  margin:5px 0 0;font-size:12px;line-height:1.55;flex:none
+}
+.t-menu-page .t-menu-product__bottom{
+  grid-column:2;grid-row:2 / span 2;
+  display:flex;flex-direction:column;align-items:stretch;justify-content:center;
+  min-width:0;gap:13px;padding:6px 0 0;margin:0
+}
+.t-menu-page .t-menu-product__price{
+  display:flex;flex-direction:column;gap:1px;
+  align-self:flex-start
+}
+.t-menu-page .t-menu-product__price strong{font-size:20px}
+.t-menu-page .t-menu-product__bottom button{
+  align-self:stretch;
+  min-height:43px;
+  font-size:12px;padding:10px 8px
+}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+  .t-menu-page .t-menu-product:hover{background:var(--cream)}
+}
+@media(max-width:860px){
+  .t-menu-page .t-menu-items__grid{grid-template-columns:minmax(0,1fr)}
+  .t-menu-page .t-menu-product,
+  .t-menu-page .t-menu-product:nth-child(6n+2),
+  .t-menu-page .t-menu-product:nth-child(6n+5){
+    grid-template-columns:minmax(0,1fr) minmax(115px,.34fr);
+    min-height:129px;
+    padding:16px 0;
+    column-gap:12px
+  }
+}
+@media(max-width:420px){
+  .t-menu-page .t-menu-product,
+  .t-menu-page .t-menu-product:nth-child(6n+2),
+  .t-menu-page .t-menu-product:nth-child(6n+5){
+    grid-template-columns:minmax(0,1fr) 117px;
+    padding:14px 0;
+    min-height:122px;
+    column-gap:10px
+  }
+  .t-menu-page .t-menu-product h3{font-size:clamp(20px,6vw,26px)}
+  .t-menu-page .t-menu-product__price strong{font-size:17px}
+  .t-menu-page .t-menu-product__bottom button{font-size:11px;min-height:40px}
+  .t-menu-page .t-menu-product__description{font-size:11px}
+}
+@media(max-width:340px){
+  .t-menu-page .t-menu-product,
+  .t-menu-page .t-menu-product:nth-child(6n+2),
+  .t-menu-page .t-menu-product:nth-child(6n+5){grid-template-columns:minmax(0,1fr) 105px}
+  .t-menu-page .t-menu-product__bottom button{font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  .t-menu-page .t-menu-product{transition:none}
+}
+
+
+/* Actual 768px screenshot exposed a too-early one-column switch that made
+ * the populated 20-item list longer than the older card grid. A compact
+ * two-column receipt spread works from tablet widths, with a narrower price
+ * lane and restrained Arabic title sizing. */
+@media(min-width:721px) and (max-width:860px){
+  .t-menu-page .t-menu-items__grid{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:25px}
+  .t-menu-page .t-menu-product,
+  .t-menu-page .t-menu-product:nth-child(6n+2),
+  .t-menu-page .t-menu-product:nth-child(6n+5){
+    grid-template-columns:minmax(0,1fr) 105px;
+    min-height:147px;column-gap:10px
+  }
+  .t-menu-page .t-menu-product h3{font-size:clamp(21px,3.2vw,27px)}
+  .t-menu-page .t-menu-product__price strong{font-size:17px}
+  .t-menu-page .t-menu-product__bottom button{font-size:11px;padding-inline:6px}
+}
+
+/* P15 material iconography on actual catalog categories, not product photos. */
+.t-menu-page .t-menu-categories__scroller button{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:10px 15px
+}
+.t-menu-page .t-menu-category-glyph{
+  flex:none;width:27px;height:27px;
+  transition:transform .22s cubic-bezier(.16,1,.3,1)
+}
+.t-menu-page .t-menu-categories__scroller button[aria-pressed=true] .t-menu-category-glyph{
+  color:var(--yellow)
+}
+.t-menu-page .t-menu-product__family{
+  display:inline-flex;gap:6px;align-items:center;justify-content:flex-end
+}
+.t-menu-page .t-menu-product__family svg{flex:none;opacity:.65}
+@media(max-width:720px){
+ .t-menu-page .t-menu-categories__scroller button{gap:7px;font-size:12px}
+ .t-menu-page .t-menu-category-glyph{width:25px;height:25px}
+ .t-menu-page .t-menu-product__family svg{width:18px;height:18px}
+}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+ .t-menu-page .t-menu-categories__scroller button:hover .t-menu-category-glyph{transform:rotate(-10deg) scale(1.1)}
+}
+@media(prefers-reduced-motion:reduce){.t-menu-page .t-menu-category-glyph{transition:none}}
+
+/* Search speaks to the entire menu, even after a family was selected. */
+.t-menu-search__scope{display:inline-flex;align-items:center;gap:9px;margin-top:16px;font-size:12px;font-weight:800;line-height:1.8;color:#5a4334}
+.t-menu-search__scope:before{content:"";width:7px;height:7px;background:var(--red);transform:rotate(45deg);flex:none}
+.t-menu-search input:focus-visible{outline:3px solid #257ae8;outline-offset:5px}
+@media(max-width:420px){.t-menu-search__scope{font-size:11px}.t-menu-items__heading{align-items:start;flex-wrap:wrap}}
+
+/* First useful action shares the Menu intro with the restaurant's own photos.
+   The photos remain documentary; the search is no longer one scroll below them. */
+.t-menu-page .t-menu-intro .t-menu-search{
+  margin-top:clamp(18px,2.4vw,28px);
+  max-width:540px;
+  padding:clamp(14px,1.8vw,24px);
+  background:var(--paper);
+  color:var(--ink);
+  border:2px solid var(--yellow)
+}
+.t-menu-page .t-menu-intro .t-menu-search label{
+  font:800 clamp(18px,2.05vw,25px)/1.35 "Changa",Tahoma,sans-serif;
+  margin-bottom:7px
+}
+.t-menu-page .t-menu-intro .t-menu-search__inputrow{border-bottom-width:2px}
+.t-menu-page .t-menu-intro .t-menu-search input{
+  font-size:16px;
+  min-height:42px;
+  padding:8px 0 10px
+}
+.t-menu-page .t-menu-intro .t-menu-search__feedback{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px 14px;
+  padding-top:12px;
+  font:800 12px/1.6 "IBM Plex Sans Arabic",Tahoma,sans-serif
+}
+.t-menu-page .t-menu-intro .t-menu-search__feedback button{
+  background:var(--yellow);
+  color:var(--ink);
+  padding:9px 12px;
+  min-height:42px;
+  font-size:12px;
+  font-weight:800
+}
+.t-menu-page .t-menu-items__heading{scroll-margin-top:112px}
+@media(max-width:720px){
+  .t-menu-page .t-menu-intro .t-menu-search{margin-top:15px;padding:12px 14px}
+  .t-menu-page .t-menu-intro .t-menu-search label{font-size:18px;margin-bottom:4px}
+  .t-menu-page .t-menu-intro__photo-pair{height:clamp(165px,47vw,210px)}
+}
+@media(max-width:370px){
+  .t-menu-page .t-menu-intro .t-menu-search{padding:10px 12px}
+  .t-menu-page .t-menu-intro__photo-pair{height:170px}
+}

@@ -1,0 +1,31 @@
+import Link from 'next/link';
+import { getLocalStudioOrigin } from '@/lib/studio-bridge';
+import {oracleOrdersEnabled} from '@/lib/oracle-order-api';
+import { OperatorPress } from '@/components/studio/operator-press';
+import '../../studio.css';
+import '../../operator-press.css';
+
+export const dynamic='force-dynamic';
+export default function OperatorOrdersPage(){
+  const publicDemo=!getLocalStudioOrigin()&&!oracleOrdersEnabled();
+  // This is a time-limited, explicitly authorized historical-menu import,
+  // NOT an automatic publication of merchant-approved live prices.
+  const canSyncCatalog=!publicDemo&&oracleOrdersEnabled()&&
+    process.env.TUSCANINI_ALLOW_CATALOG_SYNC==='yes';
+  // One operator screen in both Vercel environments. When Oracle is selected,
+  // it shows the private authenticated real queue; otherwise the exact same
+  // UI presents local synthetic examples, never real customer data.
+  return <div className="t-studio" dir="rtl">
+    <header className="t-studio__top"><Link href="/" className="t-studio__logo">TUSCANINI.</Link>
+      <span>ORDER ROOM / OPERATOR</span><Link href={publicDemo?'/menu':'/studio'}>واجهة العميل ↗</Link></header>
+    <main className="op-page">
+      {publicDemo&&<p className="op-remote-preview" role="note">
+        <strong>جرّب شاشة الأوردرات بنفسك.</strong>
+        هنا ٢٠ أوردر تجريبي، تقدر تقبلهم وترفضهم وتحركهم من التحضير للتسليم،
+        وتغيّر بين المسرح الرئيسي وشريط التذاكر. التعديلات في متصفحك بس؛
+        مش أوردرات عملاء حقيقية.
+      </p>}
+      <OperatorPress publicDemo={publicDemo} canSyncCatalog={canSyncCatalog}/>
+    </main>
+  </div>;
+}

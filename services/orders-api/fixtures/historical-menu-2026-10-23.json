@@ -1,0 +1,3259 @@
+{
+  "products": [
+    {
+      "productId": "cm1",
+      "name": "برجر",
+      "categorySlug": "crepe-meat",
+      "priceFromCents": 4000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 4000
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 6000
+        },
+        {
+          "id": "jumbo",
+          "label": "جامبو",
+          "price_cents": 7500
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "cm2",
+      "name": "سوسيس",
+      "categorySlug": "crepe-meat",
+      "priceFromCents": 4000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 4000
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 6000
+        },
+        {
+          "id": "jumbo",
+          "label": "جامبو",
+          "price_cents": 7500
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "cm3",
+      "name": "ميكس لحوم برجر ع سوسيس",
+      "categorySlug": "crepe-meat",
+      "priceFromCents": 6000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 6000
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 7500
+        },
+        {
+          "id": "jumbo",
+          "label": "جامبو",
+          "price_cents": 8500
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "cm4",
+      "name": "سجق",
+      "categorySlug": "crepe-meat",
+      "priceFromCents": 6000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 6000
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "cm5",
+      "name": "كفتة",
+      "categorySlug": "crepe-meat",
+      "priceFromCents": 7500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 7500
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "cm6",
+      "name": "مفروم",
+      "categorySlug": "crepe-meat",
+      "priceFromCents": 8500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 8500
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "cm7",
+      "name": "شاورما لحم",
+      "categorySlug": "crepe-meat",
+      "priceFromCents": 8500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 8500
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "cm8",
+      "name": "فاهيتا لحم",
+      "categorySlug": "crepe-meat",
+      "priceFromCents": 9500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 9500
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "cc1",
+      "name": "شاورما فراخ",
+      "categorySlug": "crepe-chicken",
+      "priceFromCents": 5000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 5000
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 8000
+        },
+        {
+          "id": "jumbo",
+          "label": "جامبو",
+          "price_cents": 10000
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "cc2",
+      "name": "فاهيتا فراخ",
+      "categorySlug": "crepe-chicken",
+      "priceFromCents": 7000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 7000
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 9000
+        },
+        {
+          "id": "jumbo",
+          "label": "جامبو",
+          "price_cents": 12000
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "cc3",
+      "name": "شيش",
+      "categorySlug": "crepe-chicken",
+      "priceFromCents": 5500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 5500
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 8500
+        },
+        {
+          "id": "jumbo",
+          "label": "جامبو",
+          "price_cents": 11000
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "cc4",
+      "name": "استربس",
+      "categorySlug": "crepe-chicken",
+      "priceFromCents": 5000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 5000
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 8000
+        },
+        {
+          "id": "jumbo",
+          "label": "جامبو",
+          "price_cents": 10000
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "cc5",
+      "name": "بانيه",
+      "categorySlug": "crepe-chicken",
+      "priceFromCents": 5000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 5000
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 8000
+        },
+        {
+          "id": "jumbo",
+          "label": "جامبو",
+          "price_cents": 10000
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "cc6",
+      "name": "زينجر",
+      "categorySlug": "crepe-chicken",
+      "priceFromCents": 5500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 5500
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 8500
+        },
+        {
+          "id": "jumbo",
+          "label": "جامبو",
+          "price_cents": 11000
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "cc7",
+      "name": "برجر ع بانيه",
+      "categorySlug": "crepe-chicken",
+      "priceFromCents": 9500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 9500
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "cx1",
+      "name": "بطاطس",
+      "categorySlug": "crepe-mixed",
+      "priceFromCents": 4000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 4000
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 5000
+        },
+        {
+          "id": "jumbo",
+          "label": "جامبو",
+          "price_cents": 6000
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "cx2",
+      "name": "مشروم",
+      "categorySlug": "crepe-mixed",
+      "priceFromCents": 7000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 7000
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "cx3",
+      "name": "ميكس جبن",
+      "categorySlug": "crepe-mixed",
+      "priceFromCents": 7500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 7500
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "cx4",
+      "name": "تونة",
+      "categorySlug": "crepe-mixed",
+      "priceFromCents": 8000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 8000
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "cx5",
+      "name": "بسطرمة",
+      "categorySlug": "crepe-mixed",
+      "priceFromCents": 9000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 9000
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "ct1",
+      "name": "دوز كباب",
+      "categorySlug": "crepe-tuscanini",
+      "priceFromCents": 11500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 11500
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "ct2",
+      "name": "دوز كرانشي",
+      "categorySlug": "crepe-tuscanini",
+      "priceFromCents": 12500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 12500
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "ct3",
+      "name": "تشيكن فاير",
+      "categorySlug": "crepe-tuscanini",
+      "priceFromCents": 12500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 12500
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "ct4",
+      "name": "تشيكن رانش",
+      "categorySlug": "crepe-tuscanini",
+      "priceFromCents": 10500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 10500
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "ct5",
+      "name": "سوبريم",
+      "categorySlug": "crepe-tuscanini",
+      "priceFromCents": 12000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 12000
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "ct6",
+      "name": "ميكس بيف",
+      "categorySlug": "crepe-tuscanini",
+      "priceFromCents": 11000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 11000
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "ct7",
+      "name": "تشيكن أوميجا",
+      "categorySlug": "crepe-tuscanini",
+      "priceFromCents": 12500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 12500
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "ct8",
+      "name": "تشيكن باربكيو",
+      "categorySlug": "crepe-tuscanini",
+      "priceFromCents": 12000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 12000
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "ct9",
+      "name": "توب برجر",
+      "categorySlug": "crepe-tuscanini",
+      "priceFromCents": 12000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 12000
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "ct10",
+      "name": "سيراتشا",
+      "categorySlug": "crepe-tuscanini",
+      "priceFromCents": 13500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 13500
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "ct11",
+      "name": "ميكس مدخنات",
+      "categorySlug": "crepe-tuscanini",
+      "priceFromCents": 12500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 12500
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "ct12",
+      "name": "بيف ميجا",
+      "categorySlug": "crepe-tuscanini",
+      "priceFromCents": 12000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 12000
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "ct13",
+      "name": "لولي بوم",
+      "categorySlug": "crepe-tuscanini",
+      "priceFromCents": 12500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 12500
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "ct14",
+      "name": "تركي بيف",
+      "categorySlug": "crepe-tuscanini",
+      "priceFromCents": 12000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 12000
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "ct15",
+      "name": "تشيكن روكت",
+      "categorySlug": "crepe-tuscanini",
+      "priceFromCents": 13000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 13000
+        }
+      ],
+      "addons": [
+        {
+          "id": "addon-mozzarella",
+          "label": "موتزاريلا",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-roumy",
+          "label": "رومي",
+          "price_cents": 2000
+        },
+        {
+          "id": "addon-cheddar",
+          "label": "شيدر",
+          "price_cents": 1500
+        },
+        {
+          "id": "addon-cono",
+          "label": "كونو",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-roll",
+          "label": "رول",
+          "price_cents": 2500
+        },
+        {
+          "id": "addon-sauces",
+          "label": "صوصات",
+          "price_cents": 1500
+        }
+      ]
+    },
+    {
+      "productId": "cs1",
+      "name": "كريب نوتيلا",
+      "categorySlug": "crepe-sweet",
+      "priceFromCents": 3500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 3500
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 5500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "cs2",
+      "name": "كريب وايت",
+      "categorySlug": "crepe-sweet",
+      "priceFromCents": 4000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 4000
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 6000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "cs3",
+      "name": "كريب لوتس",
+      "categorySlug": "crepe-sweet",
+      "priceFromCents": 4500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 4500
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 6500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pm1",
+      "name": "برجر",
+      "categorySlug": "pizza-meat",
+      "priceFromCents": 12000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 12000
+        },
+        {
+          "id": "medium",
+          "label": "وسط",
+          "price_cents": 15000
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 21000
+        },
+        {
+          "id": "family",
+          "label": "فاميلي",
+          "price_cents": 27000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pm2",
+      "name": "سوسيس",
+      "categorySlug": "pizza-meat",
+      "priceFromCents": 12000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 12000
+        },
+        {
+          "id": "medium",
+          "label": "وسط",
+          "price_cents": 15000
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 21000
+        },
+        {
+          "id": "family",
+          "label": "فاميلي",
+          "price_cents": 27000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pm3",
+      "name": "مفروم",
+      "categorySlug": "pizza-meat",
+      "priceFromCents": 14500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 14500
+        },
+        {
+          "id": "medium",
+          "label": "وسط",
+          "price_cents": 18500
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 25000
+        },
+        {
+          "id": "family",
+          "label": "فاميلي",
+          "price_cents": 31000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pm4",
+      "name": "شاورما لحم",
+      "categorySlug": "pizza-meat",
+      "priceFromCents": 14500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 14500
+        },
+        {
+          "id": "medium",
+          "label": "وسط",
+          "price_cents": 18500
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 25000
+        },
+        {
+          "id": "family",
+          "label": "فاميلي",
+          "price_cents": 31000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pm5",
+      "name": "بيروني",
+      "categorySlug": "pizza-meat",
+      "priceFromCents": 14000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 14000
+        },
+        {
+          "id": "medium",
+          "label": "وسط",
+          "price_cents": 18000
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 22000
+        },
+        {
+          "id": "family",
+          "label": "فاميلي",
+          "price_cents": 27000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pm6",
+      "name": "بسطرمة",
+      "categorySlug": "pizza-meat",
+      "priceFromCents": 17000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 17000
+        },
+        {
+          "id": "medium",
+          "label": "وسط",
+          "price_cents": 21000
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 27000
+        },
+        {
+          "id": "family",
+          "label": "فاميلي",
+          "price_cents": 32500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pm7",
+      "name": "ميكس لحوم",
+      "categorySlug": "pizza-meat",
+      "priceFromCents": 13500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 13500
+        },
+        {
+          "id": "medium",
+          "label": "وسط",
+          "price_cents": 19000
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 24000
+        },
+        {
+          "id": "family",
+          "label": "فاميلي",
+          "price_cents": 31000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pc1",
+      "name": "شاورما فراخ",
+      "categorySlug": "pizza-chicken",
+      "priceFromCents": 13000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 13000
+        },
+        {
+          "id": "medium",
+          "label": "وسط",
+          "price_cents": 18000
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 23000
+        },
+        {
+          "id": "family",
+          "label": "فاميلي",
+          "price_cents": 31000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pc2",
+      "name": "زينجر",
+      "categorySlug": "pizza-chicken",
+      "priceFromCents": 14000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 14000
+        },
+        {
+          "id": "medium",
+          "label": "وسط",
+          "price_cents": 19000
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 24000
+        },
+        {
+          "id": "family",
+          "label": "فاميلي",
+          "price_cents": 32000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pc3",
+      "name": "شيش",
+      "categorySlug": "pizza-chicken",
+      "priceFromCents": 13000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 13000
+        },
+        {
+          "id": "medium",
+          "label": "وسط",
+          "price_cents": 18000
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 23000
+        },
+        {
+          "id": "family",
+          "label": "فاميلي",
+          "price_cents": 31000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pc4",
+      "name": "استربس",
+      "categorySlug": "pizza-chicken",
+      "priceFromCents": 13000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 13000
+        },
+        {
+          "id": "medium",
+          "label": "وسط",
+          "price_cents": 18000
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 23000
+        },
+        {
+          "id": "family",
+          "label": "فاميلي",
+          "price_cents": 31000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pc5",
+      "name": "ميكس فراخ",
+      "categorySlug": "pizza-chicken",
+      "priceFromCents": 15500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 15500
+        },
+        {
+          "id": "medium",
+          "label": "وسط",
+          "price_cents": 19500
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 25000
+        },
+        {
+          "id": "family",
+          "label": "فاميلي",
+          "price_cents": 31500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "px1",
+      "name": "مارجريتا",
+      "categorySlug": "pizza-mixed",
+      "priceFromCents": 9000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 9000
+        },
+        {
+          "id": "medium",
+          "label": "وسط",
+          "price_cents": 11500
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 15000
+        },
+        {
+          "id": "family",
+          "label": "فاميلي",
+          "price_cents": 19000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "px2",
+      "name": "ميكس جبن",
+      "categorySlug": "pizza-mixed",
+      "priceFromCents": 12000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 12000
+        },
+        {
+          "id": "medium",
+          "label": "وسط",
+          "price_cents": 15000
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 19000
+        },
+        {
+          "id": "family",
+          "label": "فاميلي",
+          "price_cents": 25000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "px3",
+      "name": "تونة",
+      "categorySlug": "pizza-mixed",
+      "priceFromCents": 14000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 14000
+        },
+        {
+          "id": "medium",
+          "label": "وسط",
+          "price_cents": 19500
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 24000
+        },
+        {
+          "id": "family",
+          "label": "فاميلي",
+          "price_cents": 30500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "px4",
+      "name": "مشروم",
+      "categorySlug": "pizza-mixed",
+      "priceFromCents": 12000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 12000
+        },
+        {
+          "id": "medium",
+          "label": "وسط",
+          "price_cents": 15000
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 18000
+        },
+        {
+          "id": "family",
+          "label": "فاميلي",
+          "price_cents": 23000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pt1",
+      "name": "تشيكن رانش",
+      "categorySlug": "pizza-tuscanini",
+      "priceFromCents": 14000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 14000
+        },
+        {
+          "id": "medium",
+          "label": "وسط",
+          "price_cents": 19000
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 24000
+        },
+        {
+          "id": "family",
+          "label": "فاميلي",
+          "price_cents": 32000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pt2",
+      "name": "تشيكن باربكيو",
+      "categorySlug": "pizza-tuscanini",
+      "priceFromCents": 14000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 14000
+        },
+        {
+          "id": "medium",
+          "label": "وسط",
+          "price_cents": 19000
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 24000
+        },
+        {
+          "id": "family",
+          "label": "فاميلي",
+          "price_cents": 32000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pt3",
+      "name": "الفريدو",
+      "categorySlug": "pizza-tuscanini",
+      "priceFromCents": 14000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 14000
+        },
+        {
+          "id": "medium",
+          "label": "وسط",
+          "price_cents": 19000
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 24000
+        },
+        {
+          "id": "family",
+          "label": "فاميلي",
+          "price_cents": 32000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pt4",
+      "name": "تشيكن فاير",
+      "categorySlug": "pizza-tuscanini",
+      "priceFromCents": 15500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 15500
+        },
+        {
+          "id": "medium",
+          "label": "وسط",
+          "price_cents": 20500
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 25500
+        },
+        {
+          "id": "family",
+          "label": "فاميلي",
+          "price_cents": 33000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pt5",
+      "name": "تشيكن تكساس",
+      "categorySlug": "pizza-tuscanini",
+      "priceFromCents": 14500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 14500
+        },
+        {
+          "id": "medium",
+          "label": "وسط",
+          "price_cents": 19500
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 26000
+        },
+        {
+          "id": "family",
+          "label": "فاميلي",
+          "price_cents": 33500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pt6",
+      "name": "الباستشيو",
+      "categorySlug": "pizza-tuscanini",
+      "priceFromCents": 15000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 15000
+        },
+        {
+          "id": "medium",
+          "label": "وسط",
+          "price_cents": 21000
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 27000
+        },
+        {
+          "id": "family",
+          "label": "فاميلي",
+          "price_cents": 35000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pt7",
+      "name": "دوز كباب",
+      "categorySlug": "pizza-tuscanini",
+      "priceFromCents": 15000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 15000
+        },
+        {
+          "id": "medium",
+          "label": "وسط",
+          "price_cents": 19000
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 26000
+        },
+        {
+          "id": "family",
+          "label": "فاميلي",
+          "price_cents": 33500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pt8",
+      "name": "سجق كيري",
+      "categorySlug": "pizza-tuscanini",
+      "priceFromCents": 13000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "small",
+          "label": "صغير",
+          "price_cents": 13000
+        },
+        {
+          "id": "medium",
+          "label": "وسط",
+          "price_cents": 17000
+        },
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 21500
+        },
+        {
+          "id": "family",
+          "label": "فاميلي",
+          "price_cents": 28000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pt9",
+      "name": "توسكانيني تشيكن",
+      "categorySlug": "pizza-tuscanini",
+      "priceFromCents": 32000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 32000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pt10",
+      "name": "توسكانيني بيف",
+      "categorySlug": "pizza-tuscanini",
+      "priceFromCents": 34000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "large",
+          "label": "كبير",
+          "price_cents": 34000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pa1",
+      "name": "نجرسكو",
+      "categorySlug": "pasta",
+      "priceFromCents": 11000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 11000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pa2",
+      "name": "جلاكسي",
+      "categorySlug": "pasta",
+      "priceFromCents": 11500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 11500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pa3",
+      "name": "استربس رانش",
+      "categorySlug": "pasta",
+      "priceFromCents": 12000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 12000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pa4",
+      "name": "زينجر شيدر",
+      "categorySlug": "pasta",
+      "priceFromCents": 12500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 12500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pa5",
+      "name": "بشاميل",
+      "categorySlug": "pasta",
+      "priceFromCents": 11500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 11500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pa6",
+      "name": "سجق",
+      "categorySlug": "pasta",
+      "priceFromCents": 9000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 9000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pa7",
+      "name": "عشاق جبن",
+      "categorySlug": "pasta",
+      "priceFromCents": 13500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 13500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pa8",
+      "name": "دوز كباب",
+      "categorySlug": "pasta",
+      "priceFromCents": 13000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 13000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pa9",
+      "name": "الفريدو",
+      "categorySlug": "pasta",
+      "priceFromCents": 11000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 11000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pa10",
+      "name": "سوسيس او برجر",
+      "categorySlug": "pasta",
+      "priceFromCents": 9000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 9000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pa11",
+      "name": "ميكس فراخ",
+      "categorySlug": "pasta",
+      "priceFromCents": 14000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 14000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "pa12",
+      "name": "ميكس لحوم",
+      "categorySlug": "pasta",
+      "priceFromCents": 13000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 13000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "sf1",
+      "name": "شاورما فراخ/شيش",
+      "categorySlug": "sandwiches-french",
+      "priceFromCents": 6500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 6500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "sf2",
+      "name": "زينجر سوبريم",
+      "categorySlug": "sandwiches-french",
+      "priceFromCents": 8500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 8500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "sf3",
+      "name": "سوسيس ميكسكانو",
+      "categorySlug": "sandwiches-french",
+      "priceFromCents": 5500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 5500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "sf4",
+      "name": "شاورما لحم",
+      "categorySlug": "sandwiches-french",
+      "priceFromCents": 7000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 7000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "sf5",
+      "name": "فاهيتا فراخ / لحم",
+      "categorySlug": "sandwiches-french",
+      "priceFromCents": 8000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 8000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "sf6",
+      "name": "بوم فريت",
+      "categorySlug": "sandwiches-french",
+      "priceFromCents": 3000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 3000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "sk1",
+      "name": "كايزر",
+      "categorySlug": "sandwiches-kaiser",
+      "priceFromCents": 6500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 6500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "sk2",
+      "name": "تشيز برجر",
+      "categorySlug": "sandwiches-kaiser",
+      "priceFromCents": 8500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 8500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "sk3",
+      "name": "توب برجر",
+      "categorySlug": "sandwiches-kaiser",
+      "priceFromCents": 10000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 10000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "sk4",
+      "name": "سموكي زينجر",
+      "categorySlug": "sandwiches-kaiser",
+      "priceFromCents": 9500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 9500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "sk5",
+      "name": "تشيكن فاير",
+      "categorySlug": "sandwiches-kaiser",
+      "priceFromCents": 11500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 11500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "sk6",
+      "name": "توسكانيني",
+      "categorySlug": "sandwiches-kaiser",
+      "priceFromCents": 14000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 14000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "ap1",
+      "name": "باكت بطاطس",
+      "categorySlug": "appetizers",
+      "priceFromCents": 2500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 2500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "ap2",
+      "name": "باكت كرانشي",
+      "categorySlug": "appetizers",
+      "priceFromCents": 1500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 1500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "ap3",
+      "name": "حلقات بصل",
+      "categorySlug": "appetizers",
+      "priceFromCents": 4500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 4500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "ap4",
+      "name": "استيك موزاريلا",
+      "categorySlug": "appetizers",
+      "priceFromCents": 6000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 6000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "ap5",
+      "name": "بطاطس شيدر / موزاريلا",
+      "categorySlug": "appetizers",
+      "priceFromCents": 4500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 4500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "ap6",
+      "name": "كرسبي فرايز",
+      "categorySlug": "appetizers",
+      "priceFromCents": 7500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 7500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "ap7",
+      "name": "كول سلو",
+      "categorySlug": "appetizers",
+      "priceFromCents": 1500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 1500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "ap8",
+      "name": "بطاطس متبلة",
+      "categorySlug": "appetizers",
+      "priceFromCents": 1500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 1500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "ap9",
+      "name": "تومية",
+      "categorySlug": "appetizers",
+      "priceFromCents": 1500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 1500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "ap10",
+      "name": "مخلل",
+      "categorySlug": "appetizers",
+      "priceFromCents": 1500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 1500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "dr1",
+      "name": "مياه معدنية صغير",
+      "categorySlug": "drinks",
+      "priceFromCents": 1000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 1000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "dr2",
+      "name": "مياه معدنية كبير",
+      "categorySlug": "drinks",
+      "priceFromCents": 1500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 1500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "dr3",
+      "name": "بيبسي",
+      "categorySlug": "drinks",
+      "priceFromCents": 2500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 2500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "dr4",
+      "name": "سفن",
+      "categorySlug": "drinks",
+      "priceFromCents": 2500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 2500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "dr5",
+      "name": "تويست",
+      "categorySlug": "drinks",
+      "priceFromCents": 2500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 2500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "dr6",
+      "name": "فيروز",
+      "categorySlug": "drinks",
+      "priceFromCents": 2500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 2500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "wf1",
+      "name": "وافل نوتيلا",
+      "categorySlug": "waffle",
+      "priceFromCents": 6000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 6000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "wf2",
+      "name": "وافل وايت",
+      "categorySlug": "waffle",
+      "priceFromCents": 6500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 6500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "wf3",
+      "name": "وافل لوتس",
+      "categorySlug": "waffle",
+      "priceFromCents": 7000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 7000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "ca1",
+      "name": "موتزاريلا",
+      "categorySlug": "crepe-addons",
+      "priceFromCents": 2000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 2000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "ca2",
+      "name": "رومي",
+      "categorySlug": "crepe-addons",
+      "priceFromCents": 2000,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 2000
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "ca3",
+      "name": "شيدر",
+      "categorySlug": "crepe-addons",
+      "priceFromCents": 1500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 1500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "ca4",
+      "name": "كونو",
+      "categorySlug": "crepe-addons",
+      "priceFromCents": 2500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 2500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "ca5",
+      "name": "رول",
+      "categorySlug": "crepe-addons",
+      "priceFromCents": 2500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 2500
+        }
+      ],
+      "addons": []
+    },
+    {
+      "productId": "ca6",
+      "name": "صوصات",
+      "categorySlug": "crepe-addons",
+      "priceFromCents": 1500,
+      "available": true,
+      "sizes": [
+        {
+          "id": "single",
+          "label": "سعر واحد",
+          "price_cents": 1500
+        }
+      ],
+      "addons": []
+    }
+  ]
+}

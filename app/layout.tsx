@@ -3,6 +3,7 @@ import { SiteFooter } from '@/components/layout/site-footer';
 import { SiteHeader } from '@/components/layout/site-header';
 import { MobileNav } from '@/components/layout/mobile-nav';
 import { Providers } from '@/app/providers';
+import { RouteShell } from '@/components/layout/route-shell';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -29,10 +30,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ar" dir="rtl">
       <body>
         <Providers>
-          <SiteHeader />
-          <main className="container-tight pb-32 pt-5 md:pb-16 md:pt-6">{children}</main>
-          <SiteFooter />
-          <MobileNav />
+          <RouteShell
+            legacyHeader={<SiteHeader />}
+            legacyFooter={<SiteFooter />}
+            legacyMobileNav={<MobileNav />}
+          >
+            {children}
+          </RouteShell>
         </Providers>
       </body>
     </html>

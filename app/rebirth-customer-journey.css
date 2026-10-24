@@ -1,0 +1,15 @@
+/* Customer path across Cart and Tracking, not a fake backend timeline. */
+.t-customer-journey{margin-bottom:clamp(22px,3vw,38px);border-block:1px solid #bda992}
+.t-customer-journey ol{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:0;padding:0}
+.t-customer-journey li{display:flex;gap:11px;align-items:center;min-width:0;padding:13px 14px;border-inline-start:1px solid #bda992;font:800 14px/1.55 "IBM Plex Sans Arabic",Tahoma,sans-serif}
+.t-customer-journey li:last-child{border-inline-start:0}
+.t-customer-journey li[data-step-state="future"]{color:#6e6256}
+.t-customer-journey li[data-step-state="current"]{background:#171511;color:#fff8e8}
+.t-customer-journey__number{font:17px/1 Anton,Impact,sans-serif;direction:ltr}
+.t-customer-journey li[data-step-state="current"] .t-customer-journey__number{color:#f5cd4e}
+@media(max-width:720px){
+  .t-customer-journey{margin-bottom:22px}
+  .t-customer-journey li{gap:6px;padding:10px 6px;font-size:11px;line-height:1.35;justify-content:center;text-align:center}
+  .t-customer-journey__number{font-size:13px}
+}
+@media(max-width:350px){.t-customer-journey li{flex-direction:column;gap:5px}}

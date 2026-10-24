@@ -1,46 +1,56 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
-import { PageHero } from '@/components/shared/page-hero';
+import { ExperienceHeader } from '@/components/rebirth/experience-header';
+import { ExperienceFooter } from '@/components/rebirth/experience-footer';
 import { getRuntimePublicSiteSettings } from '@/lib/site-settings-runtime';
+import '../rebirth-home.css';
+import '../rebirth-feedback.css';
 
-function normalizeWhatsappNumber(raw: string): string {
-  const digits = raw.replace(/\D/g, '');
-  if (digits.startsWith('0')) {
-    return `20${digits.slice(1)}`;
-  }
-  return digits;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const metadata: Metadata = {
+  title: 'شارك رأيك | توسكانيني — بني سويف',
+  description: 'تواصل مع توسكانيني وشارك رأيك عن التجربة مباشرة، من غير تقييمات مفبركة.',
+};
+
+function whatsappLink(raw: string): string | null {
+  const digits=raw.replace(/\D/g,'');
+  const intl=digits.startsWith('0') ? `20${digits.slice(1)}` : digits;
+  if (!/^\d{10,15}$/.test(intl)) return null;
+  return `https://wa.me/${intl}?text=${encodeURIComponent('مرحبًا توسكانيني 👋\nحابب أشارك رأيي عن التجربة.')}`;
 }
 
 export default async function ReviewsPage() {
-  const settings = await getRuntimePublicSiteSettings();
-  const whatsappUrl = `https://wa.me/${normalizeWhatsappNumber(settings.whatsappOrderNumber)}?text=${encodeURIComponent(
-    'مرحبًا توسكانيني 👋\nحابب أشارك رأيي عن التجربة.',
-  )}`;
-
-  return (
-    <div className="safe-bottom-mobile space-y-6">
-      <PageHero title="آراء العملاء" subtitle="مساحة مخصصة لآراء العملاء هتظهر هنا بشكل منظم قريبًا." />
-
-      <section className="surface-card">
-        <h2 className="text-xl font-black">مساحة آراء العملاء قريبًا 💬</h2>
-        <p className="mt-3 text-sm leading-7 text-brand-charcoal">
-          حاليًا لا يتم عرض أو تخزين أي مراجعات داخل الموقع. بعد الانتهاء من النسخة الرسمية، هنوفر تجربة أوضح لعرض آراء
-          العملاء بشكل منظم.
-        </p>
-        <p className="mt-2 text-sm leading-7 text-brand-charcoal">
-          تحب تشاركنا رأيك الآن؟ ابعتلنا مباشرة على واتساب، ورأيك يهمنا جدًا في تحسين التجربة.
-        </p>
-
-        <div className="mt-4">
-          <Link href={whatsappUrl} target="_blank" className="btn-primary w-full sm:w-auto">
-            أرسل رأيك عبر واتساب
-          </Link>
+  const settings=await getRuntimePublicSiteSettings();
+  const outbound=whatsappLink(settings.whatsappOrderNumber);
+  return <div className="t-page t-feedback-page t-reviews-page" dir="rtl">
+    <a className="t-skip" href="#t-feedback-main">انتقل لمشاركة الرأي</a>
+    <ExperienceHeader />
+    <main id="t-feedback-main">
+      <section className="t-feedback-hero t-shell" aria-labelledby="t-feedback-title">
+        <div className="t-feedback-hero__meta"><span>توسكانيني / صوتك مهم</span><span lang="en">TUSCANINI / YOUR VOICE</span></div>
+        <div className="t-feedback-hero__content">
+          <span className="t-index">رأيك</span>
+          <h1 id="t-feedback-title">قولنا<br/><em>رأيك.</em></h1>
+          <div className="t-feedback-hero__aside">
+            <p>جربت أكل توسكانيني؟ رأيك يهم، سواء عجبتك التجربة أو في حاجة شايف إنها محتاجة تتظبط.</p>
+            <a href="#t-reviews-action">شارك رأيك <span aria-hidden="true">↓</span></a>
+          </div>
         </div>
       </section>
-
-      <section className="rounded-2xl border border-dashed border-brand-charcoal/35 bg-brand-white p-4 text-sm text-brand-charcoal">
-        <p className="font-semibold text-brand-dark">بدون مراجعات معروضة حاليًا.</p>
-        <p className="mt-1 leading-6">اختيار مقصود — لا تقييمات مفبركة أو منسوخة.</p>
+      <section className="t-reviews-explanation t-shell" aria-labelledby="t-reviews-heading" id="t-reviews-action">
+        <span className="t-index">شارك تجربتك</span>
+        <div>
+          <h2 id="t-reviews-heading">رأيك<br/><em>يوصلنا.</em></h2>
+          <p>ابعت رأيك للمطعم على واتساب، سواء في حاجة عجبتك أو شايف إنها محتاجة تتظبط.</p>
+          <div className="t-reviews-explanation__actions">
+            {outbound ? <a className="t-reviews-explanation__cta" href={outbound} target="_blank" rel="noopener noreferrer">ابعت رأيك على واتساب <span aria-hidden="true">↗</span></a> : <Link className="t-reviews-explanation__cta" href="/contact">تواصل مع المطعم <span aria-hidden="true">↗</span></Link>}
+            <Link href="/complaints">لو عندك مشكلة عايز تتابعها <span aria-hidden="true">↗</span></Link>
+          </div>
+          <p className="t-reviews-explanation__note">هيفتح واتساب برسالة جاهزة. راجعها وابعتها.</p>
+        </div>
       </section>
-    </div>
-  );
+    </main>
+    <ExperienceFooter />
+  </div>;
 }

@@ -13,6 +13,7 @@ type CartContextValue = {
   subtotal: number;
   addItem: (input: CartDraftItemInput) => void;
   addOfferItem: (input: CartDraftOfferItemInput) => void;
+  replaceProductItem: (lineId: string, input: CartDraftItemInput) => void;
   updateItemQuantity: (lineId: string, quantity: number) => void;
   removeItem: (lineId: string) => void;
   clearCart: () => void;
@@ -82,18 +83,61 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const subtotal = useMemo(() => state.items.reduce((sum, item) => sum + item.totalItemPrice, 0), [state.items]);
   const itemsCount = useMemo(() => state.items.reduce((sum, item) => sum + item.quantity, 0), [state.items]);
 
-  const addItem = useCallback((input: CartDraftItemInput) => setState((c) => ({ ...c, items: [...c.items, toProductCartItem(input)] })), []);
-  const addOfferItem = useCallback((input: CartDraftOfferItemInput) => setState((c) => ({ ...c, items: [...c.items, toOfferCartItem(input)] })), []);
-  const updateItemQuantity = useCallback((lineId: string, quantity: number) => {
-    if (quantity < 1) return;
-    setState((c) => ({ ...c, items: c.items.map((item) => (item.lineId === lineId ? { ...item, quantity, totalItemPrice: item.unitPrice * quantity } : item)) }));
+  // A checkmark describes the current exact basket + fulfillment + contact.
+  // An edit invalidates that review so the customer can knowingly confirm it.
+  const resetReview=(customer:CartCustomerForm):CartCustomerForm=>({...customer,confirmedAccurateDetails:false});
+  const addItem = useCallback((input: CartDraftItemInput) => setState((c) => ({
+    ...c,customer:resetReview(c.customer),items: [...c.items, toProductCartItem(input)],
+  })), []);
+  const addOfferItem = useCallback((input: CartDraftOfferItemInput) => setState((c) => ({
+    ...c,customer:resetReview(c.customer),items: [...c.items, toOfferCartItem(input)],
+  })), []);
+  // Editing an existing receipt line preserves its identity and position.
+  // Do not convert an edit into an additional item in the cart.
+  const replaceProductItem = useCallback((lineId: string, input: CartDraftItemInput) => {
+    setState((c) => {
+      const found=c.items.some(item=>item.kind==='product' && item.lineId===lineId && item.productId===input.productId);
+      if(!found)return c;
+      const quantity=Math.max(1,Math.min(50,input.quantity));
+      return {...c,customer:resetReview(c.customer),items:c.items.map(item=>
+        item.kind==='product' && item.lineId===lineId && item.productId===input.productId
+          ? {...item,...input,kind:'product' as const,lineId,quantity,totalItemPrice:input.unitPrice*quantity}
+          : item,
+      )};
+    });
   }, []);
-  const removeItem = useCallback((lineId: string) => setState((c) => ({ ...c, items: c.items.filter((item) => item.lineId !== lineId) })), []);
-  const clearCart = useCallback(() => setState((c) => ({ ...c, items: [] })), []);
-  const updateCustomer = useCallback((input: Partial<CartCustomerForm>) => setState((c) => ({ ...c, customer: { ...c.customer, ...input } })), []);
-  const updateTableReference = useCallback((value: string | null) => setState((c) => (c.tableReference === value ? c : { ...c, tableReference: value })), []);
+  const updateItemQuantity = useCallback((lineId: string, quantity: number) => {
+    if (quantity < 1 || quantity>50) return;
+    setState((c) => {
+      const existing=c.items.find(item=>item.lineId===lineId);
+      if(!existing || existing.quantity===quantity)return c;
+      return {...c,customer:resetReview(c.customer),items:c.items.map(item=>
+        item.lineId===lineId ? {...item,quantity,totalItemPrice:item.unitPrice*quantity} : item,
+      )};
+    });
+  }, []);
+  const removeItem = useCallback((lineId: string) => setState((c) => (
+    c.items.some(item=>item.lineId===lineId)
+      ? {...c,customer:resetReview(c.customer),items:c.items.filter(item=>item.lineId!==lineId)}
+      : c
+  )), []);
+  const clearCart = useCallback(() => setState((c) => ({
+    ...c,items:[],customer:resetReview(c.customer),
+  })), []);
+  const updateCustomer = useCallback((input: Partial<CartCustomerForm>) => setState((c) => {
+    const changed=Object.keys(input).some(key=>key!=='confirmedAccurateDetails');
+    return {...c,customer:{
+      ...c.customer,...input,
+      ...(changed?{confirmedAccurateDetails:false}:{}),
+    }};
+  }), []);
+  const updateTableReference = useCallback((value: string | null) => setState((c) =>
+    c.tableReference===value?c:{
+      ...c,tableReference:value,customer:resetReview(c.customer),
+    }
+  ), []);
 
-  const value = useMemo(() => ({ items: state.items, customer: state.customer, tableReference: state.tableReference, isHydrated, itemsCount, subtotal, addItem, addOfferItem, updateItemQuantity, removeItem, clearCart, updateCustomer, updateTableReference }), [state, isHydrated, itemsCount, subtotal, addItem, addOfferItem, updateItemQuantity, removeItem, clearCart, updateCustomer, updateTableReference]);
+  const value = useMemo(() => ({ items: state.items, customer: state.customer, tableReference: state.tableReference, isHydrated, itemsCount, subtotal, addItem, addOfferItem, replaceProductItem, updateItemQuantity, removeItem, clearCart, updateCustomer, updateTableReference }), [state, isHydrated, itemsCount, subtotal, addItem, addOfferItem, replaceProductItem, updateItemQuantity, removeItem, clearCart, updateCustomer, updateTableReference]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

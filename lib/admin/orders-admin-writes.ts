@@ -70,7 +70,11 @@ async function insertStatusHistoryOrThrow(
   }
 }
 
-async function applyOrderUpdateOrThrow(orderId: string, decision: TransitionDecision): Promise<void> {
+async function applyOrderUpdateOrThrow(
+  orderId: string,
+  decision: TransitionDecision,
+  expected: OrderLifecycleRow,
+): Promise<void> {
   const supabase = getSupabaseServerAdminClient();
 
   const patch: Record<string, unknown> = {
@@ -81,14 +85,24 @@ async function applyOrderUpdateOrThrow(orderId: string, decision: TransitionDeci
     patch.status = decision.nextStatus;
   }
 
-  const updateResult = await supabase.from('orders').update(patch).eq('id', orderId).select('id').maybeSingle();
+  // Optimistic concurrency: never overwrite an order that another operator
+  // already changed after our initial read. Both fields matter: confirmation
+  // can change without an order-status transition.
+  const updateResult = await supabase
+    .from('orders')
+    .update(patch)
+    .eq('id', orderId)
+    .eq('status', expected.status)
+    .eq('confirmation_status', expected.confirmation_status)
+    .select('id')
+    .maybeSingle();
 
   if (updateResult.error) {
     throw new Error(`تعذر تحديث الطلب: ${updateResult.error.message}`);
   }
 
   if (!updateResult.data) {
-    throw new Error('تعذر تحديث الطلب المطلوب.');
+    throw new Error('حالة الطلب اتغيرت من موظف تاني. حدّث الصفحة وراجع الحالة الحالية قبل إعادة الإجراء.');
   }
 }
 
@@ -96,7 +110,7 @@ export async function applyAdminOrderActionOrThrow(orderId: string, action: Admi
   const before = await loadOrderLifecycleOrThrow(orderId);
   const decision = resolveTransitionOrThrow(action, before.status, before.confirmation_status);
 
-  await applyOrderUpdateOrThrow(orderId, decision);
+  await applyOrderUpdateOrThrow(orderId, decision, before);
 
   if (decision.nextStatus) {
     await insertStatusHistoryOrThrow(orderId, before.status, decision.nextStatus, decision.historyNote);

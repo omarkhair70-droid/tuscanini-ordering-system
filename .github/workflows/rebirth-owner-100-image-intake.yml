@@ -1,0 +1,92 @@
+name: Tuscanini Rebirth — Install 100 Owner Food Visuals (Draft Branch Only)
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - redesign/tuscanini-authored-experience-20261018
+    paths:
+      - 'assets/intake/tuscanini-pass19-images.zip'
+      - 'scripts/qa/install-generated-from-zip.py'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tuscanini-owner-ai-photo-intake
+  cancel-in-progress: false
+
+jobs:
+  install-owner-food-photos:
+    if: github.ref == 'refs/heads/redesign/tuscanini-authored-experience-20261018'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-only-public-placeholder
+      SUPABASE_SERVICE_ROLE_KEY: ci-only-service-placeholder
+      NEXT_PUBLIC_REBIRTH_GENERATED_IMAGES: ready
+      REBIRTH_BRANCH: redesign/tuscanini-authored-experience-20261018
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Strictly extract exactly 100 original owner-supplied optimized WebP images
+        run: |
+          python3 scripts/qa/install-generated-from-zip.py assets/intake/tuscanini-pass19-images.zip
+          node scripts/qa/verify-generated-menu-media.mjs
+      - name: Compile the website with the owner-generated photographs ACTIVE
+        run: |
+          npm ci
+          npx tsc --noEmit
+          npm run build
+      - name: Source-aware 113-menu-item and exact source photo audit
+        run: |
+          node scripts/qa/rebirth-generated-match-audit.mjs
+          node scripts/qa/rebirth-menu-photo-shotlist.mjs
+      - name: Install real Chromium and Playwright tests
+        run: |
+          npx --yes playwright@1.56.1 install --with-deps chromium
+          npm install --no-save --ignore-scripts playwright@1.56.1
+      - name: Start Next production build for visible owner-generated food image validation
+        run: |
+          (npm run start > /tmp/tuscanini-generated-image-preview.log 2>&1 &)
+          for i in $(seq 1 50); do
+            if curl -fsS http://localhost:3000/menu >/dev/null; then exit 0; fi
+            sleep 2
+          done
+          cat /tmp/tuscanini-generated-image-preview.log
+          exit 1
+      - name: Real phone+desktop screenshots / 100-photo atlas / product details / cart
+        run: node scripts/qa/rebirth-populated-menu-visuals.mjs
+      - name: Real 390px and 1440px photo-to-product shared-object FLIP videos
+        run: node scripts/qa/rebirth-motion-film.mjs
+      - name: All four responsive viewports, reduced-motion and native product interactivity
+        run: node scripts/qa/rebirth-interaction-check.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tuscanini-owner-100-generated-photo-visual-qa
+          path: artifacts/screenshots/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Add only 100 AI-generated food image assets to this open Draft PR branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/images/rebirth/generated/
+          changed=$(git diff --cached --name-only | wc -l | tr -d ' ')
+          # This is a ONE-TIME asset intake. An existing committed 100-image
+          # set is valid; do not fail and do not create a pointless commit.
+          if [ "$changed" -eq 0 ]; then
+            echo "100 generated images already installed on this Draft branch; no new binary changes."
+            exit 0
+          fi
+          if [ "$changed" -ne 100 ]; then
+            echo "Unexpected binary diff of $changed; only first-time 100-image admission permitted"
+            exit 1
+          fi
+          git commit -m "assets(tuscanini): install 100 owner-generated illustrative food photo WebPs"
+          git push origin "HEAD:${REBIRTH_BRANCH}"
+      - name: Confirm draft-branch-only asset update
+        run: echo "Images and Chromium/FLIP QA completed. NO PR merge, NO production deploy."

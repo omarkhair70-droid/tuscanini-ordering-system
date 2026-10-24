@@ -1,0 +1,161 @@
+/* TUSCANINI / Creative Production Experiment 01
+   Authentic-photo construction, not a generic parallax package.
+   Photo TSC-09 and TSC-06 are DIFFERENT real products and never presented as one recipe.
+   TSC-02 appears twice as THE SAME PHOTOGRAPH, whole vs controlled detail crop.
+*/
+.t-page .t-hero{background:var(--ink);color:var(--paper);isolation:isolate}
+.t-page .t-hero__grid{grid-template-columns:minmax(0,.96fr) minmax(0,1.04fr);gap:clamp(8px,2vw,36px);min-height:660px;padding-block:clamp(22px,4vw,70px)}
+.t-page .t-hero__words{align-self:center}
+.t-page .t-hero h1{font-size:clamp(84px,12.7vw,194px);line-height:.89;letter-spacing:0;white-space:normal;position:relative;z-index:5}
+.t-page .t-hero h1 span{color:var(--paper)}
+.t-page .t-hero h1 em{color:var(--yellow);margin-top:7px}
+.t-page .t-hero__sub{margin-top:clamp(21px,3.4vw,50px)!important;color:#f4e9d4;max-width:410px}
+.t-page .t-button--dark{background:var(--yellow);color:var(--ink)!important}
+.t-page .t-button--dark:hover{background:var(--paper);color:var(--ink)!important}
+.t-page .t-hero__visual{min-height:570px;display:block;position:relative;overflow:visible;isolation:isolate}
+.t-hero__underprint{position:absolute;z-index:-1;top:3%;left:-12%;color:var(--paper);opacity:.08;font:clamp(100px,13vw,220px)/.83 "Anton",Impact,sans-serif;letter-spacing:.02em;writing-mode:vertical-rl;transform:rotate(180deg);pointer-events:none}
+.t-hero__backplate{position:absolute;top:0;right:4%;width:63%;height:62%;box-shadow:11px 13px 0 var(--yellow);transform:rotate(5deg);z-index:1}
+.t-hero__backplate .t-real-food-photo{height:100%;border:8px solid var(--paper)}
+.t-hero__backplate .t-real-food-photo__img{object-position:50% 33%;filter:saturate(.88)}
+.t-page .t-hero__photo{position:absolute;z-index:2;bottom:5%;left:0;width:79%;height:65%;max-height:none;clip-path:none;transform:rotate(-4deg);border:clamp(8px,1vw,14px) solid var(--paper);box-shadow:0 28px 55px #000a}
+.t-page .t-hero__photo .t-real-food-photo__img{object-fit:cover;object-position:50% 47%}
+.t-hero__photo-label{position:absolute;z-index:3;bottom:12%;right:-2%;background:var(--yellow);color:var(--ink);padding:12px 15px;font:16px "Anton",Impact,sans-serif;letter-spacing:.08em;transform:rotate(7deg);direction:ltr}
+.t-page .t-hero__stamp{z-index:4;left:-7%;bottom:8%;background:var(--red);border:2px solid var(--paper);transform:rotate(-16deg);font-size:12px;letter-spacing:.08em}
+.t-page .t-hero__visualnote{right:6%;bottom:1%;color:#e3d1af}
+.t-hero__photo-facts{position:absolute;right:2%;top:66%;color:var(--paper);font:700 12px/1.7 "IBM Plex Sans Arabic",Tahoma,sans-serif;writing-mode:vertical-rl;max-height:150px}
+.t-page .t-hero__bottom{border-color:#fff4}
+.t-page .t-hero__headerline{border-color:#fff4}
+.t-hero__visual .t-real-food-photo__img{transition:transform .65s cubic-bezier(.23,.72,.26,.97),filter .4s}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+.t-hero__visual:hover .t-hero__backplate .t-real-food-photo__img{transform:scale(1.035)}
+.t-hero__visual:hover .t-hero__photo .t-real-food-photo__img{transform:scale(1.035)}
+}
+
+/* Material chapter: a deliberate, useful photo comparison, not an invented cut-away. */
+.t-material{background:var(--ink);color:var(--paper);padding-block:clamp(80px,9vw,140px);overflow:hidden}
+.t-material__masthead{max-width:1450px}
+.t-material__eyebrow{display:flex;justify-content:space-between;gap:22px;align-items:center;color:var(--yellow)}
+.t-material__eyebrow span:last-child{font:14px "Anton",Impact,sans-serif;letter-spacing:.08em;direction:ltr}
+.t-material__masthead h2{font:800 clamp(60px,10vw,151px)/1.13 "Changa",Tahoma,sans-serif;margin:clamp(22px,4vw,60px) 0 16px;max-width:1050px}
+.t-material__masthead h2 em{color:var(--yellow)}
+.t-material__masthead>p{font:650 clamp(15px,1.6vw,22px)/1.95 "IBM Plex Sans Arabic",Tahoma,sans-serif;max-width:750px}
+.t-material__composition{position:relative;display:grid;grid-template-columns:minmax(125px,.36fr) minmax(0,1fr);margin-top:clamp(35px,6vw,95px);gap:18px;align-items:stretch}
+.t-material__type-rail{font:clamp(70px,9.8vw,150px)/.84 "Anton",Impact,sans-serif;letter-spacing:.01em;color:var(--red);direction:ltr;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end;overflow:hidden;padding-block:4%}
+.t-material__type-rail span{writing-mode:vertical-rl;transform:rotate(180deg)}
+.t-material__stage{position:relative;isolation:isolate;min-height:clamp(440px,54vw,710px);background:#34251e;overflow:hidden;outline:2px solid #f4e9d444;outline-offset:-2px}
+.t-material__image{position:absolute;inset:0;overflow:hidden}
+.t-material__img{object-fit:cover;object-position:50% 54%}
+.t-material__image--whole .t-material__img{filter:saturate(.95)}
+.t-material__image--detail{z-index:1}
+.t-material__img--macro{transform:scale(1.9);transform-origin:51% 57%;filter:saturate(1.04)}
+.t-material__handle{position:absolute;z-index:3;top:0;bottom:0;width:3px;background:var(--yellow);box-shadow:0 0 0 1px #17151155;transform:translateX(-50%);pointer-events:none}
+.t-material__handle-knob{position:absolute;z-index:4;top:50%;transform:translate(-50%,-50%);width:58px;height:58px;background:var(--yellow);border:3px solid var(--ink);border-radius:50%;display:grid;place-items:center;color:var(--ink);font:700 25px Arial,sans-serif;pointer-events:none}
+.t-material__badge{position:absolute;z-index:4;top:20px;background:var(--paper);color:var(--ink);font:800 12px "IBM Plex Sans Arabic",Tahoma,sans-serif;padding:9px 14px;pointer-events:none}
+.t-material__badge--whole{right:20px}
+.t-material__badge--detail{left:20px;background:var(--yellow)}
+.t-material__range{position:absolute;z-index:5;inset:0;width:100%;height:100%;appearance:none;background:transparent;opacity:0;cursor:ew-resize;margin:0;touch-action:pan-y;direction:ltr}
+.t-material__range:focus-visible{opacity:.12;outline:4px solid #67b9ff;outline-offset:-5px}
+.t-material__range::-webkit-slider-thumb{appearance:none;width:44px;height:44px;cursor:ew-resize}
+.t-material__range::-moz-range-thumb{width:44px;height:44px;cursor:ew-resize}
+.t-material__caption{grid-column:2;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;color:#d1bea0;font:13px/1.4 "Anton",Impact,sans-serif;letter-spacing:.055em}
+.t-material__caption span:last-child{font:750 12px "IBM Plex Sans Arabic",Tahoma,sans-serif;letter-spacing:0}
+/* Deliberate typographic breath after image reveal, not a second giant heading. */
+.t-material__bridge{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-block:clamp(25px,4vw,54px) 0;border-top:1px solid #ffffff30;margin-top:clamp(38px,5vw,70px);font:750 clamp(15px,1.5vw,20px)/1.8 "IBM Plex Sans Arabic",Tahoma,sans-serif}
+.t-material__bridge a{display:inline-flex;align-items:center;justify-content:space-between;gap:28px;color:var(--yellow)!important;border-bottom:2px solid var(--yellow);padding:11px 0;white-space:nowrap}
+/* A real editorial sequence uses contrast in density, not the same mask everywhere. */
+.t-page .t-intro{padding-block:clamp(70px,8vw,130px) clamp(35px,5vw,75px)}
+.t-page .t-intro h2{font-size:clamp(50px,6.5vw,100px)}
+.t-page .t-quick{padding-top:clamp(68px,8vw,130px)}
+.t-page .t-quick__art{transform:rotate(-7deg);max-width:100%;text-shadow:2px 2px 0 var(--paper)}
+@media(max-width:1080px){
+.t-page .t-hero__grid{grid-template-columns:.95fr 1.05fr;min-height:560px}
+.t-page .t-hero__visual{min-height:480px}
+.t-page .t-hero h1{font-size:clamp(80px,12vw,140px)}
+.t-material__composition{grid-template-columns:105px minmax(0,1fr)}
+}
+@media(max-width:720px){
+.t-page .t-hero__grid{display:flex;flex-direction:column;padding-block:40px 37px;gap:22px}
+.t-page .t-hero h1{font-size:clamp(77px,19vw,136px);line-height:.9}
+.t-page .t-hero__visual{align-self:stretch;height:clamp(340px,100vw,490px);min-height:0;margin-inline:0 10px}
+.t-hero__underprint{font-size:clamp(85px,24vw,120px);left:-4%}
+.t-hero__backplate{height:66%;right:4%;width:64%;box-shadow:6px 8px 0 var(--yellow)}
+.t-hero__backplate .t-real-food-photo{border-width:6px}
+.t-page .t-hero__photo{bottom:5%;left:0;width:80%;height:65%;border-width:7px}
+.t-page .t-hero__stamp{width:88px;height:88px;font-size:8px;left:-2%;bottom:7%}
+.t-hero__photo-label{font-size:11px;padding:9px 10px;right:-1%;bottom:10%}
+.t-hero__photo-facts{font-size:10px}
+.t-material{padding-block:72px 90px}
+.t-material__eyebrow{align-items:flex-start;flex-wrap:wrap}
+.t-material__eyebrow span:last-child{font-size:11px}
+.t-material__masthead h2{font-size:clamp(56px,13.5vw,100px);line-height:1.15;margin-top:28px}
+.t-material__composition{display:block;margin-top:32px}
+.t-material__type-rail{display:none}
+.t-material__stage{min-height:0;aspect-ratio:1/1.08}
+.t-material__caption{display:flex;gap:9px;justify-content:space-between;margin-top:12px;font-size:10px;line-height:1.7}
+.t-material__caption span:last-child{width:100%;font-size:11px}
+.t-material__badge{font-size:10px;top:12px;padding:7px 9px}
+.t-material__badge--whole{right:12px}
+.t-material__badge--detail{left:12px}
+.t-material__handle-knob{width:48px;height:48px;font-size:20px}
+.t-material__bridge{flex-direction:column;align-items:flex-start;gap:8px;font-size:15px}
+}
+@media(max-width:370px){
+.t-page .t-hero h1{font-size:73px}
+.t-page .t-hero__visual{height:330px}
+.t-page .t-hero__stamp{width:75px;height:75px}
+.t-material__masthead h2{font-size:48px}
+.t-material__stage{aspect-ratio:.93/1}
+}
+@media(prefers-reduced-motion:reduce){
+.t-page .t-hero__backplate,.t-page .t-hero__photo,.t-material__handle{transition:none!important}
+.t-hero__visual .t-real-food-photo__img{transition:none!important;transform:none!important}
+}
+
+/* Browser-image review: native Arabic stays shaped as a whole word. Two real
+   photographs land with different weights; checkout remains motion-free. */
+@media(prefers-reduced-motion:no-preference){
+  @keyframes tuscanini-photo-back {
+    from{opacity:0;transform:translate3d(22px,-16px,0) rotate(10deg)}
+    to{opacity:1;transform:translate3d(0,0,0) rotate(5deg)}
+  }
+  @keyframes tuscanini-photo-front {
+    from{opacity:0;transform:translate3d(-30px,22px,0) rotate(-9deg)}
+    to{opacity:1;transform:translate3d(0,0,0) rotate(-4deg)}
+  }
+  @keyframes tuscanini-headline-enter {
+    from{opacity:.45;transform:translate3d(0,15px,0)}
+    to{opacity:1;transform:translate3d(0,0,0)}
+  }
+  .t-page .t-hero__backplate{animation:tuscanini-photo-back .76s .08s cubic-bezier(.16,1,.3,1) both}
+  .t-page .t-hero__photo{animation:tuscanini-photo-front .84s .15s cubic-bezier(.16,1,.3,1) both}
+  .t-page .t-hero__words{animation:tuscanini-headline-enter .6s ease-out both}
+}
+.t-material__stage:focus-within{outline:3px solid var(--yellow);outline-offset:3px}
+
+/* Mobile art-direction QA: do not cover the hero photograph with a second
+   full-width order bar when the sticky header already exposes its order CTA. */
+@media(min-width:371px) and (max-width:720px){
+  .t-page .t-mobile-order{display:none}
+  .t-page .t-footer{padding-bottom:57px}
+}
+@media(max-width:370px){
+  .t-page .t-mobile-order{
+    left:12px;right:auto;bottom:max(12px,env(safe-area-inset-bottom));
+    width:auto;min-height:54px;padding:11px 15px;gap:17px;
+    border:2px solid var(--yellow);box-shadow:0 8px 28px #0006;
+    font-size:13px
+  }
+}
+
+/* Pass 03: tighter pacing after removing redundant introductory and generic order scenes. */
+.t-home-page .t-discover{padding-top:clamp(60px,8vw,120px)}
+.t-home-page .t-photo-archive{padding-bottom:clamp(74px,10vw,135px)}
+.t-home-page .t-material{padding-block:clamp(70px,8vw,116px)}
+.t-home-page .t-material__masthead h2{font-size:clamp(56px,8vw,120px);line-height:1.16}
+@media(max-width:720px){
+.t-home-page .t-discover{padding-top:52px}
+.t-home-page .t-photo-archive{padding-bottom:63px}
+.t-home-page .t-material{padding-block:70px 76px}
+.t-home-page .t-material__masthead h2{font-size:clamp(54px,12vw,85px)}
+.t-home-page .t-material__bridge{margin-top:31px;padding-top:25px}
+}

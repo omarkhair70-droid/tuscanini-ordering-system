@@ -1,0 +1,85 @@
+name: Tuscanini Rebirth — Browser Screenshots & Asset Gate
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "public/images/rebirth/**"
+      - "public/images/rebirth/generated/**"
+      - "scripts/qa/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/rebirth-visual-qa.yml"
+
+jobs:
+  browser-visuals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-only-public-placeholder
+      SUPABASE_SERVICE_ROLE_KEY: ci-only-service-placeholder
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+      - name: Enable 100 generated food photo mode ONLY after their binaries exist in this checked-out branch
+        run: |
+          if test -f public/images/rebirth/generated/b01-01.webp; then
+            echo "NEXT_PUBLIC_REBIRTH_GENERATED_IMAGES=ready" >> "$GITHUB_ENV"
+            echo "RUNNING REAL OWNER-GENERATED PHOTO TESTS"
+          else
+            echo "NEXT_PUBLIC_REBIRTH_GENERATED_IMAGES=not-ready" >> "$GITHUB_ENV"
+            echo "GENERATED PHOTOS NOT INSTALLED; BROWSER QA USES PREVIOUS FALLBACK MEDIA"
+          fi
+      - run: npm ci
+      - name: Generated 100-image manifest/binary readiness gate
+        run: node scripts/qa/verify-generated-menu-media.mjs
+      - name: Check generated food image assignment against 113 actual prior menu items
+        run: node scripts/qa/rebirth-generated-match-audit.mjs
+      - name: Type safety and production compilation
+        run: |
+          npx tsc --noEmit
+          npm run build
+      - name: Exact real-photo audit and named-menu shot list
+        run: node scripts/qa/rebirth-menu-photo-shotlist.mjs
+      - name: Install browser for screenshot capture
+        run: |
+          npx --yes playwright@1.56.1 install --with-deps chromium
+      - name: Start localhost Next production build
+        run: |
+          (npm run start > /tmp/tuscanini-next.log 2>&1 &)
+          for i in $(seq 1 50); do
+            if curl -fsS http://localhost:3000/ > /dev/null; then exit 0; fi
+            sleep 2
+          done
+          cat /tmp/tuscanini-next.log
+          exit 1
+      - name: Install browser test library
+        run: npm install --no-save --ignore-scripts playwright@1.56.1
+      - name: Scroll, decode real photographs and capture authoritative visual baselines
+        run: node scripts/qa/rebirth-visual-capture.mjs
+      - name: Populated previous-menu product/cart/finder visual proof (no order POST)
+        run: node scripts/qa/rebirth-populated-menu-visuals.mjs
+      - name: Real optional-motion films of mobile navigation and physical food views
+        run: node scripts/qa/rebirth-motion-film.mjs
+      - name: Browser interactions and mobile layout smoke
+        run: node scripts/qa/rebirth-interaction-check.mjs
+      - name: Reverse shared-image motion, Escape, focus, reduced-motion check
+        run: node scripts/qa/rebirth-reverse-flip-check.mjs
+      - name: Print media gate result
+        if: always()
+        run: node scripts/qa/verify-rebirth-media.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tuscanini-mobile-desktop-visuals
+          path: artifacts/screenshots/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Strict authentic-photo merge gate
+        run: node scripts/qa/verify-rebirth-media.mjs --strict
