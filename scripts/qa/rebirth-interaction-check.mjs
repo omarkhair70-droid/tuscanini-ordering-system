@@ -531,7 +531,7 @@ try {
       const contact=document.querySelector('a.t-checkout-action--full[href="/contact"]');
       const submit=document.querySelector('button.t-checkout-action--full[type="submit"]');
       const field=document.querySelector('#t-checkout-name');
-      const closed=status.includes('متوقف')||status.includes('متعذر')||status.includes('مش متاح');
+      const closed=status.includes('موقف استقبال الطلبات')||status.includes('تعذر التحقق')||status.includes('مش متاح');
       const open=status.includes('جاهز تسجل');
       return {closed,open,contact:!!contact,submit:!!submit,disabled:submit?.disabled??false,
         field:!!field,summary:!!document.querySelector('.t-checkout-summary')};

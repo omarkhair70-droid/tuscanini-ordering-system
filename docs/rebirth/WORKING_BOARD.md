@@ -4,6 +4,10 @@
 
 > **Start here in every new chat, and update this SAME FILE after every meaningful feature/review.** This is the current execution and coverage index; historical `00–38`, original research, the HTML reference and technical handoffs remain evidence, not competing "next task" lists. Use the current GitHub PR HEAD and Actions results if newer; never assume this snapshot is the HEAD forever.
 
+### Accurate closed-store status smoke assertion (25 Oct 2026)
+
+- Browser screenshot/interaction on `b4962bb` revealed only four text-semantic assertion failures, one for each viewport: the final fixture checked for Arabic `متوقف` but the real customer copy has always been `المطعم موقف استقبال الطلبات حاليًا`. It therefore took the **open** branch while the customer-facing **closed** contact CTA was correctly present. Corrected only the test's closed-status recognition to the actual customer text, plus genuine `تعذر التحقق` / `مش متاح` error states. No business logic or styling changed in this follow-up.
+
 ### Private visual-atlas route guard (25 Oct 2026)
 
 - The old `/menu/visual-atlas` was still an unlinked but URL-accessible archive of 100 conceptual photo studies. It was already `noindex`, but that is not the same as keeping an internal design gallery off the public consumer site. The route now returns **404 unless server-only internal visual QA is explicitly enabled**, like the earlier owner `/demo` route. Physical image assets and explicit SKU visual mapping remain unchanged; only customer-facing access to the internal gallery is removed.
