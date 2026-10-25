@@ -4,6 +4,11 @@
 
 > **Start here in every new chat, and update this SAME FILE after every meaningful feature/review.** This is the current execution and coverage index; historical `00–38`, original research, the HTML reference and technical handoffs remain evidence, not competing "next task" lists. Use the current GitHub PR HEAD and Actions results if newer; never assume this snapshot is the HEAD forever.
 
+### Public launch fixture-boundary test corrections (25 Oct 2026)
+
+- Initial release UI build/TypeScript and Dedicated API passed, but populated-cart visual test was outdated: it required address/contact fields even when intake is disabled. It now explicitly verifies either open Cart → customer fields → summary OR closed Cart with an earlier notice and NO contact input.
+- In isolated PostgreSQL, real Next customer-cart → server-priced order → operator inbox → tracking passed, but synthetic 20-ticket **visual** fixture was not enabled in that test runner. Added `TUSCANINI_INTERNAL_VISUAL_QA=yes` **only** to the ephemeral `studio-next-integration` CI job, not Vercel/production. The browser and backend visual steps need fresh success on this commit.
+
 ### Legacy pitch/demo visibility correction (25 Oct 2026)
 
 - `/demo` contained an outdated MVP roadmap and unsupported claim that old menu prices were current restaurant prices. This route now returns **404 outside explicit internal visual CI**; it is additionally `noindex`. It is not customer-facing collateral. No demo marketing/menus promoted to the production preview.

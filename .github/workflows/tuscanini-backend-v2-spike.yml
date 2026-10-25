@@ -124,6 +124,7 @@ jobs:
       TUSCANINI_STUDIO_ENABLED: "yes"
       TUSCANINI_STUDIO_BRIDGE_TOKEN: "ci-only-disposable-studio-bridge-token-for-loopback"
       TUSCANINI_STUDIO_OPERATOR_KEY: "ci-only-disposable-operator-key-for-loopback"
+      TUSCANINI_INTERNAL_VISUAL_QA: "yes"
       NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-only-public-placeholder
       SUPABASE_SERVICE_ROLE_KEY: ci-only-service-placeholder

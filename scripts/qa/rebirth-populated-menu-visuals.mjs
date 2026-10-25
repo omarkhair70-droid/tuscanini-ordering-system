@@ -106,10 +106,17 @@ try{
         const order=await page.evaluate(()=>{
           const item=document.querySelector('.t-checkout-item')?.getBoundingClientRect();
           const fields=document.querySelector('.t-checkout-inputs')?.getBoundingClientRect();
+          const unavailable=document.querySelector('.t-checkout-availability')?.getBoundingClientRect();
           const summary=document.querySelector('.t-checkout-summary')?.getBoundingClientRect();
-          return Boolean(item&&fields&&summary&&item.top < fields.top && fields.bottom <= summary.top+4);
+          // If checkout is live: food, contact fields, summary. If closed:
+          // availability notice first, then food and summary, NO buyer data form.
+          return Boolean(item&&summary&&(
+            fields ? item.top < fields.top && fields.bottom <= summary.top+4 :
+            unavailable && unavailable.top < item.top && item.bottom <= summary.top+4 &&
+              !document.querySelector('#t-checkout-name')
+          ));
         });
-        if(!order) throw new Error('Phone checkout must read item -> customer -> final summary');
+        if(!order) throw new Error('Phone checkout must present open checkout OR closed safe contact-only path');
       }
       await page.evaluate(()=>window.scrollTo(0,0));
       await page.screenshot({path:`artifacts/screenshots/cart-with-old-menu-${width}.png`,fullPage:true,animations:'disabled'});
