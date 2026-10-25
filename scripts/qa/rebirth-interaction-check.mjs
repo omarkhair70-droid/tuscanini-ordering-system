@@ -566,6 +566,10 @@ try {
     await check(await page.locator('.t-customer-journey [aria-current="step"]').getByText('راجع التفاصيل').count()===1,
       `${width}px checkout uses the shared journey with current review step`);
     await check(await page.getByRole('heading', { name:/لسه مفيش/ }).count()===1, `${width}px empty cart is honest and non-orderable`);
+    const cartLanguage=(await page.locator('.t-checkout-hero, .t-checkout-empty').allInnerTexts()).join(' ');
+    await check(cartLanguage.includes('طلبك من توسكانيني') && cartLanguage.includes('السلة فاضية') &&
+      !/YOUR CART|RESTAURANT CONFIRMATION|REVIEW YOUR FOOD/.test(cartLanguage),
+      `${width}px cart journey uses native Arabic instead of production-process labels`);
     await check(await page.getByRole('button', { name: /سجّل الطلب للمطعم/ }).count()===0, `${width}px empty cart cannot be submitted`);
     const cartOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
     await check(cartOverflow<=3, `${width}px Cart no significant horizontal overflow (${cartOverflow}px)`);
