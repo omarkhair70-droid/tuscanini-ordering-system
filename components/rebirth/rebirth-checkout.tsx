@@ -98,6 +98,7 @@ export function RebirthCheckout() {
       const orderCustomer={
         ...customer,
         address:customer.orderType==='delivery'?customer.address.trim():'',
+        deliveryLocation:customer.orderType==='delivery'?(customer.deliveryLocation??null):null,
       };
       const data={ customer:orderCustomer, items, subtotal, tableReference };
       const hash=JSON.stringify(data);
@@ -265,16 +266,16 @@ export function RebirthCheckout() {
                       setErrors(x=>({...x,address:'اختصر وصف العنوان عشان نضيف رابط الدبوس.'}));
                       return;
                     }
-                    updateCustomer({address:next});
+                    updateCustomer({address:next,deliveryLocation:point});
                     setErrors(x=>({...x,address:undefined}));
                   }} />
-                  {customer.address.includes('موقع التوصيل: https://maps.google.com/?q=') && (
+                  {customer.deliveryLocation && customer.address.includes('موقع التوصيل: https://maps.google.com/?q=') && (
                     <p className="t-checkout-delivery-pin__selected" role="status">
                       <span aria-hidden="true">✓</span> تم تحديد الدبوس. موقعه هيتبعت مع عنوان الطلب.
                     </p>
                   )}
                   <label>عنوان التوصيل <textarea id="t-checkout-address" rows={3} value={customer.address} aria-invalid={!!errors.address} aria-describedby={errors.address?'t-error-address':undefined}
-                      onChange={e=>{updateCustomer({address:e.target.value});setErrors(x=>({...x,address:undefined}))}} placeholder="الشارع، المنطقة، علامة مميزة" maxLength={300}/></label>
+                      onChange={e=>{updateCustomer({address:e.target.value,deliveryLocation:e.target.value.includes('موقع التوصيل: https://maps.google.com/?q='+customer.deliveryLocation?.lat+','+customer.deliveryLocation?.lng)?customer.deliveryLocation:null});setErrors(x=>({...x,address:undefined}))}} placeholder="الشارع، المنطقة، علامة مميزة" maxLength={300}/></label>
                       {errors.address && <p id="t-error-address" className="t-checkout-error">{errors.address}</p>}</>}
                     <label>ملاحظات عامة (اختياري) <textarea rows={2} value={customer.generalNotes} onChange={e=>updateCustomer({generalNotes:e.target.value})} maxLength={500} placeholder="أي تفاصيل تساعد المطعم"/></label>
                   </div>
