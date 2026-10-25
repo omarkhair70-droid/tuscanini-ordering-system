@@ -55,6 +55,8 @@ export type CartDraftOfferItemInput = {
 };
 
 export type OrderType = 'delivery' | 'pickup';
+/** A preferred way to pay at handoff, not an online payment transaction. */
+export type HandoffPaymentMethod = 'cash' | 'instapay_on_handoff' | 'vodafone_cash_on_handoff';
 
 /** Exact user-selected doorstep coordinate, not restaurant location or IP estimate. */
 export type CustomerDeliveryLocation = { lat: number; lng: number };
@@ -65,6 +67,7 @@ export type CartCustomerForm = {
   address: string;
   deliveryLocation?: CustomerDeliveryLocation | null;
   orderType: OrderType;
+  paymentMethod: HandoffPaymentMethod;
   generalNotes: string;
   confirmedAccurateDetails: boolean;
 };
