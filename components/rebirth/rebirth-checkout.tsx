@@ -64,6 +64,8 @@ export function RebirthCheckout() {
     if (!/^01\d{9}$/.test(customer.phone.replace(/\D/g, ''))) next.phone = 'اكتب رقم موبايل مصري من 11 رقم يبدأ بـ 01.';
     if (customer.orderType === 'delivery' && !customer.address.trim()) next.address = 'العنوان مطلوب للدليفري.';
     if (customer.orderType === 'delivery' && customer.deliveryLocation &&
+        customer.address.length > 230) next.address = 'اختصر وصف العنوان عشان نضيف موقع الدبوس.';
+    if (customer.orderType === 'delivery' && customer.deliveryLocation &&
         !customer.address.split('\nموقع التوصيل:')[0].trim())
       next.address = 'اكتب اسم الشارع ورقم العمارة أو علامة تساعد الدليفري يوصل.';
     else if (customer.orderType === 'delivery' && customer.address.trim().length > 300) next.address = 'العنوان أطول من الحد المسموح (٣٠٠ حرف).';
@@ -262,6 +264,10 @@ export function RebirthCheckout() {
                     // The form owns plain directions; the server adds the
                     // canonical map URL to the merchant-facing order snapshot.
                     const street=customer.address.split('\nموقع التوصيل:')[0].trim();
+                    if(street.length>230){
+                      setErrors(x=>({...x,address:'اختصر تفاصيل العنوان شوية عشان نحفظ الدبوس.'}));
+                      return;
+                    }
                     updateCustomer({address:street,deliveryLocation:point});
                     setErrors(x=>({...x,address:undefined}));
                   }} />
@@ -274,7 +280,7 @@ export function RebirthCheckout() {
                     </div>
                   )}
                   <label>عنوان التوصيل <textarea id="t-checkout-address" rows={3} value={customer.address} aria-invalid={!!errors.address} aria-describedby={errors.address?'t-error-address':undefined}
-                      onChange={e=>{updateCustomer({address:e.target.value});setErrors(x=>({...x,address:undefined}))}} placeholder="الشارع، رقم العمارة، الدور والشقة أو علامة مميزة" maxLength={300}/></label>
+                      onChange={e=>{updateCustomer({address:e.target.value});setErrors(x=>({...x,address:undefined}))}} placeholder="الشارع، رقم العمارة، الدور والشقة أو علامة مميزة" maxLength={customer.deliveryLocation?230:300}/></label>
                       {errors.address && <p id="t-error-address" className="t-checkout-error">{errors.address}</p>}</>}
                     <label>ملاحظات عامة (اختياري) <textarea rows={2} value={customer.generalNotes} onChange={e=>updateCustomer({generalNotes:e.target.value})} maxLength={500} placeholder="أي تفاصيل تساعد المطعم"/></label>
                   </div>
