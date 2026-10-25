@@ -83,6 +83,12 @@ test('dedicated Tuscanini service has authenticated intake, durable orders and s
     const snapshot=await pool.query('SELECT customer_snapshot FROM tuscanini.orders WHERE id=$1',[delivery.body.id]);
     assert.deepEqual(snapshot.rows[0].customer_snapshot.deliveryLocation,{lat:29.07344,lng:31.09811},
       'Exact customer-selected coordinates survive in immutable PostgreSQL order snapshot');
+    assert.match(snapshot.rows[0].customer_snapshot.address,/maps.google.com\/\?q=29.07344,31.09811/,
+      'Cashier snapshot gets the server-derived coordinate link');
+    const currentInbox=await req('/v1/operator/orders');
+    const routed=currentInbox.body.orders.find(order=>order.id===delivery.body.id);
+    assert.deepEqual(routed?.customer_snapshot?.deliveryLocation,{lat:29.07344,lng:31.09811},
+      'Cashier inbox has the selected pin needed by the driver directions button');
     const badPin=await req('/v1/orders','POST',{...deliveryInput,requestKey:'studio-'+randomUUID(),
       customer:{...deliveryInput.customer,deliveryLocation:{lat:Infinity,lng:31.09811}}});
     assert.equal(badPin.status,400,'Invalid delivery pin must never be accepted');
