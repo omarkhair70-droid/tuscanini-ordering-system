@@ -3,7 +3,8 @@ import Link from 'next/link';
 import { ExperienceHeader } from '@/components/rebirth/experience-header';
 import { ExperienceFooter } from '@/components/rebirth/experience-footer';
 import { getRuntimePublicSiteSettings } from '@/lib/site-settings-runtime';
-import { tuscaniniDirectionsUrl, tuscaniniMapEmbedUrl, tuscaniniMapSearchUrl, tuscaniniUsingOsmEmbed } from '@/lib/rebirth/wayfinding';
+import { tuscaniniDirectionsUrl, tuscaniniMapSearchUrl, tuscaniniUsingOsmEmbed } from '@/lib/rebirth/wayfinding';
+import { LocationMap } from '@/components/rebirth/location-map';
 import '../rebirth-home.css';
 import '../rebirth-contact.css';
 
@@ -82,15 +83,7 @@ export default async function ContactPage() {
               <a href={tuscaniniMapSearchUrl} target="_blank" rel="noopener noreferrer">افتح خرائط Google <span aria-hidden="true">↗</span></a>
             </div>
           </div>
-          <div className="t-contact-map-section__canvas">
-            <iframe
-              title="خريطة شارع البحر عند سور نادي توليب في بني سويف"
-              src={tuscaniniMapEmbedUrl}
-              loading="lazy"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-            />
-          </div>
+          <LocationMap />
           <div className="t-contact-map-section__foot">
             <p className="t-contact-map-section__note">دي خريطة المنطقة المحيطة بنادي توليب. افتح الاتجاهات للوصول لعنوان المطعم.</p>
             {tuscaniniUsingOsmEmbed && <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap contributors</a>}
