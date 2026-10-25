@@ -136,6 +136,14 @@ try {
     await check(visibleKnobAtStart, `${width}px reveal drag knob stays fully visible at 0%`);
     const sourcePair = await page.locator('.t-material__image img').evaluateAll(images => images.map(img => new URL(img.currentSrc || img.src).searchParams.get('url') || (img.currentSrc||img.src)));
     await check(sourcePair.length===2 && sourcePair[0]===sourcePair[1], `${width}px detail comparison uses identical real source pixels`);
+    await check(await page.locator('.t-material__hero-food img').evaluate(img=>img.complete && img.naturalWidth>0),
+      `${width}px redesigned editorial material scene displays genuine restaurant photography`);
+    await check(await page.locator('.t-material__detail-card').count()===1 &&
+      await page.getByRole('heading',{name:/التفاصيل.*بتتكلم/}).count()===1,
+      `${width}px new details chapter retains live headline and interactive inset`);
+    await check(await page.locator('.t-place-final__city svg').count()===1 &&
+      await page.locator('.t-place-final__heart').getByText(/من قلب/).count()===1,
+      `${width}px Beni Suef chapter uses authored circles instead of giant ellipse`);
     await check(await page.locator('main#t-main-story > section').count()===5, `${width}px exactly five purposeful Home chapters after editorial cut`);
     await check(await page.locator('.t-ticker__set').count()===2, `${width}px ticker has two seamless repeating sets`);
     await check(await page.locator('.t-ticker__track').evaluate(el=>getComputedStyle(el).animationName)==='none', `${width}px marquee respects reduced-motion setting`);
