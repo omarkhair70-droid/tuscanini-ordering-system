@@ -208,3 +208,270 @@
   .t-page .t-packaging__photo-label{font-size:12px}
   .t-page .t-material__caption{font-size:11px}
 }
+
+
+/* 25 Oct / Tuscanini authored campaign spreads.
+   The mockup is art direction, not a flattened banner: live type, links and
+   a keyboard-usable same-photo detail slider survive on every viewport. */
+.t-page .t-material{
+  background:#fff8e8;color:var(--ink);padding:0;isolation:isolate;
+  border-top:1px solid #dfd3bf;
+}
+.t-page .t-material__spread{
+  display:grid;direction:rtl;grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr);
+  align-items:center;gap:clamp(28px,4vw,80px);
+  max-width:1580px;padding-block:clamp(65px,7vw,113px);
+}
+.t-page .t-material__story{min-width:0}
+.t-page .t-material__masthead{max-width:660px}
+.t-page .t-material__eyebrow{
+  color:#ab271e;align-items:center;gap:12px;
+  font:800 13px/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+}
+.t-page .t-material__eyebrow span:last-child{
+  font:800 13px/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  letter-spacing:0;direction:rtl;
+}
+.t-page .t-material__masthead h2{
+  margin:20px 0 11px;max-width:none;
+  font:800 clamp(57px,7vw,105px)/1.07 "Changa",Tahoma,sans-serif;
+  letter-spacing:0;
+}
+.t-page .t-material__masthead h2 em{color:var(--red)}
+.t-page .t-material__masthead>p{
+  max-width:540px;color:#312821;
+  font:700 clamp(15px,1.5vw,19px)/1.85 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+}
+.t-page .t-material__detail-card{
+  position:relative;margin-top:clamp(20px,2.6vw,38px);
+  padding:13px;background:var(--ink);color:var(--paper);
+  border-radius:3px;box-shadow:8px 8px 0 var(--yellow);
+}
+.t-page .t-material__detail-head{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:8px 16px;margin:0 3px 10px;
+}
+.t-page .t-material__detail-head strong{
+  font:800 17px/1.5 "Changa",Tahoma,sans-serif;
+}
+.t-page .t-material__detail-head span{
+  color:var(--yellow);font:700 12px/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+}
+.t-page .t-material__stage{
+  height:clamp(190px,19vw,280px);min-height:0;aspect-ratio:auto;
+  background:#34231b;border:0;outline:0;
+}
+.t-page .t-material__img{
+  object-fit:cover;object-position:center 77%;
+}
+.t-page .t-material__img--macro{
+  object-position:center 78%;transform:scale(1.75);transform-origin:48% 65%;
+}
+.t-page .t-material__handle-knob{
+  width:54px;height:54px;border-radius:50%;
+  border:3px solid var(--ink);background:var(--yellow);color:var(--ink);
+}
+.t-page .t-material__caption{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;grid-column:auto;margin:10px 3px 0;
+  color:#f0e1c7;font:700 12px/1.6 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  letter-spacing:0;
+}
+.t-page .t-material__bridge{
+  margin-top:24px;padding:0;gap:12px;border:0;
+  flex-wrap:wrap;font-size:14px;color:var(--ink);
+}
+.t-page .t-material__bridge a{
+  color:var(--red)!important;border-color:var(--red);padding:6px 0;
+}
+.t-page .t-material__hero-food{
+  position:relative;isolation:isolate;
+  min-height:clamp(445px,49vw,710px);
+  width:100%;overflow:hidden;
+  background:#211914;box-shadow:-12px 15px 0 var(--yellow);
+  transform:rotate(-1.1deg);
+}
+.t-page .t-material__hero-food::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,0,0,.24) 0%,transparent 32%,transparent 77%,rgba(0,0,0,.27) 100%);
+}
+.t-page .t-material__hero-img{
+  object-fit:cover;object-position:50% 80%;transform:scale(1.17);
+  transform-origin:center 78%;
+}
+.t-page .t-material__halo{
+  position:absolute;z-index:2;top:-17%;left:-20%;width:76%;aspect-ratio:1;
+  border:16px solid #d92e24;border-radius:50%;opacity:.79;pointer-events:none;
+  mix-blend-mode:screen;
+}
+.t-page .t-material__photo-tag,
+.t-page .t-material__photo-index{
+  position:absolute;z-index:3;color:var(--ink);background:var(--yellow);
+  font:800 14px/1.4 "Changa",Tahoma,sans-serif;padding:7px 12px;
+}
+.t-page .t-material__photo-tag{right:18px;bottom:18px;transform:rotate(2deg)}
+.t-page .t-material__photo-index{
+  left:16px;top:16px;font-size:12px;background:var(--paper);
+}
+
+/* Location chapter: distinctive circles replace the oversized BNS ellipse.
+   The line drawing denotes the river/city in abstract, NOT a claimed landmark. */
+.t-page .t-place-final{
+  position:relative;isolation:isolate;
+  padding:clamp(65px,7vw,110px) clamp(22px,5vw,90px);
+  grid-template-columns:minmax(0,1.07fr) minmax(0,.93fr);
+  gap:clamp(24px,5vw,88px);
+  min-height:clamp(540px,55vw,760px);
+  background:#f5cd4e;
+}
+.t-page .t-place-final__copy{max-width:730px;position:relative;z-index:2}
+.t-page .t-place-final__copy .t-index{
+  color:#8c241b;font:800 13px/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+}
+.t-page .t-place-final__copy h2{
+  margin:clamp(20px,3vw,39px) 0 15px;
+  font:800 clamp(70px,8vw,120px)/1.09 "Changa",Tahoma,sans-serif;
+  letter-spacing:0;
+}
+.t-page .t-place-final__address{
+  display:flex;gap:12px;align-items:center;
+  font:800 clamp(16px,1.9vw,24px)/1.75 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  border-bottom:3px solid var(--red);
+  padding-bottom:12px;width:fit-content;max-width:100%;
+}
+.t-place-final__pin{
+  display:inline-block;position:relative;
+  flex:0 0 18px;width:18px;height:18px;
+  background:var(--red);color:transparent;border-radius:50% 50% 50% 0;
+  transform:rotate(-45deg);font-size:0;
+}
+.t-place-final__pin::after{
+  content:"";position:absolute;inset:5px;border-radius:50%;background:var(--yellow);
+}
+.t-page .t-place-final__links{margin-top:clamp(20px,3vw,38px)}
+.t-page .t-place-final__art{
+  height:clamp(355px,37vw,540px);min-height:0;
+  position:relative;isolation:isolate;
+}
+.t-page .t-place-final__city{
+  position:absolute;inset:12% 12% 12% 12%;
+  border:7px solid var(--ink);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;
+  gap:4%;background:#f5cd4e;
+  transform:rotate(-5deg);overflow:hidden;
+}
+.t-page .t-place-final__city::before{
+  content:"";position:absolute;inset:8%;border:1px dashed var(--ink);
+  border-radius:50%;opacity:.32;
+}
+.t-page .t-place-final__city svg{
+  position:relative;width:78%;height:auto;color:var(--ink);
+}
+.t-page .t-place-final__city-label,
+.t-page .t-place-final__city-foot{
+  position:relative;font:400 clamp(10px,1.25vw,17px)/1.1 "Anton",Impact,sans-serif;
+  letter-spacing:.06em;direction:ltr;text-align:center;
+}
+.t-page .t-place-final__city-foot{
+  font:800 clamp(11px,1.1vw,16px)/1.4 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  direction:rtl;letter-spacing:0;
+}
+.t-page .t-place-final__heart{
+  position:absolute;top:1%;right:2%;z-index:3;
+  width:clamp(108px,12vw,172px);aspect-ratio:1;
+  background:var(--red);border-radius:50%;color:var(--paper);
+  display:grid;place-content:center;text-align:center;
+  padding:12px;transform:rotate(10deg);
+  font:800 clamp(18px,2vw,25px)/1.4 "Changa",Tahoma,sans-serif;
+  box-shadow:5px 6px 0 #17151121;
+}
+.t-page .t-place-final__food-disc{
+  position:absolute;z-index:4;left:0;bottom:11%;
+  width:clamp(98px,11vw,165px);aspect-ratio:1;
+  border:6px solid var(--yellow);border-radius:50%;
+  overflow:hidden;transform:rotate(-11deg);
+  box-shadow:0 0 0 2px var(--ink);
+}
+.t-page .t-place-final__food-disc img{
+  object-fit:cover;object-position:center 80%;transform:scale(1.32);
+}
+.t-page .t-place-final__stamp{
+  position:absolute;z-index:5;left:9%;bottom:0;
+  width:clamp(90px,10vw,135px);aspect-ratio:1;
+  border:3px solid var(--ink);border-radius:50%;
+  background:var(--yellow);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font:400 clamp(43px,5vw,73px)/.9 "Anton",Impact,sans-serif;
+  letter-spacing:.015em;transform:rotate(-12deg);
+}
+.t-page .t-place-final__stamp small{
+  font:400 clamp(12px,1.3vw,18px)/1.5 "Anton",Impact,sans-serif;
+  letter-spacing:.15em;
+}
+.t-page .t-place-final__thin-ring{
+  position:absolute;border:2px solid var(--ink);border-radius:50%;
+  pointer-events:none;opacity:.85;
+}
+.t-page .t-place-final__thin-ring--top{
+  width:27%;aspect-ratio:1;top:-19%;left:18%;
+}
+.t-page .t-place-final__thin-ring--bottom{
+  width:40%;aspect-ratio:1;bottom:-22%;right:-15%;
+}
+@media(max-width:900px){
+  .t-page .t-material__spread{gap:24px}
+  .t-page .t-material__masthead h2{font-size:clamp(53px,7vw,78px)}
+  .t-page .t-material__hero-food{min-height:490px}
+  .t-page .t-place-final__copy h2{font-size:clamp(65px,9vw,95px)}
+}
+@media(max-width:720px){
+  .t-page .t-material__spread{
+    display:flex;flex-direction:column;align-items:stretch;
+    padding-block:65px 70px;gap:23px;
+  }
+  .t-page .t-material__story{display:contents}
+  .t-page .t-material__masthead{order:0}
+  .t-page .t-material__masthead h2{
+    font-size:clamp(56px,12vw,83px);line-height:1.12;margin:16px 0 10px;
+  }
+  .t-page .t-material__masthead>p{font-size:15px;line-height:1.9}
+  .t-page .t-material__hero-food{
+    order:1;min-height:0;height:auto;aspect-ratio:1.07/1;
+    transform:rotate(-1deg);box-shadow:-7px 8px 0 var(--yellow);
+  }
+  .t-page .t-material__hero-img{object-position:50% 80%;transform:scale(1.19)}
+  .t-page .t-material__detail-card{order:2;margin:12px 0 0;padding:9px}
+  .t-page .t-material__stage{height:clamp(175px,50vw,250px)}
+  .t-page .t-material__caption{flex-wrap:wrap;font-size:10px}
+  .t-page .t-material__bridge{order:3;margin-top:9px}
+  .t-page .t-place-final{
+    grid-template-columns:1fr;gap:24px;min-height:0;
+    padding:65px 22px 60px;
+  }
+  .t-page .t-place-final__copy h2{
+    font-size:clamp(66px,13vw,101px);margin-block:20px;
+  }
+  .t-page .t-place-final__address{font-size:16px;gap:10px}
+  .t-page .t-place-final__art{height:clamp(310px,84vw,450px)}
+  .t-page .t-place-final__heart{
+    width:clamp(102px,28vw,140px);font-size:clamp(16px,4.6vw,21px);
+  }
+  .t-page .t-place-final__city{inset:10% 12%}
+  .t-page .t-place-final__food-disc{width:clamp(95px,24vw,135px)}
+  .t-page .t-place-final__stamp{
+    width:clamp(83px,21vw,112px);font-size:clamp(41px,10vw,60px);
+  }
+  .t-page .t-place-final__stamp small{font-size:12px}
+  .t-page .t-place-final__city-label{font-size:11px}
+  .t-page .t-place-final__city-foot{font-size:12px}
+}
+@media(max-width:370px){
+  .t-page .t-material__masthead h2{font-size:clamp(50px,12vw,66px)}
+  .t-page .t-material__detail-head strong{font-size:15px}
+  .t-page .t-place-final__copy h2{font-size:clamp(57px,13vw,76px)}
+  .t-page .t-place-final__art{height:295px}
+}
+@media(prefers-reduced-motion:reduce){
+  .t-page .t-material__hero-img,.t-page .t-material__halo,
+  .t-page .t-place-final__art *{animation:none!important;transition:none!important}
+}
