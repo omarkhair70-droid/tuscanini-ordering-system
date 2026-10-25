@@ -22,6 +22,21 @@ try {
     const runtimeErrors = [];
     page.on('pageerror', err => runtimeErrors.push(err.message));
 
+    const accountPage=await context.newPage();
+    const accountResponse=await accountPage.goto(baseUrl+'/account',{
+      waitUntil:'domcontentloaded',timeout:30000,
+    });
+    await check(accountResponse?.status()===200 &&
+      await accountPage.getByRole('heading',{name:/أكلك.*على حسابك/}).count()===1 &&
+      await accountPage.locator('main#t-account-main').count()===1,
+      `${width}px native account route uses authored customer shell without invented saved orders`);
+    const privateHistory=await context.request.get(baseUrl+'/api/customer/orders',{failOnStatusCode:false});
+    const privateBody=await privateHistory.json();
+    await check([401,503].includes(privateHistory.status()) &&
+      !Array.isArray(privateBody.orders),
+      `${width}px unauthenticated customer history never leaks orders`);
+    await accountPage.close();
+
     // Only this CI's server-side visual-review flag authorizes synthetic operator tickets.
     // Real deployed customer/merchant pages fail closed without an order backend.
     // Public operator page must OPEN, not 404. Its twenty synthetic tickets
