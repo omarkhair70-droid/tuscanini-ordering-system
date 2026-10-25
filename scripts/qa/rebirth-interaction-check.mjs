@@ -679,9 +679,13 @@ try {
     if(width===390)await cart.screenshot({path:'artifacts/screenshots/customer-journey-cart-fixture-390.png',fullPage:true,animations:'disabled'});
     await check((await cart.getByTestId('checkout-delivery-fee').innerText()).trim()==='لسه مش محددة',
       `${width}px delivery checkout never fabricates an approved delivery fee`);
-    await check(await cart.getByRole('heading',{name:'الدفع مش بيتم هنا.'}).count()===1 &&
-      await cart.getByText(/الدفع مش إلكتروني/).count()===1,
-      `${width}px checkout exposes payment not collected, without pretending a payment gateway is active`);
+    await check(await cart.getByRole('heading',{name:'تدفع إزاي وقت الاستلام؟'}).count()===1 &&
+      await cart.getByText(/مش عملية دفع من الموقع/).count()===1 &&
+      await cart.locator('input[name="handoff-payment"]').count()===3,
+      `${width}px offers three at-handoff choices without implying any online charge`);
+    await cart.locator('input[value="instapay_on_handoff"]').check();
+    await check(await cart.locator('input[value="instapay_on_handoff"]').isChecked(),
+      `${width}px InstaPay at-handoff preference can be selected`);
     await cart.getByRole('button',{name:/سجّل الطلب للمطعم/}).click();
     await check(await cart.getByText(/اكتب اسمك/).count()===1,`${width}px fixture cart required name validation`);
     await check(await cart.locator('#t-checkout-name').evaluate(el=>document.activeElement===el),
@@ -705,6 +709,7 @@ try {
     await check(submits===1,`${width}px exactly one mocked checkout request`);
     await check(submittedChoices[0]?.customer?.orderType==='delivery' &&
       submittedChoices[0]?.customer?.address==='عنوان تجريبي' &&
+      submittedChoices[0]?.customer?.paymentMethod==='instapay_on_handoff' &&
       (width!==390 || (submittedChoices[0].customer.deliveryLocation?.lat===29.07344 &&
         submittedChoices[0].customer.deliveryLocation?.lng===31.09811)),
       `${width}px delivery request retains the readable address and selected coordinates independently`);
@@ -724,6 +729,7 @@ try {
         path:`artifacts/screenshots/checkout-pickup-payment-truth-${width}.png`,fullPage:true,animations:'disabled',
       });
     }
+    await cart.locator('input[value="vodafone_cash_on_handoff"]').check();
     await cart.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).check();
     const secondPost=cart.waitForResponse(resp=>new URL(resp.url()).pathname==='/api/orders');
     await cart.getByRole('button',{name:/سجّل الطلب للمطعم/}).click();
@@ -731,6 +737,7 @@ try {
     await check(submits===2 && submittedChoices[1]?.customer?.orderType==='pickup' &&
       submittedChoices[1]?.customer?.address==='' &&
       submittedChoices[1]?.customer?.deliveryLocation==null &&
+      submittedChoices[1]?.customer?.paymentMethod==='vodafone_cash_on_handoff' &&
       submittedChoices[1]?.subtotal===45,
       `${width}px pickup payload excludes leftover delivery address, preserving original food subtotal`);
     await cart.getByRole('radio',{name:'دليفري'}).check();
