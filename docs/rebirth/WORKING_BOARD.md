@@ -1,3 +1,5 @@
+> **NEW SESSION HANDOFF (25 Oct 2026):** [40_CANONICAL_HANDOFF_POST_POS_2026-10-25.md](40_CANONICAL_HANDOFF_POST_POS_2026-10-25.md) — includes the real restaurant POS photo/add-ons, latest verified green code SHA, merchant integration boundaries, branding, visuals, and remaining production polish. Read it together with this Working Board and current PR HEAD; older technical handoffs remain historical.
+
 ### Public-facing price disclaimer assertion update after the POS additions (25 Oct 2026)
 
 - Browser pass on `47ade305` successfully reached checkout/media and interactive smoke but failed exactly three obsolete Arabic copy assertions on each of 320, 390, 768, 1440. They still searched for the removed phrase “المنيو السابق”. Changed these three **test-only** expectations to the actual short buyer-facing “الأسعار والتوافر بيتأكدوا مع المطعم” and “تأكيد السعر والتوافر مع المطعم قبل تسجيل الطلب”. This preserves genuine price disclosure without old editorial jargon, and changes no live product, order, image, or payment behavior.
