@@ -194,6 +194,15 @@ try {
       `${width}px historical Tuscanini menu has 16 original category filters plus All`);
     await check(await page.locator('[data-visual-disclosure="menu"]').getByText(/الأسعار والتوافر بيتأكدوا مع المطعم/).count()===1,
       `${width}px original old-price menu is transparently source-labelled`);
+    if (width === 320 || width === 390) {
+      const firstFoodTop = await page.locator('.t-menu-product').first().evaluate(el => {
+        return Math.round(el.getBoundingClientRect().top + window.scrollY);
+      });
+      await check(firstFoodTop <= (width === 320 ? 1270 : 1200),
+        `${width}px real first food card is reachable promptly on mobile (${firstFoodTop}px from page top)`);
+      await check(await page.locator('.t-menu-intro__photo img').count() === 2,
+        `${width}px compact menu remains genuine-photo-led rather than stripping brand media`);
+    }
     await check(await page.locator('.t-menu-product').count()===20,
       `${width}px 113-item original menu is populated and paginated, not an unavailable dummy`);
     await check(await page.locator('.t-menu-items__grid--photo').count()===1 &&
