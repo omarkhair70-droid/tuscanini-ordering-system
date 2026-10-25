@@ -74,14 +74,10 @@ try {
       if (!route && !media.packaging) {
         throw new Error(`Real packaging photo did not decode on Home at ${width}px`);
       }
-      // Third-party street maps load their tiles separately from our images.
-      // Visit the actual map viewport before the full-page proof frame: a
-      // full-page screenshot alone does not trigger lazy iframe tile loading.
+      // The unactivated map must be a designed, accessible wayfinding panel,
+      // not an empty third-party iframe; browser interactions open the real map.
       if (route === 'contact') {
-        const mapFrame=page.locator('#t-contact-map iframe');
-        await mapFrame.scrollIntoViewIfNeeded();
-        await mapFrame.evaluate(el=>{el.loading='eager'});
-        await page.waitForTimeout(1100);
+        await page.locator('#t-contact-map .t-contact-map-section__reveal').scrollIntoViewIfNeeded();
         await page.evaluate(()=>window.scrollTo(0,0));
       }
       const filename = `artifacts/screenshots/${route||'home'}-${width}.png`;
