@@ -671,8 +671,13 @@ try {
         type:'tuscanini:delivery-pin:selected',version:1,lat:29.07344,lng:31.09811
       },window.location.origin));
       await cart.getByText(/تم تحديد الدبوس/).waitFor({timeout:5000});
-      await check((await cart.locator('#t-checkout-address').inputValue()).includes('https://maps.google.com/?q=29.07344,31.09811'),
-        '390px exact pin coordinates are persisted in the same order address the backend receives');
+      await cart.waitForFunction(() => {
+        const value=JSON.parse(localStorage.getItem('tuscanini-cart-v1')||'{}');
+        return value.customer?.deliveryLocation?.lat===29.07344 &&
+          value.customer?.deliveryLocation?.lng===31.09811;
+      },null,{timeout:5000});
+      await check(!(await cart.locator('#t-checkout-address').inputValue()).includes('maps.google.com'),
+        '390px pin is stored separately, not displayed as a technical URL inside the address text area');
     }
     if(width===390)await cart.screenshot({path:'artifacts/screenshots/customer-journey-cart-fixture-390.png',fullPage:true,animations:'disabled'});
     await check((await cart.getByTestId('checkout-delivery-fee').innerText()).trim()==='لسه مش محددة',
@@ -687,7 +692,7 @@ try {
     await check(submits===0,`${width}px invalid checkout never posts order`);
     await cart.getByPlaceholder('الاسم').fill('عميل اختبار');
     await cart.getByPlaceholder('01xxxxxxxxx').fill('01012345678');
-    await cart.getByPlaceholder('الشارع، المنطقة، علامة مميزة').fill('عنوان تجريبي');
+    await cart.locator('#t-checkout-address').fill('عنوان تجريبي');
     if([390,1440].includes(width)){
       // Playwright full-page captures can place a sticky header halfway down
       // the stitched image if the input has auto-scrolled the active viewport.
@@ -702,14 +707,16 @@ try {
     await check(await cart.getByText('الطلبات متوقفة الآن').count()===1,`${width}px refused order shows exact server closure`);
     await check(submits===1,`${width}px exactly one mocked checkout request`);
     await check(submittedChoices[0]?.customer?.orderType==='delivery' &&
-      submittedChoices[0]?.customer?.address==='عنوان تجريبي',
-      `${width}px delivery request retains the explicitly entered address`);
+      submittedChoices[0]?.customer?.address==='عنوان تجريبي' &&
+      (width!==390 || (submittedChoices[0].customer.deliveryLocation?.lat===29.07344 &&
+        submittedChoices[0].customer.deliveryLocation?.lng===31.09811)),
+      `${width}px delivery request retains the readable address and selected coordinates independently`);
     await check(await cart.getByText(/عرض اختبار غير حقيقي/).count()>0,`${width}px rejected order keeps items for correction`);
 
     // Switch an already-addressed delivery draft to pickup. Never leak that
     // draft address into the restaurant order for an in-store pickup.
     await cart.getByRole('radio',{name:'استلام من المطعم'}).check();
-    await check(await cart.getByPlaceholder('الشارع، المنطقة، علامة مميزة').count()===0 &&
+    await check(await cart.locator('#t-checkout-address').count()===0 &&
       (await cart.getByTestId('checkout-delivery-fee').innerText()).trim()==='لا توجد رسوم توصيل',
       `${width}px pickup removes irrelevant address entry and does not invent delivery cost`);
     await check(!(await cart.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).isChecked()),
@@ -726,10 +733,11 @@ try {
     await secondPost;
     await check(submits===2 && submittedChoices[1]?.customer?.orderType==='pickup' &&
       submittedChoices[1]?.customer?.address==='' &&
+      submittedChoices[1]?.customer?.deliveryLocation==null &&
       submittedChoices[1]?.subtotal===45,
       `${width}px pickup payload excludes leftover delivery address, preserving original food subtotal`);
     await cart.getByRole('radio',{name:'دليفري'}).check();
-    await check(await cart.getByPlaceholder('الشارع، المنطقة، علامة مميزة').inputValue()==='عنوان تجريبي' &&
+    await check(await cart.locator('#t-checkout-address').inputValue()==='عنوان تجريبي' &&
       (await cart.getByTestId('checkout-delivery-fee').innerText()).trim()==='لسه مش محددة',
       `${width}px changing back to delivery restores customer draft but shows only unverified fee`);
     await check(!(await cart.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).isChecked()),
