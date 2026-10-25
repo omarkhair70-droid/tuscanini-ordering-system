@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { ExperienceHeader } from '@/components/rebirth/experience-header';
 import { ExperienceFooter } from '@/components/rebirth/experience-footer';
 import { getRuntimePublicSiteSettings } from '@/lib/site-settings-runtime';
-import { tuscaniniDirectionsUrl, tuscaniniMapEmbedUrl, tuscaniniMapSearchUrl } from '@/lib/rebirth/wayfinding';
+import { tuscaniniDirectionsUrl, tuscaniniMapEmbedUrl, tuscaniniMapSearchUrl, tuscaniniUsingOsmEmbed } from '@/lib/rebirth/wayfinding';
 import '../rebirth-home.css';
 import '../rebirth-contact.css';
 
@@ -91,7 +91,10 @@ export default async function ContactPage() {
               allowFullScreen
             />
           </div>
-          <p className="t-contact-map-section__note">اتبع العنوان المكتوب، أو افتح الاتجاهات على موبايلك.</p>
+          <div className="t-contact-map-section__foot">
+            <p className="t-contact-map-section__note">دي خريطة المنطقة المحيطة بنادي توليب. افتح الاتجاهات للوصول لعنوان المطعم.</p>
+            {tuscaniniUsingOsmEmbed && <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap contributors</a>}
+          </div>
         </section>
         <section className="t-contact-methods t-shell" id="t-contact-methods" aria-labelledby="t-contact-methods-title">
           <div className="t-contact-methods__head">
