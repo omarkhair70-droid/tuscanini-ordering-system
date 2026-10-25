@@ -55,7 +55,7 @@ button{border:1px solid #171511;min-height:49px;padding:10px 12px;font:700 14px 
   try {
     if(!window.maplibregl)throw new Error('map-library-unavailable');
     map=new maplibregl.Map({
-      container:'map',style:'https://tiles.openfreemap.org/styles/bright',
+      container:'map',style:'https://tiles.openfreemap.org/styles/liberty',
       center:[31.099,29.072],zoom:13,attributionControl:true
     });
     marker=new maplibregl.Marker({color:'#d72e26',draggable:true})
