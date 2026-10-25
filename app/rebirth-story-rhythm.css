@@ -190,3 +190,21 @@
  .t-packaging__photo-img,.t-packaging__chooser button{transition:none!important;will-change:auto}
  .t-packaging__photo-img[data-current=false]{transform:none}
 }
+
+
+/* Actual Arabic customer captions must not inherit Anton's Latin letterforms. */
+.t-page .t-packaging__photo-label,
+.t-page .t-material__caption,
+.t-page .t-material__eyebrow span:last-child{
+  font-family:"IBM Plex Sans Arabic",Tahoma,Arial,sans-serif;
+  font-weight:800;
+  letter-spacing:0;
+  direction:rtl;
+}
+.t-page .t-packaging__photo-label{font-size:15px;line-height:1.55}
+.t-page .t-material__caption{font-size:13px;line-height:1.7}
+.t-page .t-material__eyebrow span:last-child{font-size:13px}
+@media(max-width:720px){
+  .t-page .t-packaging__photo-label{font-size:12px}
+  .t-page .t-material__caption{font-size:11px}
+}
