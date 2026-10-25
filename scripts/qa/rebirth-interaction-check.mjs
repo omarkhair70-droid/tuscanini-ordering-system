@@ -59,6 +59,21 @@ try {
     }
     await demo.close();
     await page.goto(baseUrl + '/', { waitUntil:'networkidle',timeout:30000 });
+    // Product-led mobile shell: one thumb dock on customer screens, not
+    // duplicate full-width order/floating-cart actions.
+    const appDock=page.getByRole('navigation',{name:'التنقل السريع على الموبايل'});
+    if(width<=720){
+      await check(await appDock.isVisible() &&
+        await appDock.locator('a').count()===4 &&
+        await appDock.locator('a[aria-current="page"][href="/"]').count()===1,
+        `${width}px app dock gives visible Home/Menu/Offers/Cart thumb routes`);
+      await check(!(await page.locator('.t-mobile-order').isVisible()) &&
+        await page.locator('.t-header__order').isHidden(),
+        `${width}px no competing fixed order bar under the mobile app dock`);
+    }else{
+      await check(await appDock.isHidden(),
+        `${width}px desktop/tablet keeps existing full navigation rather than a phone dock`);
+    }
     await page.locator('.t-hero__photo img').waitFor({ state:'visible', timeout:15000 });
     const heroLoaded = await page.locator('.t-hero__photo img').evaluate(img => img.complete && img.naturalWidth > 0);
     await check(heroLoaded, `${width}px original restaurant hero image loaded`);
