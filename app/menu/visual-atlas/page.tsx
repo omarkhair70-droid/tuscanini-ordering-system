@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { GENERATED_ASSET_COUNT, GENERATED_ASSET_IDS, GENERATED_MEDIA_READY } from '@/lib/rebirth/generated-menu-media';
@@ -13,6 +14,9 @@ export const metadata:Metadata={
 };
 const families=['تجربة التصوير الأولى','توسعة المشاهد الأساسية','كريبات فراخ','كريبات لحوم','كريبات متنوعة','كريب حلو ووافل','بيتزا — صور بانورامية معالجة','ساندوتشات وبرجر','باستا ومقبلات','مشروبات ومقبلات وحلو'];
 export default function VisualAtlas(){
+  // The 100-image editorial lab is internal source material, not a customer page.
+  // Preserve the assets for SKU art review while keeping its route out of retail UX.
+  if(process.env.TUSCANINI_INTERNAL_VISUAL_QA!=='yes')notFound();
   return <main className="t-menu-atlas" dir="rtl">
     <nav className="t-menu-atlas__nav"><Link href="/menu">← ارجع للمنيو</Link><span>VISUAL ARCHIVE / TUSCANINI</span></nav>
     <header className="t-menu-atlas__header">

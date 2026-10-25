@@ -4,6 +4,11 @@
 
 > **Start here in every new chat, and update this SAME FILE after every meaningful feature/review.** This is the current execution and coverage index; historical `00–38`, original research, the HTML reference and technical handoffs remain evidence, not competing "next task" lists. Use the current GitHub PR HEAD and Actions results if newer; never assume this snapshot is the HEAD forever.
 
+### Private visual-atlas route guard (25 Oct 2026)
+
+- The old `/menu/visual-atlas` was still an unlinked but URL-accessible archive of 100 conceptual photo studies. It was already `noindex`, but that is not the same as keeping an internal design gallery off the public consumer site. The route now returns **404 unless server-only internal visual QA is explicitly enabled**, like the earlier owner `/demo` route. Physical image assets and explicit SKU visual mapping remain unchanged; only customer-facing access to the internal gallery is removed.
+- No redirect to a misleading photo gallery, and no marketing promise that the 100 image studies are actual Tuscanini dishes.
+
 ### Release Cart availability check after edit (25 Oct 2026)
 
 - Browser CI on `9f384ee` passed compilation/real transactional PostgreSQL and most screens but two viewport tests (320/768) sampled checkout *before settings restored after editing a cart line*. The final assertion now waits for the mounted Cart's actual runtime status and tests **its current state**, never reuses an initial state from before the menu→cart navigation.
