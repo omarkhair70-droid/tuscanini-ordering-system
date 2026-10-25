@@ -241,3 +241,24 @@
   .t-checkout-page--filled .t-checkout-hero__bottom{padding-top:10px}
   .t-checkout-page--filled .t-checkout-content{padding-top:clamp(18px,2.8vw,40px)}
 }
+
+
+/* Localize checkout wayfinding without changing payment or order behavior. */
+.t-checkout-page .t-checkout-hero__overline span:first-child,
+.t-checkout-page .t-checkout-hero__bottom span:first-child{
+  font:800 12px/1.5 "IBM Plex Sans Arabic",Tahoma,Arial,sans-serif;
+  direction:rtl;letter-spacing:0;
+}
+.t-checkout-page .t-checkout-hero__headline .t-index,
+.t-checkout-page .t-checkout-section__head .t-index,
+.t-checkout-page .t-checkout-summary>.t-index,
+.t-checkout-page .t-checkout-payment-note .t-index,
+.t-checkout-page .t-checkout-empty>.t-index,
+.t-checkout-page .t-checkout-availability .t-index{
+  font:800 12px/1.5 "IBM Plex Sans Arabic",Tahoma,Arial,sans-serif;
+  letter-spacing:0;
+}
+@media(max-width:720px){
+  .t-checkout-page .t-checkout-hero__overline span:first-child,
+  .t-checkout-page .t-checkout-hero__bottom span:first-child{font-size:11px}
+}
