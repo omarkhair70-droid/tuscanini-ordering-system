@@ -664,6 +664,7 @@ try {
       await cart.getByRole('button',{name:/حدّد مكان التوصيل على الخريطة/}).click();
       await check(await cart.locator('dialog.t-checkout-delivery-pin__dialog[open] iframe[src="/delivery-location-picker.html"]').count()===1,
         '390px precise address uses an interactive same-origin map rather than restaurant location iframe');
+      await cart.frameLocator('iframe[src="/delivery-location-picker.html"]').locator('body').waitFor({timeout:10000});
       const pinFrame = cart.frame({url:/delivery-location-picker\.html/});
       if (!pinFrame) throw new Error('Delivery location iframe did not initialize');
       await pinFrame.evaluate(() => window.parent.postMessage({
