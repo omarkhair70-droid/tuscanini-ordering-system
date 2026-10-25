@@ -105,7 +105,7 @@ try {
     await check(await page.locator('.t-packaging__photo-img').evaluateAll(images =>
       images.length===2 && images.every(img=>img.complete&&img.naturalWidth>0)),
       `${width}px both package and interior photographs decode without fabricated product mapping`);
-    await check(await page.getByText(/مش لنفس الساندوتشات/).count()===1,
+    await check(await page.getByText(/كريبات تانية من توسكانيني/).count()===1,
       `${width}px user-controlled inside/out view openly distinguishes two photographed products`);
     if(width===390 || width===1440){
       await page.locator('.t-packaging__photo').scrollIntoViewIfNeeded();
@@ -351,7 +351,7 @@ try {
       `${width}px Finder first-scene priority is bounded (${Math.round(finderHeroHeight)}px)`);
     await check(await page.locator('.t-finder-form-glyph').count()===8,
       `${width}px Finder family choices use visual sketches instead of emoji/text-only chips`);
-    await check(await page.locator('.t-finder-progress').getByText('2 STEPS / YOUR FOOD').count()===1,
+    await check(await page.locator('.t-finder-progress').getByText('خطوتين وتختار').count()===1,
       `${width}px Finder uses two actual recorded-data questions rather than unsupported tags`);
     await page.getByRole('button',{name:'كريب',exact:true}).click();
     await page.getByRole('button',{name:'لحد 150 ج.م',exact:true}).click();
