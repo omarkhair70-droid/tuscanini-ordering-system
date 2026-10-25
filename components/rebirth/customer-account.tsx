@@ -79,13 +79,17 @@ export function CustomerAccount() {
   },[]);
 
   useEffect(()=>{
+    if(user)void loadOwnedData(user);
+  },[user,loadOwnedData]);
+
+  useEffect(()=>{
     let active=true;
     const supabase=getSupabaseBrowserClient();
     void supabase.auth.getUser().then(async ({data})=>{
       if (!active) return;
       setUser(data.user);
       setInitializing(false);
-      if(data.user) await loadOwnedData(data.user);
+      // The user effect loads owner-scoped data after authentication.
     }).catch(()=>{
       if(active){setInitializing(false);setError('تعذّر التحقق من الحساب دلوقتي.');}
     });
@@ -122,7 +126,7 @@ export function CustomerAccount() {
       if(e)throw e;
       if(!data.user)throw new Error('الكود غير صالح أو انتهت صلاحيته.');
       setUser(data.user);setNotice('دخلت حسابك بنجاح.');setOtp('');
-      await loadOwnedData(data.user);
+      // Owner-scoped data loads in the user effect.
     }catch(e){setError(message(e));}
     finally{setBusy(false);}
   }
