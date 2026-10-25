@@ -748,6 +748,44 @@ try {
       `${width}px changing pickup back to delivery invalidates previous review`);
     await fixtureContext.close();
 
+    if(width===390){
+      // Closing merchant intake must not close product discovery, edit or GPS
+      // selection. Equally, a complete draft must NEVER POST a live order.
+      const closedContext=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'reduce'});
+      await closedContext.addInitScript(()=>{
+        localStorage.setItem('tuscanini-cart-v1',JSON.stringify({
+          items:[{lineId:'closed-test',kind:'offer',offerId:'closed-fixture',
+            offerTitle:'أوردر لمراجعة تجربة الموقع',quantity:1,unitPrice:45,totalItemPrice:45,itemNotes:''}],
+          customer:{name:'',phone:'',address:'',orderType:'pickup',
+            paymentMethod:'cash',generalNotes:'',confirmedAccurateDetails:false},
+          tableReference:null,
+        }));
+      });
+      await closedContext.route('**/api/public/site-settings',route=>route.fulfill({
+        status:200,contentType:'application/json',
+        body:JSON.stringify({ok:true,settings:{isOrderingOpen:false,deliveryEnabled:false,whatsappOrderNumber:''}}),
+      }));
+      let closedPosts=0;
+      await closedContext.route('**/api/orders',route=>{
+        closedPosts++;
+        return route.fulfill({status:409,contentType:'application/json',
+          body:JSON.stringify({ok:false,code:'ORDERING_CLOSED'})});
+      });
+      const closedPage=await closedContext.newPage();
+      await closedPage.goto(baseUrl+'/cart',{waitUntil:'networkidle',timeout:30000});
+      await check(await closedPage.locator('#t-checkout-name').count()===1 &&
+        await closedPage.getByRole('button',{name:'إرسال الطلب متوقف حاليًا'}).isDisabled(),
+        '390px closed intake keeps the complete editable customer form but cannot send an order');
+      await closedPage.locator('#t-checkout-name').fill('عميل لمراجعة الرحلة');
+      await closedPage.getByRole('radio',{name:'توصيل لعنوانك'}).check();
+      await closedPage.locator('#t-checkout-address').fill('شارع النيل، عمارة ٤');
+      await check(await closedPage.getByRole('button',{name:/حدّد مكان التوصيل على الخريطة/}).count()===1,
+        '390px closed intake still allows exact address/pin journey');
+      await check(closedPosts===0 && await closedPage.getByRole('button',{name:'إرسال الطلب متوقف حاليًا'}).isDisabled(),
+        '390px editable closed draft never creates a restaurant order');
+      await closedContext.close();
+    }
+
     // Browser integration proof of the customer's ACTUAL Menu/Cart form contract
     // through redirect and status polling. Network is fully stubbed: never
     // creates a merchant order or opens intake on Oracle or Vercel.
