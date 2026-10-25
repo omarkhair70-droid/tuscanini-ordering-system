@@ -15,11 +15,11 @@ export function MaterialReveal() {
     <section className="t-material" aria-labelledby="t-material-heading" id="t-material">
       <div className="t-material__masthead t-shell" data-t-story-step>
         <div className="t-material__eyebrow">
-          <span className="t-index">03 / A CLOSER LOOK</span>
-          <span lang="en">ONE REAL PHOTO · TWO WAYS TO LOOK</span>
+          <span className="t-index">03 / قرّب أكتر</span>
+          <span>الحشو من جوّه</span>
         </div>
         <h2 id="t-material-heading">قرّب<br/><em>بنفسك.</em></h2>
-        <p>اسحب بإيدك: نفس الصورة، مرة كاملة ومرة أقرب للتفاصيل.</p>
+        <p>اسحب بإيدك وقرّب على تفاصيل الكريب، وشوف الحشو بنفسك.</p>
       </div>
       <div className="t-material__composition t-shell" data-t-story-step>
         <div className="t-material__type-rail" aria-hidden="true" lang="en">
@@ -49,7 +49,7 @@ export function MaterialReveal() {
           />
         </div>
         <div className="t-material__caption">
-          <span>FROM THE RESTAURANT / TUSCANINI</span><span>ONE PHOTO / TWO VIEWS</span>
+          <span>كريب توسكانيني</span><span>التفاصيل بتتكلم</span>
           <span>اسحب أو استخدم الأسهم في الكيبورد</span>
         </div>
       </div>
