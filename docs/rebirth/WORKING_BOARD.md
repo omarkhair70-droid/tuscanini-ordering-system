@@ -1,3 +1,9 @@
+### 26 Oct — First interactive customer delivery pin in Checkout
+- Shipped `public/delivery-location-picker.html` using pinned MapLibre GL + OpenFreeMap tiles, with draggable marker, map tap, current-location action, coordinate validation for Egypt and confirm handoff. This is the **customer's drop-off point**; it is NOT the map of Tuscanini's storefront.
+- The same-origin parent `CustomerDeliveryPin` dialog validates `postMessage` origin/frame and stores a Google Maps coordinate link inside the existing persistent customer address. It is visible when the customer selects Delivery, so the currently deployed order transport can receive the pin with its existing `address` field without assuming a migration exists. This is an interim order-address representation; the v2 architecture document separately calls for structured lat/lng, zone fees, saved addresses and driver/operator UX.
+- UI has native modal close, map unavailable fallback, touch/keyboard drag provided by MapLibre, a confirm action only after selection, and readable selected-pin feedback. Browser QA checks the active delivery fixture and map source/coord handoff without placing a real order.
+- Product integration remaining: exact coordinate database fields, geocoded display address, real service area/fees, cashier ticket map link and owner-verified address policy. Manual address remains supported. No account, PSP or real POS acknowledged yet.
+
 ### 26 Oct — Mobile commerce follow-through
 - Mobile product listing now uses horizontal, one-column cards at phone widths; product bottom sheet has clearer tactile spacing and controls. Existing images, prices and business rules are retained.
 - Home mobile hides repetitive micro-labels, retains its approved food story; header subtitle uses concise product categories.
