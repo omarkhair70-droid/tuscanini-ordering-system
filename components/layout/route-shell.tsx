@@ -22,7 +22,7 @@ const CLARITY_ENABLED = /^[a-z0-9]{8,30}$/i.test(CLARITY_PROJECT_ID);
 const INSIGHT_ROUTES = new Set(['/', '/menu', '/offers', '/food-finder', '/about', '/contact']);
 
 const AUTHORED_PUBLIC_ROUTES = new Set([
-  '/', '/menu', '/cart', '/order-success', '/food-finder', '/offers', '/about', '/contact', '/reviews', '/complaints',
+  '/', '/menu', '/cart', '/order-success', '/food-finder', '/offers', '/about', '/contact', '/reviews', '/complaints', '/account',
 ]);
 export function RouteShell({ children, legacyHeader, legacyFooter, legacyMobileNav }: RouteShellProps) {
   const pathname = usePathname();
