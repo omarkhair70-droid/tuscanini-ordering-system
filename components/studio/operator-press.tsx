@@ -9,7 +9,8 @@ type Line={sku:string;name:string;qty:number;price_cents:number;
 type Order={id:string;status:string;subtotal_cents:string;created_at:string;items:Line[];
   order_type?:string;table_reference?:string|null;
   customer_snapshot?:{name?:string;phone?:string;address?:string;generalNotes?:string;
-    deliveryLocation?:{lat:number;lng:number}|null}};
+    deliveryLocation?:{lat:number;lng:number}|null;
+    paymentMethod?:'cash'|'instapay_on_handoff'|'vodafone_cash_on_handoff'}};
 type Layout='press'|'rail';
 type Filter='all'|'received'|'making'|'ready'|'done';
 type Data={orders?:Order[];error?:string};
@@ -33,6 +34,12 @@ const ACTIONS:Record<string,Array<{key:string;label:string}>>={
 };
 const money=(n:number|string)=>new Intl.NumberFormat('ar-EG',{maximumFractionDigits:2}).format(Number(n)/100)+' ج.م';
 const short=(id:string)=>'#'+id.slice(0,8).toUpperCase();
+function handoffLabel(value:Order['customer_snapshot']):string{
+  const method=value?.paymentMethod;
+  return method==='instapay_on_handoff'?'إنستا باي وقت الاستلام':
+    method==='vodafone_cash_on_handoff'?'فودافون كاش وقت الاستلام':
+    'كاش وقت الاستلام';
+}
 /** Exact address chosen by the guest, not the restaurant's own location.
  * Only validated coordinate pairs are turned into a cashier/driver map link. */
 function deliveryDirections(order:Order):string|null{
@@ -135,6 +142,7 @@ function OrderTicket({order,preview,pending,onAction,compact=false}:{
       <span>{order.order_type==='delivery'?'دليفري':'استلام'}{order.table_reference?' · '+order.table_reference:''}</span></div>
     <div className="op-ticket__name">{order.customer_snapshot?.name??'عميل'}</div>
     {order.customer_snapshot?.generalNotes&&<p className="op-ticket__warning">{order.customer_snapshot.generalNotes}</p>}
+    <p className="op-ticket__payment">طريقة الدفع المطلوبة: {handoffLabel(order.customer_snapshot)} · لم يتم تحصيلها من الموقع</p>
     <LineDetails lines={order.items}/>
     {!compact&&<div className="op-ticket__details">
       {order.customer_snapshot?.phone&&<span>☎ {order.customer_snapshot.phone}</span>}
