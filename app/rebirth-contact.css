@@ -174,3 +174,72 @@
   margin-top:16px;font:600 11px/1.4 Arial,sans-serif;
   direction:ltr;opacity:.75;border-bottom:1px solid currentColor;
 }
+
+
+/* First paint is a purposeful wayfinding panel; map tiles load only on
+   interaction so a blocked third-party iframe never becomes an empty hero. */
+.t-contact-map-section__canvas{position:relative;isolation:isolate}
+.t-contact-map-section__reveal{
+  width:100%;min-height:inherit;height:clamp(300px,39vw,540px);
+  display:flex;flex-direction:column;align-items:stretch;
+  justify-content:space-between;gap:14px;
+  padding:clamp(18px,3vw,38px);border:0;border-radius:0;
+  background:var(--yellow);color:var(--ink);
+  position:relative;overflow:hidden;isolation:isolate;cursor:pointer;
+  text-align:right;
+}
+.t-contact-map-section__reveal::before{
+  content:"";position:absolute;z-index:-1;inset:-45% -15%;
+  background:repeating-linear-gradient(-34deg,transparent 0 56px,
+    rgba(23,21,17,.08) 57px 61px,transparent 62px 104px);
+  transform:rotate(-3deg);pointer-events:none;
+}
+.t-contact-map-section__reveal::after{
+  content:"";position:absolute;z-index:-1;
+  width:clamp(210px,36vw,520px);aspect-ratio:1;
+  border:15px solid rgba(217,46,36,.85);border-radius:50%;
+  bottom:-48%;left:-7%;transform:rotate(-17deg);pointer-events:none;
+}
+.t-contact-map-section__reveal-top,
+.t-contact-map-section__reveal-bottom{
+  display:flex;justify-content:space-between;gap:16px;align-items:center;
+  flex-wrap:wrap;font:800 13px/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+}
+.t-contact-map-section__reveal-top span:first-child{
+  direction:ltr;font:400 15px/1.4 "Anton",Impact,sans-serif;letter-spacing:.07em;
+}
+.t-contact-map-section__reveal-symbol{
+  position:absolute;left:clamp(16px,3vw,38px);top:32%;
+  width:clamp(62px,10vw,120px);aspect-ratio:1;
+  display:grid;place-items:center;border:3px solid var(--ink);
+  border-radius:50%;font-size:clamp(29px,4.5vw,65px);
+  transform:rotate(-20deg);
+}
+.t-contact-map-section__reveal strong{
+  display:block;align-self:flex-start;position:relative;
+  margin-block:auto;padding-block:14px;
+  font:800 clamp(58px,7vw,110px)/1.08 "Changa",Tahoma,sans-serif;
+}
+.t-contact-map-section__reveal strong em{color:var(--red)}
+.t-contact-map-section__reveal-bottom{
+  align-items:flex-end;border-top:2px solid var(--ink);padding-top:14px;
+}
+.t-contact-map-section__reveal-bottom>span:last-child{
+  display:inline-flex;align-items:center;gap:15px;
+  padding:9px 13px;background:var(--ink);color:var(--paper);
+}
+.t-contact-map-section__reveal:hover .t-contact-map-section__reveal-bottom>span:last-child,
+.t-contact-map-section__reveal:focus-visible .t-contact-map-section__reveal-bottom>span:last-child{
+  background:var(--red);
+}
+.t-contact-map-section__reveal:focus-visible{
+  outline:4px solid #267fe2;outline-offset:-4px;
+}
+@media(max-width:720px){
+  .t-contact-map-section__reveal{height:330px;padding:15px;gap:8px}
+  .t-contact-map-section__reveal strong{font-size:clamp(50px,12vw,72px)}
+  .t-contact-map-section__reveal-top,.t-contact-map-section__reveal-bottom{font-size:11px;gap:8px}
+  .t-contact-map-section__reveal-top span:first-child{font-size:12px}
+  .t-contact-map-section__reveal-symbol{left:15px;top:32%;width:68px;font-size:34px}
+  .t-contact-map-section__reveal-bottom>span:last-child{padding:7px 9px}
+}
