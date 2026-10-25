@@ -658,6 +658,21 @@ try {
     await check(await cart.locator('.t-checkout-availability').count()===0 &&
       await cart.locator('#t-checkout-name').count()===1,
       `${width}px available-order checkout keeps the real contact form and no closure panel`);
+    await check(await cart.getByRole('button',{name:/حدّد مكان التوصيل على الخريطة/}).count()===1,
+      `${width}px delivery checkout offers an actual customer-selected drop-off pin`);
+    if (width===390) {
+      await cart.getByRole('button',{name:/حدّد مكان التوصيل على الخريطة/}).click();
+      await check(await cart.locator('dialog.t-checkout-delivery-pin__dialog[open] iframe[src="/delivery-location-picker.html"]').count()===1,
+        '390px precise address uses an interactive same-origin map rather than restaurant location iframe');
+      const pinFrame = cart.frame({url:/delivery-location-picker\.html/});
+      if (!pinFrame) throw new Error('Delivery location iframe did not initialize');
+      await pinFrame.evaluate(() => window.parent.postMessage({
+        type:'tuscanini:delivery-pin:selected',version:1,lat:29.07344,lng:31.09811
+      },window.location.origin));
+      await cart.getByText(/تم تحديد الدبوس/).waitFor({timeout:5000});
+      await check((await cart.locator('#t-checkout-address').inputValue()).includes('https://maps.google.com/?q=29.07344,31.09811'),
+        '390px exact pin coordinates are persisted in the same order address the backend receives');
+    }
     if(width===390)await cart.screenshot({path:'artifacts/screenshots/customer-journey-cart-fixture-390.png',fullPage:true,animations:'disabled'});
     await check((await cart.getByTestId('checkout-delivery-fee').innerText()).trim()==='لسه مش محددة',
       `${width}px delivery checkout never fabricates an approved delivery fee`);
