@@ -1,3 +1,8 @@
+### 26 Oct — Mobile commerce follow-through
+- Mobile product listing now uses horizontal, one-column cards at phone widths; product bottom sheet has clearer tactile spacing and controls. Existing images, prices and business rules are retained.
+- Home mobile hides repetitive micro-labels, retains its approved food story; header subtitle uses concise product categories.
+- CI screenshots must confirm 320/390/768/1440 results. Further accounts, coordinate-accurate delivery addresses, payment methods and POS acknowledgments remain specified in document 41, not claimed built.
+
 ### 26 Oct — Product Rebirth 02: switch from editorial website to mobile-first takeaway application
 
 - Owner rejected treating previous green QA and adequate styling as comparable to strong modern restaurant mobile products. Reviewed the **actual 390px evidence board** (Home/Menu/Product/Cart/Checkout/Contact/Tracking). Shortcoming is systemic: repetitive poster-like headings, too many black/yellow full slabs, ordinary purchase controls, no app-level location/accounts/reorder/payment architecture. This is a **new design and product direction**, not a new repo.
