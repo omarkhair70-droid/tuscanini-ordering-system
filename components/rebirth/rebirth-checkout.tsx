@@ -182,9 +182,11 @@ export function RebirthCheckout() {
                 <span>إجمالي الأصناف التقديري · {count} قطعة</span>
                 <strong>{money(subtotal)} ج.م</strong>
               </div>
-              {settings && !settings.isOrderingOpen
+              {(settingsFailed || (settings && !settings.isOrderingOpen))
                 ? <Link href="/contact">تواصل مع المطعم ↗</Link>
-                : <a href="#t-checkout-fields">اكمل بياناتك <span aria-hidden="true">↓</span></a>}
+                : settings?.isOrderingOpen
+                  ? <a href="#t-checkout-fields">اكمل بياناتك <span aria-hidden="true">↓</span></a>
+                  : <span role="status">بنتحقق من استقبال الطلبات…</span>}
             </nav>
           )}
           {!isHydrated ? <div className="t-checkout-message" role="status">جاري تجهيز السلة…</div> : null}
@@ -283,7 +285,7 @@ export function RebirthCheckout() {
                 {errors.confirmedAccurateDetails && <p className="t-checkout-error">{errors.confirmedAccurateDetails}</p>}
                 <p className="t-checkout-status" role="status">{status}</p>
                 {error && <p className="t-checkout-error t-checkout-error--large" role="alert">{error}</p>}
-                {settings && !settings.isOrderingOpen
+                {(settingsFailed || (settings && !settings.isOrderingOpen))
                   ? <Link href="/contact" className="t-checkout-action t-checkout-action--full">تواصل مع المطعم ↗</Link>
                   : <button type="submit" className="t-checkout-action t-checkout-action--full" disabled={disabled}>
                     {sending ? 'بنرسل طلبك…' : uncertain ? 'راجع المطعم قبل إعادة الإرسال' : 'سجّل الطلب للمطعم ↗'}</button>}

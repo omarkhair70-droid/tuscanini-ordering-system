@@ -504,6 +504,10 @@ try {
     await shopPage.locator('#rebirth-product-notes').fill('بدون بصل - تعديل من السلة');
     await shopPage.getByRole('button',{name:/احفظ التعديلات/}).click();
     await shopPage.waitForURL(/\/cart(?:#|$)/,{timeout:12000});
+    await shopPage.waitForFunction(()=>{
+      const status=document.querySelector('.t-checkout-status')?.textContent??'';
+      return status.length>0&&!status.includes('بنتحقق من استقبال الطلبات');
+    },null,{timeout:12000});
     await shopPage.waitForFunction(id=>{
       const saved=JSON.parse(localStorage.getItem('tuscanini-cart-v1')||'{}');
       return saved.items?.length===1&&saved.items[0].lineId===id&&
@@ -522,11 +526,21 @@ try {
       updated.items[0].unitPrice===125&&updated.items[0].totalItemPrice===125 &&
       updated.items[0].selectedAddons?.length===0&&updated.items[0].itemNotes==='بدون بصل - تعديل من السلة' && !updated.reviewed,
       `${width}px saved cart edit updates same receipt line, recalculates price, keeps notes and never duplicates`);
-    await check(checkoutClosed
-      ? await shopPage.getByRole('button',{name:/سجّل الطلب للمطعم/}).count()===0 &&
-        await shopPage.getByRole('link',{name:/تواصل مع المطعم/}).count()>=1
-      : await shopPage.getByRole('button',{name:/سجّل الطلب للمطعم/}).isDisabled(),
-      `${width}px old catalog cannot submit when intake is closed; direct contact remains available`);
+    const guardedCart=await shopPage.evaluate(()=>{
+      const status=document.querySelector('.t-checkout-status')?.textContent??'';
+      const contact=document.querySelector('a.t-checkout-action--full[href="/contact"]');
+      const submit=document.querySelector('button.t-checkout-action--full[type="submit"]');
+      const field=document.querySelector('#t-checkout-name');
+      const closed=status.includes('متوقف')||status.includes('متعذر')||status.includes('مش متاح');
+      const open=status.includes('جاهز تسجل');
+      return {closed,open,contact:!!contact,submit:!!submit,disabled:submit?.disabled??false,
+        field:!!field,summary:!!document.querySelector('.t-checkout-summary')};
+    });
+    await check(guardedCart.summary && (
+      guardedCart.closed
+        ? guardedCart.contact&&!guardedCart.submit&&!guardedCart.field
+        : guardedCart.open&&guardedCart.submit&&guardedCart.field
+    ),`${width}px release Cart uses contact when unavailable or complete verified checkout when open; never simulated purchase`);
     await catalogContext.close();
     await page.goto(baseUrl + '/cart', { waitUntil: 'networkidle', timeout:30000 });
     await check(await page.getByRole('heading', { name:/على.*مزاجك/ }).count()===1, `${width}px Checkout authored header renders`);

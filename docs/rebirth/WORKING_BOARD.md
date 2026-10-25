@@ -4,6 +4,12 @@
 
 > **Start here in every new chat, and update this SAME FILE after every meaningful feature/review.** This is the current execution and coverage index; historical `00–38`, original research, the HTML reference and technical handoffs remain evidence, not competing "next task" lists. Use the current GitHub PR HEAD and Actions results if newer; never assume this snapshot is the HEAD forever.
 
+### Release Cart availability check after edit (25 Oct 2026)
+
+- Browser CI on `9f384ee` passed compilation/real transactional PostgreSQL and most screens but two viewport tests (320/768) sampled checkout *before settings restored after editing a cart line*. The final assertion now waits for the mounted Cart's actual runtime status and tests **its current state**, never reuses an initial state from before the menu→cart navigation.
+- Repaired a real failure edge: when loading site settings fails, checkout provides a working direct-contact CTA and shortcut, with no dead anchor to a hidden form and no unnecessary customer-data collection. While loading, shortcut explicitly announces checking rather than linking to a not-yet-shown form.
+- Merchant intake gate, product prices, Oracle API, image mappings and draft PR unchanged; this is a production-safe UX correction, not an order-open change.
+
 ### Desktop real-cart first fold — screenshot-led reduction (25 Oct 2026)
 
 - Personally inspected **actual generated 1440 and 390 screenshot artifact** (prior CI `40195824268`): mobile food dialog / live quantity footer and early closed-order panel were legible, but desktop populated Cart still spent most of the first viewport on a two-line oversized editorial hero. That delayed the first order line and early merchant availability notice.
