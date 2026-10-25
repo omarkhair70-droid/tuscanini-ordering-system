@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { createOrderInSupabase } from '@/lib/orders/create-order';
+import { verifiedCustomerId } from '@/lib/orders/customer-auth';
 import { isLocalStudioRequest } from '@/lib/studio-bridge';
 import { submitStagedRebirthOrder, StudioMenuError } from '@/lib/studio-menu-orders';
 import { parseCreateOrderPayloadOrThrow } from '@/lib/orders/order-validation';
@@ -60,7 +61,18 @@ export async function POST(request: Request) {
       );
     }
 
-    const result = await createOrderInSupabase(payload);
+    // Verified ownership is only available after migration 009 was applied.
+    // An anonymous guest can still order. Never trust a body-supplied user ID.
+    let customerUserId: string | null = null;
+    if (process.env.TUSCANINI_SUPABASE_CUSTOMER_ACCOUNTS_READY === 'yes') {
+      try { customerUserId = await verifiedCustomerId(request); }
+      catch {
+        return NextResponse.json({ok:false,code:'INVALID_CUSTOMER_SESSION',
+          error:'جلسة حسابك انتهت. جدّد تسجيل الدخول أو أكمل الطلب كضيف.'},
+          {status:401,headers:{'Cache-Control':'no-store'}});
+      }
+    }
+    const result = await createOrderInSupabase(payload, customerUserId);
 
     return NextResponse.json({
       ok: true,
