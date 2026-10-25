@@ -14,6 +14,7 @@ import type { ProductCartItem } from '@/types/cart';
 import { MaterialGlyph, categoryMaterialGlyph } from '@/components/rebirth/material-glyph';
 import { ProductArtwork } from '@/components/rebirth/product-artwork';
 import { getCategoryContextPhoto } from '@/lib/rebirth/verified-menu-photographs';
+import { trackCustomerInsight } from '@/lib/rebirth/customer-insights';
 import type { RebirthCatalog } from '@/lib/rebirth/previous-menu-catalog';
 
 type Props = {
@@ -90,6 +91,7 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
     const art=trigger.querySelector<HTMLElement>('.t-product-art')??trigger.closest('.t-menu-product')?.querySelector<HTMLElement>('.t-product-art');
     const rect=art?.getBoundingClientRect();
     setOriginRect(rect&&rect.width>0&&rect.height>0?{left:rect.left,top:rect.top,width:rect.width,height:rect.height}:null);
+    trackCustomerInsight('menu_product_open');
     setSelectedProduct(item);
   }
   function chooseCategory(slug: string) {
@@ -97,6 +99,7 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
     // the menu can look empty even though that family has available items.
     setQuery('');
     setCategory(slug);
+    trackCustomerInsight('menu_category_select');
     setLimit(PAGE_SIZE);
     const url = new URL(window.location.href);
     if (slug === 'all') url.searchParams.delete('category');
@@ -135,10 +138,10 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
               <section aria-label="ابحث عن الأصناف" className="t-menu-search" id="t-menu-search">
                 <label htmlFor="t-menu-query">دور على أكلك بالاسم</label>
                 <div className="t-menu-search__inputrow">
-                  <input id="t-menu-query" type="search" autoComplete="off" maxLength={80} value={query} onChange={event=>searchAcrossMenu(event.target.value)} onKeyDown={event=>{if(event.key==='Enter' && !event.nativeEvent.isComposing){event.preventDefault();document.getElementById('t-menu-items-title')?.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});}}} placeholder="تشيكن فاير، بيتزا، كريب..." />
+                  <input id="t-menu-query" type="search" autoComplete="off" maxLength={80} value={query} onChange={event=>searchAcrossMenu(event.target.value)} onKeyDown={event=>{if(event.key==='Enter' && !event.nativeEvent.isComposing){event.preventDefault();trackCustomerInsight('menu_search_results');document.getElementById('t-menu-items-title')?.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});}}} placeholder="تشيكن فاير، بيتزا، كريب..." />
                   {query && <button type="button" onClick={()=>{setQuery('');setLimit(PAGE_SIZE);}}>امسح البحث</button>}
                 </div>
-                {query.trim() && <div className="t-menu-search__feedback"><span role="status" aria-live="polite">{filtered.length} نتيجة من المنيو كله</span><button type="button" onClick={()=>document.getElementById('t-menu-items-title')?.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}>شوف النتائج ↓</button></div>}
+                {query.trim() && <div className="t-menu-search__feedback"><span role="status" aria-live="polite">{filtered.length} نتيجة من المنيو كله</span><button type="button" onClick={()=>{trackCustomerInsight('menu_search_results');document.getElementById('t-menu-items-title')?.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});}}>شوف النتائج ↓</button></div>}
               </section>
             </div>
             <div className="t-menu-intro__photo-pair" aria-label="صور كريب وبيتزا من مطعم توسكانيني">
