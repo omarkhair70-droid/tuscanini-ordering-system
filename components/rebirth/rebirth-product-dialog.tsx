@@ -6,6 +6,7 @@ import type { MenuItem } from '@/types/menu';
 import type { ProductCartItem } from '@/types/cart';
 import { ProductArtwork } from '@/components/rebirth/product-artwork';
 import { getPosModifierGroup, POS_MODIFIER_GROUPS } from '@/lib/rebirth/pos-addons-reference';
+import { trackCustomerInsight } from '@/lib/rebirth/customer-insights';
 
 type Props = {
   item: MenuItem | null;
@@ -189,6 +190,7 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
     };
     if(editingLine?.productId===item.id)replaceProductItem(editingLine.lineId,line);
     else addItem(line);
+    trackCustomerInsight('menu_add_to_cart');
     onClose();
   };
 
