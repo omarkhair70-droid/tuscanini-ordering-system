@@ -1,3 +1,9 @@
+### Checkout extra-picker usability and POS data regression gate (25 Oct 2026)
+
+- Updated long POS add-ons list into accessible per-group disclosure rows (`<details>/<summary>`); cheeses start open for normal checkout, fillings/sauces/other remain one tap away. Selected count remains visible on each group; checked options survive collapsing. No Javascript state machine or broken native focus.
+- CI now enforces 34 POS source rows, 30 website choices, four held ambiguous sizes, important photographed prices (especially roll 20), original product ID mapping and hero line. Food Finder public description no longer calls the menu “previous”.
+- Source photo and restaurant guidance still require owner signoff before enabling server catalog sync or accepting web orders. Screenshot CI to validate this commit.
+
 ### POS add-ons, restaurant voice and cashier system handoff (25 Oct 2026)
 
 - New direct merchant evidence: photo of existing cashier system showing **34** options in **الإضافات**. Registered 30 legible extras in website savoury-crepe customization with stable `addon-*` keys and a readable four-group picker; four ambiguous S/M/L/F items are source-documented and intentionally not selectable. Exact source values in `docs/rebirth/POS_MODIFIERS_2026-10-25.md`. `رول` pictured at **20 EGP**, replacing legacy reference 25 EGP; no live POS/catalog sync or order activation.

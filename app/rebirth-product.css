@@ -61,3 +61,14 @@
 .t-product-dialog__addon-group .t-product-dialog__options label{min-height:57px;padding:10px;gap:8px;font-size:13px;line-height:1.55}
 .t-product-dialog__addon-group .t-product-dialog__options label strong{font-variant-numeric:tabular-nums}
 @media(max-width:510px){.t-product-dialog__addon-group .t-product-dialog__options{grid-template-columns:1fr}}
+
+/* Quick-to-scan POS modifier sections: only the three familiar cheeses open initially. */
+.t-product-dialog__addon-group{border:1px solid #c7b9a4;margin:10px 0;background:#fff9eb}
+.t-product-dialog__addon-group summary{display:flex;justify-content:space-between;gap:12px;align-items:center;
+  padding:13px 16px;cursor:pointer;list-style:none;font:850 18px/1.4 "Changa",Tahoma,sans-serif}
+.t-product-dialog__addon-group summary::-webkit-details-marker{display:none}
+.t-product-dialog__addon-group summary:after{content:'+';color:#b32820;font:800 22px/1 Arial;order:-1}
+.t-product-dialog__addon-group[open] summary:after{content:'−'}
+.t-product-dialog__addon-group summary span{font:750 12px/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif;color:#684f3c;margin-inline-start:auto}
+.t-product-dialog__addon-group summary:focus-visible{outline:3px solid #287bd6;outline-offset:2px}
+.t-product-dialog__addon-group[open] .t-product-dialog__options{padding:0 12px 14px}

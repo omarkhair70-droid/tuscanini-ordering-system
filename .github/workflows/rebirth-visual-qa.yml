@@ -40,6 +40,8 @@ jobs:
       - run: npm ci
       - name: Generated 100-image manifest/binary readiness gate
         run: node scripts/qa/verify-generated-menu-media.mjs
+      - name: Verify 34 cashier modifiers, 30 selectable extras, and brand line
+        run: node scripts/qa/rebirth-pos-addons-audit.mjs
       - name: Check generated food image assignment against 113 actual prior menu items
         run: node scripts/qa/rebirth-generated-match-audit.mjs
       - name: Type safety and production compilation

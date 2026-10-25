@@ -8,7 +8,7 @@ export const dynamic='force-dynamic';
 export const revalidate=0;
 export const metadata: Metadata={
   title:'اختار أكلك | توسكانيني',
-  description:'ساعد نفسك تختار من أصناف وأسعار منيو توسكانيني السابق بالنوع والميزانية.',
+  description:'ساعد نفسك تختار من أصناف وأسعار منيو توسكانيني بالنوع والميزانية.',
 };
 
 export default function FoodFinderPage(){

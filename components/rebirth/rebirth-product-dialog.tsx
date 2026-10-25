@@ -238,8 +238,9 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
               {POS_MODIFIER_GROUPS.map(group=>{
                 const options=item.addons?.filter(a=>getPosModifierGroup(a.id)===group.id)??[];
                 if(!options.length)return null;
-                return <div className="t-product-dialog__addon-group" role="group" aria-label={group.label} key={group.id}>
-                  <h3>{group.label}</h3>
+                const chosen=options.filter(a=>addonIds.includes(a.id)).length;
+                return <details className="t-product-dialog__addon-group" key={group.id} open={group.id==='cheese'?true:undefined}>
+                  <summary>{group.label}<span>{chosen ? `${chosen} مختارة` : `${options.length} اختيار`}</span></summary>
                   <div className="t-product-dialog__options">
                     {options.map(addon => (
                       <label key={addon.id}>
@@ -249,7 +250,7 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
                       </label>
                     ))}
                   </div>
-                </div>;
+                </details>;
               })}
               {item.addons.some(a=>!getPosModifierGroup(a.id))&&
                 <div className="t-product-dialog__options">
