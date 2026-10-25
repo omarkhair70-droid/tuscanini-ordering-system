@@ -25,7 +25,7 @@ export function LocationMap() {
           onClick={() => setMapOpen(true)}
           aria-label="افتح خريطة منطقة توسكانيني داخل الصفحة"
         >
-          <span className="t-contact-map-section__reveal-top"><span>TUSCANINI / BNS</span><span>29° N / بني سويف</span></span>
+          <span className="t-contact-map-section__reveal-top"><span>TUSCANINI / BNS</span><span>من قلب بني سويف</span></span>
           <span className="t-contact-map-section__reveal-symbol" aria-hidden="true">↗</span>
           <strong>هنا<br/><em>بنستناك.</em></strong>
           <span className="t-contact-map-section__reveal-bottom">
