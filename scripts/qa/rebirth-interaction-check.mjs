@@ -411,6 +411,9 @@ try {
     const aboutOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
     await check(aboutOverflow<=3, `${width}px About no significant horizontal overflow (${aboutOverflow}px)`);
     await page.goto(baseUrl + '/contact', { waitUntil: 'networkidle', timeout:30000 });
+    await check(await page.getByRole('button',{name:'افتح خريطة منطقة توسكانيني داخل الصفحة'}).count()===1,
+      `${width}px contact never paints a blank inactive third-party iframe`);
+    await page.getByRole('button',{name:'افتح خريطة منطقة توسكانيني داخل الصفحة'}).click();
     const liveMap=page.locator('#t-contact-map iframe');
     const mapLinks=await page.locator('#t-contact-map .t-contact-map-section__actions a').evaluateAll(els=>
       els.map(el=>({href:el.getAttribute('href'),target:el.getAttribute('target'),rel:el.getAttribute('rel')}))
