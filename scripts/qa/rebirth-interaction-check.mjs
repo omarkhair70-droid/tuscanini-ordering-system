@@ -532,11 +532,9 @@ try {
       const cartQuickAmount=(await shopPage.locator('.t-checkout-quicknav strong').textContent())?.trim();
       const expectedArabicAmount=new Intl.NumberFormat('ar-EG',{maximumFractionDigits:2}).format(290)+' ج.م';
       await check(cartQuickAmount===expectedArabicAmount &&
-        (checkoutClosed
-          ? await shopPage.getByRole('link',{name:/تواصل مع المطعم/}).count()>=1 &&
-            await shopPage.locator('#t-checkout-name').count()===0
-          : await shopPage.getByRole('link',{name:/اكمل بياناتك/}).count()===1),
-        `${width}px mobile Cart shows honest estimated subtotal and an actionable available path`);
+        await shopPage.getByRole('link',{name:/كمّل التفاصيل/}).count()===1 &&
+        await shopPage.locator('#t-checkout-name').count()===1,
+        `${width}px Cart always lets customers complete saved details without making a closed merchant accept orders`);
     }
     await check(await shopPage.getByRole('heading',{name:/تشيكن فاير/}).count()===1,
       `${width}px previous menu item survives into authored populated checkout`);
@@ -547,10 +545,12 @@ try {
       await shopPage.screenshot({path:`artifacts/screenshots/checkout-before-line-edit-${width}.png`,
         fullPage:true,animations:'disabled'});
     }
-    if(!checkoutClosed)await shopPage.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).check();
-    else await check(await shopPage.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).count()===0 &&
-      await shopPage.locator('#t-checkout-name').count()===0,
-      `${width}px closed ordering never collects private contact fields or fakes a checkout acknowledgment`);
+    await check(await shopPage.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).count()===1 &&
+      await shopPage.locator('#t-checkout-name').count()===1,
+      `${width}px checkout retains editable details regardless of restaurant intake availability`);
+    if(!checkoutClosed) await shopPage.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).check();
+    else await check(await shopPage.getByRole('button',{name:/إرسال الطلب متوقف حاليًا/}).isDisabled(),
+      `${width}px closed checkout safely prevents order POST while saved fields remain available`);
     await shopPage.getByRole('link',{name:/تعديل الحجم والإضافات وملاحظات تشيكن فاير/}).click();
     await shopPage.locator('.t-product-dialog[open]').waitFor({timeout:8000});
     await check(await shopPage.getByRole('button',{name:/احفظ التعديلات/}).count()===1,
@@ -588,19 +588,16 @@ try {
       `${width}px saved cart edit updates same receipt line, recalculates price, keeps notes and never duplicates`);
     const guardedCart=await shopPage.evaluate(()=>{
       const status=document.querySelector('.t-checkout-status')?.textContent??'';
-      const contact=document.querySelector('a.t-checkout-action--full[href="/contact"]');
       const submit=document.querySelector('button.t-checkout-action--full[type="submit"]');
       const field=document.querySelector('#t-checkout-name');
       const closed=status.includes('موقف استقبال الطلبات')||status.includes('تعذر التحقق')||status.includes('مش متاح');
       const open=status.includes('جاهز تسجل');
-      return {closed,open,contact:!!contact,submit:!!submit,disabled:submit?.disabled??false,
+      return {closed,open,submit:!!submit,disabled:submit?.disabled??false,
         field:!!field,summary:!!document.querySelector('.t-checkout-summary')};
     });
-    await check(guardedCart.summary && (
-      guardedCart.closed
-        ? guardedCart.contact&&!guardedCart.submit&&!guardedCart.field
-        : guardedCart.open&&guardedCart.submit&&guardedCart.field
-    ),`${width}px release Cart uses contact when unavailable or complete verified checkout when open; never simulated purchase`);
+    await check(guardedCart.summary && guardedCart.field && guardedCart.submit && (
+      guardedCart.closed ? guardedCart.disabled : guardedCart.open && !guardedCart.disabled
+    ),`${width}px checkout is always editable, with delivery intake guard enforced at the submit boundary`);
     await catalogContext.close();
     await page.goto(baseUrl + '/cart', { waitUntil: 'networkidle', timeout:30000 });
     await check(await page.getByRole('heading', { name:/على.*مزاجك/ }).count()===1, `${width}px Checkout authored header renders`);
