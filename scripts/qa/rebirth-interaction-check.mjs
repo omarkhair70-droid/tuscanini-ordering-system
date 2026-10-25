@@ -268,7 +268,15 @@ try {
        await page.locator('.t-product-dialog[data-motion-technique]').count()===0,
        `${width}px product options open from food imagery without motion when reduced`);
      await page.getByRole('button',{name:'إغلاق تفاصيل المنتج'}).click();
-     await page.getByRole('searchbox',{name:/دور على أكلك/}).fill('تشيكن فاير');
+     const normalizedSearch=page.getByRole('searchbox',{name:/دور على أكلك/});
+     await normalizedSearch.fill('فَاير تِشْيكن');
+     const reorderedMatches=await page.locator('.t-menu-product h3').allInnerTexts();
+     await check(reorderedMatches.length>=2 && reorderedMatches.every(name=>name==='تشيكن فاير'),
+       `${width}px Arabic search ignores vowel marks and matches unordered food-name words`);
+     await normalizedSearch.fill('تشيكن فاير');
+    await check(await page.locator('.t-menu-intro__photo figcaption').allTextContents().then(values=>
+      values.join(' ').includes('الكريب من جوّه') && values.join(' ').includes('البيتزا والعلبة')),
+      `${width}px menu hero photos use native Arabic captions`);
     await check(await page.locator('.t-menu-search__feedback').getByText(/نتيجة من المنيو كله/).count()===1 &&
       await page.locator('.t-menu-search__feedback button').count()===1,
       `${width}px typed menu search gives inline result count and a direct results jump`);
