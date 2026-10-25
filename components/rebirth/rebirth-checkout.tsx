@@ -8,6 +8,7 @@ import { useCart } from '@/components/cart/cart-provider';
 import { ExperienceHeader } from '@/components/rebirth/experience-header';
 import { ActiveOrderBanner } from '@/components/shared/active-order-banner';
 import { CustomerJourney } from '@/components/rebirth/customer-journey';
+import { CustomerDeliveryPin } from '@/components/rebirth/customer-delivery-pin';
 import { saveActiveOrder } from '@/lib/active-order-storage';
 
 type RuntimeSettings = { isOrderingOpen: boolean; deliveryEnabled: boolean; whatsappOrderNumber: string; studioMode?: boolean };
@@ -252,7 +253,27 @@ export function RebirthCheckout() {
                         ? (settings?.deliveryEnabled?'هتستلم بنفسك من المطعم. مش محتاجين عنوان توصيل، وتقدر تتابع حالة التجهيز بعد تسجيل الطلب.':'الطلب متاح للاستلام من المطعم فقط حاليًا. الدليفري هيتفتح بعد تحديد المناطق والرسوم.')
                         : 'اكتب عنوان واضح. المطعم محتاج يتأكد من إمكانية التوصيل وأي رسوم قبل تأكيد الطلب.'}
                     </p>
-                    {customer.orderType==='delivery' && <><label>عنوان التوصيل <textarea id="t-checkout-address" rows={3} value={customer.address} aria-invalid={!!errors.address} aria-describedby={errors.address?'t-error-address':undefined}
+                    {customer.orderType==='delivery' && <>
+                  <CustomerDeliveryPin onSelect={point => {
+                    // Attach the exact map pin to the existing persisted order
+                    // address field. No new backend schema/transport assumptions.
+                    const street=customer.address.split('\nموقع التوصيل:')[0].trim();
+                    const mapLink='https://maps.google.com/?q='+point.lat+','+point.lng;
+                    const locationLine='موقع التوصيل: '+mapLink;
+                    const next=[street, locationLine].filter(Boolean).join('\n');
+                    if(next.length>300){
+                      setErrors(x=>({...x,address:'اختصر وصف العنوان عشان نضيف رابط الدبوس.'}));
+                      return;
+                    }
+                    updateCustomer({address:next});
+                    setErrors(x=>({...x,address:undefined}));
+                  }} />
+                  {customer.address.includes('موقع التوصيل: https://maps.google.com/?q=') && (
+                    <p className="t-checkout-delivery-pin__selected" role="status">
+                      <span aria-hidden="true">✓</span> تم تحديد الدبوس. موقعه هيتبعت مع عنوان الطلب.
+                    </p>
+                  )}
+                  <label>عنوان التوصيل <textarea id="t-checkout-address" rows={3} value={customer.address} aria-invalid={!!errors.address} aria-describedby={errors.address?'t-error-address':undefined}
                       onChange={e=>{updateCustomer({address:e.target.value});setErrors(x=>({...x,address:undefined}))}} placeholder="الشارع، المنطقة، علامة مميزة" maxLength={300}/></label>
                       {errors.address && <p id="t-error-address" className="t-checkout-error">{errors.address}</p>}</>}
                     <label>ملاحظات عامة (اختياري) <textarea rows={2} value={customer.generalNotes} onChange={e=>updateCustomer({generalNotes:e.target.value})} maxLength={500} placeholder="أي تفاصيل تساعد المطعم"/></label>
