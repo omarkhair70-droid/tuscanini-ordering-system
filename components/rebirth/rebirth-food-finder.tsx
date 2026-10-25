@@ -59,7 +59,7 @@ export function RebirthFoodFinder({categories,items,catalogReady,priceNote}:Prop
       <ExperienceHeader/>
       <main id="t-finder-main">
         <header className="t-finder-hero t-shell">
-          <span className="t-index">02 CHOICES / REAL RECORDED MENU</span>
+          <span className="t-index">02 / اختار على مزاجك</span>
           <div><h1>تختار<br/><em>إزاي؟</em></h1><p>نفسك في إيه؟ اختار نوع الأكل والميزانية، وشوف الأنسب ليك.</p></div>
           <Link href="/menu">عارف طلبك؟ روح للمنيو ↗</Link>
         </header>
@@ -77,15 +77,15 @@ export function RebirthFoodFinder({categories,items,catalogReady,priceNote}:Prop
             </section>
           ):(
             <>
-              <div className="t-finder-progress"><span>2 STEPS / YOUR FOOD</span><span>{finished?'جاهز':form===null?'01 / 02':'02 / 02'}</span></div>
+              <div className="t-finder-progress"><span>خطوتين وتختار</span><span>{finished?'جاهز':form===null?'01 / 02':'02 / 02'}</span></div>
               <fieldset className="t-finder-question">
-                <legend><small>01 — THE FOOD</small><strong>نفسك في نوع أكل إيه؟</strong></legend>
+                <legend><small>01 — نوع الأكل</small><strong>نفسك في نوع أكل إيه؟</strong></legend>
                 <div>{forms.map(x=><button key={x.id} type="button" aria-pressed={form===x.id} onClick={()=>{setForm(x.id);setBudget(null)}}><MaterialGlyph name={x.glyph} size={37} className="t-finder-form-glyph"/><span>{x.label}</span></button>)}</div>
               </fieldset>
               {form!==null&&<fieldset className="t-finder-question">
-                <legend><small>02 — STARTING PRICE</small><strong>تبدأ من كام؟</strong></legend>
+                <legend><small>02 — ميزانيتك</small><strong>تبدأ من كام؟</strong></legend>
                 <div>{budgets.map(x=><button key={x.id} type="button" aria-pressed={budget===x.id} onClick={()=>setBudget(x.id)}>{x.label}</button>)}</div>
-                <p>السعر الابتدائي من المنيو السابق؛ الأحجام والإضافات ممكن تغيّر الإجمالي، والتوافر النهائي بيتأكد مع المطعم.</p>
+                <p>الأسعار والتوافر بيتأكدوا مع المطعم قبل تسجيل الطلب. الحجم والإضافات ممكن يغيّروا الإجمالي.</p>
               </fieldset>}
               {finished&&<section className="t-finder-results" aria-labelledby="t-finder-result-title">
                 <div className="t-finder-results__top"><div><span className="t-index">اختيارات ليك</span><h2 id="t-finder-result-title">لقيّنا إيه؟</h2></div><button type="button" onClick={reset}>ابدأ من جديد ↺</button></div>
