@@ -27,6 +27,20 @@ new Script(compiled).runInContext(context);
 const {getGeneratedMenuPhoto,GENERATED_ASSET_COUNT,GENERATED_ASSET_IDS}=sandbox.exports;
 if(GENERATED_ASSET_COUNT!==100||GENERATED_ASSET_IDS.length!==100||new Set(GENERATED_ASSET_IDS).size!==100)
   throw Error('Missing or duplicate 100-image generated catalog IDs');
+
+const curated=getGeneratedMenuPhoto&&sandbox.exports.CURATED_VISUALS;
+if(!curated||Object.keys(curated).length!==113)throw Error('Every one of the 113 historic SKUs requires a deliberate mapping or null');
+if(items.some(i=>!Object.prototype.hasOwnProperty.call(curated,i.id)))
+  throw Error('Some historical SKUs still inherit a random food-family photo');
+if(getGeneratedMenuPhoto('cm2','سوسيس','crepe-meat',true)?.assetId!=='B04-05')
+  throw Error('Sausage photo incorrectly mapped');
+if(getGeneratedMenuPhoto('ct2','دوز كرانشي','crepe-tuscanini',true)!==null)
+  throw Error('Crunchy crepe must not depict ordinary grilled chicken');
+if(getGeneratedMenuPhoto('pm3','مفروم','pizza-meat',true)?.assetId==='B07-03')
+  throw Error('Pepperoni visual assigned to minced pizza');
+if(getGeneratedMenuPhoto('cx1','بطاطس','crepe-mixed',true)!==null)
+  throw Error('Cheese visual assigned to potato crepe');
+
 const used=new Set();
 const entries=[];
 for(const item of items){

@@ -24,7 +24,9 @@ export type SupplementalConcept = Readonly<{
 }>;
 
 export function getSupplementalMenuPhoto(id:string):SupplementalConcept|null {
-  if(!GENERATED_MEDIA_READY||!supplementSet.has(id))return null;
+  // Six ambiguous/mismatched concepts stay in the repo for art review, but
+  // must NOT appear as the named food, drink or addon in the public draft menu.
+  if(!GENERATED_MEDIA_READY||!supplementSet.has(id)||flaggedSet.has(id))return null;
   const reviewStatus=flaggedSet.has(id)?'merchant-review-required':'concept-preview';
   return {
     src:'/images/rebirth/supplemental/'+id+'.webp',

@@ -187,11 +187,13 @@ try {
        await page.locator('.t-menu-view-switch').count()===0,
        `${width}px one food menu, not a three-mode graphic/gallery switch`);
     const expectedKind=generatedMediaReady?'generated-illustrative':'representative-stock';
-    await check(await page.locator('.t-menu-items__grid--photo [data-kind="'+expectedKind+'"]').count()===(generatedMediaReady?20:19) &&
+    await check(await page.locator('.t-menu-items__grid--photo [data-kind="'+expectedKind+'"]').count()===(generatedMediaReady?12:19) &&
       (generatedMediaReady
-        ? await page.locator('.t-menu-product [data-kind="generated-illustrative"][data-product-id="cx4"][data-source-photo-id="SKU-CX4"]').count()===1
+        ? await page.locator('.t-menu-product [data-kind="generated-illustrative"][data-product-id="cx4"][data-source-photo-id="SKU-CX4"]').count()===1 &&
+          await page.locator('.t-menu-product [data-kind="generated-illustrative"][data-product-id="cm2"][data-source-photo-id="B04-05"]').count()===1 &&
+          await page.locator('.t-menu-product [data-kind="original-graphic"][data-product-id="cm3"]').count()===1
         : await page.locator('.t-menu-product [data-kind="original-graphic"][data-product-id="cx4"]').count()===1),
-      `${width}px all currently photographed menu rows use declared conceptual provenance, including new tuna-crepe study`);
+      `${width}px no random meat fillers: sausage curated, mixed beef/sausage drawn, tuna illustrated`);
     await check(await page.locator('[data-visual-disclosure="menu"]').count()===1 &&
        (await page.locator('[data-visual-disclosure="menu"]').innerText()).includes('الصور للتوضيح') &&
        await page.locator('.t-menu-product .t-product-art__representative-label').count()===0,
@@ -211,9 +213,9 @@ try {
       },null,{timeout:12000});
       const distinct=[...new Set(imageSrcs)];
       const responses=await Promise.all(distinct.map(src=>page.request.get(new URL(src,baseUrl).toString())));
-      const loaded=imageSrcs.length===20&&distinct.length>=5&&
+      const loaded=imageSrcs.length===12&&distinct.length>=5&&
         responses.every(r=>r.status()===200&&(r.headers()['content-type']||'').includes('image/webp'));
-      await check(loaded,`${width}px all 20 illustrated first-page assets return local WebP including supplemental tuna`);
+      await check(loaded,`${width}px all 12 curated first-page WebPs decode; other dishes retain distinct printed artwork`);
     }
     if(width===390 && generatedMediaReady){
       const supplementIds=['cx4','px3','sf5','sf6','ap3','ap7','ap9','ap10','dr1','dr2','dr3','dr4','dr5','dr6','ca1','ca2','ca3','ca4','ca5','ca6'];
@@ -224,12 +226,23 @@ try {
       await check(got.length===20 && got.every(Boolean),
         '390px all twenty individually committed supplemental illustrative WebPs served from this site');
       await page.getByRole('button',{name:'مشروبات',exact:true}).click();
-      await check(await page.locator('[data-source-photo-id^="SKU-"]').count()===6,
-        '390px all six real historical drink names have local, explicitly fictional illustration previews');
+      await check(await page.locator('[data-source-photo-id^="SKU-"]').count()===4 &&
+        await page.locator('[data-kind="original-graphic"][data-product-id="dr5"]').count()===1 &&
+        await page.locator('[data-kind="original-graphic"][data-product-id="dr6"]').count()===1,
+        '390px drinks with no confirmed packaging do not show imaginary Twist/Fayrouz bottles');
       await page.getByRole('button',{name:'إضافات كريب',exact:true}).click();
-      await check(await page.locator('[data-source-photo-id^="SKU-"]').count()===6,
-        '390px six crepe-addon named concepts are displayed with separately recorded provenance');
+      await check(await page.locator('[data-source-photo-id^="SKU-"]').count()===4 &&
+        await page.locator('[data-kind="original-graphic"][data-product-id="ca4"]').count()===1 &&
+        await page.locator('[data-kind="original-graphic"][data-product-id="ca5"]').count()===1,
+        '390px unclear cono/roll addons retain individually named original artworks');
       await page.getByRole('button',{name:'كل الأصناف',exact:true}).click();
+      await page.getByRole('searchbox',{name:/دور على أكلك/}).fill('دوز كرانشي');
+      await check(await page.locator('.t-menu-product [data-product-id="ct2"][data-kind="original-graphic"]').count()===1,
+        '390px named crunchy crepe cannot masquerade as regular grilled chicken');
+      await page.getByRole('searchbox',{name:/دور على أكلك/}).fill('سوسيس');
+      await check(await page.locator('.t-menu-product [data-product-id="cm2"][data-source-photo-id="B04-05"]').count()===1,
+        '390px sausage crepe uses deliberate sausage-bearing crepe photograph instead of random beef');
+      await page.getByRole('searchbox',{name:/دور على أكلك/}).fill('');
     }
     const menuArt=await page.locator('.t-menu-product__identity .t-product-art').evaluateAll(elements=>({
        count:elements.length,
