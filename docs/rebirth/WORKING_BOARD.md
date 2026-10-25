@@ -4,6 +4,10 @@
 
 > **Start here in every new chat, and update this SAME FILE after every meaningful feature/review.** This is the current execution and coverage index; historical `00–38`, original research, the HTML reference and technical handoffs remain evidence, not competing "next task" lists. Use the current GitHub PR HEAD and Actions results if newer; never assume this snapshot is the HEAD forever.
 
+### Legacy pitch/demo visibility correction (25 Oct 2026)
+
+- `/demo` contained an outdated MVP roadmap and unsupported claim that old menu prices were current restaurant prices. This route now returns **404 outside explicit internal visual CI**; it is additionally `noindex`. It is not customer-facing collateral. No demo marketing/menus promoted to the production preview.
+
 ### Public-facing finish pass — no synthetic operator orders or dead checkout forms (25 Oct 2026)
 
 - Owner direction: this is a customer/merchant-facing final product surface, **not a demo interface**. No new system or speculative features were commissioned. Preserved PR #59 Draft and historical data safety gates.

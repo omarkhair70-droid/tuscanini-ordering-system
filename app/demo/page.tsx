@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
 import { getRuntimePublicSiteSettings } from '@/lib/site-settings-runtime';
 
 function normalizeWhatsappNumber(raw: string): string {
@@ -50,7 +52,11 @@ const ctaButtons = [
   { href: '/reviews', label: 'آراء العملاء' },
 ] as const;
 
+export const metadata:Metadata={robots:{index:false,follow:false,noarchive:true}};
 export default async function DemoPage() {
+  // Old owner-only pitch/MVP content mentions obsolete prices and features.
+  // Never publish it as a current customer/merchant-facing surface.
+  if(process.env.TUSCANINI_INTERNAL_VISUAL_QA!=='yes')notFound();
   const settings = await getRuntimePublicSiteSettings();
   const whatsappUrl = `https://wa.me/${normalizeWhatsappNumber(settings.whatsappOrderNumber)}?text=${encodeURIComponent(
     'مرحبًا توسكانيني 👋\nحابب أعرف تفاصيل التشغيل والتطوير للنظام.',
