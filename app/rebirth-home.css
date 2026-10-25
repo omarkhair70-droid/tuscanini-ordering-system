@@ -179,6 +179,9 @@
 
 /* Unified public-site navigation: cart always reachable, one primary ordering CTA. */
 .t-header__actions{display:flex;align-items:center;gap:12px;margin-inline-start:auto}
+.t-header__account{font:800 13px/1.4 'IBM Plex Sans Arabic',Tahoma,sans-serif;padding:10px 8px;white-space:nowrap}
+.t-header__account:focus-visible{outline:3px solid #286ed9;outline-offset:2px}
+@media(max-width:720px){.t-header__account{display:none}}
 .t-header__cart{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:8px 10px;font-weight:800;font-size:13px;white-space:nowrap}
 .t-header__cart-count{display:inline-flex;min-width:22px;height:22px;padding-inline:5px;align-items:center;justify-content:center;border-radius:50%;background:var(--yellow);font-family:'Anton',sans-serif;font-size:12px}
 .t-header__links a[aria-current=page]{border-color:var(--red)}
