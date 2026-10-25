@@ -1,6 +1,6 @@
 import 'server-only';
 
-import type { OrderType } from '@/types/cart';
+import type { HandoffPaymentMethod, OrderType } from '@/types/cart';
 
 const hasMaxTwoDecimals = (value: number): boolean => Number.isInteger(value * 100);
 
@@ -85,6 +85,12 @@ const parseOrderTypeOrThrow = (value: unknown): OrderType => {
   throw new Error('نوع الطلب غير صالح.');
 };
 
+function parsePaymentMethodOrThrow(value: unknown): HandoffPaymentMethod {
+  if (value === undefined || value === null || value === 'cash') return 'cash';
+  if (value === 'instapay_on_handoff' || value === 'vodafone_cash_on_handoff') return value;
+  throw new Error('وسيلة الدفع غير صالحة.');
+}
+
 const parseIdStringOrThrow = (value: unknown, fieldLabelAr: string): string => {
   if (typeof value !== 'string') {
     throw new Error(`${fieldLabelAr} غير صالح.`);
@@ -144,6 +150,7 @@ export type ValidatedOrderCustomer = {
   address: string;
   deliveryLocation: { lat: number; lng: number } | null;
   orderType: OrderType;
+  paymentMethod: HandoffPaymentMethod;
   generalNotes: string;
 };
 
@@ -334,6 +341,7 @@ export const parseCreateOrderPayloadOrThrow = (payload: unknown): ValidatedOrder
       address,
       deliveryLocation,
       orderType,
+      paymentMethod: parsePaymentMethodOrThrow(customerPayload.paymentMethod),
       generalNotes: parseOptionalString(customerPayload.generalNotes),
     },
     items,
