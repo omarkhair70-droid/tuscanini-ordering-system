@@ -63,6 +63,9 @@ export function RebirthCheckout() {
     if (!customer.name.trim()) next.name = 'اكتب اسمك عشان المطعم يقدر يتواصل معاك.';
     if (!/^01\d{9}$/.test(customer.phone.replace(/\D/g, ''))) next.phone = 'اكتب رقم موبايل مصري من 11 رقم يبدأ بـ 01.';
     if (customer.orderType === 'delivery' && !customer.address.trim()) next.address = 'العنوان مطلوب للدليفري.';
+    if (customer.orderType === 'delivery' && customer.deliveryLocation &&
+        !customer.address.split('\nموقع التوصيل:')[0].trim())
+      next.address = 'اكتب اسم الشارع ورقم العمارة أو علامة تساعد الدليفري يوصل.';
     else if (customer.orderType === 'delivery' && customer.address.trim().length > 300) next.address = 'العنوان أطول من الحد المسموح (٣٠٠ حرف).';
     if (!customer.confirmedAccurateDetails) next.confirmedAccurateDetails = 'أكد صحة البيانات قبل الإرسال.';
     return next;
