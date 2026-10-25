@@ -72,7 +72,7 @@ export function FoodExploration() {
     <>
       <section className="t-discover t-shell" aria-labelledby="t-discover-title" id="t-discover">
         <div className="t-discover__intro">
-          <span className="t-index">01 — PICK YOUR FOOD</span>
+          <span className="t-index">01 — اختار أكلك</span>
           <div>
             <h2 id="t-discover-title">مش صنف <em>واحد.</em></h2>
             <p>الأكل عند توسكانيني له أشكال مختلفة. اتفرّج على الصور الحقيقية، أو ادخل المنيو على طول.</p>
@@ -101,21 +101,21 @@ export function FoodExploration() {
           </div>
           <div className="t-discover__image">
             <FoodPhoto key={selectedSubject.image} id={selectedSubject.image} />
-            <span className="t-discover__photo-index" lang="en">{selectedSubject.image} / PHOTO EVIDENCE</span>
+            <span className="t-discover__photo-index">من تصوير توسكانيني</span>
           </div>
         </div>
       </section>
 
       <section className="t-photo-archive t-shell" aria-labelledby="t-photo-archive-title">
         <div className="t-photo-archive__header">
-          <div><span className="t-index">02 — PHOTOS / FROM THE RESTAURANT</span><h2 id="t-photo-archive-title">من قلب <em>توسكانيني.</em></h2></div>
+          <div><span className="t-index">02 — من قلب المطعم</span><h2 id="t-photo-archive-title">من قلب <em>توسكانيني.</em></h2></div>
           <button type="button" onClick={openGallery} aria-haspopup="dialog">شوف صور المطعم <span aria-hidden="true">↗</span></button>
         </div>
         <div className="t-photo-archive__samples">
-          {['TSC-01','TSC-04','TSC-10'].map((id) => (
+          {['TSC-01','TSC-04','TSC-10'].map((id, index) => (
             <button key={id} type="button" onClick={openGallery} aria-label="افتح معرض صور توسكانيني">
               <FoodPhoto id={id} />
-              <span aria-hidden="true">{id}</span>
+              <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
             </button>
           ))}
         </div>
@@ -124,7 +124,7 @@ export function FoodExploration() {
       <dialog ref={dialogRef} className="t-gallery-dialog" aria-label="صور الطعام الحقيقية من توسكانيني" onClose={() => setGalleryOpen(false)}
         onClick={(event) => { if (event.target === dialogRef.current) closeGallery(); }}>
         <div className="t-gallery-dialog__header">
-          <div><span>ORIGINAL RESTAURANT PHOTOGRAPHS</span><h2>صور توسكانيني</h2></div>
+          <div><span>من أكل توسكانيني</span><h2>صور توسكانيني</h2></div>
           <button type="button" onClick={closeGallery} aria-label="إغلاق المعرض">×</button>
         </div>
         {galleryOpen ? (
@@ -132,7 +132,7 @@ export function FoodExploration() {
             {displayableGallery.map((photo) => (
               <figure key={photo.id}>
                 <FoodPhoto id={photo.id} />
-                <figcaption><span lang="en">{photo.id}</span> — {photo.altAr}</figcaption>
+                <figcaption>{photo.altAr}</figcaption>
               </figure>
             ))}
           </div>
