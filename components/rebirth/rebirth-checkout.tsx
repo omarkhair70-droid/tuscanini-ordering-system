@@ -163,13 +163,28 @@ export function RebirthCheckout() {
         <div className="t-shell t-checkout-content">
           <CustomerJourney stage="checkout" />
           <ActiveOrderBanner />
+          {isHydrated && items.length>0 && settings && !settings.isOrderingOpen &&
+            <section className="t-checkout-availability" role="status" aria-labelledby="t-checkout-availability-title">
+              <div><span className="t-index">TUSCANINI / ORDER STATUS</span>
+                <h2 id="t-checkout-availability-title">الطلبات أونلاين متوقفة حاليًا.</h2>
+                <p>السلة محفوظة عندك وتقدر تعدّل اختياراتك. لتأكيد الأسعار والتوفر أو الطلب مباشرة، تواصل مع المطعم.</p></div>
+              <Link href="/contact">تواصل مع المطعم ↗</Link>
+            </section>}
+          {isHydrated && items.length>0 && settingsFailed &&
+            <section className="t-checkout-availability" role="alert" aria-labelledby="t-checkout-availability-title">
+              <div><h2 id="t-checkout-availability-title">مش قادرين نتحقق من استقبال الطلبات.</h2>
+                <p>السلة محفوظة عندك. تواصل مع المطعم قبل إرسال أي طلب.</p></div>
+              <Link href="/contact">طرق التواصل ↗</Link>
+            </section>}
           {isHydrated && items.length > 0 && (
             <nav className="t-checkout-quicknav" aria-label="اختصارات مراجعة الطلب">
               <div>
                 <span>إجمالي الأصناف التقديري · {count} قطعة</span>
                 <strong>{money(subtotal)} ج.م</strong>
               </div>
-              <a href="#t-checkout-fields">اكمل بياناتك <span aria-hidden="true">↓</span></a>
+              {settings && !settings.isOrderingOpen
+                ? <Link href="/contact">تواصل مع المطعم ↗</Link>
+                : <a href="#t-checkout-fields">اكمل بياناتك <span aria-hidden="true">↓</span></a>}
             </nav>
           )}
           {!isHydrated ? <div className="t-checkout-message" role="status">جاري تجهيز السلة…</div> : null}
@@ -217,7 +232,7 @@ export function RebirthCheckout() {
                   <Link href="/menu" className="t-checkout-textlink">+ ضيف أصناف تانية</Link>
                 </section>
 
-                <section className="t-checkout-section" id="t-checkout-fields" aria-labelledby="t-cart-customer-title">
+                {settings?.isOrderingOpen && <section className="t-checkout-section" id="t-checkout-fields" aria-labelledby="t-cart-customer-title">
                   <div className="t-checkout-section__head"><span className="t-index">02 — ORDER DETAILS</span><h2 id="t-cart-customer-title">تكمل إزاي؟</h2></div>
                   <div className="t-checkout-inputs">
                     <label>اسمك <input id="t-checkout-name" type="text" autoComplete="name" value={customer.name} aria-invalid={!!errors.name} aria-describedby={errors.name?'t-error-name':undefined}
@@ -240,7 +255,7 @@ export function RebirthCheckout() {
                       {errors.address && <p id="t-error-address" className="t-checkout-error">{errors.address}</p>}</>}
                     <label>ملاحظات عامة (اختياري) <textarea rows={2} value={customer.generalNotes} onChange={e=>updateCustomer({generalNotes:e.target.value})} maxLength={500} placeholder="أي تفاصيل تساعد المطعم"/></label>
                   </div>
-                </section>
+                </section>}
               </div>
 
               <aside id="t-checkout-summary" className="t-checkout-summary" aria-labelledby="t-checkout-summary-title">
@@ -262,14 +277,16 @@ export function RebirthCheckout() {
                   <p>الأسعار المعروضة محتاجة تأكيد من المطعم.</p>
                 </section>
                 {tableReference && <p className="t-checkout-summary__table">مرجع الطاولة: {tableReference}</p>}
-                <label className="t-checkout-confirm"><input id="t-checkout-confirm" type="checkbox" checked={customer.confirmedAccurateDetails}
+                {settings?.isOrderingOpen && <label className="t-checkout-confirm"><input id="t-checkout-confirm" type="checkbox" checked={customer.confirmedAccurateDetails}
                   onChange={e=>{updateCustomer({confirmedAccurateDetails:e.target.checked});setErrors(x=>({...x,confirmedAccurateDetails:undefined}))}}/>
-                  <span>راجعت الأصناف وبيانات الطلب، وفاهم إن السعر النهائي وطريقة الدفع هيتأكدوا مع المطعم.</span></label>
+                  <span>راجعت الأصناف وبيانات الطلب، وفاهم إن السعر النهائي وطريقة الدفع هيتأكدوا مع المطعم.</span></label>}
                 {errors.confirmedAccurateDetails && <p className="t-checkout-error">{errors.confirmedAccurateDetails}</p>}
                 <p className="t-checkout-status" role="status">{status}</p>
                 {error && <p className="t-checkout-error t-checkout-error--large" role="alert">{error}</p>}
-                <button type="submit" className="t-checkout-action t-checkout-action--full" disabled={disabled}>
-                  {sending ? 'بنرسل طلبك…' : uncertain ? 'راجع المطعم قبل إعادة الإرسال' : 'سجّل الطلب للمطعم ↗'}</button>
+                {settings && !settings.isOrderingOpen
+                  ? <Link href="/contact" className="t-checkout-action t-checkout-action--full">تواصل مع المطعم ↗</Link>
+                  : <button type="submit" className="t-checkout-action t-checkout-action--full" disabled={disabled}>
+                    {sending ? 'بنرسل طلبك…' : uncertain ? 'راجع المطعم قبل إعادة الإرسال' : 'سجّل الطلب للمطعم ↗'}</button>}
                 <Link href="/contact" className="t-checkout-summary__support">محتاج مساعدة أو تتأكد من طلبك؟</Link>
               </aside>
             </form>

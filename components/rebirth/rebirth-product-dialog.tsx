@@ -204,7 +204,7 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
     >
       <div className="t-product-dialog__sheet">
         <header className="t-product-dialog__header">
-          <div><span className="t-product-dialog__eyebrow">{editingLine?'EDIT YOUR ORDER / TUSCANINI':'ORDER DETAILS / TUSCANINI'}</span><h2 id="t-product-title">{item.name}</h2></div>
+          <div><span className="t-product-dialog__eyebrow">{editingLine?'تعديل اختيارك':'تفاصيل الصنف'}</span><h2 id="t-product-title">{item.name}</h2></div>
           <button type="button" className="t-product-dialog__close" onClick={closeProduct} aria-label="إغلاق تفاصيل المنتج">×</button>
         </header>
         <div className="t-product-dialog__body">
@@ -217,7 +217,7 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
           </div>
           {item.sizes && item.sizes.length > 0 && (
             <fieldset className="t-product-dialog__section">
-              <legend>01 — الحجم</legend>
+              <legend>اختار الحجم</legend>
               <div className="t-product-dialog__options">
                 {item.sizes.map(size=> (
                   <label key={size.id}>
@@ -230,7 +230,7 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
           )}
           {item.addons && item.addons.length > 0 && (
             <fieldset className="t-product-dialog__section">
-              <legend>02 — إضافات على مزاجك</legend>
+              <legend>إضافات على مزاجك <small>(اختياري)</small></legend>
               <div className="t-product-dialog__options">
                 {item.addons.map(addon => (
                   <label key={addon.id}>
@@ -243,7 +243,8 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
           )}
           <div className="t-product-dialog__section">
             <label className="t-product-dialog__legend" htmlFor="rebirth-product-notes">ملاحظات خاصة</label>
-            <textarea id="rebirth-product-notes" maxLength={500} rows={3} placeholder="مثال: بدون بصل" value={notes} onChange={e=>setNotes(e.target.value)} />
+            <textarea id="rebirth-product-notes" maxLength={500} rows={3} aria-describedby="t-product-notes-count" placeholder="مثال: بدون بصل" value={notes} onChange={e=>setNotes(e.target.value)} />
+            <small id="t-product-notes-count" className="t-product-dialog__notes-count">{notes.length} / 500</small>
           </div>
           <div className="t-product-dialog__quantity">
             <span>الكمية</span>
@@ -255,7 +256,7 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
           </div>
         </div>
         <footer className="t-product-dialog__footer">
-          <div><span>الإجمالي قبل التوصيل</span><strong>{totalPrice.toFixed(2)} ج.م</strong></div>
+          <div><span>{quantity} × {unitPrice.toFixed(2)} ج.م · قبل التوصيل</span><strong aria-live="polite">{totalPrice.toFixed(2)} ج.م</strong></div>
           <button type="button" disabled={cannotAdd} onClick={addToCart}>{unavailable ? 'الصنف مش متاح' : editingLine?'احفظ التعديلات ↗':'ضيف للسلة ↗'}</button>
         </footer>
       </div>

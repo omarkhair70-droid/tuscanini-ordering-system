@@ -151,7 +151,7 @@ function AllDay({orders}:{orders:Order[]}){
     <small>تجميع من الأوردرات المقبولة أو قيد التحضير فقط</small>
   </div>;
 }
-export function OperatorPress({publicDemo=false,canSyncCatalog=false}:{publicDemo?:boolean;canSyncCatalog?:boolean}){
+export function OperatorPress({publicDemo=false,canSyncCatalog=false,allowDesignPreview=false}:{publicDemo?:boolean;canSyncCatalog?:boolean;allowDesignPreview?:boolean}){
   const [key,setKey]=useState('');
   const [orders,setOrders]=useState<Order[]>([]);
   const [layout,setLayout]=useState<Layout>('press');
@@ -175,10 +175,10 @@ export function OperatorPress({publicDemo=false,canSyncCatalog=false}:{publicDem
   const railTrack=useRef<HTMLDivElement|null>(null);
 
   useEffect(()=>{
-    if(publicDemo || new URLSearchParams(window.location.search).get('preview')==='20')setPreview(true);
+    if(publicDemo || (allowDesignPreview && new URLSearchParams(window.location.search).get('preview')==='20'))setPreview(true);
     const timer=window.setInterval(()=>setClock(v=>v+1),30000);
     return ()=>{window.clearInterval(timer);void audioContext.current?.close();audioContext.current=null;};
-  },[publicDemo]);
+  },[publicDemo,allowDesignPreview]);
   const toggleSound=async()=>{
     if(audioArmed.current){audioArmed.current=false;setSoundOn(false);return;}
     try{
@@ -296,18 +296,18 @@ export function OperatorPress({publicDemo=false,canSyncCatalog=false}:{publicDem
           <button type="button" aria-pressed={layout==='press'} onClick={()=>setLayout('press')}>المسرح الرئيسي</button>
           <button type="button" aria-pressed={layout==='rail'} onClick={()=>setLayout('rail')}>شريط التذاكر</button>
         </div>
-        <button type="button" className="op-preview" aria-pressed={preview} onClick={()=>{
+        {allowDesignPreview&&<button type="button" className="op-preview" aria-pressed={preview} onClick={()=>{
           if(publicDemo){setDemoStatuses({});setMessage('رجّعنا الـ٢٠ أوردر لحالتهم الأولى');}
           else setPreview(v=>!v);
           setFilter('all');setSelectedId('');setNewArrivals(0);
-        }}>{publicDemo?'إعادة ضبط ٢٠ طلبًا':preview?'العودة للأوردرات':'جرّب ضغط 20 طلبًا'}</button>
+        }}>{publicDemo?'إعادة ضبط ٢٠ طلبًا':preview?'العودة للأوردرات':'اختبر عرض ٢٠ طلبًا'}</button>}
       </div>
     </div>
     <div className="op-health">
       {preview?<span className="op-health__mark">{publicDemo
         ?'تجربة تفاعلية · ٢٠ طلبًا خياليًا · لا يوجد اتصال بالمطعم'
         :'عرض تصميم · ٢٠ طلبًا تجريبيًا · الأزرار غير مفعّلة'}</span>:
-        <label className="op-health__key"><span>مفتاح تجربة الموظف</span><input type="password" placeholder="Studio operator key"
+        <label className="op-health__key"><span>مفتاح دخول المطعم</span><input type="password" placeholder="مفتاح الدخول"
           value={key} onChange={e=>setKey(e.target.value)} autoComplete="off"/></label>}
       <button type="button" className="op-health__sound" aria-pressed={soundOn}
         onClick={()=>{void toggleSound();}} title="تنبيه صوتي عند وصول طلب جديد">
@@ -341,7 +341,7 @@ export function OperatorPress({publicDemo=false,canSyncCatalog=false}:{publicDem
       <input aria-label="ابحث عن أوردر أو صنف" type="search" placeholder="رقم الأوردر أو الصنف…" value={search}
         onChange={e=>setSearch(e.target.value)} />
     </div>
-    {!preview&&!key?<p className="op-nokey">حط مفتاح بيئة الاختبار عشان تشوف أوردراتك الحقيقية.</p>:
+    {!preview&&!key?<p className="op-nokey">اكتب مفتاح دخول المطعم لعرض الأوردرات وتحديث حالتها.</p>:
       !filtered.length?<p className="op-nokey">مفيش أوردرات مطابقة. اختار قسم تاني أو امسح البحث.</p>:
       layout==='press'?<div className="op-stage" data-testid="order-press">
         <div className="op-stage__focus">
@@ -369,6 +369,6 @@ export function OperatorPress({publicDemo=false,canSyncCatalog=false}:{publicDem
       </div>}
     <AllDay orders={data}/>
     <footer className="op-foot"><span lang="en">TUSCANINI / OPERATIONAL PRINT</span>
-      <span>{preview?'المعاينة منفصلة عن قاعدة البيانات':"حالات السيرفر هي اللي بتحرّك أوردرات التابلت"}</span></footer>
+      <span>{preview?'عرض داخلي منفصل عن طلبات المطعم':'كل حالة بتتحدث بعد حفظها في نظام الطلبات'}</span></footer>
   </section>;
 }

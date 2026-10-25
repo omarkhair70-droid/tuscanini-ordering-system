@@ -40,3 +40,14 @@
   border-right:4px solid #d92e24;background:#f4e9d4;
   font:750 12px/1.9 "IBM Plex Sans Arabic",Tahoma,sans-serif;
 }
+
+/* Product details remain a usable order form on a narrow phone. */
+.t-product-dialog__section legend small{font:650 13px "IBM Plex Sans Arabic",Tahoma,sans-serif;color:#695a47;margin-inline-start:7px}
+.t-product-dialog__notes-count{display:block;text-align:left;font:700 12px "IBM Plex Sans Arabic",Tahoma,sans-serif;color:#695a47;margin-top:6px}
+.t-product-dialog__eyebrow{font:750 13px "IBM Plex Sans Arabic",Tahoma,sans-serif;direction:rtl;letter-spacing:0;text-align:right}
+.t-product-dialog__footer strong{font-variant-numeric:tabular-nums}
+@media(max-width:390px){
+ .t-product-dialog__footer{gap:8px;padding-inline:13px}
+ .t-product-dialog__footer button{padding:12px 13px;min-height:52px}
+ .t-product-dialog__footer strong{font-size:20px}
+}

@@ -4,6 +4,14 @@
 
 > **Start here in every new chat, and update this SAME FILE after every meaningful feature/review.** This is the current execution and coverage index; historical `00–38`, original research, the HTML reference and technical handoffs remain evidence, not competing "next task" lists. Use the current GitHub PR HEAD and Actions results if newer; never assume this snapshot is the HEAD forever.
 
+### Public-facing finish pass — no synthetic operator orders or dead checkout forms (25 Oct 2026)
+
+- Owner direction: this is a customer/merchant-facing final product surface, **not a demo interface**. No new system or speculative features were commissioned. Preserved PR #59 Draft and historical data safety gates.
+- **Operator deployment gate:** if there is no real Oracle/localhost orders backend, `/operator/orders` now displays a well-designed unavailable state rather than **20 fabricated tickets**. Interactive 20-ticket designs only exist under explicit server-only `TUSCANINI_INTERNAL_VISUAL_QA=yes` in the GitHub browser suite. Query `?preview=20` no longer activates a fictitious queue in an ordinary deployment; active real operator controls conceal the preview toggle by default. Operator page is `noindex`.
+- **Checkout honesty before customer data:** when `isOrderingOpen=false`, a customer can keep/edit items but sees an early short notice and direct /contact route. Contact/address form and final confirmation checkbox are not displayed; the final action becomes contact rather than a disabled nonfunctional submit. Once intake is truly open, original contact validation, pickup/delivery, server submission, prices and order tracking stay unchanged.
+- **Product sheet:** compact human-facing Arabic eyebrow, plain option legends, character count on optional notes, readable quantity × unit price before delivery and accessible live total; small-screen footer adjustments retain native dialog and original forward/reverse FLIP and focus behavior.
+- QA uses an explicit **CI-only** fixture gate; no Vercel/merchant order intake toggles were touched. Screenshot CI/build must prove this SHA; then physically inspect 390/1440 page evidence. Merchant menu, fees and customer order go-live approvals are still open.
+
 ### Browser reference correction after image curation (25 Oct 2026)
 
 - First screenshot CI on `6ee44b2` completed build and source/media verification, then stopped in the specifically focused `cm8` screenshot assertion because it still hard-coded old image `B04-02`. The curated Fajita beef image is deliberately `B04-06`. Updated **only that source expectation** in `rebirth-populated-menu-visuals.mjs`; rerun on this HEAD and inspect full browser result. No customer runtime image or price changed in the correction.

@@ -301,3 +301,16 @@
 }
 .op-ticket__customer-view:hover{color:var(--red)}
 .op-ticket__customer-view:focus-visible{outline:3px solid #287bd6;outline-offset:3px}
+
+/* Protected real-operator surface when no order service has been enabled. */
+.op-unavailable{max-width:750px;margin:clamp(30px,7vw,90px) auto;
+  background:#fff8e8;color:#171511;border-top:7px solid #d92e24;
+  padding:clamp(28px,5vw,58px);box-shadow:0 12px 40px #0001}
+.op-unavailable>span{font:600 12px Anton,Impact,sans-serif;letter-spacing:.1em;color:#9a1b16}
+.op-unavailable h1{font:850 clamp(33px,5.5vw,60px)/1.22 Changa,Tahoma,sans-serif;margin:18px 0}
+.op-unavailable p{font:650 16px/1.9 "IBM Plex Sans Arabic",Tahoma,sans-serif}
+.op-unavailable>div{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+.op-unavailable a{min-height:46px;padding:12px 18px;display:inline-flex;align-items:center;
+  background:#171511;color:#fff8e8;font-weight:850;text-decoration:none}
+.op-unavailable a:hover{background:#d92e24}
+.op-unavailable a:focus-visible{outline:3px solid #287bd6;outline-offset:3px}

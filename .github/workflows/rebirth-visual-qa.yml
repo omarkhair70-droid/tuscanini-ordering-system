@@ -21,6 +21,7 @@ jobs:
       NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-only-public-placeholder
       SUPABASE_SERVICE_ROLE_KEY: ci-only-service-placeholder
+      TUSCANINI_INTERNAL_VISUAL_QA: 'yes'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

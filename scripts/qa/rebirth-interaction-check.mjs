@@ -22,6 +22,8 @@ try {
     const runtimeErrors = [];
     page.on('pageerror', err => runtimeErrors.push(err.message));
 
+    // Only this CI's server-side visual-review flag authorizes synthetic operator tickets.
+    // Real deployed customer/merchant pages fail closed without an order backend.
     // Public operator page must OPEN, not 404. Its twenty synthetic tickets
     // are actually interactive, but may never issue a real mutation API call.
     const demo=await context.newPage();
@@ -559,6 +561,9 @@ try {
     });
     const cart=await fixtureContext.newPage();
     await cart.goto(baseUrl+'/cart',{waitUntil:'networkidle',timeout:30000});
+    await check(await cart.locator('.t-checkout-availability').count()===0 &&
+      await cart.locator('#t-checkout-name').count()===1,
+      `${width}px available-order checkout keeps the real contact form and no closure panel`);
     if(width===390)await cart.screenshot({path:'artifacts/screenshots/customer-journey-cart-fixture-390.png',fullPage:true,animations:'disabled'});
     await check((await cart.getByTestId('checkout-delivery-fee').innerText()).trim()==='لسه مش محددة',
       `${width}px delivery checkout never fabricates an approved delivery fee`);
