@@ -102,6 +102,10 @@ try{
       },null,{timeout:7000});
       await page.goto(base+'/cart',{waitUntil:'networkidle',timeout:30000});
       await page.getByRole('heading',{name:'تشيكن فاير'}).waitFor({state:'visible',timeout:5000});
+      if(width===1440){
+        const heroEnd=await page.locator('.t-checkout-hero').evaluate(e=>e.getBoundingClientRect().bottom);
+        if(heroEnd>450)throw Error('Populated desktop cart is hiding actual food below another oversized hero: '+heroEnd);
+      }
       if(width===390){
         const order=await page.evaluate(()=>{
           const item=document.querySelector('.t-checkout-item')?.getBoundingClientRect();

@@ -4,6 +4,11 @@
 
 > **Start here in every new chat, and update this SAME FILE after every meaningful feature/review.** This is the current execution and coverage index; historical `00–38`, original research, the HTML reference and technical handoffs remain evidence, not competing "next task" lists. Use the current GitHub PR HEAD and Actions results if newer; never assume this snapshot is the HEAD forever.
 
+### Desktop real-cart first fold — screenshot-led reduction (25 Oct 2026)
+
+- Personally inspected **actual generated 1440 and 390 screenshot artifact** (prior CI `40195824268`): mobile food dialog / live quantity footer and early closed-order panel were legible, but desktop populated Cart still spent most of the first viewport on a two-line oversized editorial hero. That delayed the first order line and early merchant availability notice.
+- Scoped populated Cart at >=721px to an editorial but compact **single-line hero**, smaller typography and less space before food/status; empty Cart continues its intentional large editorial treatment, phone styles unchanged. Added a 1440px screenshot assertion for populated hero bottom <=450px. No prices, checkout fields, availability rules or transactions changed. Must verify current screenshot CI before aesthetic sign-off.
+
 ### Async site-settings ready gate for release-facing cart CI (25 Oct 2026)
 
 - Follow-up `a08b5c4` passed Home/TypeScript, Dedicated API, all Backend V2, populated screenshots and actual transactional customer test. Browser smoke had **only 2 failures out of four viewport runs**, at 320px and 768px: the test sampled `checkoutClosed` before the async runtime settings arrived, then asserted the wrong branch after the UI updated. Added a state-settling wait anchored to the **real user-facing status text** before branching. No production runtime behavior changed. Fresh QA pending on this test-only commit.

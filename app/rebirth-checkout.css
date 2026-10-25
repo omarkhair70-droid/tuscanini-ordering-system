@@ -220,3 +220,24 @@
  .t-checkout-availability{flex-direction:column;align-items:stretch;gap:15px;margin-top:8px}
  .t-checkout-availability>a{width:100%}
 }
+
+/* Release polish: populated Cart is a receipt, not a second cinematic Home.
+   First-screen desktop priority: items, open/closed status and payable context. */
+@media(min-width:721px){
+  .t-checkout-page--filled .t-checkout-hero{padding-block:14px 20px}
+  .t-checkout-page--filled .t-checkout-hero__overline{padding-bottom:10px}
+  .t-checkout-page--filled .t-checkout-hero__headline{
+    align-items:center;grid-template-columns:minmax(0,1.1fr) minmax(240px,.9fr);
+    gap:clamp(15px,3.5vw,45px);padding-block:18px
+  }
+  .t-checkout-page--filled .t-checkout-hero__headline h1{
+    font-size:clamp(48px,5.9vw,84px);line-height:1.14
+  }
+  .t-checkout-page--filled .t-checkout-hero__headline h1 br{display:none}
+  .t-checkout-page--filled .t-checkout-hero__headline h1 em{margin-inline-start:.2em}
+  .t-checkout-page--filled .t-checkout-hero__headline p{
+    font-size:clamp(13px,1.2vw,16px);line-height:1.65;margin-top:8px
+  }
+  .t-checkout-page--filled .t-checkout-hero__bottom{padding-top:10px}
+  .t-checkout-page--filled .t-checkout-content{padding-top:clamp(18px,2.8vw,40px)}
+}
