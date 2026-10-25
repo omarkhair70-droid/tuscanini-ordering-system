@@ -327,3 +327,10 @@
 }
 .op-ticket__delivery-map:hover{background:#171511;color:#fff9ee}
 .op-ticket__delivery-map:focus-visible{outline:3px solid #247bea;outline-offset:2px}
+
+.op-ticket__payment{
+  display:block;padding:8px 11px;margin:10px 0;
+  background:#fff2d6;border-inline-start:3px solid #e0aa12;
+  border-radius:6px;color:#443527;
+  font:750 12px/1.6 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+}
