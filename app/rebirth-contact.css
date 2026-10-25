@@ -165,3 +165,12 @@
 @media(prefers-reduced-motion:reduce){
   .t-contact-map-section__actions a{transition:none}
 }
+
+.t-contact-map-section__foot{
+  display:flex;justify-content:space-between;align-items:baseline;
+  gap:9px 20px;flex-wrap:wrap;
+}
+.t-contact-map-section__foot>a{
+  margin-top:16px;font:600 11px/1.4 Arial,sans-serif;
+  direction:ltr;opacity:.75;border-bottom:1px solid currentColor;
+}
