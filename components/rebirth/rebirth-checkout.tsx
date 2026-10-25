@@ -53,7 +53,7 @@ export function RebirthCheckout() {
   useEffect(()=>{
     // Return visits can restore an obsolete delivery selection in localStorage.
     // Switch to pickup rather than transmitting an unpriced delivery request.
-    if(settings && !settings.deliveryEnabled && customer.orderType==='delivery'){
+    if(settings?.isOrderingOpen && !settings.deliveryEnabled && customer.orderType==='delivery'){
       updateCustomer({orderType:'pickup'});
     }
   },[settings,customer.orderType,updateCustomer]);
@@ -150,7 +150,7 @@ export function RebirthCheckout() {
   const disabled = !isHydrated || !items.length || sending || uncertain || !settings?.isOrderingOpen;
   const status = settingsFailed ? 'تعذر التحقق من حالة استقبال الطلبات. الطلب الإلكتروني مش متاح مؤقتًا.' :
     !settings ? 'بنتحقق من استقبال الطلبات…' :
-      !settings.isOrderingOpen ? 'المطعم موقف استقبال الطلبات حاليًا.' :
+      !settings.isOrderingOpen ? 'تقدر تكمّل اختياراتك وعنوانك؛ إرسال الأوردر للمطعم متوقف حاليًا.' :
         'جاهز تسجل طلبك؟ هتقدر تتابعه بعد الإرسال.';
 
   return (
@@ -174,13 +174,13 @@ export function RebirthCheckout() {
             <section className="t-checkout-availability" role="status" aria-labelledby="t-checkout-availability-title">
               <div><span className="t-index">حالة استقبال الطلبات</span>
                 <h2 id="t-checkout-availability-title">الطلبات أونلاين متوقفة حاليًا.</h2>
-                <p>السلة محفوظة عندك وتقدر تعدّل اختياراتك. لتأكيد الأسعار والتوفر أو الطلب مباشرة، تواصل مع المطعم.</p></div>
+                <p>السلة محفوظة وتقدر تجهز عنوانك وموقعك وتكمل بياناتك. إرسال الأوردر للمطعم مش متاح دلوقتي.</p></div>
               <Link href="/contact">تواصل مع المطعم ↗</Link>
             </section>}
           {isHydrated && items.length>0 && settingsFailed &&
             <section className="t-checkout-availability" role="alert" aria-labelledby="t-checkout-availability-title">
               <div><h2 id="t-checkout-availability-title">مش قادرين نتحقق من استقبال الطلبات.</h2>
-                <p>السلة محفوظة عندك. تواصل مع المطعم قبل إرسال أي طلب.</p></div>
+                <p>السلة محفوظة وتقدر تكمل تفاصيلها. الإرسال هيفضل متوقف لحد التحقق من اتصال المطعم.</p></div>
               <Link href="/contact">طرق التواصل ↗</Link>
             </section>}
           {isHydrated && items.length > 0 && (
@@ -189,11 +189,7 @@ export function RebirthCheckout() {
                 <span>إجمالي الأصناف التقديري · {count} قطعة</span>
                 <strong>{money(subtotal)} ج.م</strong>
               </div>
-              {(settingsFailed || (settings && !settings.isOrderingOpen))
-                ? <Link href="/contact">تواصل مع المطعم ↗</Link>
-                : settings?.isOrderingOpen
-                  ? <a href="#t-checkout-fields">اكمل بياناتك <span aria-hidden="true">↓</span></a>
-                  : <span role="status">بنتحقق من استقبال الطلبات…</span>}
+              <a href="#t-checkout-fields">كمّل التفاصيل <span aria-hidden="true">↓</span></a>
             </nav>
           )}
           {!isHydrated ? <div className="t-checkout-message" role="status">جاري تجهيز السلة…</div> : null}
@@ -241,7 +237,7 @@ export function RebirthCheckout() {
                   <Link href="/menu" className="t-checkout-textlink">+ ضيف أصناف تانية</Link>
                 </section>
 
-                {settings?.isOrderingOpen && <section className="t-checkout-section" id="t-checkout-fields" aria-labelledby="t-cart-customer-title">
+                <section className="t-checkout-section" id="t-checkout-fields" aria-labelledby="t-cart-customer-title">
                   <div className="t-checkout-section__head"><span className="t-index">02 — بيانات الطلب</span><h2 id="t-cart-customer-title">تكمل إزاي؟</h2></div>
                   <div className="t-checkout-inputs">
                     <label>اسمك <input id="t-checkout-name" type="text" autoComplete="name" value={customer.name} aria-invalid={!!errors.name} aria-describedby={errors.name?'t-error-name':undefined}
@@ -251,13 +247,13 @@ export function RebirthCheckout() {
                       onChange={e=>{updateCustomer({phone:e.target.value});setErrors(x=>({...x,phone:undefined}))}} placeholder="01xxxxxxxxx" maxLength={20}/></label>
                     {errors.phone && <p id="t-error-phone" className="t-checkout-error">{errors.phone}</p>}
                     <fieldset className="t-checkout-type" aria-describedby="t-checkout-service-note"><legend>هتستلم أوردرِك إزاي؟</legend><div>
-                      <label><input type="radio" name="fulfillment" checked={customer.orderType==='delivery'} disabled={!settings?.deliveryEnabled} onChange={()=>updateCustomer({orderType:'delivery'})}/><span>{settings?.deliveryEnabled?'دليفري':'دليفري (غير متاح حاليًا)'}</span></label>
+                      <label><input type="radio" name="fulfillment" checked={customer.orderType==='delivery'} disabled={Boolean(settings?.isOrderingOpen&&!settings.deliveryEnabled)} onChange={()=>updateCustomer({orderType:'delivery'})}/><span>{settings?.deliveryEnabled?'دليفري':settings?.isOrderingOpen?'دليفري (غير متاح حاليًا)':'توصيل لعنوانك'}</span></label>
                       <label><input type="radio" name="fulfillment" checked={customer.orderType==='pickup'} onChange={()=>{updateCustomer({orderType:'pickup'});setErrors(x=>({...x,address:undefined}))}}/><span>استلام من المطعم</span></label>
                     </div></fieldset>
                     <p className="t-checkout-service-note" id="t-checkout-service-note" role="status">
                       {customer.orderType==='pickup'
-                        ? (settings?.deliveryEnabled?'هتستلم بنفسك من المطعم. مش محتاجين عنوان توصيل، وتقدر تتابع حالة التجهيز بعد تسجيل الطلب.':'الطلب متاح للاستلام من المطعم فقط حاليًا. الدليفري هيتفتح بعد تحديد المناطق والرسوم.')
-                        : 'اكتب عنوان واضح. المطعم محتاج يتأكد من إمكانية التوصيل وأي رسوم قبل تأكيد الطلب.'}
+                        ? (settings?.isOrderingOpen?'هتستلم بنفسك من المطعم. مش محتاجين عنوان توصيل.':'تقدر تجهز اختيار الاستلام أو عنوان الدليفري، وإرسال الطلبات متوقف حاليًا.')
+                        : 'اختار موقعك على الخريطة واكتب الشارع ورقم العمارة والمدخل عشان الدليفري يوصل بدقة.'}
                     </p>
                     {customer.orderType==='delivery' && <>
                   <CustomerDeliveryPin onSelect={point => {
@@ -284,7 +280,7 @@ export function RebirthCheckout() {
                       {errors.address && <p id="t-error-address" className="t-checkout-error">{errors.address}</p>}</>}
                     <label>ملاحظات عامة (اختياري) <textarea rows={2} value={customer.generalNotes} onChange={e=>updateCustomer({generalNotes:e.target.value})} maxLength={500} placeholder="أي تفاصيل تساعد المطعم"/></label>
                   </div>
-                </section>}
+                </section>
               </div>
 
               <aside id="t-checkout-summary" className="t-checkout-summary" aria-labelledby="t-checkout-summary-title">
@@ -306,16 +302,17 @@ export function RebirthCheckout() {
                   <p>الأسعار المعروضة محتاجة تأكيد من المطعم.</p>
                 </section>
                 {tableReference && <p className="t-checkout-summary__table">مرجع الطاولة: {tableReference}</p>}
-                {settings?.isOrderingOpen && <label className="t-checkout-confirm"><input id="t-checkout-confirm" type="checkbox" checked={customer.confirmedAccurateDetails}
+                <label className="t-checkout-confirm"><input id="t-checkout-confirm" type="checkbox" checked={customer.confirmedAccurateDetails}
                   onChange={e=>{updateCustomer({confirmedAccurateDetails:e.target.checked});setErrors(x=>({...x,confirmedAccurateDetails:undefined}))}}/>
-                  <span>راجعت الأصناف وبيانات الطلب، وفاهم إن السعر النهائي وطريقة الدفع هيتأكدوا مع المطعم.</span></label>}
+                  <span>راجعت الأصناف وبيانات الطلب، وعارف إن الدفع مش بيتم من الموقع حاليًا.</span></label>
                 {errors.confirmedAccurateDetails && <p className="t-checkout-error">{errors.confirmedAccurateDetails}</p>}
                 <p className="t-checkout-status" role="status">{status}</p>
                 {error && <p className="t-checkout-error t-checkout-error--large" role="alert">{error}</p>}
-                {(settingsFailed || (settings && !settings.isOrderingOpen))
-                  ? <Link href="/contact" className="t-checkout-action t-checkout-action--full">تواصل مع المطعم ↗</Link>
-                  : <button type="submit" className="t-checkout-action t-checkout-action--full" disabled={disabled}>
-                    {sending ? 'بنرسل طلبك…' : uncertain ? 'راجع المطعم قبل إعادة الإرسال' : 'سجّل الطلب للمطعم ↗'}</button>}
+                <button type="submit" className="t-checkout-action t-checkout-action--full" disabled={disabled}
+                  title={!settings?.isOrderingOpen?'إرسال الطلب للمطعم متوقف حاليًا':undefined}>
+                  {sending ? 'بنرسل طلبك…' : uncertain ? 'راجع المطعم قبل إعادة الإرسال'
+                    : settings?.isOrderingOpen ? 'سجّل الطلب للمطعم ↗' : 'إرسال الطلب متوقف حاليًا'}
+                </button>
                 <Link href="/contact" className="t-checkout-summary__support">محتاج مساعدة أو تتأكد من طلبك؟</Link>
               </aside>
             </form>
