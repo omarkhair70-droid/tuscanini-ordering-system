@@ -300,6 +300,7 @@ export const parseCreateOrderPayloadOrThrow = (payload: unknown): ValidatedOrder
   // text area—owns the exact lat/lng URL in the stored merchant-facing snapshot.
   const deliveryLocation = orderType === 'delivery'
     ? parseDeliveryLocationOrThrow(customerPayload.deliveryLocation) : null;
+  if (rawAddress.length > 300) throw new Error('عنوان التوصيل غير صالح: أطول من ٣٠٠ حرف.');
   const street = rawAddress.split(/\nموقع التوصيل:/)[0].trim();
   const coordinateUrl = deliveryLocation
     ? 'https://maps.google.com/?q=' + deliveryLocation.lat + ',' + deliveryLocation.lng
@@ -310,7 +311,7 @@ export const parseCreateOrderPayloadOrThrow = (payload: unknown): ValidatedOrder
   if (orderType === 'delivery' && (!address || (deliveryLocation && !street))) {
     throw new Error('عنوان التوصيل وتفاصيل المدخل مطلوبين للدليفري.');
   }
-  if (address.length > 300) throw new Error('العنوان أطول من الحد المسموح (٣٠٠ حرف).');
+  if (address.length > 300) throw new Error('العنوان غير صالح: أطول من الحد المسموح (٣٠٠ حرف).');
 
   const itemsPayload = body.items;
   if (!Array.isArray(itemsPayload) || itemsPayload.length === 0) {
