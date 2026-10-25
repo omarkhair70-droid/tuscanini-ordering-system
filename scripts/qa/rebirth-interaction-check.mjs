@@ -461,12 +461,16 @@ try {
       selectedLegacy.unitPrice===145 && selectedLegacy.quantity===2),
       `${width}px actual recorded 125 + 20 addon, quantity 2, is stored as 290 EGP cart`);
     await shopPage.goto(baseUrl+'/cart',{waitUntil:'networkidle',timeout:30000});
+    const checkoutClosed=(await shopPage.locator('.t-checkout-availability').count())>0;
     if(width<=720){
       const cartQuickAmount=(await shopPage.locator('.t-checkout-quicknav strong').textContent())?.trim();
       const expectedArabicAmount=new Intl.NumberFormat('ar-EG',{maximumFractionDigits:2}).format(290)+' ج.م';
       await check(cartQuickAmount===expectedArabicAmount &&
-        await shopPage.getByRole('link',{name:/اكمل بياناتك/}).count()===1,
-        `${width}px mobile Cart opens with an accurate estimated product subtotal and a direct customer-form shortcut`);
+        (checkoutClosed
+          ? await shopPage.getByRole('link',{name:/تواصل مع المطعم/}).count()>=1 &&
+            await shopPage.locator('#t-checkout-name').count()===0
+          : await shopPage.getByRole('link',{name:/اكمل بياناتك/}).count()===1),
+        `${width}px mobile Cart shows honest estimated subtotal and an actionable available path`);
     }
     await check(await shopPage.getByRole('heading',{name:/تشيكن فاير/}).count()===1,
       `${width}px previous menu item survives into authored populated checkout`);
@@ -477,7 +481,10 @@ try {
       await shopPage.screenshot({path:`artifacts/screenshots/checkout-before-line-edit-${width}.png`,
         fullPage:true,animations:'disabled'});
     }
-    await shopPage.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).check();
+    if(!checkoutClosed)await shopPage.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).check();
+    else await check(await shopPage.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).count()===0 &&
+      await shopPage.locator('#t-checkout-name').count()===0,
+      `${width}px closed ordering never collects private contact fields or fakes a checkout acknowledgment`);
     await shopPage.getByRole('link',{name:/تعديل الحجم والإضافات وملاحظات تشيكن فاير/}).click();
     await shopPage.locator('.t-product-dialog[open]').waitFor({timeout:8000});
     await check(await shopPage.getByRole('button',{name:/احفظ التعديلات/}).count()===1,
@@ -509,8 +516,11 @@ try {
       updated.items[0].unitPrice===125&&updated.items[0].totalItemPrice===125 &&
       updated.items[0].selectedAddons?.length===0&&updated.items[0].itemNotes==='بدون بصل - تعديل من السلة' && !updated.reviewed,
       `${width}px saved cart edit updates same receipt line, recalculates price, keeps notes and never duplicates`);
-    await check(await shopPage.getByRole('button',{name:/سجّل الطلب للمطعم/}).isDisabled(),
-      `${width}px historic menu doesn't bypass store-open/live-order validation`);
+    await check(checkoutClosed
+      ? await shopPage.getByRole('button',{name:/سجّل الطلب للمطعم/}).count()===0 &&
+        await shopPage.getByRole('link',{name:/تواصل مع المطعم/}).count()>=1
+      : await shopPage.getByRole('button',{name:/سجّل الطلب للمطعم/}).isDisabled(),
+      `${width}px old catalog cannot submit when intake is closed; direct contact remains available`);
     await catalogContext.close();
     await page.goto(baseUrl + '/cart', { waitUntil: 'networkidle', timeout:30000 });
     await check(await page.getByRole('heading', { name:/على.*مزاجك/ }).count()===1, `${width}px Checkout authored header renders`);

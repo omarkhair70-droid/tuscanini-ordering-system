@@ -4,6 +4,10 @@
 
 > **Start here in every new chat, and update this SAME FILE after every meaningful feature/review.** This is the current execution and coverage index; historical `00–38`, original research, the HTML reference and technical handoffs remain evidence, not competing "next task" lists. Use the current GitHub PR HEAD and Actions results if newer; never assume this snapshot is the HEAD forever.
 
+### Production customer-cart interaction guard alignment (25 Oct 2026)
+
+- Browser interaction after successful source and populated screenshots expected a customer-review checkbox and "complete your fields" shortcut even when ordering was deliberately OFF. Updated the exact real previous-menu add→cart→edit fixture to exercise either closed contact-only basket (no PII inputs, no disabled fake checkout call) or the original open service checkout. Kept original same-line edit, quantity, notes, pricing, confirmation reset and no unauthorized POST checks.
+
 ### Staff-key test selector after public-copy clean-up (25 Oct 2026)
 
 - Isolated Backend V2 real customer→operator→tracking and 20-ticket stage layout pass independently. The later two-device fixture stopped because it still looked up the old English placeholder `Studio operator key`, now deliberately replaced with the final Arabic `مفتاح الدخول`. Updated **only** that selector in the test, retaining the same test key and existing security guard.
