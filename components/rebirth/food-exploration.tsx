@@ -33,9 +33,9 @@ export function FoodPhoto({ id, priority = false, className = '' }: { id: string
           onError={() => setFailed(true)}
         />
       ) : (
-        <div className="t-real-food-photo__missing" aria-label="صورة حقيقية من توسكانيني قيد تجهيز المصدر">
-          <span lang="en">TUSCANINI / ORIGINAL PHOTO</span>
-          <span>الصورة الأصلية قيد التجهيز</span>
+        <div className="t-real-food-photo__missing" role="img" aria-label="صورة الطعام مش متاحة دلوقتي">
+          <span lang="en">TUSCANINI</span>
+          <span>الصورة مش متاحة دلوقتي</span>
         </div>
       )}
     </div>
