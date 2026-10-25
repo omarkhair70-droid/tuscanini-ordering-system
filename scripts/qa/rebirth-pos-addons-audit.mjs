@@ -24,7 +24,7 @@ assert.match(catalog,/import \{ posCrepeAddons \} from '@\/lib\/rebirth\/pos-add
 assert.match(catalog,/\{ id: 'ca5', name: 'رول'.*priceFrom: 20.*price: 20/,
   'Standalone roll price must match POS photo');
 assert.match(hero,/الكريب بيتكلم\./,'Actual Tuscanini brand voice must appear in Home hero');
-assert.match(hero,/t-hero__backplate[^\n]*TSC-05/,'Home must use genuine crepe food photo for the rear collage');
+assert.match(hero,/t-hero__backplate[^\n]*TSC-07/,'Home must use genuine crepe food photo for the rear collage');
 assert.doesNotMatch(hero,/REAL CRAVING|FOOD IN FOCUS|FROM BENI SUEF/,'Home must not show old English campaign stamps');
 assert.doesNotMatch(foodGallery,/PHOTO EVIDENCE|ORIGINAL RESTAURANT PHOTOGRAPHS|\{photo\.id\}.*figcaption/,
   'Customer gallery must not expose internal proof labels or image inventory IDs');
