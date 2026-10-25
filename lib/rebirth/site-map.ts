@@ -18,6 +18,7 @@ export const primaryExperienceNavigation = [
 ] as const satisfies readonly PublicExperienceRoute[];
 
 export const customerUtilityNavigation = [
+  { href: '/account', label: 'حسابي وطلباتي', role: 'utility' },
   { href: '/contact', label: 'المكان والتواصل', role: 'utility' },
   { href: '/reviews', label: 'آراء الناس', role: 'support' },
   { href: '/complaints', label: 'مساعدة وشكاوى', role: 'support' },
