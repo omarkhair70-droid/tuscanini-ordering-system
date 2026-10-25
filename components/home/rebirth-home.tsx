@@ -31,7 +31,7 @@ export function RebirthHome({ activeOrderSlot }: { activeOrderSlot?: ReactNode }
           </div>
           <div className="t-hero__visual">
             <span className="t-hero__underprint" lang="en" aria-hidden="true">TUSCANINI</span>
-            <div className="t-hero__backplate"><FoodPhoto id="TSC-07" priority /></div>
+            <div className="t-hero__backplate"><FoodPhoto id="TSC-12" priority /></div>
             <FoodPhoto id="TSC-09" priority className="t-hero__photo" />
             <div className="t-hero__stamp" aria-hidden="true"><span>من قلب</span><span>بني سويف</span></div>
             <span className="t-hero__photo-label">شوف الحشو</span>
