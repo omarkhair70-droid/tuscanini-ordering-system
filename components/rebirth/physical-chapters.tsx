@@ -68,17 +68,33 @@ export function PlaceChapter() {
   return (
     <section className="t-place-final" aria-labelledby="t-place-final-title">
       <div className="t-place-final__copy">
-        <span className="t-index">05 / THE PLACE — BENI SUEF</span>
+        <span className="t-index">05 / من قلب بني سويف</span>
         <h2 id="t-place-final-title">تلاقينا<br/>في بني<br/><em>سويف.</em></h2>
-        <p>شارع البحر، سور نادي توليب، بني سويف.</p>
+        <p className="t-place-final__address">
+          <span aria-hidden="true" className="t-place-final__pin">●</span>
+          شارع البحر، سور نادي توليب، بني سويف.
+        </p>
         <div className="t-place-final__links">
           <Link href="/contact">المكان والتواصل <span aria-hidden="true">↗</span></Link>
-          <Link href="/offers">العروض الحالية <span aria-hidden="true">↗</span></Link>
+          <Link href="/offers">شوف العروض <span aria-hidden="true">↗</span></Link>
         </div>
       </div>
       <div className="t-place-final__art" aria-hidden="true">
-        <span className="t-place-final__orbit">TUSCANINI / BENI SUEF /</span>
-        <span className="t-place-final__stamp">BNS<br/><small>EGYPT</small></span>
+        <span className="t-place-final__thin-ring t-place-final__thin-ring--top" />
+        <span className="t-place-final__thin-ring t-place-final__thin-ring--bottom" />
+        <div className="t-place-final__city">
+          <span className="t-place-final__city-label">TUSCANINI / BENI SUEF</span>
+          <svg viewBox="0 0 310 155" fill="none" aria-hidden="true">
+            <path d="M18 110H292M26 95H284M45 95V50H74V95M87 95V38H116V95M129 95V63H159V95M171 95V24H198V95M210 95V51H240V95M251 95V69H277V95" stroke="currentColor" strokeWidth="5" strokeLinejoin="round"/>
+            <path d="M11 124C39 111 60 137 86 124S136 111 162 124S211 137 238 124S276 116 299 124M11 141C39 128 60 154 86 141S136 128 162 141S211 154 238 141S276 133 299 141" stroke="currentColor" strokeWidth="5" strokeLinecap="round"/>
+          </svg>
+          <span className="t-place-final__city-foot">شارع البحر / بني سويف</span>
+        </div>
+        <span className="t-place-final__heart">من قلب<br/>بني سويف</span>
+        <div className="t-place-final__food-disc">
+          <Image src="/images/rebirth/food-12.jpg" alt="" fill sizes="(max-width:720px) 25vw, 11vw" />
+        </div>
+        <span className="t-place-final__stamp">BNS<small>EGYPT</small></span>
       </div>
     </section>
   );
