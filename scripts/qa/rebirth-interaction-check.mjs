@@ -461,6 +461,12 @@ try {
       selectedLegacy.unitPrice===145 && selectedLegacy.quantity===2),
       `${width}px actual recorded 125 + 20 addon, quantity 2, is stored as 290 EGP cart`);
     await shopPage.goto(baseUrl+'/cart',{waitUntil:'networkidle',timeout:30000});
+    // Runtime site-settings load is asynchronous; never assert on a transient
+    // 'checking ordering availability' state which can flip after screenshot.
+    await shopPage.waitForFunction(()=>{
+      const status=document.querySelector('.t-checkout-status')?.textContent??'';
+      return status.length>0 && !status.includes('بنتحقق من استقبال الطلبات');
+    },null,{timeout:12000});
     const checkoutClosed=(await shopPage.locator('.t-checkout-availability').count())>0;
     if(width<=720){
       const cartQuickAmount=(await shopPage.locator('.t-checkout-quicknav strong').textContent())?.trim();

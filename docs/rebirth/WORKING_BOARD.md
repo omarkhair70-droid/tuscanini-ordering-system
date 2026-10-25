@@ -4,6 +4,10 @@
 
 > **Start here in every new chat, and update this SAME FILE after every meaningful feature/review.** This is the current execution and coverage index; historical `00–38`, original research, the HTML reference and technical handoffs remain evidence, not competing "next task" lists. Use the current GitHub PR HEAD and Actions results if newer; never assume this snapshot is the HEAD forever.
 
+### Async site-settings ready gate for release-facing cart CI (25 Oct 2026)
+
+- Follow-up `a08b5c4` passed Home/TypeScript, Dedicated API, all Backend V2, populated screenshots and actual transactional customer test. Browser smoke had **only 2 failures out of four viewport runs**, at 320px and 768px: the test sampled `checkoutClosed` before the async runtime settings arrived, then asserted the wrong branch after the UI updated. Added a state-settling wait anchored to the **real user-facing status text** before branching. No production runtime behavior changed. Fresh QA pending on this test-only commit.
+
 ### Production customer-cart interaction guard alignment (25 Oct 2026)
 
 - Browser interaction after successful source and populated screenshots expected a customer-review checkbox and "complete your fields" shortcut even when ordering was deliberately OFF. Updated the exact real previous-menu add→cart→edit fixture to exercise either closed contact-only basket (no PII inputs, no disabled fake checkout call) or the original open service checkout. Kept original same-line edit, quantity, notes, pricing, confirmation reset and no unauthorized POST checks.
