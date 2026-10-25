@@ -8,8 +8,9 @@ type CatalogRow={product_id:string;name:string;category_slug:string;price_from_c
   available:boolean;sizes:Choice[];addons:Choice[]};
 type CreateLine={kind:'product';productId:string;sizeId:string|null;addonIds:string[];quantity:number;itemNotes:string};
 type DeliveryLocation={lat:number;lng:number};
+type HandoffPaymentMethod='cash'|'instapay_on_handoff'|'vodafone_cash_on_handoff';
 type Customer={name:string;phone:string;address:string;deliveryLocation:DeliveryLocation|null;
-  orderType:'delivery'|'pickup';generalNotes:string};
+  orderType:'delivery'|'pickup';paymentMethod:HandoffPaymentMethod;generalNotes:string};
 export type MenuOrderPayload={requestKey:string;customer:Customer;items:CreateLine[];tableReference:string|null;expectedSubtotalCents:number};
 export type MenuProductInput={
  productId:string;name:string;categorySlug:string;priceFromCents:number;available:boolean;
@@ -96,6 +97,9 @@ function parsePayload(raw:unknown):MenuOrderPayload{
        pin.lat<22||pin.lat>32||pin.lng<24||pin.lng>37)bad('delivery pin bounds');
     deliveryLocation={lat:Number(pin.lat.toFixed(6)),lng:Number(pin.lng.toFixed(6))};
   }
+  const paymentMethod=customer.paymentMethod===undefined?'cash':customer.paymentMethod;
+  if(!['cash','instapay_on_handoff','vodafone_cash_on_handoff'].includes(String(paymentMethod)))
+    bad('payment preference');
   const writtenAddress=customer.orderType==='delivery'?String(customer.address).trim():'';
   const street=writtenAddress.split(/\nموقع التوصيل:/)[0].trim();
   const address=deliveryLocation
@@ -103,7 +107,8 @@ function parsePayload(raw:unknown):MenuOrderPayload{
     : writtenAddress;
   if(deliveryLocation&&(!street||address.length>300))bad('delivery description');
   return {requestKey:p.requestKey as string,customer:{
-    ...(customer as Customer),address,deliveryLocation
+    ...(customer as Customer),address,deliveryLocation,
+    paymentMethod:paymentMethod as HandoffPaymentMethod
   },items:lines as CreateLine[],tableReference:(p.tableReference as string|null)||null,
     expectedSubtotalCents:p.expectedSubtotalCents as number};
 }
