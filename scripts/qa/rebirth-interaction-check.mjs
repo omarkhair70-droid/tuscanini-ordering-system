@@ -416,7 +416,7 @@ try {
       els.map(el=>({href:el.getAttribute('href'),target:el.getAttribute('target'),rel:el.getAttribute('rel')}))
     );
     await check(await liveMap.count()===1 &&
-      (await liveMap.getAttribute('src'))?.includes('maps')===true &&
+      /^(https:\/\/www\.openstreetmap\.org\/export\/embed\.html|https:\/\/www\.google\.com\/maps\/embed\/v1\/place)/.test((await liveMap.getAttribute('src'))||'') &&
       mapLinks.length===2 &&
       mapLinks.every(el=>el.target==='_blank' && el.rel?.includes('noopener') && el.href?.includes('google.com/maps/')),
       `${width}px Contact exposes embedded street-level map plus both real Google Maps routes`);
