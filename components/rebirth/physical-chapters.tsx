@@ -28,9 +28,9 @@ export function PackagingChapter() {
           className="t-packaging__photo-img t-packaging__photo-img--inside"
           data-current={!packageActive} aria-hidden={packageActive}
         />
-        <span className="t-packaging__photo-label" lang="en">{packageActive ? 'TSC-08 / REAL PACKAGING' : 'TSC-07 / REAL FOOD INSIDE'}</span>
+        <span className="t-packaging__photo-label">{packageActive ? 'العلبة والورق' : 'الأكل من جوّه'}</span>
         <div className="t-packaging__view-caption" role="status">
-          {packageActive ? 'العلب وورق التغليف من صور توسكانيني' : 'دي صورة مختلفة من المطعم، مش لنفس الساندوتشات'}
+          {packageActive ? 'علب توسكانيني الحمراء وورق التغليف.' : 'كريب توسكانيني، والحشو واضح من أول نظرة.'}
         </div>
         <div className="t-packaging__photo-mark" aria-hidden="true">
           <MaterialGlyph name={packageActive ? 'box' : 'cut'} size={72}/>
@@ -55,7 +55,7 @@ export function PackagingChapter() {
           </button>
         </div>
         <div className="t-packaging__bottom">
-          <p>من ورق التغليف الأحمر لصور الأكل المفتوح. اختار مشهد وشوف مواد حقيقية من المطعم — مش صور دعائية متخيلة.</p>
+          <p>من العلبة الحمراء لحد الحشو اللي جوّه الكريب. اختار المشهد اللي يفتح نفسك، وبعدين اختار أكلك.</p>
           <Link href="/menu">شوف الأكل كله <span aria-hidden="true">↗</span></Link>
         </div>
         <MaterialGlyph name="fold" size={340} className="t-packaging__ghost-glyph"/>
