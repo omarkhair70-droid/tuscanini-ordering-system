@@ -25,7 +25,19 @@ export async function createOrderInSupabase(payload: ValidatedOrderPayload): Pro
   }
   const verifiedSubtotal = serverSubtotalCents / 100;
 
+  // Opt-in after the additive Supabase migration has been applied to the
+  // target database. Until then, the canonical Google Maps coordinate URL
+  // remains inside customer_address for legacy operator screens.
+  const coordinateColumns = process.env.TUSCANINI_SUPABASE_DELIVERY_COORDS_READY === 'yes'
+    && payload.customer.orderType === 'delivery' && payload.customer.deliveryLocation
+    ? {
+        delivery_latitude: payload.customer.deliveryLocation.lat,
+        delivery_longitude: payload.customer.deliveryLocation.lng,
+      }
+    : {};
+
   const { data: orderRow, error: orderError } = await admin.from('orders').insert({
+    ...coordinateColumns,
     customer_name: payload.customer.name,
     customer_phone: payload.customer.phone,
     customer_address: payload.customer.address || null,
