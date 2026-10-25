@@ -56,15 +56,20 @@ try {
         window.scrollTo(0,0);
         await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
         const main = [...document.querySelectorAll('main img')];
+        const heroPhotos = [...document.querySelectorAll('.t-hero__visual img')];
         return {
           total:main.length,
           missing:main.filter(img => img.naturalWidth <= 0).map(img => img.getAttribute('src')),
+          hero: heroPhotos.length === 2 && heroPhotos.every(img => img.complete && img.naturalWidth > 0),
           packaging: [...document.querySelectorAll('.t-packaging__photo-img')]
             .every(img => img.complete && img.naturalWidth > 0),
         };
       });
       if (media.missing.length) {
         throw new Error(`Broken content images ${path} ${width}px: ${media.missing.join(', ')}`);
+      }
+      if (!route && !media.hero) {
+        throw new Error(`Both genuine hero photos must decode on Home at ${width}px`);
       }
       if (!route && !media.packaging) {
         throw new Error(`Real packaging photo did not decode on Home at ${width}px`);
