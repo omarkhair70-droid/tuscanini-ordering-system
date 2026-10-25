@@ -22,7 +22,7 @@ export function RebirthHome({ activeOrderSlot }: { activeOrderSlot?: ReactNode }
           <div className="t-hero__words">
             <p className="t-overline">توسكانيني / بني سويف</p>
             <h1 id="t-hero-title"><span>بص</span><em>جوه.</em></h1>
-            <p className="t-hero__voice">توسكانيني <strong>الكريب بيتكلم.</strong></p>
+            <p className="t-hero__voice"><span>توسكانيني</span><strong>الكريب بيتكلم.</strong></p>
             <p className="t-hero__sub">كريب، بيتزا، وساندوتشات تتشاف قبل ما تتطلب. اختار اللي فتح نفسك.</p>
             <div className="t-hero__actions">
               <Link className="t-button t-button--dark" href="/menu">افتح المنيو <span aria-hidden="true">↗</span></Link>
@@ -31,15 +31,14 @@ export function RebirthHome({ activeOrderSlot }: { activeOrderSlot?: ReactNode }
           </div>
           <div className="t-hero__visual">
             <span className="t-hero__underprint" lang="en" aria-hidden="true">TUSCANINI</span>
-            <div className="t-hero__backplate"><FoodPhoto id="TSC-06" priority /></div>
+            <div className="t-hero__backplate"><FoodPhoto id="TSC-05" priority /></div>
             <FoodPhoto id="TSC-09" priority className="t-hero__photo" />
-            <div className="t-hero__stamp" lang="en" aria-hidden="true"><span>REAL FOOD.</span><span>REAL CRAVING.</span></div>
-            <span className="t-hero__photo-label" lang="en">FROM BENI SUEF</span>
-            <span className="t-hero__photo-facts">توسكانيني / بني سويف</span>
-            <span className="t-hero__visualnote">01 / FOOD IN FOCUS</span>
+            <div className="t-hero__stamp" aria-hidden="true"><span>من قلب</span><span>بني سويف</span></div>
+            <span className="t-hero__photo-label">شوف الحشو</span>
+            <span className="t-hero__visualnote">توسكانيني / كريب</span>
           </div>
         </div>
-        <div className="t-hero__bottom"><span>SCROLL TO EXPLORE</span><span aria-hidden="true">↓</span><span>توسكانيني / بني سويف</span></div>
+        <div className="t-hero__bottom"><span>انزل واتفرّج</span><span aria-hidden="true">↓</span><span>توسكانيني / بني سويف</span></div>
       </section>
 
       <div className="t-ticker" role="img" aria-label="توسكانيني، كريب وبيتزا وساندوتشات">
