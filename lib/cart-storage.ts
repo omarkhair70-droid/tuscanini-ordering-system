@@ -11,6 +11,7 @@ export const defaultCartState: CartState = {
     deliveryLocation: null,
     // Pickup is the safe default until delivery zones/fees are approved.
     orderType: 'pickup',
+    paymentMethod: 'cash',
     generalNotes: '',
     confirmedAccurateDetails: false,
   },
@@ -34,6 +35,8 @@ export function loadCartState(): CartState {
       customer: {
         ...defaultCartState.customer,
         ...(parsed.customer ?? {}),
+        paymentMethod: ['cash','instapay_on_handoff','vodafone_cash_on_handoff'].includes(String(parsed.customer?.paymentMethod))
+          ? parsed.customer!.paymentMethod : 'cash',
         address: typeof parsed.customer?.address === 'string'
           ? parsed.customer.address.split('\nموقع التوصيل:')[0] : '',
         // Old saved carts remain loadable, but a malformed coordinate never
