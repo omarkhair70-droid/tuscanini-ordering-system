@@ -142,6 +142,7 @@ export type ValidatedOrderCustomer = {
   name: string;
   phone: string;
   address: string;
+  deliveryLocation: { lat: number; lng: number } | null;
   orderType: OrderType;
   generalNotes: string;
 };
@@ -152,6 +153,20 @@ export type ValidatedOrderPayload = {
   subtotal: number;
   tableReference: string | null;
 };
+
+/** The user's confirmed location, not a guessed coordinates string or a map link.
+ * Old clients that send no location remain compatible with text addresses.
+ */
+function parseDeliveryLocationOrThrow(value: unknown): { lat: number; lng: number } | null {
+  if (value === null || value === undefined) return null;
+  const loc = assertObjectOrThrow(value, 'موقع التوصيل غير صالح.');
+  if (typeof loc.lat !== 'number' || typeof loc.lng !== 'number' ||
+      !Number.isFinite(loc.lat) || !Number.isFinite(loc.lng) ||
+      loc.lat < 22 || loc.lat > 32 || loc.lng < 24 || loc.lng > 37) {
+    throw new Error('إحداثيات موقع التوصيل غير صالحة.');
+  }
+  return { lat: Number(loc.lat.toFixed(6)), lng: Number(loc.lng.toFixed(6)) };
+}
 
 const TABLE_REFERENCE_MAX_LENGTH = 40;
 const TABLE_REFERENCE_PATTERN = /^[\p{Script=Arabic}\p{Script=Latin}\p{Number}_\- ]+$/u;
@@ -280,11 +295,22 @@ export const parseCreateOrderPayloadOrThrow = (payload: unknown): ValidatedOrder
   // Server-side minimization: an old delivery address is irrelevant (and
   // private) once the customer chooses in-store pickup, even if a caller
   // manually posts an address that the UI would have omitted.
-  const address = orderType === 'delivery' ? parseOptionalString(customerPayload.address) : '';
-
-  if (orderType === 'delivery' && !address) {
-    throw new Error('العنوان مطلوب في حالة الدليفري.');
+  const rawAddress = orderType === 'delivery' ? parseOptionalString(customerPayload.address) : '';
+  // Pickup discards stale addresses/pins. For delivery, the server—not the
+  // text area—owns the exact lat/lng URL in the stored merchant-facing snapshot.
+  const deliveryLocation = orderType === 'delivery'
+    ? parseDeliveryLocationOrThrow(customerPayload.deliveryLocation) : null;
+  const street = rawAddress.split(/\nموقع التوصيل:/)[0].trim();
+  const coordinateUrl = deliveryLocation
+    ? 'https://maps.google.com/?q=' + deliveryLocation.lat + ',' + deliveryLocation.lng
+    : '';
+  const address = deliveryLocation
+    ? [street, 'موقع التوصيل: ' + coordinateUrl].filter(Boolean).join('\n')
+    : rawAddress;
+  if (orderType === 'delivery' && (!address || (deliveryLocation && !street))) {
+    throw new Error('عنوان التوصيل وتفاصيل المدخل مطلوبين للدليفري.');
   }
+  if (address.length > 300) throw new Error('العنوان أطول من الحد المسموح (٣٠٠ حرف).');
 
   const itemsPayload = body.items;
   if (!Array.isArray(itemsPayload) || itemsPayload.length === 0) {
@@ -305,6 +331,7 @@ export const parseCreateOrderPayloadOrThrow = (payload: unknown): ValidatedOrder
       name,
       phone,
       address,
+      deliveryLocation,
       orderType,
       generalNotes: parseOptionalString(customerPayload.generalNotes),
     },
