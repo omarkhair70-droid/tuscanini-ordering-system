@@ -355,3 +355,107 @@
     line-height:1.5!important;
   }
 }
+
+
+/* MOBILE COMMERCE / V2 — readable food first, no mini magazine grid.
+   True product names/prices and original representative art stay untouched.
+   Single horizontal list cards work with the new app dock at 320–720px. */
+@media(max-width:720px){
+  .t-menu-page .t-menu-items__grid--photo{
+    grid-template-columns:minmax(0,1fr);
+    gap:11px;
+  }
+  .t-menu-page .t-menu-items__grid--photo .t-menu-product,
+  .t-menu-page .t-menu-items__grid--photo .t-menu-product:nth-child(6n+2),
+  .t-menu-page .t-menu-items__grid--photo .t-menu-product:nth-child(6n+5){
+    min-height:0;
+    padding:13px 14px 12px;
+    border:1px solid #d6c7b3;
+    border-radius:18px;
+    box-shadow:0 4px 16px rgb(39 27 15 / 4%);
+    background:#fff9ef;
+  }
+  .t-menu-page .t-menu-items__grid--photo .t-menu-product__top{
+    padding-bottom:8px;
+  }
+  .t-menu-page .t-menu-items__grid--photo .t-menu-product__top span:first-child{
+    display:none;
+  }
+  .t-menu-page .t-menu-items__grid--photo .t-menu-product__top span:last-child{
+    font-size:11px;
+    color:#786350;
+  }
+  .t-menu-page .t-menu-items__grid--photo .t-menu-product__identity{
+    display:grid;
+    grid-template-columns:clamp(95px,26vw,128px) minmax(0,1fr);
+    align-items:center;
+    gap:13px;
+    flex:none;
+  }
+  .t-menu-page .t-menu-items__grid--photo .t-menu-product__art-trigger{
+    width:100%;height:auto;min-width:0;
+  }
+  .t-menu-page .t-menu-items__grid--photo .t-product-art--compact{
+    width:100%;aspect-ratio:1.04/1;
+    border:0;border-radius:13px;
+  }
+  .t-menu-page .t-menu-items__grid--photo .t-menu-product__text h3{
+    font-size:clamp(20px,5.2vw,27px);
+    line-height:1.25;
+  }
+  .t-menu-page .t-menu-items__grid--photo .t-menu-product__text p{
+    font-size:12px;line-height:1.5;
+    display:-webkit-box;-webkit-box-orient:vertical;
+    -webkit-line-clamp:2;overflow:hidden;
+  }
+  .t-menu-page .t-menu-items__grid--photo .t-menu-product__bottom{
+    flex-direction:row;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    margin-top:11px;
+    padding-top:11px;
+    border-top:1px solid #ebdfcf;
+  }
+  .t-menu-page .t-menu-items__grid--photo .t-menu-product__price{
+    gap:5px;
+    flex-wrap:wrap;
+    white-space:nowrap;
+  }
+  .t-menu-page .t-menu-items__grid--photo .t-menu-product__price span{font-size:11px}
+  .t-menu-page .t-menu-items__grid--photo .t-menu-product__price strong{font-size:18px}
+  .t-menu-page .t-menu-items__grid--photo .t-menu-product__bottom button{
+    width:auto;min-width:124px;min-height:44px;
+    padding:9px 15px;border-radius:12px;
+    font-size:12px;line-height:1.45;
+    background:#171511;color:#fff9ef;
+  }
+  .t-menu-page .t-menu-items__grid--photo .t-menu-product__bottom button:focus-visible{
+    outline:3px solid #2578e2;outline-offset:2px;
+  }
+  .t-menu-page .t-menu-items__grid--photo .t-menu-product__family svg{display:inline-block}
+}
+@media(max-width:355px){
+  .t-menu-page .t-menu-items__grid--photo .t-menu-product__identity{grid-template-columns:95px minmax(0,1fr);gap:10px}
+  .t-menu-page .t-menu-items__grid--photo .t-menu-product__bottom button{min-width:112px;padding-inline:10px}
+}
+/* Product sheet should feel like the mobile app, not another full-page flyer. */
+@media(max-width:720px){
+  .t-product-dialog{border-radius:24px 24px 0 0;overflow:hidden}
+  .t-product-dialog__sheet{border-radius:24px 24px 0 0}
+  .t-product-dialog__header{position:relative;padding:27px 20px 17px;align-items:center;gap:12px}
+  .t-product-dialog__header::before{
+    content:"";position:absolute;left:50%;top:8px;
+    transform:translateX(-50%);
+    height:4px;width:36px;border-radius:10px;background:#a69a86;
+  }
+  .t-product-dialog__header h2{font-size:clamp(29px,7.7vw,43px);line-height:1.18;margin-top:3px}
+  .t-product-dialog__body{padding:17px 18px 26px}
+  .t-product-dialog__section{margin-top:25px}
+  .t-product-dialog__section legend,.t-product-dialog__legend{font-size:20px;margin-bottom:10px}
+  .t-product-dialog__options label{border-radius:12px;min-height:54px;background:#fffdf7;padding:10px 12px}
+  .t-product-dialog__addon-group{border-radius:12px;overflow:hidden}
+  .t-product-dialog__addon-group summary{min-height:51px;align-items:center;font-size:16px}
+  .t-product-dialog__footer{box-shadow:0 -8px 22px rgb(35 25 15 / 8%);padding-inline:18px}
+  .t-product-dialog__footer button{border-radius:12px;min-height:51px}
+}
