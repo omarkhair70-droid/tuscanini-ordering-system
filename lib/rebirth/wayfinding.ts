@@ -26,10 +26,13 @@ export const tuscaniniDirectionsUrl =
 
 const embedKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_EMBED_KEY ?? '';
 
-/** Use Google's documented, key-based Embed API when configured; otherwise
- * show a lightweight address-search embed with a working external link beside it.
- * The external route always works independently of iframe availability.
+/** The no-key map uses OpenStreetMap's documented embeddable view of the
+ * Tolip/sports-club neighborhood. Tolip Inn's coordinates are published at
+ * 29.06296 / 31.10091; this is NOT a geocoded Tuscanini doorway or pin.
+ * Keep Google Maps directions address-driven until the merchant shares their
+ * verified Place URL.
  */
-export const tuscaniniMapEmbedUrl = /^[a-zA-Z0-9_-]{12,}$/.test(embedKey)
+export const tuscaniniUsingOsmEmbed = !/^[a-zA-Z0-9_-]{12,}$/.test(embedKey);
+export const tuscaniniMapEmbedUrl = !tuscaniniUsingOsmEmbed
   ? `https://www.google.com/maps/embed/v1/place?key=${encodeURIComponent(embedKey)}&q=${query}&language=ar&region=eg`
-  : `https://maps.google.com/maps?q=${query}&hl=ar&z=16&output=embed`;
+  : 'https://www.openstreetmap.org/export/embed.html?bbox=31.097%2C29.060%2C31.105%2C29.066&layer=mapnik';
