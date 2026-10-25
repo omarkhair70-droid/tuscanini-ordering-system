@@ -8,7 +8,8 @@ type Line={sku:string;name:string;qty:number;price_cents:number;
   selection?:{size?:Variant|null;addons?:Variant[]};notes?:string};
 type Order={id:string;status:string;subtotal_cents:string;created_at:string;items:Line[];
   order_type?:string;table_reference?:string|null;
-  customer_snapshot?:{name?:string;phone?:string;address?:string;generalNotes?:string}};
+  customer_snapshot?:{name?:string;phone?:string;address?:string;generalNotes?:string;
+    deliveryLocation?:{lat:number;lng:number}|null}};
 type Layout='press'|'rail';
 type Filter='all'|'received'|'making'|'ready'|'done';
 type Data={orders?:Order[];error?:string};
@@ -32,6 +33,18 @@ const ACTIONS:Record<string,Array<{key:string;label:string}>>={
 };
 const money=(n:number|string)=>new Intl.NumberFormat('ar-EG',{maximumFractionDigits:2}).format(Number(n)/100)+' ج.م';
 const short=(id:string)=>'#'+id.slice(0,8).toUpperCase();
+/** Exact address chosen by the guest, not the restaurant's own location.
+ * Only validated coordinate pairs are turned into a cashier/driver map link. */
+function deliveryDirections(order:Order):string|null{
+  if(order.order_type!=='delivery')return null;
+  const pin=order.customer_snapshot?.deliveryLocation;
+  if(!pin||typeof pin.lat!=='number'||typeof pin.lng!=='number'||
+    !Number.isFinite(pin.lat)||!Number.isFinite(pin.lng)||
+    pin.lat<22||pin.lat>32||pin.lng<24||pin.lng>37)return null;
+  return 'https://www.google.com/maps/dir/?api=1&destination='+
+    encodeURIComponent(Number(pin.lat.toFixed(6))+','+Number(pin.lng.toFixed(6)));
+}
+
 const matching=(o:Order,f:Filter)=>f==='all'||f==='received'&&o.status==='received'||
   f==='making'&&(o.status==='accepted'||o.status==='preparing')||
   f==='ready'&&o.status==='ready'||
@@ -126,6 +139,10 @@ function OrderTicket({order,preview,pending,onAction,compact=false}:{
     {!compact&&<div className="op-ticket__details">
       {order.customer_snapshot?.phone&&<span>☎ {order.customer_snapshot.phone}</span>}
       {order.customer_snapshot?.address&&<span>{order.customer_snapshot.address}</span>}
+      {deliveryDirections(order)&&<a className="op-ticket__delivery-map"
+        href={deliveryDirections(order)??undefined} target="_blank" rel="noopener noreferrer">
+        افتح موقع العميل ↗
+      </a>}
     </div>}
     {!preview && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(order.id) &&
       <a className="op-ticket__customer-view"
