@@ -96,7 +96,12 @@ function parsePayload(raw:unknown):MenuOrderPayload{
        pin.lat<22||pin.lat>32||pin.lng<24||pin.lng>37)bad('delivery pin bounds');
     deliveryLocation={lat:Number(pin.lat.toFixed(6)),lng:Number(pin.lng.toFixed(6))};
   }
-  const address=customer.orderType==='delivery'?String(customer.address).trim():'';
+  const writtenAddress=customer.orderType==='delivery'?String(customer.address).trim():'';
+  const street=writtenAddress.split(/\nموقع التوصيل:/)[0].trim();
+  const address=deliveryLocation
+    ? [street,'موقع التوصيل: https://maps.google.com/?q='+deliveryLocation.lat+','+deliveryLocation.lng].join('\n')
+    : writtenAddress;
+  if(deliveryLocation&&(!street||address.length>300))bad('delivery description');
   return {requestKey:p.requestKey as string,customer:{
     ...(customer as Customer),address,deliveryLocation
   },items:lines as CreateLine[],tableReference:(p.tableReference as string|null)||null,
