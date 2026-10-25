@@ -36,8 +36,14 @@ export async function createOrderInSupabase(payload: ValidatedOrderPayload): Pro
       }
     : {};
 
+  // Optional, additive Supabase column: never claim the preferred method
+  // is an online payment or settled transfer.
+  const handoffPaymentColumn = process.env.TUSCANINI_SUPABASE_PAYMENT_METHOD_READY === 'yes'
+    ? { payment_method: payload.customer.paymentMethod } : {};
+
   const { data: orderRow, error: orderError } = await admin.from('orders').insert({
     ...coordinateColumns,
+    ...handoffPaymentColumn,
     customer_name: payload.customer.name,
     customer_phone: payload.customer.phone,
     customer_address: payload.customer.address || null,
