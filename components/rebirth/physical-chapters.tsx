@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { MaterialGlyph } from '@/components/rebirth/material-glyph';
+import { tuscaniniDirectionsUrl } from '@/lib/rebirth/wayfinding';
 
 /** Real physical restaurant evidence, not a fictional production or delivery ritual. */
 export function PackagingChapter() {
@@ -76,7 +77,7 @@ export function PlaceChapter() {
         </p>
         <div className="t-place-final__links">
           <Link href="/contact">المكان والتواصل <span aria-hidden="true">↗</span></Link>
-          <Link href="/offers">شوف العروض <span aria-hidden="true">↗</span></Link>
+          <a href={tuscaniniDirectionsUrl} target="_blank" rel="noopener noreferrer">هات الاتجاهات <span aria-hidden="true">↗</span></a>
         </div>
       </div>
       <div className="t-place-final__art" aria-hidden="true">
