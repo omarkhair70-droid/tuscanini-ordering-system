@@ -259,26 +259,22 @@ export function RebirthCheckout() {
                     </p>
                     {customer.orderType==='delivery' && <>
                   <CustomerDeliveryPin onSelect={point => {
-                    // Attach the exact map pin to the existing persisted order
-                    // address field. No new backend schema/transport assumptions.
+                    // The form owns plain directions; the server adds the
+                    // canonical map URL to the merchant-facing order snapshot.
                     const street=customer.address.split('\nموقع التوصيل:')[0].trim();
-                    const mapLink='https://maps.google.com/?q='+point.lat+','+point.lng;
-                    const locationLine='موقع التوصيل: '+mapLink;
-                    const next=[street, locationLine].filter(Boolean).join('\n');
-                    if(next.length>300){
-                      setErrors(x=>({...x,address:'اختصر وصف العنوان عشان نضيف رابط الدبوس.'}));
-                      return;
-                    }
-                    updateCustomer({address:next,deliveryLocation:point});
+                    updateCustomer({address:street,deliveryLocation:point});
                     setErrors(x=>({...x,address:undefined}));
                   }} />
-                  {customer.deliveryLocation && customer.address.includes('موقع التوصيل: https://maps.google.com/?q=') && (
-                    <p className="t-checkout-delivery-pin__selected" role="status">
-                      <span aria-hidden="true">✓</span> تم تحديد الدبوس. موقعه هيتبعت مع عنوان الطلب.
-                    </p>
+                  {customer.deliveryLocation && (
+                    <div className="t-checkout-delivery-pin__selected" role="status">
+                      <span aria-hidden="true">✓</span>
+                      <span>الدبوس محفوظ. تقدر تغيّره لو مكان الاستلام مش مضبوط.</span>
+                      <a href={'https://www.google.com/maps/search/?api=1&query='+customer.deliveryLocation.lat+','+customer.deliveryLocation.lng}
+                        target="_blank" rel="noopener noreferrer">شوف المكان ↗</a>
+                    </div>
                   )}
                   <label>عنوان التوصيل <textarea id="t-checkout-address" rows={3} value={customer.address} aria-invalid={!!errors.address} aria-describedby={errors.address?'t-error-address':undefined}
-                      onChange={e=>{updateCustomer({address:e.target.value,deliveryLocation:e.target.value.includes('موقع التوصيل: https://maps.google.com/?q='+customer.deliveryLocation?.lat+','+customer.deliveryLocation?.lng)?customer.deliveryLocation:null});setErrors(x=>({...x,address:undefined}))}} placeholder="الشارع، المنطقة، علامة مميزة" maxLength={300}/></label>
+                      onChange={e=>{updateCustomer({address:e.target.value});setErrors(x=>({...x,address:undefined}))}} placeholder="الشارع، رقم العمارة، الدور والشقة أو علامة مميزة" maxLength={300}/></label>
                       {errors.address && <p id="t-error-address" className="t-checkout-error">{errors.address}</p>}</>}
                     <label>ملاحظات عامة (اختياري) <textarea rows={2} value={customer.generalNotes} onChange={e=>updateCustomer({generalNotes:e.target.value})} maxLength={500} placeholder="أي تفاصيل تساعد المطعم"/></label>
                   </div>
