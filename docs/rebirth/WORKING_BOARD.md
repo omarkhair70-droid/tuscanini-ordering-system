@@ -1,3 +1,11 @@
+### Oct 25 — Menu and checkout customer-copy / search production pass
+
+- Continued on the existing Tuscanini Rebirth branch/PR after the approved food-detail and Beni Suef story redesign. Inspected the real 390/1440 browser artifacts for populated menu, product options and cart, not just source text.
+- **Menu language:** replaced public-facing `FIND YOUR FOOD`, `PICK A FOOD FAMILY`, `THE INSIDE`, `THE BOX` and other menu photo labels with actual Arabic restaurant copy; kept the original real Tuscanini photographs, menu sections, product IDs, 113 original items and visual mappings unchanged. Scoped Arabic font/direction/mobile label styling to the menu.
+- **Search behavior:** accents/tatweel, Arabic alef/ya variants and non-word separators are normalized; tokens are matched regardless of ordering across a product's name, description and authentic category name. Search still spans the entire menu; selecting a category clears the search and never touches prices/availability. Browser check searches `فَاير تِشْيكن` and confirms the same named items as `تشيكن فاير`.
+- **Cart copy:** replaced visible English workflow headings (including `RESTAURANT CONFIRMATION`, `FINAL REVIEW`, `PAYMENT / NOT CHARGED`) with readable Arabic labels. The existing explicit **no online payment / merchant price confirmation** text, order intake fail-closed logic, customer form validations and submission path are unchanged. Arabic caption typography is styled natively; smoke test rejects old process copy.
+- **Release gate:** require latest-HEAD Home/Backend/Order API and real 320/390/768/1440 browser screenshot checks + SHA-matched READY Vercel before claiming this pass finished. Restaurant cashier integration, payment, catalog signoff and live order enablement remain separate merchant blockers. Do not merge draft PR.
+
 ### Oct 25 — Approved visual concepts translated into live customer sections
 
 - Owner explicitly liked two newly authored conceptual spreads: **«التفاصيل بتتكلم»** (oversized real food with a smaller close-up detail view) and **«تلاقينا في بني سويف»** (yellow circles, smaller BNS stamp, location narrative). The artwork is a **composition reference**, not a menu SKU photo, exact Beni Suef architectural record, or release-ready raster banner.
