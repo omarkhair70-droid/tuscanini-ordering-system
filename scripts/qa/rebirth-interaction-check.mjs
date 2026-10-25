@@ -156,6 +156,8 @@ try {
     await check(packagingLoaded, `${width}px genuine packaging photograph pixels loaded (not just img element)`);
     await check(await page.getByRole('heading',{name:/العلبة.*ليها شكل/}).count()===1, `${width}px separate red packaging chapter renders`);
     await check(await page.getByRole('heading',{name:/تلاقينا.*في بني.*سويف/}).count()===1, `${width}px local yellow place chapter renders`);
+    await check(await page.locator('.t-place-final a[href^="https://www.google.com/maps/dir/"]').count()===1,
+      `${width}px Beni Suef story links to actual map directions`);
     await check(await page.locator('.t-place-final a[href="/contact"]').count()===1, `${width}px place contact route is available`);
     await check(await page.locator('.t-intro').count()===0, `${width}px duplicate intro chapter removed`);
     await check(await page.locator('.t-quick').count()===0, `${width}px redundant large CTA chapter removed`);
@@ -409,6 +411,18 @@ try {
     const aboutOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
     await check(aboutOverflow<=3, `${width}px About no significant horizontal overflow (${aboutOverflow}px)`);
     await page.goto(baseUrl + '/contact', { waitUntil: 'networkidle', timeout:30000 });
+    const liveMap=page.locator('#t-contact-map iframe');
+    const mapLinks=await page.locator('#t-contact-map .t-contact-map-section__actions a').evaluateAll(els=>
+      els.map(el=>({href:el.getAttribute('href'),target:el.getAttribute('target'),rel:el.getAttribute('rel')}))
+    );
+    await check(await liveMap.count()===1 &&
+      (await liveMap.getAttribute('src'))?.includes('maps')===true &&
+      mapLinks.length===2 &&
+      mapLinks.every(el=>el.target==='_blank' && el.rel?.includes('noopener') && el.href?.includes('google.com/maps/')),
+      `${width}px Contact exposes embedded street-level map plus both real Google Maps routes`);
+    const realMapBox=await liveMap.boundingBox();
+    await check(Boolean(realMapBox && realMapBox.width>=200 && realMapBox.height>=290),
+      `${width}px physical contact map has real touch-target dimensions`);
     await check(await page.getByRole('heading', { name:/تعالى.*لحد عندنا/ }).count() === 1,
       `${width}px Contact has dedicated wayfinding identity`);
     await check(await page.locator('body header').count() === 1 &&
