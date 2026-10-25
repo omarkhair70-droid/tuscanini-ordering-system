@@ -152,12 +152,12 @@ export function RebirthCheckout() {
       <ExperienceHeader />
       <main id="t-checkout-main">
         <header className="t-checkout-hero t-shell">
-          <div className="t-checkout-hero__overline"><span>YOUR ORDER / TUSCANINI</span><span>من اختيار الأكل لتأكيده</span></div>
+          <div className="t-checkout-hero__overline"><span>طلبك من توسكانيني</span><span>من اختيار الأكل لتأكيده</span></div>
           <div className="t-checkout-hero__headline"><h1>على<br/><em>مزاجك.</em></h1>
-            <div><span className="t-index">CART → DETAILS → RESTAURANT CONFIRMATION</span>
+            <div><span className="t-index">راجع طلبك وبياناتك</span>
               <p>راجع أكلك وبياناتك، وبعد الإرسال تابع الطلب خطوة بخطوة.</p></div>
           </div>
-          <div className="t-checkout-hero__bottom"><span>01 / REVIEW YOUR FOOD</span><span>{count} قطعة في السلة</span></div>
+          <div className="t-checkout-hero__bottom"><span>01 / راجع اختياراتك</span><span>{count} قطعة في السلة</span></div>
         </header>
 
         <div className="t-shell t-checkout-content">
@@ -165,7 +165,7 @@ export function RebirthCheckout() {
           <ActiveOrderBanner />
           {isHydrated && items.length>0 && settings && !settings.isOrderingOpen &&
             <section className="t-checkout-availability" role="status" aria-labelledby="t-checkout-availability-title">
-              <div><span className="t-index">TUSCANINI / ORDER STATUS</span>
+              <div><span className="t-index">حالة استقبال الطلبات</span>
                 <h2 id="t-checkout-availability-title">الطلبات أونلاين متوقفة حاليًا.</h2>
                 <p>السلة محفوظة عندك وتقدر تعدّل اختياراتك. لتأكيد الأسعار والتوفر أو الطلب مباشرة، تواصل مع المطعم.</p></div>
               <Link href="/contact">تواصل مع المطعم ↗</Link>
@@ -193,7 +193,7 @@ export function RebirthCheckout() {
 
           {isHydrated && !items.length ? (
             <section className="t-checkout-empty" aria-labelledby="t-cart-empty-title">
-              <span className="t-index">YOUR CART / 00</span><h2 id="t-cart-empty-title">لسه مفيش<br/><em>حاجة هنا.</em></h2>
+              <span className="t-index">السلة فاضية</span><h2 id="t-cart-empty-title">لسه مفيش<br/><em>حاجة هنا.</em></h2>
               <p>اختار اللي نفسك فيه من المنيو، وارجع هنا تكمل طلبك.</p>
               <Link href="/menu" className="t-checkout-action">افتح المنيو ↗</Link>
             </section>
@@ -203,7 +203,7 @@ export function RebirthCheckout() {
             <form onSubmit={submit} noValidate className="t-checkout-grid">
               <div className="t-checkout-column">
                 <section className="t-checkout-section" aria-labelledby="t-cart-items-title">
-                  <div className="t-checkout-section__head"><span className="t-index">01 — YOUR FOOD</span><h2 id="t-cart-items-title">طلبك.</h2></div>
+                  <div className="t-checkout-section__head"><span className="t-index">01 — أصنافك</span><h2 id="t-cart-items-title">طلبك.</h2></div>
                   {items.map((line, index) => (
                     <article key={line.lineId} className="t-checkout-item">
                       <div className="t-checkout-item__number" lang="en">{String(index+1).padStart(2, '0')}</div>
@@ -235,7 +235,7 @@ export function RebirthCheckout() {
                 </section>
 
                 {settings?.isOrderingOpen && <section className="t-checkout-section" id="t-checkout-fields" aria-labelledby="t-cart-customer-title">
-                  <div className="t-checkout-section__head"><span className="t-index">02 — ORDER DETAILS</span><h2 id="t-cart-customer-title">تكمل إزاي؟</h2></div>
+                  <div className="t-checkout-section__head"><span className="t-index">02 — بيانات الطلب</span><h2 id="t-cart-customer-title">تكمل إزاي؟</h2></div>
                   <div className="t-checkout-inputs">
                     <label>اسمك <input id="t-checkout-name" type="text" autoComplete="name" value={customer.name} aria-invalid={!!errors.name} aria-describedby={errors.name?'t-error-name':undefined}
                       onChange={e=>{updateCustomer({name:e.target.value});setErrors(x=>({...x,name:undefined}))}} placeholder="الاسم" maxLength={100}/></label>
@@ -261,7 +261,7 @@ export function RebirthCheckout() {
               </div>
 
               <aside id="t-checkout-summary" className="t-checkout-summary" aria-labelledby="t-checkout-summary-title">
-                <span className="t-index">03 — FINAL REVIEW</span>
+                <span className="t-index">03 — المراجعة الأخيرة</span>
                 <h2 id="t-checkout-summary-title">الخلاصة.</h2>
                 <div className="t-checkout-summary__line"><span>نوع الطلب</span><strong>{customer.orderType==='delivery'?'دليفري':'استلام من المطعم'}</strong></div>
                 <div className="t-checkout-summary__line"><span>عدد القطع</span><strong>{count}</strong></div>
@@ -270,7 +270,7 @@ export function RebirthCheckout() {
                   <span>إجمالي الأصناف فقط</span><strong>{money(subtotal)} ج.م</strong>
                 </div>
                 <section className="t-checkout-payment-note" aria-label="التكلفة وطريقة الدفع">
-                  <span className="t-index">PAYMENT / NOT CHARGED</span>
+                  <span className="t-index">طريقة الدفع</span>
                   <h3>الدفع مش بيتم هنا.</h3>
                   <p>هتسجّل طلبك هنا، لكن الدفع مش إلكتروني. اتأكد من طريقة الدفع مع المطعم.</p>
                   <p>{customer.orderType==='pickup'
