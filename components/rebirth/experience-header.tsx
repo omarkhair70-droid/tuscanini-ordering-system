@@ -52,11 +52,12 @@ export function ExperienceHeader() {
   }, [open]);
 
   return (
+    <>
     <header className="t-header">
       <div className="t-header__inner">
         <Link href="/" className="t-logo" aria-label="توسكانيني - الرئيسية" onClick={() => setOpen(false)}>
           <span className="t-logo__latin" lang="en">Tuscanini<span aria-hidden="true">.</span></span>
-          <span className="t-logo__arabic">توسكانيني / بني سويف</span>
+          <span className="t-logo__arabic">الكريب بيتكلم</span>
         </Link>
 
         <nav aria-label="التنقل الرئيسي" className="t-header__links">
@@ -119,5 +120,24 @@ export function ExperienceHeader() {
       </div>
       <ActiveOrderStatusStrip />
     </header>
+    <nav className="t-app-dock" aria-label="التنقل السريع على الموبايل">
+      {[
+        {href:'/', label:'الرئيسية'},
+        {href:'/menu', label:'المنيو'},
+        {href:'/offers', label:'العروض'},
+        {href:'/cart', label:'السلة'},
+      ].map(link => {
+        const active=pathname===link.href;
+        return (
+          <Link key={link.href} href={link.href} className="t-app-dock__link"
+            aria-current={active?'page':undefined} onClick={()=>setOpen(false)}>
+            <MaterialGlyph name={routeMaterialGlyph(link.href)} size={23}/>
+            <span>{link.label}</span>
+            {link.href==='/cart' && itemsCount>0 && <b className="t-app-dock__count" aria-label={itemsCount+' أصناف'}>{itemsCount}</b>}
+          </Link>
+        );
+      })}
+    </nav>
+    </>
   );
 }
