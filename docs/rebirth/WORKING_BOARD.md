@@ -4,6 +4,10 @@
 
 > **Start here in every new chat, and update this SAME FILE after every meaningful feature/review.** This is the current execution and coverage index; historical `00–38`, original research, the HTML reference and technical handoffs remain evidence, not competing "next task" lists. Use the current GitHub PR HEAD and Actions results if newer; never assume this snapshot is the HEAD forever.
 
+### Browser reference correction after image curation (25 Oct 2026)
+
+- First screenshot CI on `6ee44b2` completed build and source/media verification, then stopped in the specifically focused `cm8` screenshot assertion because it still hard-coded old image `B04-02`. The curated Fajita beef image is deliberately `B04-06`. Updated **only that source expectation** in `rebirth-populated-menu-visuals.mjs`; rerun on this HEAD and inspect full browser result. No customer runtime image or price changed in the correction.
+
 ### SKU illustration truth pass — audited actual atlas and removed random matching (25 Oct 2026)
 
 - **User-reported defect reproduced in source:** `crepe-meat`, chicken, specialty crepes, pasta, and pizza silently chose an illustrative frame by a hash of the item's ID from a broad family bank. For example, `cm2` (سوسيس) had no link to a sausage-specific image; `ct2` (دوز كرانشي) could show generic grilled chicken. Independent visual review of the 100-frame full 1440px atlas found actual B04-05 sausage crepe, B09-10 fried crisp strips, and B07-03 pepperoni vs other pizza toppings.

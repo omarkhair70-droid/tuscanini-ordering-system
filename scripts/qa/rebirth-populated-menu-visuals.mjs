@@ -45,7 +45,7 @@ try{
         const focusCard=page.locator('.t-menu-items__grid--photo .t-menu-product').nth(7);
         const focusArt=focusCard.locator('.t-product-art');
         if(await focusArt.getAttribute('data-product-id')!=='cm8' ||
-           await focusArt.getAttribute('data-source-photo-id')!=='B04-02')
+           await focusArt.getAttribute('data-source-photo-id')!=='B04-06')
           throw Error('Focused screenshot source mapping unexpectedly changed');
         await focusCard.scrollIntoViewIfNeeded();
         const natural=await focusArt.locator('img').evaluate(el=>el.decode().then(()=>el.naturalWidth));
@@ -54,7 +54,7 @@ try{
           path:`artifacts/screenshots/menu-on-screen-cm8-${width}.png`,animations:'disabled'
         });
         await page.evaluate(()=>window.scrollTo(0,0));
-        console.log(`MENU PHOTO CAPTURE ${width}px: all ${await catalogPhotos.count()} decoded, cm8/B04-02 focused card also captured at real viewport width`);
+        console.log(`MENU PHOTO CAPTURE ${width}px: all ${await catalogPhotos.count()} decoded, cm8/B04-06 focused card also captured at real viewport width`);
       }
       await page.waitForTimeout(800);
       await page.screenshot({path:`artifacts/screenshots/menu-representative-photo-${width}.png`,fullPage:true,animations:'disabled'});
