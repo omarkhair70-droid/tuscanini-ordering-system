@@ -9,6 +9,7 @@ import { ExperienceHeader } from '@/components/rebirth/experience-header';
 import { ActiveOrderBanner } from '@/components/shared/active-order-banner';
 import { CustomerJourney } from '@/components/rebirth/customer-journey';
 import { CustomerDeliveryPin } from '@/components/rebirth/customer-delivery-pin';
+import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { saveActiveOrder } from '@/lib/active-order-storage';
 
 type RuntimeSettings = { isOrderingOpen: boolean; deliveryEnabled: boolean; whatsappOrderNumber: string; studioMode?: boolean };
@@ -109,8 +110,18 @@ export function RebirthCheckout() {
       const hash=JSON.stringify(data);
       if(!requestRef.current||requestRef.current.hash!==hash)
         requestRef.current={hash,key:'studio-'+crypto.randomUUID()};
+      // Optional verified account identity. Guests retain their existing path.
+      // The server, never localStorage or a posted customer ID, verifies owner.
+      let authToken: string | undefined;
+      try {
+        const {data:{session}}=await getSupabaseBrowserClient().auth.getSession();
+        authToken=session?.access_token;
+      } catch { /* browser can continue with guest checkout */ }
       const response = await fetch('/api/orders', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        method: 'POST', headers: {
+          'Content-Type': 'application/json',
+          ...(authToken ? {Authorization:'Bearer '+authToken} : {}),
+        },
         body: JSON.stringify({ ...data, requestKey:requestRef.current.key }),
       });
       const payload = await response.json() as ApiResult;
