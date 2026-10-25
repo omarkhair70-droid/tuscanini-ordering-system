@@ -53,7 +53,7 @@ export function CustomerAccount() {
       .order('created_at',{ascending:false})
       .limit(30);
     if (addressError) {
-      setError('العناوين المحفوظة مش متاحة حاليًا. راجع إعداد قاعدة البيانات.');
+      setError('العناوين المحفوظة مش متاحة دلوقتي. جرّب تاني بعد شوية.');
       setAddresses([]);
     } else {
       setAddresses((data??[]) as SavedAddress[]);
@@ -68,7 +68,7 @@ export function CustomerAccount() {
       if (!response.ok) {
         setOrders([]);
         setHistoryMessage(response.status===503
-          ? 'سجل الطلبات بيتجهز للربط بحسابك.' : 'تعذّر تحميل طلباتك دلوقتي.');
+          ? 'مش قادرين نعرض طلباتك دلوقتي. جرّب تاني بعد شوية.' : 'تعذّر تحميل طلباتك دلوقتي.');
       } else {
         setOrders(result.orders??[]);
         setHistoryMessage('');
@@ -252,7 +252,7 @@ export function CustomerAccount() {
             <p>{new Date(order.placed_at).toLocaleDateString('ar-EG')} · {order.order_type==='delivery'?'دليفري':'استلام'} · {order.total_estimate} ج.م</p>
             <Link href={'/order-success?orderId='+encodeURIComponent(order.id)}>شوف حالة الطلب ↗</Link>
           </article>):
-          <p>أول طلب تعمله وأنت داخل حسابك هيظهر هنا بعد ربط سجل الطلبات.</p>}
+          <p>لسه مفيش طلبات في حسابك. افتح المنيو واختار اللي نفسك فيه.</p>}
       </section>
     </>}
   </div>;
