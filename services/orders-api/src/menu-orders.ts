@@ -7,7 +7,9 @@ type Choice={id:string;label:string;price_cents:number};
 type CatalogRow={product_id:string;name:string;category_slug:string;price_from_cents:number;
   available:boolean;sizes:Choice[];addons:Choice[]};
 type CreateLine={kind:'product';productId:string;sizeId:string|null;addonIds:string[];quantity:number;itemNotes:string};
-type Customer={name:string;phone:string;address:string;orderType:'delivery'|'pickup';generalNotes:string};
+type DeliveryLocation={lat:number;lng:number};
+type Customer={name:string;phone:string;address:string;deliveryLocation:DeliveryLocation|null;
+  orderType:'delivery'|'pickup';generalNotes:string};
 export type MenuOrderPayload={requestKey:string;customer:Customer;items:CreateLine[];tableReference:string|null;expectedSubtotalCents:number};
 export type MenuProductInput={
  productId:string;name:string;categorySlug:string;priceFromCents:number;available:boolean;
@@ -82,8 +84,22 @@ function parsePayload(raw:unknown):MenuOrderPayload{
        !v.addonIds.every(x=>typeof x==='string'&&x.length>0&&x.length<=64)||
        new Set(v.addonIds).size!==v.addonIds.length||!short(v.itemNotes,500))bad('line variant');
   }
-  return {requestKey:p.requestKey as string,customer:{...(customer as Customer),address:customer.orderType==='delivery'?String(customer.address).trim():''},
-    items:lines as CreateLine[],tableReference:(p.tableReference as string|null)||null,
+  // The service enforces the same immutable Egypt coordinate bounds as Next
+  // and stores this pair inside customer_snapshot, not just a free-text URL.
+  let deliveryLocation:DeliveryLocation|null=null;
+  if(customer.orderType==='delivery' && customer.deliveryLocation!==undefined &&
+     customer.deliveryLocation!==null){
+    if(typeof customer.deliveryLocation!=='object'||Array.isArray(customer.deliveryLocation))bad('delivery pin');
+    const pin=customer.deliveryLocation as Record<string,unknown>;
+    if(typeof pin.lat!=='number'||typeof pin.lng!=='number'||
+       !Number.isFinite(pin.lat)||!Number.isFinite(pin.lng)||
+       pin.lat<22||pin.lat>32||pin.lng<24||pin.lng>37)bad('delivery pin bounds');
+    deliveryLocation={lat:Number(pin.lat.toFixed(6)),lng:Number(pin.lng.toFixed(6))};
+  }
+  const address=customer.orderType==='delivery'?String(customer.address).trim():'';
+  return {requestKey:p.requestKey as string,customer:{
+    ...(customer as Customer),address,deliveryLocation
+  },items:lines as CreateLine[],tableReference:(p.tableReference as string|null)||null,
     expectedSubtotalCents:p.expectedSubtotalCents as number};
 }
 async function existing(pool:Pool,key:string,hash:string):Promise<RecordedOrder|null>{
