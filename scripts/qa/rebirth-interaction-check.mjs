@@ -590,7 +590,7 @@ try {
       const status=document.querySelector('.t-checkout-status')?.textContent??'';
       const submit=document.querySelector('button.t-checkout-action--full[type="submit"]');
       const field=document.querySelector('#t-checkout-name');
-      const closed=status.includes('موقف استقبال الطلبات')||status.includes('تعذر التحقق')||status.includes('مش متاح');
+      const closed=status.includes('متوقف')||status.includes('تعذر التحقق')||status.includes('مش متاح');
       const open=status.includes('جاهز تسجل');
       return {closed,open,submit:!!submit,disabled:submit?.disabled??false,
         field:!!field,summary:!!document.querySelector('.t-checkout-summary')};
@@ -876,7 +876,8 @@ try {
       const pickupRadio=guarded.getByRole('radio',{name:'استلام من المطعم'});
       await pickupRadio.waitFor({state:'visible',timeout:8000});
       await check(await deliveryRadio.isDisabled() && await pickupRadio.isChecked() &&
-        await guarded.getByText(/الطلب متاح للاستلام من المطعم فقط/).count()===1 &&
+        await guarded.getByText('دليفري (غير متاح حاليًا)').count()===1 &&
+        await guarded.getByText(/هتستلم بنفسك من المطعم/).count()===1 &&
         await guarded.locator('#t-checkout-address').count()===0,
         '390px stored delivery order converts to pickup when merchant delivery is disabled');
       await check(!(await guarded.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).isChecked()),
