@@ -8,6 +8,7 @@ export const defaultCartState: CartState = {
     name: '',
     phone: '',
     address: '',
+    deliveryLocation: null,
     // Pickup is the safe default until delivery zones/fees are approved.
     orderType: 'pickup',
     generalNotes: '',
@@ -33,6 +34,15 @@ export function loadCartState(): CartState {
       customer: {
         ...defaultCartState.customer,
         ...(parsed.customer ?? {}),
+        // Old saved carts remain loadable, but a malformed coordinate never
+        // becomes a selected delivery point in the new cart model.
+        deliveryLocation: (() => {
+          const pin = parsed.customer?.deliveryLocation;
+          return pin && typeof pin.lat === 'number' && typeof pin.lng === 'number' &&
+            Number.isFinite(pin.lat) && Number.isFinite(pin.lng) &&
+            pin.lat >= 22 && pin.lat <= 32 && pin.lng >= 24 && pin.lng <= 37
+            ? { lat: Number(pin.lat.toFixed(6)), lng: Number(pin.lng.toFixed(6)) } : null;
+        })(),
       },
       tableReference: typeof parsed.tableReference === 'string' ? parsed.tableReference : null,
     };
