@@ -57,7 +57,7 @@ export function ExperienceHeader() {
       <div className="t-header__inner">
         <Link href="/" className="t-logo" aria-label="توسكانيني - الرئيسية" onClick={() => setOpen(false)}>
           <span className="t-logo__latin" lang="en">Tuscanini<span aria-hidden="true">.</span></span>
-          <span className="t-logo__arabic">الكريب بيتكلم</span>
+          <span className="t-logo__arabic">كريب • بيتزا</span>
         </Link>
 
         <nav aria-label="التنقل الرئيسي" className="t-header__links">
