@@ -457,3 +457,33 @@
   .t-menu-page .t-menu-intro .t-menu-search{padding:10px 12px}
   .t-menu-page .t-menu-intro__photo-pair{height:170px}
 }
+
+
+/* Customer-facing Arabic photo captions and menu wayfinding: never inherit
+   English Anton type or LTR alignment after replacing editorial placeholders. */
+.t-menu-page .t-menu-intro__label span:first-child{
+  direction:rtl;
+  font:800 12px/1.5 "IBM Plex Sans Arabic",Tahoma,Arial,sans-serif;
+  letter-spacing:0;
+}
+.t-menu-page .t-menu-intro__photo figcaption{
+  direction:rtl;text-align:right;letter-spacing:0;
+  font:800 clamp(11px,1.1vw,14px)/1.55 "IBM Plex Sans Arabic",Tahoma,Arial,sans-serif;
+  padding:8px 12px;
+  background:rgba(23,21,17,.93);
+  color:var(--paper);
+}
+.t-menu-page .t-menu-intro__copy>.t-index{
+  color:var(--yellow);
+  font:800 12px/1.5 "IBM Plex Sans Arabic",Tahoma,Arial,sans-serif;
+  letter-spacing:0;
+}
+.t-menu-page .t-menu-categories__heading .t-index,
+.t-menu-page .t-menu-family-context .t-index{
+  font:800 12px/1.5 "IBM Plex Sans Arabic",Tahoma,Arial,sans-serif;
+  letter-spacing:0;
+}
+@media(max-width:720px){
+  .t-menu-page .t-menu-intro__photo figcaption{font-size:11px;padding:7px 9px}
+  .t-menu-page .t-menu-intro__label span:first-child{font-size:11px}
+}
