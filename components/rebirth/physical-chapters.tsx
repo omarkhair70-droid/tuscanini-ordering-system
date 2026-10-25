@@ -30,7 +30,7 @@ export function PackagingChapter() {
         />
         <span className="t-packaging__photo-label">{packageActive ? 'العلبة والورق' : 'الأكل من جوّه'}</span>
         <div className="t-packaging__view-caption" role="status">
-          {packageActive ? 'علب توسكانيني الحمراء وورق التغليف.' : 'كريب توسكانيني، والحشو واضح من أول نظرة.'}
+          {packageActive ? 'علب توسكانيني الحمراء وورق التغليف.' : 'ودي كريبات تانية من توسكانيني، شوف الحشو من جوّه.'}
         </div>
         <div className="t-packaging__photo-mark" aria-hidden="true">
           <MaterialGlyph name={packageActive ? 'box' : 'cut'} size={72}/>
