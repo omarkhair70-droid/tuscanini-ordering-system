@@ -1,3 +1,8 @@
+### Public-facing price disclaimer assertion update after the POS additions (25 Oct 2026)
+
+- Browser pass on `47ade305` successfully reached checkout/media and interactive smoke but failed exactly three obsolete Arabic copy assertions on each of 320, 390, 768, 1440. They still searched for the removed phrase “المنيو السابق”. Changed these three **test-only** expectations to the actual short buyer-facing “الأسعار والتوافر بيتأكدوا مع المطعم” and “تأكيد السعر والتوافر مع المطعم قبل تسجيل الطلب”. This preserves genuine price disclosure without old editorial jargon, and changes no live product, order, image, or payment behavior.
+- Home + dedicated PostgreSQL Order API + Backend V2 all independently passed on the pre-test-fix release code; newest screenshot CI remains required.
+
 ### Product detail film after consumer-copy cleanup (25 Oct 2026)
 
 - On `8240ff3`, TypeScript/Home/Backend V2/Dedicated API all passed, but the optional browser motion film still expected the **removed** customer-facing phrase “الأسعار حسب المنيو السابق.”. Updated film to assert the replacement neutral customer message about confirming price and availability. Media provenance stays in internal metadata instead of public marketing copy. No runtime UI/product mapping changed.

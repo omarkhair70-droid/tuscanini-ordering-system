@@ -181,7 +181,7 @@ try {
       `${width}px all sixteen authentic categories and All carry drawn SVG family pictograms`);
     await check(await page.locator('.t-menu-categories__scroller button').count()===17,
       `${width}px historical Tuscanini menu has 16 original category filters plus All`);
-    await check(await page.locator('[data-visual-disclosure="menu"]').getByText(/الأسعار من المنيو السابق/).count()===1,
+    await check(await page.locator('[data-visual-disclosure="menu"]').getByText(/الأسعار والتوافر بيتأكدوا مع المطعم/).count()===1,
       `${width}px original old-price menu is transparently source-labelled`);
     await check(await page.locator('.t-menu-product').count()===20,
       `${width}px 113-item original menu is populated and paginated, not an unavailable dummy`);
@@ -279,7 +279,7 @@ try {
        await check(detailPhotoWidth>=135 && detailPhotoWidth<=160,
          '390px product detail illustration carries food imagery without hiding size/addon controls');
      }
-     await check(await page.locator('.t-product-dialog').getByText(/الأسعار حسب المنيو السابق/).count()===1,
+     await check(await page.locator('.t-product-dialog').getByText(/تأكيد السعر والتوافر مع المطعم قبل تسجيل الطلب/).count()===1,
       `${width}px size/addon picker states where its historical prices came from`);
     await check(await page.locator('.t-product-dialog__options label').count()>1,
       `${width}px old crepe is populated with real original size and addon controls`);
@@ -319,7 +319,7 @@ try {
       (generatedMediaReady
         ? await photoSheet.locator('[data-kind="generated-illustrative"]').count()===1
         : await photoSheet.locator('[data-kind="representative-stock"]').count()===1) &&
-        await photoSheet.getByText('الأسعار حسب المنيو السابق.').count()===1 &&
+        await photoSheet.getByText('تأكيد السعر والتوافر مع المطعم قبل تسجيل الطلب.').count()===1 &&
         await photoSheet.getByText(/مولّدة بالذكاء الاصطناعي|مش تصوير الصنف|Pexels/).count()===0,
       `${width}px product sheet preserves original size/addons and correctly declares generated versus stock food photography`);
     await page.getByRole('button',{name:'إغلاق تفاصيل المنتج'}).click();
