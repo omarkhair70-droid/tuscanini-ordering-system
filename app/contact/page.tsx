@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { ExperienceHeader } from '@/components/rebirth/experience-header';
 import { ExperienceFooter } from '@/components/rebirth/experience-footer';
 import { getRuntimePublicSiteSettings } from '@/lib/site-settings-runtime';
+import { tuscaniniDirectionsUrl, tuscaniniMapEmbedUrl, tuscaniniMapSearchUrl } from '@/lib/rebirth/wayfinding';
 import '../rebirth-home.css';
 import '../rebirth-contact.css';
 
@@ -49,16 +50,16 @@ export default async function ContactPage() {
             <div className="t-contact-hero__main">
               <div className="t-contact-hero__overline"><span>المكان والتواصل</span><span lang="en">TUSCANINI / BENI SUEF</span></div>
               <div>
-                <span className="t-index">01 — FIND US / TALK TO US</span>
+                <span className="t-index">01 / تعالى لحد عندنا</span>
                 <h1 id="t-contact-title">تعالى<br/><em>لحد عندنا.</em></h1>
                 <p>ده مكاننا وطرق التواصل معانا.</p>
               </div>
-              <a className="t-contact-hero__jump" href="#t-contact-methods">كل طرق التواصل <span aria-hidden="true">↓</span></a>
+              <div className="t-contact-hero__wayfinding"><a className="t-contact-hero__jump" href="#t-contact-map">شوف الخريطة <span aria-hidden="true">↓</span></a><a className="t-contact-hero__jump" href="#t-contact-methods">طرق التواصل <span aria-hidden="true">↓</span></a></div>
             </div>
             <div className="t-contact-hero__place">
               <span className="t-contact-hero__placemark" lang="en">BS / 01</span>
               <div className="t-contact-hero__place-copy">
-                <span className="t-index" lang="en">WHERE TO FIND US</span>
+                <span className="t-index">توسكانيني على الخريطة</span>
                 <h2>بني<br/>سويف.</h2>
                 <p>{address}</p>
               </div>
@@ -70,9 +71,31 @@ export default async function ContactPage() {
             </div>
           </div>
         </section>
+        <section className="t-contact-map-section t-shell" id="t-contact-map" aria-labelledby="t-contact-map-title">
+          <div className="t-contact-map-section__head">
+            <div><span className="t-index">02 / تعالى لحد عندنا</span>
+              <h2 id="t-contact-map-title">على <em>الخريطة.</em></h2>
+              <p>{address}</p>
+            </div>
+            <div className="t-contact-map-section__actions">
+              <a href={tuscaniniDirectionsUrl} target="_blank" rel="noopener noreferrer">هات الاتجاهات <span aria-hidden="true">↗</span></a>
+              <a href={tuscaniniMapSearchUrl} target="_blank" rel="noopener noreferrer">افتح خرائط Google <span aria-hidden="true">↗</span></a>
+            </div>
+          </div>
+          <div className="t-contact-map-section__canvas">
+            <iframe
+              title="خريطة شارع البحر عند سور نادي توليب في بني سويف"
+              src={tuscaniniMapEmbedUrl}
+              loading="lazy"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            />
+          </div>
+          <p className="t-contact-map-section__note">اتبع العنوان المكتوب، أو افتح الاتجاهات على موبايلك.</p>
+        </section>
         <section className="t-contact-methods t-shell" id="t-contact-methods" aria-labelledby="t-contact-methods-title">
           <div className="t-contact-methods__head">
-            <span className="t-index" lang="en">02 / DIRECT CONTACT</span>
+            <span className="t-index">03 / كل طرق التواصل</span>
             <div><h2 id="t-contact-methods-title">كل الطرق <em>مباشرة.</em></h2>
               <p>سؤال عن طلبك أو عن المكان؟ كلمنا بالطريقة الأنسب ليك.</p>
             </div>
