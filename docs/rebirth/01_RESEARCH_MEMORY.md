@@ -70,3 +70,32 @@ These expose product truths and constraints, not validated user preferences. Tre
 
 ## Research-to-production loop (preserve permanently)
 REALITY → candidate thesis → contextual reference decomposition → behavioral/product translation → **second narrower reference research** → small implementation study → screenshot/phone QA → refine/reject → record decision. If a new issue is discovered, search that ISSUE, not all restaurant websites from scratch. Maintain citation/source and evidence-status discipline at every pass.
+
+
+## 25 Oct 2026 — Evidence-led restaurant reference comparison (Egypt + international)
+
+This is a **transferable-principle ledger** for the *existing* Tuscanini website, not a proposal for a new website or an award/rating claim about Tuscanini. Public website and editorial/UX materials checked on 25 Oct 2026. Owner's actual 320px/390px screenshot artifact from verified prior CI is the baseline for changes.
+
+| Reference | Distinct strength / publicly observable behavior | Apply to Tuscanini | Do not copy |
+|---|---|---|---|
+| [Zooba Egypt](https://zoobaeats.com/) | Colorful, unmistakably Egyptian brand voice and food-world; online delivery links point to external ordering partners | Protect Tuscanini's local Beni Suef street-food character and original typography | An external aggregator dependence if direct order integration is eventually approved |
+| [Pizza Station Egypt](https://pizzastationeg.com/home) | Real large menu, search, sale bundles and branch/order-type entry | Put real products and categories close to search on a phone; search and browsing are distinct, immediate paths | Promotions or prices not supplied by Tuscanini |
+| [Buffalo Burger Egypt](https://buffaloburger.com/branches/all/home) | Quick access to featured food/ordering and loyalty/reorder app claims | Strong visible first purchase + credible return path, only after real account/history exists | Invented loyalty points/past orders |
+| [Khufu's / MONARQ](https://monarqeg.com/case-studies/khufus/) | Egyptian location-specific art direction; case study reports Awwwards recognition (studio claim, not independently scored here) | Keep site place-based and visually authored | Long cinematic hero that delays a hungry takeaway customer |
+| [Shake Shack](https://shakeshack.com/) | Order action present with product campaigns and rich food images | Protect immediate order shortcut and helpful food story | Campaign copy, recipes, promotions or restaurant assets |
+| [Chipotle](https://www.chipotle.com/order/find-a-chipotle) | Pickup vs delivery and location are decisions before fulfillment | Make pickup truthful, delivery disabled unless zones and fees confirmed | Artificial address/service-area choice at a single unapproved branch |
+| [CAVA](https://cava.com/) | Food customization / Add to Bag as clear dedicated flow | Compact, keyboard/touch-ready crepe-size and extra groups + live total | Ingredient or diet/nutrition claims with no merchant evidence |
+| [Domino's Tracker](https://ir.dominos.com/news-releases/news-release-details/dominosr-updates-its-iconic-industry-first-tracker-even-better) | March 2026 improved genuine order progress and ready-time information | Only show POS-backed step/status, not fabricated timers/ETA | Pretend cashier acknowledgment or push notifications |
+
+**External scored visual reference:** [Simply Delicious, CSS Design Awards](https://www.cssdesignawards.com/sites/simply-delicious/49692/) reports a **7.20 final judges' score** (July 2026), in the *food/drink* category, for a mobile-first product experience; this is a rating for THAT site, never a claim about Tuscanini. Use as a reminder to evaluate combined UI, UX and responsiveness, not to chase animations. [Baymard's Aug 13, 2026 food-delivery benchmark](https://baymard.com/research-articles/food-delivery-and-takeout-ux-benchmark-2026) benchmarks eight major mobile experiences: findings foreground reordering, clearer customization, orientation/back paths and fulfillment truth. A design award and a takeout conversion experience must be evaluated on separate axes.
+
+### Actual Tuscanini mobile finding and concrete pass
+
+On the **genuine 320px and 390px first-viewport screen captures** at `e71b7ff4`, Menu spent substantially more initial vertical space on the title and overlapping genuine food photos than on letting customers reach the first SKU; at 390px the category selector/first row appeared after a substantial scroll. The Home's expressive editorial story should stay, but /menu is a **shopping mode**. Implemented a mobile-only condensation in `app/rebirth-menu.css` and a regression at 320/390px requiring the first product to appear earlier by an explicit page-top threshold; retained the two true food photos, fast search, category icons, brand type, 20-card pagination and accessibility. Check latest browser screenshots for exact outcome and adjust if necessary; no physical-device claims based on emulation.
+
+### Ranked delta, compared with research and existing brief
+
+- **P0 before any public launch:** verify CURRENT 113 merchant prices/size choices/stock and modifier compatibility; resolve four ambiguous POS extras; connect real restaurant cashier and verify *received/printed* acknowledgment, duplicate-proof retry, status transfer; test on-site cashier PC and two customer devices; confirm live ordering flags/payment/delivery and legal/service policy with merchant.
+- **P1 already being polished:** mobile first-product distance and scanability; search/filter speed; clear prominent checkout pickup status; large touch controls; source-correct pictures + any six knowingly held visuals; mobile real-network image/LCP and keyboard/reduced-motion checks.
+- **P2 subsequent enhancement:** personalized quick reorder/history only after authenticated real records and customer consent, helpful allergen facts only from merchant evidence, optional loyalty only after it exists.
+- **Merge/cutover:** Vercel project's `main` is wired to production; green CI on the draft branch is NOT approval to replace the main deployment with historically priced shop content. Keep draft / no merge until shop data and owner publication permission, separate from technical confidence. Never equate a staged Oracle order with the existing restaurant POS.
