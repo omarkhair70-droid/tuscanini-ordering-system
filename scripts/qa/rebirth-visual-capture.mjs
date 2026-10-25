@@ -9,7 +9,7 @@ import { mkdir } from 'node:fs/promises';
  */
 const base = process.env.REBIRTH_BASE_URL ?? 'http://localhost:3000';
 const combos = [
-  ...['','menu','offers','food-finder','about','contact','cart','order-success','reviews','complaints']
+  ...['','menu','offers','food-finder','about','contact','cart','order-success','reviews','complaints','account']
     .flatMap(route => [390,1440].map(width => ({route,width,height:width===390?844:900}))),
   ...[320,768].map(width => ({route:'',width,height:width===320?720:1024})),
   ...['menu','offers','about','contact','reviews','complaints']
