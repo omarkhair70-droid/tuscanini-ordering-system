@@ -72,6 +72,20 @@ test('dedicated Tuscanini service has authenticated intake, durable orders and s
       'idempotency key cannot be reused for a different payload');
     const saved=await pool.query('SELECT customer_snapshot FROM tuscanini.orders WHERE id=$1',[orderId]);
     assert.equal(saved.rows[0].customer_snapshot.address,'','No old delivery address in pickup order');
+    assert.equal(saved.rows[0].customer_snapshot.deliveryLocation,null,
+      'Pickup strips location data even from old customer drafts');
+    const deliveryInput={...input,requestKey:'studio-'+randomUUID(),
+      customer:{...input.customer,orderType:'delivery',
+        address:'شارع البحر، عمارة ٥، الدور الثاني\nموقع التوصيل: https://maps.google.com/?q=29.07344,31.09811',
+        deliveryLocation:{lat:29.07344,lng:31.09811}}};
+    const delivery=await req('/v1/orders','POST',deliveryInput);
+    assert.equal(delivery.status,200,JSON.stringify(delivery.body));
+    const snapshot=await pool.query('SELECT customer_snapshot FROM tuscanini.orders WHERE id=$1',[delivery.body.id]);
+    assert.deepEqual(snapshot.rows[0].customer_snapshot.deliveryLocation,{lat:29.07344,lng:31.09811},
+      'Exact customer-selected coordinates survive in immutable PostgreSQL order snapshot');
+    const badPin=await req('/v1/orders','POST',{...deliveryInput,requestKey:'studio-'+randomUUID(),
+      customer:{...deliveryInput.customer,deliveryLocation:{lat:Infinity,lng:31.09811}}});
+    assert.equal(badPin.status,400,'Invalid delivery pin must never be accepted');
     const ticket=await req('/v1/orders/'+orderId+'/track');
     assert.equal(ticket.body.order.status,'received');
     assert.equal(JSON.stringify(ticket.body).includes('01012345678'),false,'tracking never leaks contact');
