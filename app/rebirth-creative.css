@@ -159,3 +159,113 @@
 .t-home-page .t-material__masthead h2{font-size:clamp(54px,12vw,85px)}
 .t-home-page .t-material__bridge{margin-top:31px;padding-top:25px}
 }
+
+
+/* Tuscanini / customer-facing food hero finish (25 Oct).
+   Keep the two authentic crepe images and tactile overlap, but make food the
+   subject, give the merchant phrase a deliberate physical mark, and remove
+   Latin-display typography from the Arabic food/photo captions. */
+.t-page .t-hero__grid{
+  gap:clamp(18px,3.1vw,52px);
+}
+.t-page .t-hero h1{
+  font-size:clamp(78px,10.8vw,164px);
+  line-height:.97;
+}
+.t-page .t-hero__voice{
+  display:inline-flex;
+  align-items:baseline;
+  flex-wrap:wrap;
+  gap:4px 12px;
+  max-width:100%;
+  margin-top:clamp(20px,2.5vw,32px);
+  padding:9px 18px 10px;
+  background:var(--red);
+  color:var(--paper);
+  box-shadow:5px 5px 0 var(--yellow);
+  transform:rotate(-1deg);
+  font:800 clamp(17px,1.8vw,24px)/1.6 "Changa",Tahoma,sans-serif;
+  letter-spacing:0;
+}
+.t-page .t-hero__voice span{
+  font-size:.78em;
+  opacity:.93;
+}
+.t-page .t-hero__voice strong{
+  color:var(--paper);
+  font-size:1.08em;
+  font-weight:800;
+  letter-spacing:0;
+}
+.t-page .t-hero__voice + .t-hero__sub{
+  margin-top:clamp(23px,2.6vw,36px)!important;
+}
+.t-hero__underprint{opacity:.045}
+.t-hero__backplate{right:7%;top:4%;width:61%;height:59%;transform:rotate(3.5deg)}
+.t-hero__backplate .t-real-food-photo__img{
+  object-position:50% 55%;
+  filter:saturate(.98);
+}
+.t-page .t-hero__photo{
+  left:2%;bottom:9%;width:82%;height:65%;
+  transform:rotate(-2.5deg);
+}
+.t-page .t-hero__photo .t-real-food-photo__img{
+  object-position:50% 72%;
+}
+.t-page .t-hero__stamp{
+  left:-4%;bottom:10%;
+  width:122px;height:122px;
+  padding:14px;
+  font:800 17px/1.4 "Changa",Tahoma,sans-serif;
+  letter-spacing:0;
+  text-align:center;
+  transform:rotate(-11deg);
+}
+.t-page .t-hero__photo-label{
+  right:-1%;bottom:14%;
+  padding:9px 17px;
+  font:800 17px/1.5 "Changa",Tahoma,sans-serif;
+  letter-spacing:0;
+  transform:rotate(4deg);
+}
+.t-page .t-hero__visualnote{
+  right:8%;bottom:1%;
+  font:700 12px/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  letter-spacing:0;
+  direction:rtl;
+}
+.t-page .t-discover__photo-index{
+  font:700 13px/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  letter-spacing:0;
+  direction:rtl;
+}
+.t-gallery-dialog__header span{
+  font:700 13px/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  letter-spacing:0;
+}
+@media(max-width:1080px){
+  .t-page .t-hero h1{font-size:clamp(77px,10.5vw,126px)}
+  .t-page .t-hero__stamp{width:103px;height:103px;font-size:14px}
+}
+@media(max-width:720px){
+  .t-page .t-hero__grid{gap:28px}
+  .t-page .t-hero h1{font-size:clamp(72px,19vw,122px);line-height:.96}
+  .t-page .t-hero__voice{
+    margin-top:21px;
+    padding:7px 12px 8px;
+    gap:3px 9px;
+    box-shadow:4px 4px 0 var(--yellow);
+    font-size:clamp(16px,4.5vw,20px);
+  }
+  .t-page .t-hero__voice + .t-hero__sub{margin-top:20px!important}
+  .t-hero__backplate{right:5%;top:4%;width:62%;height:62%}
+  .t-page .t-hero__photo{left:3%;bottom:7%;width:82%;height:66%}
+  .t-page .t-hero__stamp{left:-2%;bottom:9%;width:88px;height:88px;font-size:12px;padding:8px}
+  .t-page .t-hero__photo-label{font-size:13px;right:-1%;bottom:12%;padding:6px 9px}
+  .t-page .t-hero__visualnote{font-size:10px;right:5%}
+}
+@media(max-width:370px){
+  .t-page .t-hero h1{font-size:clamp(66px,19vw,73px)}
+  .t-page .t-hero__stamp{width:78px;height:78px;font-size:11px}
+}
