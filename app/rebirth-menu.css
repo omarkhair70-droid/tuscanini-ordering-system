@@ -487,3 +487,75 @@
   .t-menu-page .t-menu-intro__photo figcaption{font-size:11px;padding:7px 9px}
   .t-menu-page .t-menu-intro__label span:first-child{font-size:11px}
 }
+
+
+/* MOBILE-ORDERING PASS / measured on genuine 320/390px browser screenshots.
+   The Home stays expressive; a visitor already in /menu must get to their food
+   and category controls quickly, without stripping the approved photography. */
+@media (max-width: 720px) {
+  .t-menu-page .t-menu-intro { padding-top:12px; padding-bottom:13px; }
+  .t-menu-page .t-menu-intro__label { padding-bottom:8px; }
+  .t-menu-page .t-menu-intro__headline {
+    padding-top:15px; gap:8px;
+  }
+  .t-menu-page .t-menu-intro__copy > .t-index {
+    font-size:10px;line-height:1.3;
+  }
+  .t-menu-page .t-menu-intro__copy h1 {
+    font-size:clamp(44px,10.5vw,66px);
+    line-height:1.08; margin-top:9px;
+  }
+  .t-menu-page .t-menu-intro__copy > p {
+    font-size:13px;line-height:1.55;
+    margin-top:10px;max-width:380px;
+  }
+  .t-menu-page .t-menu-intro__actions {
+    margin-top:12px;
+    gap:9px 18px;
+  }
+  .t-menu-page .t-menu-intro__actions .t-menu-intro__jump {
+    min-height:42px;display:inline-flex;align-items:center;
+  }
+  .t-menu-page .t-menu-intro .t-menu-search {
+    margin-top:9px; padding:11px 14px;
+  }
+  .t-menu-page .t-menu-intro .t-menu-search label {
+    font-size:16px;line-height:1.4;margin-bottom:3px;
+  }
+  .t-menu-page .t-menu-intro .t-menu-search input {
+    padding-block:5px 10px;min-height:39px;
+  }
+  .t-menu-page .t-menu-intro__photo-pair {
+    height:clamp(118px,35vw,175px); margin-top:8px;
+    width:100%;max-width:430px;
+  }
+  .t-menu-page .t-menu-intro__photo--main {
+    width:61%;height:97%;right:6%;top:0;
+  }
+  .t-menu-page .t-menu-intro__photo--accent {
+    width:41%;height:69%;left:0;bottom:9%;
+  }
+  .t-menu-page .t-menu-intro__bottom {
+    margin-top:8px;gap:12px;font-size:11px;
+  }
+  .t-menu-page .t-menu-content { padding-top:16px; }
+  .t-menu-page .t-menu-source-note { margin-bottom:7px; }
+  .t-menu-page .t-menu-categories { padding-top:15px; }
+  .t-menu-page .t-menu-categories__scroller {
+    padding-block:11px 15px;
+    scroll-padding-inline:20px;
+  }
+  .t-menu-page .t-menu-items { padding-top:20px; }
+  .t-menu-page .t-menu-items__heading { margin-bottom:16px; }
+  .t-menu-page .t-menu-items__heading h2 {
+    font-size:clamp(37px,9vw,57px);margin-top:5px;
+  }
+  .t-menu-page #t-menu-search,
+  .t-menu-page #t-menu-categories,
+  .t-menu-page #t-menu-items-title { scroll-margin-top:92px; }
+}
+@media(max-width:370px) {
+  .t-menu-page .t-menu-intro__copy h1 { font-size:43px; }
+  .t-menu-page .t-menu-intro__photo-pair { height:118px; }
+  .t-menu-page .t-menu-intro__bottom { flex-wrap:wrap;margin-top:3px; }
+}
