@@ -320,3 +320,20 @@
   }
   .t-checkout-delivery-pin__surface>header{padding:9px 14px}
 }
+
+/* One clear pay-on-handoff choice. The radio preference is not a payment. */
+.t-checkout-payment-methods{border:0;padding:0;margin:15px 0 12px;display:grid;gap:9px}
+.t-checkout-payment-methods legend{font:750 13px/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif;margin-bottom:10px}
+.t-checkout-payment-method{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;min-height:60px;
+  border:1px solid #ccbca9;border-radius:14px;
+  background:#fffaf0;cursor:pointer;
+}
+.t-checkout-payment-method:has(input:checked){border-color:#171511;background:#f7e7ae;box-shadow:inset 0 0 0 1px #171511}
+.t-checkout-payment-method:focus-within{outline:3px solid #2774d0;outline-offset:2px}
+.t-checkout-payment-method input{width:20px;height:20px;accent-color:#171511;flex:none}
+.t-checkout-payment-method__copy{display:flex;flex-direction:column;gap:2px;min-width:0}
+.t-checkout-payment-method__copy strong{font:800 15px/1.4 "IBM Plex Sans Arabic",Tahoma,sans-serif}
+.t-checkout-payment-method__copy small{font:500 12px/1.6 "IBM Plex Sans Arabic",Tahoma,sans-serif;color:#605748}
+@media(max-width:720px){.t-checkout-payment-method{min-height:58px}}
