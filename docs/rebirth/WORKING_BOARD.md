@@ -1,3 +1,10 @@
+### POS add-ons, restaurant voice and cashier system handoff (25 Oct 2026)
+
+- New direct merchant evidence: photo of existing cashier system showing **34** options in **الإضافات**. Registered 30 legible extras in website savoury-crepe customization with stable `addon-*` keys and a readable four-group picker; four ambiguous S/M/L/F items are source-documented and intentionally not selectable. Exact source values in `docs/rebirth/POS_MODIFIERS_2026-10-25.md`. `رول` pictured at **20 EGP**, replacing legacy reference 25 EGP; no live POS/catalog sync or order activation.
+- Restaurant copy request: added an authored, responsive line **«توسكانيني — الكريب بيتكلم.»** on the real Home hero, without replacing the established `بص جوه` creative idea or interrupting the primary menu CTA. Historic-price technical jargon replaced by natural consumer disclosure without claiming unapproved prices are verified.
+- Existing cashier-system developer said integration is *possible*, not complete. Created `docs/rebirth/POS_ORDER_INTEGRATION_HANDOFF_2026-10-25.md` with exact SKU/size/modifier, customer, idempotency, ACK, return-status and printer proof acceptance criteria. POS credentials, connector protocol and POS product IDs are unknown: **NO** pretended POS route, no automatic dispatch, no public ordering go-live.
+- Public artifacts remain production-directed: no owner/demo/mock technical messages on consumer pages. Protect restaurant operations until live confirmation; keep PR #59 Draft and retain Oracle/merchant acceptance safeguards. Fresh CI/screenshots required for this SHA.
+
 # TUSCANINI REBIRTH — ONE WORKING BOARD
 
 **Last audited (including broad capability scan):** 2026-10-22 | **Branch:** `redesign/tuscanini-authored-experience-20261018` | **PR:** [#59 (DRAFT)](https://github.com/omarkhair70-droid/tuscanini-ordering-system/pull/59) | **Audited code checkpoint:** `82a1a262d41ff78b2dd56546a410cdbb3125b3f1`.

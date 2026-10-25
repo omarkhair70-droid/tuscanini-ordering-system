@@ -320,3 +320,11 @@
   .t-order-strip__caption{display:none}
   .t-page .t-order-strip__link{padding-inline:10px;min-height:42px;font-size:12px}
 }
+
+/* The restaurant's actual line belongs to the opening food story, not checkout. */
+.t-hero__voice{display:flex;flex-wrap:wrap;align-items:baseline;gap:9px 14px;
+  margin-top:clamp(14px,2vw,29px);font:800 clamp(16px,2.1vw,27px)/1.5 "Changa",Tahoma,sans-serif}
+.t-hero__voice strong{color:var(--red);font-weight:900;letter-spacing:-.015em}
+.t-hero__voice+.t-hero__sub{margin-top:clamp(16px,2.2vw,29px)!important}
+@media(max-width:720px){.t-hero__voice{font-size:clamp(17px,5.1vw,23px);margin-top:12px;gap:6px 10px}
+ .t-hero__voice+.t-hero__sub{margin-top:12px!important}}

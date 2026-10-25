@@ -1,14 +1,10 @@
 import type { MenuCategory, MenuItem } from '@/types/menu';
 import type { Offer } from '@/types/offers';
+import { posCrepeAddons } from '@/lib/rebirth/pos-addons-reference';
 
-const crepeAddons = [
-  { id: 'addon-mozzarella', label: 'موتزاريلا', price: 20 },
-  { id: 'addon-roumy', label: 'رومي', price: 20 },
-  { id: 'addon-cheddar', label: 'شيدر', price: 15 },
-  { id: 'addon-cono', label: 'كونو', price: 25 },
-  { id: 'addon-roll', label: 'رول', price: 25 },
-  { id: 'addon-sauces', label: 'صوصات', price: 15 },
-];
+// Shared modifier IDs/prices are taken from the merchant's actual POS screen;
+// restaurant backend remains authoritative before a real order is accepted.
+const crepeAddons = posCrepeAddons;
 
 export const menuCategories: MenuCategory[] = [
   { id: 'c1', name: 'كريب لحوم', slug: 'crepe-meat', description: 'منيو توسكانيني' },
@@ -403,7 +399,7 @@ export const featuredItems: MenuItem[] = [
   { id: 'ca2', name: 'رومي', categorySlug: 'crepe-addons', description: 'إضافات كريب', priceFrom: 20, availability: 'available', sizes: [{ id: 'single', label: 'سعر واحد', price: 20 }] },
   { id: 'ca3', name: 'شيدر', categorySlug: 'crepe-addons', description: 'إضافات كريب', priceFrom: 15, availability: 'available', sizes: [{ id: 'single', label: 'سعر واحد', price: 15 }] },
   { id: 'ca4', name: 'كونو', categorySlug: 'crepe-addons', description: 'إضافات كريب', priceFrom: 25, availability: 'available', sizes: [{ id: 'single', label: 'سعر واحد', price: 25 }] },
-  { id: 'ca5', name: 'رول', categorySlug: 'crepe-addons', description: 'إضافات كريب', priceFrom: 25, availability: 'available', sizes: [{ id: 'single', label: 'سعر واحد', price: 25 }] },
+  { id: 'ca5', name: 'رول', categorySlug: 'crepe-addons', description: 'إضافات كريب', priceFrom: 20, availability: 'available', sizes: [{ id: 'single', label: 'سعر واحد', price: 20 }] },
   { id: 'ca6', name: 'صوصات', categorySlug: 'crepe-addons', description: 'إضافات كريب', priceFrom: 15, availability: 'available', sizes: [{ id: 'single', label: 'سعر واحد', price: 15 }] },
 ];
 

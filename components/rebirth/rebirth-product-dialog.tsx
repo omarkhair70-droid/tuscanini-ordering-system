@@ -5,6 +5,7 @@ import { useCart } from '@/components/cart/cart-provider';
 import type { MenuItem } from '@/types/menu';
 import type { ProductCartItem } from '@/types/cart';
 import { ProductArtwork } from '@/components/rebirth/product-artwork';
+import { getPosModifierGroup, POS_MODIFIER_GROUPS } from '@/lib/rebirth/pos-addons-reference';
 
 type Props = {
   item: MenuItem | null;
@@ -212,7 +213,7 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
             <ProductArtwork item={item} size="large" visualMode={visualMode}/>
             <div className="t-product-dialog__identity-copy">
               <p id="t-product-summary">{item.description || 'اختار التفاصيل المناسبة لطلبك.'}</p>
-              {priceSource === 'previous' && <p className="t-product-dialog__price-notice">الأسعار حسب المنيو السابق.</p>}
+              {priceSource === 'previous' && <p className="t-product-dialog__price-notice">تأكيد السعر والتوافر مع المطعم قبل تسجيل الطلب.</p>}
             </div>
           </div>
           {item.sizes && item.sizes.length > 0 && (
@@ -231,14 +232,32 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
           {item.addons && item.addons.length > 0 && (
             <fieldset className="t-product-dialog__section">
               <legend>إضافات على مزاجك <small>(اختياري)</small></legend>
-              <div className="t-product-dialog__options">
-                {item.addons.map(addon => (
-                  <label key={addon.id}>
-                    <input type="checkbox" checked={addonIds.includes(addon.id)} onChange={event=>setAddonIds(current=>event.target.checked?[...current,addon.id]:current.filter(id=>id!==addon.id))} />
-                    <span>{addon.label}</span><strong>+{addon.price} ج.م</strong>
-                  </label>
-                ))}
-              </div>
+              <p className="t-product-dialog__addon-summary" aria-live="polite">
+                {addonIds.length ? `اخترت ${addonIds.length} إضافة · +${selectedAddons.reduce((sum,a)=>sum+a.price,0)} ج.م` : 'اختار الإضافات اللي بتحبها، أو كمل من غير إضافات.'}
+              </p>
+              {POS_MODIFIER_GROUPS.map(group=>{
+                const options=item.addons?.filter(a=>getPosModifierGroup(a.id)===group.id)??[];
+                if(!options.length)return null;
+                return <div className="t-product-dialog__addon-group" role="group" aria-label={group.label} key={group.id}>
+                  <h3>{group.label}</h3>
+                  <div className="t-product-dialog__options">
+                    {options.map(addon => (
+                      <label key={addon.id}>
+                        <input type="checkbox" checked={addonIds.includes(addon.id)}
+                          onChange={event=>setAddonIds(current=>event.target.checked?[...current,addon.id]:current.filter(id=>id!==addon.id))}/>
+                        <span>{addon.label}</span><strong>+{addon.price} ج.م</strong>
+                      </label>
+                    ))}
+                  </div>
+                </div>;
+              })}
+              {item.addons.some(a=>!getPosModifierGroup(a.id))&&
+                <div className="t-product-dialog__options">
+                  {item.addons.filter(a=>!getPosModifierGroup(a.id)).map(addon=>
+                    <label key={addon.id}><input type="checkbox" checked={addonIds.includes(addon.id)}
+                      onChange={event=>setAddonIds(current=>event.target.checked?[...current,addon.id]:current.filter(id=>id!==addon.id))}/>
+                      <span>{addon.label}</span><strong>+{addon.price} ج.م</strong></label>)}
+                </div>}
             </fieldset>
           )}
           <div className="t-product-dialog__section">

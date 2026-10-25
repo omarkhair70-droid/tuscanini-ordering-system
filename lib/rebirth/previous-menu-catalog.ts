@@ -20,7 +20,7 @@ import type { MenuCategory, MenuItem } from '@/types/menu';
 export const previousMenuSource = {
   kind: 'owner-directed-previous-menu' as const,
   label: 'المنيو',
-  note: 'الأسعار من المنيو السابق · الصور للتوضيح',
+  note: 'الأسعار والتوافر بيتأكدوا مع المطعم · الصور للتوضيح',
 };
 
 export type RebirthCatalog = {

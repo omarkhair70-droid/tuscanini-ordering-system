@@ -51,3 +51,13 @@
  .t-product-dialog__footer button{padding:12px 13px;min-height:52px}
  .t-product-dialog__footer strong{font-size:20px}
 }
+
+/* Actual POS extra choices, clustered so 30 modifiers never form an undifferentiated scroll list. */
+.t-product-dialog__addon-summary{margin:0 0 15px!important;font-size:13px;font-weight:750;line-height:1.8;color:#66513d}
+.t-product-dialog__addon-group{margin:15px 0 21px}
+.t-product-dialog__addon-group h3{border-block-end:1px solid #c8b9a2;padding-block-end:8px;margin:0 0 12px;
+  font:850 18px/1.5 "Changa",Tahoma,sans-serif;color:#171511}
+.t-product-dialog__addon-group .t-product-dialog__options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.t-product-dialog__addon-group .t-product-dialog__options label{min-height:57px;padding:10px;gap:8px;font-size:13px;line-height:1.55}
+.t-product-dialog__addon-group .t-product-dialog__options label strong{font-variant-numeric:tabular-nums}
+@media(max-width:510px){.t-product-dialog__addon-group .t-product-dialog__options{grid-template-columns:1fr}}
