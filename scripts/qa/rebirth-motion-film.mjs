@@ -67,7 +67,7 @@ try{
       // not for long AI-credit disclaimers or stock-photo links.
       const expectedKind=generatedMediaReady?'generated-illustrative':'representative-stock';
       if((await page.locator('.t-product-dialog [data-kind="'+expectedKind+'"] img').count())!==1||
-         (await page.locator('.t-product-dialog').getByText('الأسعار حسب المنيو السابق.').count())!==1||
+         (await page.locator('.t-product-dialog').getByText('تأكيد السعر والتوافر مع المطعم قبل تسجيل الطلب.').count())!==1||
          (await page.locator('.t-product-dialog').getByText(/مولّدة بالذكاء الاصطناعي|مش تصوير الصنف|Pexels/).count())!==0)
         throw new Error('The original food visual must carry into product details without customer-facing provenance essays');
       await page.waitForTimeout(750);

@@ -1,3 +1,8 @@
+### Product detail film after consumer-copy cleanup (25 Oct 2026)
+
+- On `8240ff3`, TypeScript/Home/Backend V2/Dedicated API all passed, but the optional browser motion film still expected the **removed** customer-facing phrase “الأسعار حسب المنيو السابق.”. Updated film to assert the replacement neutral customer message about confirming price and availability. Media provenance stays in internal metadata instead of public marketing copy. No runtime UI/product mapping changed.
+- Resume Screenshot/Asset browser QA at this corrected commit before any production approval.
+
 ### Checkout extra-picker usability and POS data regression gate (25 Oct 2026)
 
 - Updated long POS add-ons list into accessible per-group disclosure rows (`<details>/<summary>`); cheeses start open for normal checkout, fillings/sauces/other remain one tap away. Selected count remains visible on each group; checked options survive collapsing. No Javascript state machine or broken native focus.
