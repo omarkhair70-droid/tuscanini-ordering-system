@@ -136,7 +136,10 @@ try {
     await check(visibleKnobAtStart, `${width}px reveal drag knob stays fully visible at 0%`);
     const sourcePair = await page.locator('.t-material__image img').evaluateAll(images => images.map(img => new URL(img.currentSrc || img.src).searchParams.get('url') || (img.currentSrc||img.src)));
     await check(sourcePair.length===2 && sourcePair[0]===sourcePair[1], `${width}px detail comparison uses identical real source pixels`);
-    await check(await page.locator('.t-material__hero-food img').evaluate(img=>img.complete && img.naturalWidth>0),
+    await page.locator('.t-material__hero-food img').scrollIntoViewIfNeeded();
+    await check(await page.locator('.t-material__hero-food img').evaluate(async img=>{
+      try { await img.decode(); return img.naturalWidth>0; } catch { return false; }
+    }),
       `${width}px redesigned editorial material scene displays genuine restaurant photography`);
     await check(await page.locator('.t-material__detail-card').count()===1 &&
       await page.getByRole('heading',{name:/التفاصيل.*بتتكلم/}).count()===1,
