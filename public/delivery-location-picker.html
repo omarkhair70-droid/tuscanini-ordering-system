@@ -60,7 +60,20 @@ button{border:1px solid #171511;min-height:49px;padding:10px 12px;font:700 14px 
     });
     marker=new maplibregl.Marker({color:'#d72e26',draggable:true})
       .setLngLat([31.099,29.072]).addTo(map);
-    marker.getElement().setAttribute('aria-label','دبوس التوصيل؛ حرّكه بالأسهم أو باللمس');
+    var markerElement=marker.getElement();
+    markerElement.setAttribute('aria-label','دبوس التوصيل؛ استخدم الأسهم لتحريكه، أو اسحبه باللمس');
+    markerElement.setAttribute('tabindex','0');
+    markerElement.setAttribute('role','button');
+    markerElement.addEventListener('keydown',function(event){
+      var steps={ArrowUp:[0,1],ArrowDown:[0,-1],ArrowLeft:[-1,0],ArrowRight:[1,0]};
+      var direction=steps[event.key];
+      if(!direction)return;
+      event.preventDefault();
+      var current=marker.getLngLat(), step=event.shiftKey?0.001:0.00015;
+      var lng=current.lng+direction[0]*step,lat=current.lat+direction[1]*step;
+      setPoint(lng,lat);
+      map.easeTo({center:[lng,lat],duration:0});
+    });
     marker.on('dragend',function(){var pos=marker.getLngLat();setPoint(pos.lng,pos.lat);});
     map.on('click',function(e){setPoint(e.lngLat.lng,e.lngLat.lat);});
     map.on('error',function(){ if(!selected) message.textContent='لو الخريطة مش ظاهرة، تقدر تكتب العنوان في الطلب.'; });
