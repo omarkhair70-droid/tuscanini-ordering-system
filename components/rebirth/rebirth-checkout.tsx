@@ -294,12 +294,23 @@ export function RebirthCheckout() {
                 </div>
                 <section className="t-checkout-payment-note" aria-label="التكلفة وطريقة الدفع">
                   <span className="t-index">طريقة الدفع</span>
-                  <h3>الدفع مش بيتم هنا.</h3>
-                  <p>هتسجّل طلبك هنا، لكن الدفع مش إلكتروني. اتأكد من طريقة الدفع مع المطعم.</p>
-                  <p>{customer.orderType==='pickup'
-                    ? 'الاستلام من المطعم، من غير رسوم توصيل. الإجمالي ده للأصناف بس.'
-                    : 'رسوم الدليفري والمنطقة المتاحة محتاجين تأكيد المطعم؛ إجمالي الأصناف مش السعر النهائي شامل التوصيل.'}</p>
-                  <p>الأسعار المعروضة محتاجة تأكيد من المطعم.</p>
+                  <h3>تدفع إزاي وقت الاستلام؟</h3>
+                  <fieldset className="t-checkout-payment-methods">
+                    <legend>اختار الطريقة المناسبة ليك</legend>
+                    {[
+                      {value:'cash',title:'كاش',hint:'تدفع عند الاستلام'},
+                      {value:'instapay_on_handoff',title:'إنستا باي',hint:'تحويل وقت الاستلام'},
+                      {value:'vodafone_cash_on_handoff',title:'فودافون كاش',hint:'تحويل وقت الاستلام'},
+                    ].map(option => <label key={option.value} className="t-checkout-payment-method">
+                      <input name="handoff-payment" type="radio" value={option.value}
+                        checked={customer.paymentMethod===option.value}
+                        onChange={() => updateCustomer({paymentMethod:option.value as typeof customer.paymentMethod})}/>
+                      <span className="t-checkout-payment-method__copy"><strong>{option.title}</strong><small>{option.hint}</small></span>
+                    </label>)}
+                  </fieldset>
+                  <p role="note">ده اختيار لطريقة الدفع وقت الاستلام، مش عملية دفع من الموقع. التحويل بيتم فقط بعد تأكيد تفاصيله مع المطعم.</p>
+                  {customer.orderType==='delivery' &&
+                    <p>رسوم التوصيل بتتحسب بعد اعتماد منطقة الدليفري؛ إجمالي الأصناف لوحده مش شاملها.</p>}
                 </section>
                 {tableReference && <p className="t-checkout-summary__table">مرجع الطاولة: {tableReference}</p>}
                 <label className="t-checkout-confirm"><input id="t-checkout-confirm" type="checkbox" checked={customer.confirmedAccurateDetails}
