@@ -4,6 +4,10 @@
 
 > **Start here in every new chat, and update this SAME FILE after every meaningful feature/review.** This is the current execution and coverage index; historical `00–38`, original research, the HTML reference and technical handoffs remain evidence, not competing "next task" lists. Use the current GitHub PR HEAD and Actions results if newer; never assume this snapshot is the HEAD forever.
 
+### Staff-key test selector after public-copy clean-up (25 Oct 2026)
+
+- Isolated Backend V2 real customer→operator→tracking and 20-ticket stage layout pass independently. The later two-device fixture stopped because it still looked up the old English placeholder `Studio operator key`, now deliberately replaced with the final Arabic `مفتاح الدخول`. Updated **only** that selector in the test, retaining the same test key and existing security guard.
+
 ### Public launch fixture-boundary test corrections (25 Oct 2026)
 
 - Initial release UI build/TypeScript and Dedicated API passed, but populated-cart visual test was outdated: it required address/contact fields even when intake is disabled. It now explicitly verifies either open Cart → customer fields → summary OR closed Cart with an earlier notice and NO contact input.
