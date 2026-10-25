@@ -457,6 +457,8 @@
     width:clamp(102px,28vw,140px);font-size:clamp(16px,4.6vw,21px);
   }
   .t-page .t-place-final__city{inset:10% 12%}
+  .t-page .t-place-final__thin-ring--top{top:2%;left:7%;width:20%}
+  .t-page .t-place-final__thin-ring--bottom{bottom:-10%;right:-9%}
   .t-page .t-place-final__food-disc{width:clamp(95px,24vw,135px)}
   .t-page .t-place-final__stamp{
     width:clamp(83px,21vw,112px);font-size:clamp(41px,10vw,60px);
