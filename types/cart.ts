@@ -56,10 +56,14 @@ export type CartDraftOfferItemInput = {
 
 export type OrderType = 'delivery' | 'pickup';
 
+/** Exact user-selected doorstep coordinate, not restaurant location or IP estimate. */
+export type CustomerDeliveryLocation = { lat: number; lng: number };
+
 export type CartCustomerForm = {
   name: string;
   phone: string;
   address: string;
+  deliveryLocation?: CustomerDeliveryLocation | null;
   orderType: OrderType;
   generalNotes: string;
   confirmedAccurateDetails: boolean;
