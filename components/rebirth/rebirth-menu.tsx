@@ -25,7 +25,11 @@ type Props = {
 
 const PAGE_SIZE = 20;
 function normalizeArabic(text: string) {
-  return text.normalize('NFKC').replace(/[\u064B-\u065F\u0670]/g, '').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').toLocaleLowerCase('ar').trim();
+  return text.normalize('NFKC')
+    .replace(/[\u064B-\u065F\u0670\u0640]/g, '')
+    .replace(/[أإآٱ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه')
+    .replace(/[^\p{L}\p{N}]+/gu, ' ')
+    .toLocaleLowerCase('ar').trim().replace(/\s+/g, ' ');
 }
 
 export function RebirthMenu({ categories, items, initialTableReference, source }: Props) {
@@ -69,12 +73,16 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
   const validItems = items;
   const catalogPresent = categories.length > 0 && items.length > 0;
   const filtered = useMemo(() => {
-    const term = normalizeArabic(query);
+    const terms = normalizeArabic(query).split(' ').filter(Boolean);
     return validItems.filter(item => {
-      const belongs = category === 'all' || item.categorySlug === category;
-      return belongs && (!term || normalizeArabic(item.name + ' ' + item.description).includes(term));
+      if (category !== 'all' && item.categorySlug !== category) return false;
+      if (!terms.length) return true;
+      const familyName = categories.find(family => family.slug === item.categorySlug)?.name ?? '';
+      const searchable = normalizeArabic([item.name, item.description, familyName].join(' '));
+      // A guest can type the words in any order, with or without Arabic diacritics.
+      return terms.every(term => searchable.includes(term));
     });
-  }, [validItems, category, query]);
+  }, [validItems, categories, category, query]);
 
   const displayed = filtered.slice(0, limit);
   const contextPhoto = category==='all'?null:getCategoryContextPhoto(category as MenuItem['categorySlug']);
@@ -114,10 +122,10 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
       <ExperienceHeader />
       <main className="t-menu-main">
         <header className="t-menu-intro t-shell">
-          <div className="t-menu-intro__label"><span>MENU / TUSCANINI</span><span>اختياراتك من توسكانيني — بني سويف</span></div>
+          <div className="t-menu-intro__label"><span>توسكانيني / المنيو</span><span>اختياراتك من توسكانيني — بني سويف</span></div>
           <div className="t-menu-intro__headline">
             <div className="t-menu-intro__copy">
-              <span className="t-index">FIND YOUR FOOD / TUSCANINI</span>
+              <span className="t-index">منيو توسكانيني</span>
               <h1>كل اللي<br/><em>نفسك فيه.</em></h1>
               <p>عارف أكلك؟ دوّر عليه بالاسم. ولسه بتختار؟ ابدأ من الأقسام.</p>
               <nav className="t-menu-intro__actions" aria-label="اختصارات المنيو">
@@ -133,14 +141,14 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
                 {query.trim() && <div className="t-menu-search__feedback"><span role="status" aria-live="polite">{filtered.length} نتيجة من المنيو كله</span><button type="button" onClick={()=>document.getElementById('t-menu-items-title')?.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}>شوف النتائج ↓</button></div>}
               </section>
             </div>
-            <div className="t-menu-intro__photo-pair" aria-label="صور حقيقية عامة من المطعم، وليست صور أصناف محددة في المنيو">
+            <div className="t-menu-intro__photo-pair" aria-label="صور كريب وبيتزا من مطعم توسكانيني">
               <figure className="t-menu-intro__photo t-menu-intro__photo--main">
                 <Image src="/images/rebirth/food-07.jpg" alt="ثلاثة كريبات حقيقية ظاهرة الحشو من توسكانيني" fill priority sizes="(max-width: 720px) 57vw, 30vw" />
-                <figcaption lang="en">01 / THE INSIDE</figcaption>
+                <figcaption>الكريب من جوّه</figcaption>
               </figure>
               <figure className="t-menu-intro__photo t-menu-intro__photo--accent">
                 <Image src="/images/rebirth/food-03.jpg" alt="بيتزا حقيقية داخل علبة توسكانيني المطبوعة" fill sizes="(max-width: 720px) 36vw, 19vw" />
-                <figcaption lang="en">02 / THE BOX</figcaption>
+                <figcaption>البيتزا والعلبة</figcaption>
               </figure>
               
             </div>
@@ -150,7 +158,7 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
         <div className="t-shell t-menu-content">
           <p className="t-menu-source-note" role="note" data-visual-disclosure="menu">{source.note}</p>
           <section id="t-menu-categories" aria-label="أقسام المنيو" className="t-menu-categories">
-            <div className="t-menu-categories__heading"><span className="t-index">01 — PICK A FOOD FAMILY</span><span>{categories.length} قسم</span></div>
+            <div className="t-menu-categories__heading"><span className="t-index">01 — اختار القسم</span><span>{categories.length} قسم</span></div>
             <div className="t-menu-categories__scroller">
               <button type="button" aria-pressed={category==='all'} onClick={()=>chooseCategory('all')}><MaterialGlyph name="all" size={26} className="t-menu-category-glyph"/>كل الأصناف</button>
               {categories.map(item => (
@@ -168,7 +176,7 @@ export function RebirthMenu({ categories, items, initialTableReference, source }
               <figure className="t-menu-family-context">
                 <div className="t-menu-family-context__photo"><Image src={contextPhoto.src} alt={contextPhoto.alt} fill
                   sizes="(max-width:720px) 128px, 240px" /></div>
-                <figcaption><span className="t-index" lang="en">FROM TUSCANINI</span>
+                <figcaption><span className="t-index">من مطبخ توسكانيني</span>
                   <strong>من جوّه المطعم.</strong><span>{contextPhoto.credit}</span></figcaption>
               </figure>
             )}
