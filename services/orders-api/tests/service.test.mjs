@@ -45,7 +45,7 @@ test('dedicated Tuscanini service has authenticated intake, durable orders and s
     const requestKey='studio-'+randomUUID();
     const input={requestKey,tableReference:null,expectedSubtotalCents:25000,
       customer:{name:'عميل تجربة',phone:'01012345678',
-        address:'PRIVATE OLD DELIVERY ADDRESS',orderType:'pickup',generalNotes:''},
+        address:'PRIVATE OLD DELIVERY ADDRESS',orderType:'pickup',paymentMethod:'cash',generalNotes:''},
       items:[{kind:'product',productId:'TUSC_CI_01',sizeId:null,addonIds:[],quantity:2,itemNotes:''}],
     };
     // Do not save an order when the amount the guest reviewed differs
@@ -75,7 +75,7 @@ test('dedicated Tuscanini service has authenticated intake, durable orders and s
     assert.equal(saved.rows[0].customer_snapshot.deliveryLocation,null,
       'Pickup strips location data even from old customer drafts');
     const deliveryInput={...input,requestKey:'studio-'+randomUUID(),
-      customer:{...input.customer,orderType:'delivery',
+      customer:{...input.customer,orderType:'delivery',paymentMethod:'instapay_on_handoff',
         address:'شارع البحر، عمارة ٥، الدور الثاني\nموقع التوصيل: https://maps.google.com/?q=29.07344,31.09811',
         deliveryLocation:{lat:29.07344,lng:31.09811}}};
     const delivery=await req('/v1/orders','POST',deliveryInput);
@@ -83,12 +83,17 @@ test('dedicated Tuscanini service has authenticated intake, durable orders and s
     const snapshot=await pool.query('SELECT customer_snapshot FROM tuscanini.orders WHERE id=$1',[delivery.body.id]);
     assert.deepEqual(snapshot.rows[0].customer_snapshot.deliveryLocation,{lat:29.07344,lng:31.09811},
       'Exact customer-selected coordinates survive in immutable PostgreSQL order snapshot');
+    assert.equal(snapshot.rows[0].customer_snapshot.paymentMethod,'instapay_on_handoff',
+      'Snapshot stores payment preference only, not any alleged completed payment');
     assert.match(snapshot.rows[0].customer_snapshot.address,/maps.google.com\/\?q=29.07344,31.09811/,
       'Cashier snapshot gets the server-derived coordinate link');
     const currentInbox=await req('/v1/operator/orders');
     const routed=currentInbox.body.orders.find(order=>order.id===delivery.body.id);
     assert.deepEqual(routed?.customer_snapshot?.deliveryLocation,{lat:29.07344,lng:31.09811},
       'Cashier inbox has the selected pin needed by the driver directions button');
+    const badPayment=await req('/v1/orders','POST',{...deliveryInput,requestKey:'studio-'+randomUUID(),
+      customer:{...deliveryInput.customer,paymentMethod:'online_card_paid'}});
+    assert.equal(badPayment.status,400,'Client cannot forge a paid or unsupported payment state');
     const badPin=await req('/v1/orders','POST',{...deliveryInput,requestKey:'studio-'+randomUUID(),
       customer:{...deliveryInput.customer,deliveryLocation:{lat:Infinity,lng:31.09811}}});
     assert.equal(badPin.status,400,'Invalid delivery pin must never be accepted');
