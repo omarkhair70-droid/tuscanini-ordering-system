@@ -8,7 +8,7 @@ type CreateOrderResult = { orderId: string; orderNumber: number | null; tableRef
 const ORDER_SOURCE = 'web_whatsapp';
 const cents = (value: number) => Math.round(value * 100);
 
-export async function createOrderInSupabase(payload: ValidatedOrderPayload): Promise<CreateOrderResult> {
+export async function createOrderInSupabase(payload: ValidatedOrderPayload, verifiedCustomerId: string | null = null): Promise<CreateOrderResult> {
   const admin = getSupabaseServerAdminClient();
 
   // Critically: validate ALL active products, linked addons and authoritative
@@ -41,7 +41,13 @@ export async function createOrderInSupabase(payload: ValidatedOrderPayload): Pro
   const handoffPaymentColumn = process.env.TUSCANINI_SUPABASE_PAYMENT_METHOD_READY === 'yes'
     ? { payment_method: payload.customer.paymentMethod } : {};
 
+  // Ownership comes exclusively from a Supabase Auth-verified JWT. The
+  // customer cannot supply customer_user_id in a request body.
+  const ownerColumn = process.env.TUSCANINI_SUPABASE_CUSTOMER_ACCOUNTS_READY === 'yes'
+    && verifiedCustomerId ? { customer_user_id: verifiedCustomerId } : {};
+
   const { data: orderRow, error: orderError } = await admin.from('orders').insert({
+    ...ownerColumn,
     ...coordinateColumns,
     ...handoffPaymentColumn,
     customer_name: payload.customer.name,
