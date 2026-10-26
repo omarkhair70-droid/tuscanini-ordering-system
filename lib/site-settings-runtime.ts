@@ -68,9 +68,8 @@ function normalizeSettingsWithFallback(raw: Record<string, unknown> | null | und
 }
 
 export async function getRuntimePublicSiteSettings(): Promise<PublicSiteSettings> {
-  const supabase = getSupabaseServerAdminClient();
-
   try {
+    const supabase = getSupabaseServerAdminClient();
     const { data, error } = await supabase
       .from('site_settings')
       .select('is_ordering_open, whatsapp_order_number, phone_primary, phone_secondary, address_ar, facebook_url')
@@ -78,11 +77,11 @@ export async function getRuntimePublicSiteSettings(): Promise<PublicSiteSettings
       .maybeSingle();
 
     if (error) {
-      return getStaticFallbackSettings();
+      return normalizeSettingsWithFallback(null);
     }
 
     return normalizeSettingsWithFallback(data as Record<string, unknown> | null);
   } catch {
-    return getStaticFallbackSettings();
+    return normalizeSettingsWithFallback(null);
   }
 }
