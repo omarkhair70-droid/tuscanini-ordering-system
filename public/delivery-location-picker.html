@@ -56,7 +56,8 @@ button{border:1px solid #171511;min-height:49px;padding:10px 12px;font:700 14px 
     if(marker)marker.setLngLat([selected.lng,selected.lat]);
     coord.textContent=isGps?'✓ تم تحديد موقعك بالجهاز — راجع الدبوس واضبط المدخل':
       '✓ تم اختيار نقطة التوصيل — تأكد من المدخل قبل الاعتماد';
-    confirm.disabled=false;message.textContent='';
+    confirm.disabled=false;
+    message.textContent=map?'':'الـGPS حدد النقطة، لكن الخريطة مش متاحة. راجع الإحداثيات على خرائط جوجل قبل الاعتماد.';
     updateMapLink();
   }
   function updateMapLink(){
