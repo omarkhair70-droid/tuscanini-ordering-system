@@ -2,8 +2,13 @@ import 'server-only';
 
 import { getSupabaseServerAdminClient } from '@/lib/supabase/server-admin';
 import type { SiteSettingsUpdatePayload } from '@/lib/admin/site-settings-validation';
+import {nativeContentEnabled,callNativeContentAdmin} from '@/lib/oracle-order-api';
 
 export async function updateSiteSettingsSingletonOrThrow(payload: SiteSettingsUpdatePayload): Promise<void> {
+  if(nativeContentEnabled()){
+    await callNativeContentAdmin('site-settings','POST',payload);
+    return;
+  }
   const supabase = getSupabaseServerAdminClient();
 
   const { data, error } = await supabase
