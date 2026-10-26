@@ -18,6 +18,30 @@ permissions:
   contents: read
 
 jobs:
+  regenerate-lock-once:
+    if: ${{ github.event_name == 'pull_request' && github.head_ref == 'chore/tuscanini-20261026-tailwind4-typescript7' && github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Commit root lockfile only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(types): lock TS compatibility tool alias"
+            git push origin "HEAD:${{ github.head_ref }}"
+          fi
   typecheck-build:
     name: Typecheck & Next build
     runs-on: ubuntu-latest
