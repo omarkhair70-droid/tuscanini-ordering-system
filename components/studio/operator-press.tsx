@@ -115,8 +115,10 @@ function playOrderCue(context:AudioContext){
   });
 }
 function makePreviewOrders():Order[]{
-  const labels=['شاورما لحم','شاورما لحم','تشيكن فاير','كريب مكس جبن','توسكانيني سبيشال','مياه معدنية'];
-  const demoCategory=['crepe-meat','pizza-meat','crepe-chicken','crepe-mixed','crepe-tuscanini','drinks'];
+  const labels=['كفتة','شاورما لحم','شاورما لحم','شاورما لحم','توسكانيني سبيشال','مياه معدنية'];
+  // All names below appear in the real previous-menu catalog. Identical
+  // "شاورما لحم" is intentional to test crepe/pizza disambiguation.
+  const demoCategory=['crepe-meat','pizza-meat','crepe-meat','pizza-meat','crepe-tuscanini','drinks'];
   const statuses:Phase[]=['received','received','preparing','accepted','ready','received','preparing','delivered','ready','accepted',
     'received','preparing','preparing','received','ready','accepted','delivered','received','rejected','accepted'];
   return statuses.map((status,i)=>{
