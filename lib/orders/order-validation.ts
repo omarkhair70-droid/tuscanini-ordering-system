@@ -1,6 +1,6 @@
 import 'server-only';
 
-import type { OrderType } from '@/types/cart';
+import type { HandoffPaymentMethod, OrderType } from '@/types/cart';
 
 const hasMaxTwoDecimals = (value: number): boolean => Number.isInteger(value * 100);
 
@@ -85,6 +85,12 @@ const parseOrderTypeOrThrow = (value: unknown): OrderType => {
   throw new Error('نوع الطلب غير صالح.');
 };
 
+function parsePaymentMethodOrThrow(value: unknown): HandoffPaymentMethod {
+  if (value === undefined || value === null || value === 'cash') return 'cash';
+  if (value === 'instapay_on_handoff' || value === 'vodafone_cash_on_handoff') return value;
+  throw new Error('وسيلة الدفع غير صالحة.');
+}
+
 const parseIdStringOrThrow = (value: unknown, fieldLabelAr: string): string => {
   if (typeof value !== 'string') {
     throw new Error(`${fieldLabelAr} غير صالح.`);
@@ -142,7 +148,9 @@ export type ValidatedOrderCustomer = {
   name: string;
   phone: string;
   address: string;
+  deliveryLocation: { lat: number; lng: number } | null;
   orderType: OrderType;
+  paymentMethod: HandoffPaymentMethod;
   generalNotes: string;
 };
 
@@ -152,6 +160,20 @@ export type ValidatedOrderPayload = {
   subtotal: number;
   tableReference: string | null;
 };
+
+/** The user's confirmed location, not a guessed coordinates string or a map link.
+ * Old clients that send no location remain compatible with text addresses.
+ */
+function parseDeliveryLocationOrThrow(value: unknown): { lat: number; lng: number } | null {
+  if (value === null || value === undefined) return null;
+  const loc = assertObjectOrThrow(value, 'موقع التوصيل غير صالح.');
+  if (typeof loc.lat !== 'number' || typeof loc.lng !== 'number' ||
+      !Number.isFinite(loc.lat) || !Number.isFinite(loc.lng) ||
+      loc.lat < 22 || loc.lat > 32 || loc.lng < 24 || loc.lng > 37) {
+    throw new Error('إحداثيات موقع التوصيل غير صالحة.');
+  }
+  return { lat: Number(loc.lat.toFixed(6)), lng: Number(loc.lng.toFixed(6)) };
+}
 
 const TABLE_REFERENCE_MAX_LENGTH = 40;
 const TABLE_REFERENCE_PATTERN = /^[\p{Script=Arabic}\p{Script=Latin}\p{Number}_\- ]+$/u;
@@ -277,11 +299,26 @@ export const parseCreateOrderPayloadOrThrow = (payload: unknown): ValidatedOrder
   const orderType = parseOrderTypeOrThrow(customerPayload.orderType);
   const name = parseStringOrThrow(customerPayload.name, 'الاسم');
   const phone = parsePhoneOrThrow(customerPayload.phone);
-  const address = parseOptionalString(customerPayload.address);
-
-  if (orderType === 'delivery' && !address) {
-    throw new Error('العنوان مطلوب في حالة الدليفري.');
+  // Server-side minimization: an old delivery address is irrelevant (and
+  // private) once the customer chooses in-store pickup, even if a caller
+  // manually posts an address that the UI would have omitted.
+  const rawAddress = orderType === 'delivery' ? parseOptionalString(customerPayload.address) : '';
+  // Pickup discards stale addresses/pins. For delivery, the server—not the
+  // text area—owns the exact lat/lng URL in the stored merchant-facing snapshot.
+  const deliveryLocation = orderType === 'delivery'
+    ? parseDeliveryLocationOrThrow(customerPayload.deliveryLocation) : null;
+  if (rawAddress.length > 300) throw new Error('عنوان التوصيل غير صالح: أطول من ٣٠٠ حرف.');
+  const street = rawAddress.split(/\nموقع التوصيل:/)[0].trim();
+  const coordinateUrl = deliveryLocation
+    ? 'https://maps.google.com/?q=' + deliveryLocation.lat + ',' + deliveryLocation.lng
+    : '';
+  const address = deliveryLocation
+    ? [street, 'موقع التوصيل: ' + coordinateUrl].filter(Boolean).join('\n')
+    : rawAddress;
+  if (orderType === 'delivery' && (!address || (deliveryLocation && !street))) {
+    throw new Error('عنوان التوصيل وتفاصيل المدخل مطلوبين للدليفري.');
   }
+  if (address.length > 300) throw new Error('العنوان غير صالح: أطول من الحد المسموح (٣٠٠ حرف).');
 
   const itemsPayload = body.items;
   if (!Array.isArray(itemsPayload) || itemsPayload.length === 0) {
@@ -302,7 +339,9 @@ export const parseCreateOrderPayloadOrThrow = (payload: unknown): ValidatedOrder
       name,
       phone,
       address,
+      deliveryLocation,
       orderType,
+      paymentMethod: parsePaymentMethodOrThrow(customerPayload.paymentMethod),
       generalNotes: parseOptionalString(customerPayload.generalNotes),
     },
     items,

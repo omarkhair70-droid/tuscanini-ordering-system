@@ -64,3 +64,83 @@ body {
     @apply h-auto w-full max-w-[200px] rounded-lg object-contain sm:max-w-[240px];
   }
 }
+
+
+/* TUSCANINI / product-led mobile app shell.
+   Discovery pages stay expressive; purchasing keeps predictable touch targets.
+   One navigation system, one persistent basket — never stacked fixed CTAs. */
+:root {
+  --t-mobile-safe: env(safe-area-inset-bottom, 0px);
+  --t-commerce-space-1: 4px;
+  --t-commerce-space-2: 8px;
+  --t-commerce-space-3: 12px;
+  --t-commerce-space-4: 16px;
+  --t-commerce-space-6: 24px;
+  --t-commerce-space-8: 32px;
+  --t-commerce-radius-control: 14px;
+  --t-commerce-radius-sheet: 24px;
+}
+.t-app-dock { display:none; }
+
+@media (max-width:720px) {
+  .tuscanini-rebirth-main {
+    padding-bottom:calc(76px + var(--t-mobile-safe));
+  }
+  .t-app-dock {
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    align-items:stretch;
+    position:fixed;
+    inset-inline:0;
+    bottom:0;
+    z-index:80;
+    min-height:calc(69px + var(--t-mobile-safe));
+    padding:5px 10px calc(6px + var(--t-mobile-safe));
+    background:#fff9ed;
+    border-top:1px solid #d9cbb8;
+    box-shadow:0 -7px 27px rgb(26 19 13 / 9%);
+    direction:rtl;
+  }
+  .t-app-dock__link {
+    position:relative;
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:2px;
+    min-height:55px;min-width:0;
+    color:#5e5242;
+    text-decoration:none;
+    border-radius:var(--t-commerce-radius-control);
+    font:750 11px/1.45 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+    transition:background-color .17s,color .17s;
+  }
+  .t-app-dock__link svg {flex:none;stroke-width:3.1}
+  .t-app-dock__link[aria-current="page"] {background:#181714;color:#fff9ed}
+  .t-app-dock__link[aria-current="page"] svg {color:#f8d34c}
+  .t-app-dock__count {
+    position:absolute;top:1px;inset-inline-start:calc(50% + 9px);
+    display:grid;place-items:center;min-width:19px;height:19px;
+    padding-inline:4px;border-radius:50%;
+    color:#181714;background:#f8d34c;
+    font:800 11px/1 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  }
+  .t-app-dock__link:focus-visible {
+    outline:3px solid #246ce0;outline-offset:-2px;
+  }
+  .tuscanini-rebirth-main .t-header__cart,
+  .tuscanini-rebirth-main .t-header__order,
+  .tuscanini-rebirth-main .t-mobile-order {display:none!important}
+  .tuscanini-rebirth-main .t-header__inner {
+    min-height:60px;
+  }
+  .tuscanini-rebirth-main .t-logo__arabic {
+    opacity:.8;
+  }
+  .tuscanini-rebirth-main .t-floating-cart-cta {
+    display:none!important;
+  }
+  .tuscanini-rebirth-main .t-footer {
+    padding-bottom:36px;
+  }
+}
+@media (prefers-reduced-motion:reduce) {
+  .t-app-dock__link {transition:none}
+}

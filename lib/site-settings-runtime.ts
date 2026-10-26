@@ -2,9 +2,11 @@ import 'server-only';
 
 import { siteConfig } from '@/lib/site-config';
 import { getSupabaseServerAdminClient } from '@/lib/supabase/server-admin';
+import { oracleOrdersEnabled } from '@/lib/oracle-order-api';
 
 export type PublicSiteSettings = {
   isOrderingOpen: boolean;
+  deliveryEnabled: boolean;
   whatsappOrderNumber: string;
   phonePrimary: string;
   phoneSecondary: string;
@@ -14,7 +16,10 @@ export type PublicSiteSettings = {
 
 function getStaticFallbackSettings(): PublicSiteSettings {
   return {
-    isOrderingOpen: true,
+    // Fail closed when dynamic store configuration cannot be verified.
+    isOrderingOpen: false,
+    // Until service area and delivery fees are verified, offer pickup only.
+    deliveryEnabled: process.env.TUSCANINI_DELIVERY_ENABLED === 'yes',
     whatsappOrderNumber: siteConfig.whatsappOrderNumber,
     phonePrimary: siteConfig.phonePrimary,
     phoneSecondary: siteConfig.phoneSecondary,
@@ -23,18 +28,22 @@ function getStaticFallbackSettings(): PublicSiteSettings {
   };
 }
 
+/** Independent restaurant-site release switch for Oracle order intake.
+ * Supabase's legacy open/closed state cannot override Oracle's order controls. */
+function oracleCustomerIntake():boolean{
+  return process.env.TUSCANINI_ORACLE_LIVE_ORDERS==='yes';
+}
 function normalizeSettingsWithFallback(raw: Record<string, unknown> | null | undefined): PublicSiteSettings {
   const fallback = getStaticFallbackSettings();
 
   if (!raw) {
-    return fallback;
+    return {...fallback,isOrderingOpen:oracleOrdersEnabled()?oracleCustomerIntake():false};
   }
 
   return {
-    isOrderingOpen:
-      typeof raw.is_ordering_open === 'boolean'
-        ? raw.is_ordering_open
-        : fallback.isOrderingOpen,
+    deliveryEnabled: process.env.TUSCANINI_DELIVERY_ENABLED === 'yes',
+    isOrderingOpen:oracleOrdersEnabled()?oracleCustomerIntake():
+      (typeof raw.is_ordering_open === 'boolean'?raw.is_ordering_open:fallback.isOrderingOpen),
     whatsappOrderNumber:
       typeof raw.whatsapp_order_number === 'string' && raw.whatsapp_order_number.trim()
         ? raw.whatsapp_order_number
@@ -59,9 +68,8 @@ function normalizeSettingsWithFallback(raw: Record<string, unknown> | null | und
 }
 
 export async function getRuntimePublicSiteSettings(): Promise<PublicSiteSettings> {
-  const supabase = getSupabaseServerAdminClient();
-
   try {
+    const supabase = getSupabaseServerAdminClient();
     const { data, error } = await supabase
       .from('site_settings')
       .select('is_ordering_open, whatsapp_order_number, phone_primary, phone_secondary, address_ar, facebook_url')
@@ -69,11 +77,11 @@ export async function getRuntimePublicSiteSettings(): Promise<PublicSiteSettings
       .maybeSingle();
 
     if (error) {
-      return getStaticFallbackSettings();
+      return normalizeSettingsWithFallback(null);
     }
 
     return normalizeSettingsWithFallback(data as Record<string, unknown> | null);
   } catch {
-    return getStaticFallbackSettings();
+    return normalizeSettingsWithFallback(null);
   }
 }

@@ -1,0 +1,36 @@
+name: Tuscanini Rebirth Home CI
+
+on:
+  pull_request:
+    paths:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "public/images/rebirth/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/rebirth-home-ci.yml"
+  push:
+    branches:
+      - "redesign/**"
+
+jobs:
+  typecheck-build:
+    name: Typecheck & Next build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-only-public-placeholder
+      SUPABASE_SERVICE_ROLE_KEY: ci-only-service-placeholder
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+      - run: npm ci
+      - name: Test concurrent admin order updates without a live database
+        run: node scripts/qa/rebirth-order-concurrency-smoke.mjs
+      - run: npx tsc --noEmit
+      - run: npm run build

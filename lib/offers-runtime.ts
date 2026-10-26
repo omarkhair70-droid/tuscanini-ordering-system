@@ -41,7 +41,7 @@ function isOfferInActiveWindow(nowMs: number, startsAt: string | null, endsAt: s
   return true;
 }
 
-export async function getActivePublicOffers(limit?: number): Promise<PublicOffer[]> {
+export async function getActivePublicOffers(limit?: number, options?: { throwOnError?: boolean }): Promise<PublicOffer[]> {
   const supabase = getSupabaseServerAdminClient();
   const { data, error } = await supabase
     .from('offers')
@@ -51,6 +51,9 @@ export async function getActivePublicOffers(limit?: number): Promise<PublicOffer
     .order('created_at', { ascending: false });
 
   if (error) {
+    // Editorial Offers page must distinguish a failed live data read from
+    // a genuinely empty list. Other legacy callers retain their fallback.
+    if (options?.throwOnError) throw new Error('Failed to verify active restaurant offers');
     return [];
   }
 

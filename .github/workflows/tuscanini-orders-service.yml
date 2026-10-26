@@ -1,0 +1,68 @@
+name: Tuscanini Dedicated Order API PostgreSQL
+
+on:
+  pull_request:
+    paths:
+      - "services/orders-api/**"
+      - "infra/oracle/postgres.compose.yaml"
+      - ".github/workflows/tuscanini-orders-service.yml"
+  push:
+    branches: ["redesign/**"]
+    paths:
+      - "services/orders-api/**"
+      - "infra/oracle/postgres.compose.yaml"
+      - ".github/workflows/tuscanini-orders-service.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  order-api:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: tuscanini_app
+          POSTGRES_PASSWORD: ci-ephemeral-orders-only
+          POSTGRES_DB: tuscanini_orders_ci
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U tuscanini_app -d tuscanini_orders_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: 5432
+      PGDATABASE: tuscanini_orders_ci
+      PGUSER: tuscanini_app
+      PGPASSWORD: ci-ephemeral-orders-only
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install scoped standalone service dependencies
+        run: npm install --prefix services/orders-api --no-audit --no-fund --no-package-lock
+      - name: Typecheck and compile standalone runtime
+        run: |
+          npm run typecheck --prefix services/orders-api
+          npm run build --prefix services/orders-api
+      - name: Validate exact Coolify Compose and production container build
+        env:
+          TUSCANINI_DB_NAME: tuscanini_orders
+          TUSCANINI_DB_USER: tuscanini_app
+          TUSCANINI_DB_PASSWORD: only-a-ci-placeholder-not-a-production-secret
+          TUSCANINI_ORDER_API_SERVICE_KEY: only-a-ci-placeholder-very-long-not-live
+        run: |
+          docker compose -f infra/oracle/postgres.compose.yaml config -q
+          docker build -f services/orders-api/Dockerfile -t tuscanini-orders-api:ci services/orders-api
+      - name: Apply additive Tuscanini schema on disposable CI Postgres
+        run: npm run migrate --prefix services/orders-api
+      - name: Assert authenticated HTTP actions, cart idempotency and private tracking
+        run: npm test --prefix services/orders-api

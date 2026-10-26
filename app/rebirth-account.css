@@ -1,0 +1,93 @@
+/* Tuscanini customer account — functional, quiet, thumb-first.
+   Uses the existing brand palette but not the giant poster grid. */
+.t-account-page{background:#fff9ee;color:#171511;min-height:100dvh}
+.t-account-main{padding-block:clamp(30px,6vw,75px) clamp(100px,10vw,160px);max-width:1300px}
+.t-account-heading{margin-bottom:clamp(22px,4vw,48px)}
+.t-account-eyebrow{font:750 12px/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif;color:#b43125}
+.t-account-heading h1{font:800 clamp(45px,6vw,82px)/1.12 "Changa",Tahoma,sans-serif;margin:9px 0 14px}
+.t-account-heading h1 em{color:#d72e26}
+.t-account-heading p{font:600 clamp(15px,1.4vw,20px)/1.8 "IBM Plex Sans Arabic",Tahoma,sans-serif;color:#594f43}
+.t-account-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(14px,2.5vw,28px);align-items:start}
+.t-account-panel{min-width:0;background:#fffcf5;border:1px solid #e5d6c1;border-radius:23px;padding:clamp(18px,2.6vw,33px);box-shadow:0 8px 27px #2c1c100c}
+.t-account-panel h2{font:800 clamp(27px,3vw,39px)/1.2 "Changa",Tahoma,sans-serif;margin:0 0 13px}
+.t-account-panel p{font:550 14px/1.85 "IBM Plex Sans Arabic",Tahoma,sans-serif;color:#554c43}
+.t-account-email{direction:ltr;text-align:right;overflow-wrap:anywhere;font-size:14px}
+.t-account-form{display:grid;gap:9px;margin-top:22px}
+.t-account-form label,.t-account-save label{font:750 14px/1.4 "IBM Plex Sans Arabic",Tahoma,sans-serif}
+.t-account-form input,.t-account-save input{
+ width:100%;min-height:50px;padding:11px 14px;border:1px solid #af9f8d;
+ border-radius:13px;background:#fffefa;color:#171511;font-size:16px;
+}
+.t-account-form input:focus-visible,.t-account-save input:focus-visible{outline:3px solid #267be6;outline-offset:2px}
+.t-account-button{
+ display:inline-flex;align-items:center;justify-content:center;min-height:49px;
+ padding:11px 18px;margin-top:8px;border:1px solid #171511;
+ background:#171511;color:#fff9ee;border-radius:13px;cursor:pointer;
+ font:800 14px/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+}
+.t-account-button--outline{background:transparent;color:#171511}
+.t-account-button:disabled{opacity:.55;cursor:default}
+.t-account-button:focus-visible,.t-account-actions button:focus-visible{outline:3px solid #267be6;outline-offset:2px}
+.t-account-error,.t-account-notice{padding:11px 13px;margin-top:13px;border-radius:12px}
+.t-account-panel .t-account-error{background:#fde8e3;color:#922019}
+.t-account-panel .t-account-notice{background:#edf4e4;color:#315324}
+.t-account-minor-link{display:inline-flex;margin-top:18px;font-weight:800;text-decoration:underline}
+.t-account-panel__head{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid #e3d7c8;padding-bottom:10px;margin-bottom:18px}
+.t-account-panel__head h2{margin:0}
+.t-account-panel__head span{font:700 13px/1.6 "IBM Plex Sans Arabic",Tahoma,sans-serif;color:#695c4d}
+.t-account-address,.t-account-order{border:1px solid #ebdfcf;border-radius:15px;padding:14px;margin-top:10px;background:#fff9ed}
+.t-account-address strong,.t-account-order strong{font:800 17px/1.5 "Changa",Tahoma,sans-serif}
+.t-account-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.t-account-actions button{min-height:44px;cursor:pointer;padding:9px 13px;border:1px solid #171511;border-radius:11px;background:#fffdf8;font-weight:700}
+.t-account-actions button:first-child{background:#171511;color:#fff9ee}
+.t-account-save{margin-top:24px;padding-top:18px;border-top:1px solid #e3d7c8;display:grid;gap:9px}
+.t-account-save a,.t-account-order a{font-weight:800;text-decoration:underline}
+.t-account-order>div{display:flex;justify-content:space-between;align-items:center;gap:9px}
+.t-account-order span{font:800 13px/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif;color:#a02b23}
+.t-account-panel--orders{grid-column:1 / -1}
+@media(max-width:720px){
+ .t-account-main{padding-block:24px calc(100px + env(safe-area-inset-bottom,0px))}
+ .t-account-heading h1{font-size:clamp(44px,11vw,64px)}
+ .t-account-grid{grid-template-columns:1fr}
+ .t-account-panel{border-radius:19px;padding:18px}
+ .t-account-panel--orders{grid-column:auto}
+ .t-account-order>div{flex-wrap:wrap}
+}
+
+/* Release: compact mobile account identity, Google sign-in and account summaries. */
+.t-account-identity{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+.t-account-avatar{width:62px;height:62px;min-width:62px;display:flex;align-items:center;
+ justify-content:center;border-radius:50%;background:#171511;color:#f6ce45;
+ border:3px solid #f6ce45;font:900 28px/1 "Changa",Tahoma,sans-serif;text-transform:uppercase}
+.t-account-kicker{color:#a52a20;font:850 11px/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif}
+.t-account-identity h2{margin:3px 0 0;font-size:clamp(23px,2.6vw,33px);line-height:1.3}
+.t-account-overview{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:20px 0}
+.t-account-overview>div{display:flex;flex-direction:column;align-items:start;
+ border:1px solid #e5d6c1;background:#fff7e7;border-radius:14px;padding:13px 16px;min-width:0}
+.t-account-overview strong{font:900 31px/1.2 "Changa",Tahoma,sans-serif;color:#171511}
+.t-account-overview span{font:700 12px/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif;color:#68574a}
+.t-account-google{gap:14px;width:100%;min-height:55px;justify-content:center;
+ background:#fff;color:#171511;border:1.5px solid #171511;text-decoration:none}
+.t-account-google:hover{background:#f6ce45}
+.t-account-google__mark{font:900 23px/1 Arial,sans-serif;direction:ltr;color:#4285f4}
+.t-account-panel .t-account-email{font-size:clamp(13px,2vw,16px);unicode-bidi:plaintext}
+@media(max-width:720px){
+ .t-account-main{padding-inline:clamp(14px,4vw,22px)}
+ .t-account-heading{margin-bottom:22px}
+ .t-account-heading h1{font-size:clamp(38px,10.1vw,54px);line-height:1.2}
+ .t-account-heading p{font-size:14px;line-height:1.65}
+ .t-account-panel{padding:clamp(16px,4.5vw,23px);border-radius:18px}
+ .t-account-identity{gap:12px}
+ .t-account-avatar{width:50px;height:50px;min-width:50px;font-size:23px}
+ .t-account-identity h2{font-size:clamp(21px,6vw,27px)}
+ .t-account-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .t-account-actions button{width:100%;padding-inline:7px}
+ .t-account-panel .t-account-button{width:100%}
+ .t-account-order{overflow-wrap:anywhere}
+ .t-account-save input{font-size:16px}
+}
+@media(max-width:350px){
+ .t-account-actions{grid-template-columns:1fr}
+ .t-account-overview>div{padding:11px}
+ .t-account-overview strong{font-size:25px}
+}

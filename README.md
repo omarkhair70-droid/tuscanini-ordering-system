@@ -1,3 +1,14 @@
+> **CURRENT REBIRTH WORKING BOARD (22 OCT 2026):** [Single authoritative execution / coverage register](docs/rebirth/WORKING_BOARD.md). It supersedes the historical snapshots and old implementation bullets below. The current product is ONE authored customer ordering website plus ONE staff order inbox, not a POS or staff-management suite. The board tracks actual build/CI/visual/field/merchant statuses. PR #59 remains draft.
+
+> ### TUSCANINI REBIRTH / 2026 — active development
+> The restaurant site is being rebuilt as a new authored customer + operations experience. The original implementation is preserved on `main`; the live redesign is a **Draft PR**, not a finished release.
+>
+> **Start here:** [Research and decision source of truth](docs/rebirth/00_START_HERE.md) · [Research atlas](docs/rebirth/01_RESEARCH_MEMORY.md) · [Creative/media bible](docs/rebirth/02_CREATIVE_AND_MEDIA_SYSTEM.md) · [QA contract](docs/rebirth/03_ENGINEERING_AND_QA.md) · [Build gates](docs/rebirth/04_BUILD_SEQUENCE_AND_DECISIONS.md).
+>
+> Photo assets are a required release gate: the 12 genuine 640px Tuscanini images are cataloged in `lib/rebirth/food-media.ts`; 11 of 12 genuine images are now committed as original JPEGs under `public/images/rebirth`; one photo remains pending, and the set is not yet fully reviewed, the Home is not visually approved. The legacy material below records older implementation phases, not current restaurant pricing or an approved new art direction.
+>
+> ---
+
 # Tuscanini Ordering System
 
 Arabic-first, RTL-ready Next.js App Router project for a bold fast-food ordering experience.

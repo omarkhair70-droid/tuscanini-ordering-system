@@ -1,79 +1,58 @@
+import { ExperienceFooter } from '@/components/rebirth/experience-footer';
+import type { Metadata } from 'next';
 import Link from 'next/link';
-import { PageHero } from '@/components/shared/page-hero';
-import { OrderTrackingCard } from '@/components/order-success/order-tracking-card';
-import { getRuntimePublicSiteSettings } from '@/lib/site-settings-runtime';
-import { buildWhatsappFollowupMessage, buildWhatsappOrderUrl } from '@/lib/whatsapp';
+import { RebirthOrderTracking } from '@/components/rebirth/rebirth-order-tracking';
+import { CustomerJourney } from '@/components/rebirth/customer-journey';
+import '../rebirth-home.css';
+import '../rebirth-checkout.css';
+import '../rebirth-tracking.css';
+import '../rebirth-customer-journey.css';
 
-type OrderSuccessPageProps = {
-  searchParams?: Promise<{
-    orderId?: string;
-    ref?: string;
-    table?: string;
-  }>;
+export const dynamic = 'force-dynamic';
+export const metadata: Metadata = {
+  title: 'متابعة الطلب | توسكانيني',
+  description: 'شوف حالة طلبك المسجلة من المطعم، من انتظار التأكيد لحد الاستلام.',
+  robots: { index: false, follow: false, noarchive: true },
 };
 
-export default async function OrderSuccessPage({ searchParams }: OrderSuccessPageProps) {
-  const resolvedSearchParams = searchParams ? await searchParams : undefined;
-  const orderId = typeof resolvedSearchParams?.orderId === 'string' ? resolvedSearchParams.orderId.trim() : '';
-  const orderReference = typeof resolvedSearchParams?.ref === 'string' ? resolvedSearchParams.ref.trim() : '';
-  const tableReference = typeof resolvedSearchParams?.table === 'string' ? resolvedSearchParams.table.trim() : '';
+type Props = { searchParams?: Promise<{ orderId?: string }> };
 
-  const settings = await getRuntimePublicSiteSettings();
-  const referenceForFollowup = orderReference || orderId;
-  const followupMessage = referenceForFollowup ? buildWhatsappFollowupMessage(referenceForFollowup, tableReference || null) : '';
-  const whatsappUrl = referenceForFollowup ? buildWhatsappOrderUrl(followupMessage, settings.whatsappOrderNumber) : null;
-
+export default async function OrderSuccessPage({searchParams}: Props) {
+  const query = searchParams ? await searchParams : {};
+  const orderId = typeof query.orderId==='string' ? query.orderId.trim() : '';
+  // Do not infer an order exists just because this route opens.
+  const valid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(orderId);
   return (
-    <div className="space-y-6">
-      <PageHero title="تم استلام طلبك" subtitle="شكرًا لطلبك من توسكانيني ❤️" />
-
-      {orderId ? (
-        <OrderTrackingCard orderId={orderId} fallbackReference={orderReference} fallbackTableReference={tableReference} />
-      ) : (
-        <section className="rounded-3xl border border-brand-dark/10 bg-brand-white p-5 shadow-[0_10px_24px_rgba(18,18,18,0.05)] sm:p-6">
-          <div className="space-y-3">
-            <p className="text-lg font-black text-brand-dark sm:text-xl">تم استلام طلبك</p>
-            <p className="rounded-xl border border-brand-dark/20 bg-brand-yellow/30 px-3 py-2 text-sm font-bold text-brand-dark sm:text-base">
-              طلبك في انتظار تأكيد المطعم
-            </p>
-
-            {orderReference ? (
-              <div className="rounded-xl border border-brand-dark/20 bg-brand-white px-4 py-3">
-                <p className="text-xs font-bold text-brand-charcoal">مرجع الطلب</p>
-                <p className="mt-1 text-base font-black text-brand-red sm:text-lg">{orderReference}</p>
-              </div>
-            ) : null}
-
-            {tableReference ? (
-              <div className="rounded-xl border border-brand-dark/20 bg-brand-white px-4 py-3">
-                <p className="text-xs font-bold text-brand-charcoal">مرجع الطاولة</p>
-                <p className="mt-1 text-base font-black text-brand-dark sm:text-lg">{tableReference}</p>
-              </div>
-            ) : null}
-          </div>
-        </section>
-      )}
-
-      <section className="rounded-2xl border border-brand-dark/10 bg-brand-white p-4 shadow-[0_8px_20px_rgba(18,18,18,0.04)] sm:p-5">
-        <h2 className="text-base font-black text-brand-dark sm:text-lg">الخطوات التالية</h2>
-        <ul className="mt-3 list-inside list-disc space-y-2 text-sm font-bold text-brand-charcoal sm:text-base">
-          <li>سيتم التواصل معك لتأكيد تفاصيل الطلب.</li>
-          <li>لو طلبك دليفري، يُفضّل إرسال اللوكيشن على واتساب لتسريع التأكيد.</li>
-          <li>بعد التأكيد، يبدأ المطعم في تجهيز الطلب.</li>
-        </ul>
-      </section>
-
-      <section className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-        <Link href="/menu" className="btn-primary min-h-11 w-full text-center">
-          العودة إلى المنيو
-        </Link>
-
-        {whatsappUrl ? (
-          <Link href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="btn-primary min-h-11 w-full text-center">
-            متابعة عبر واتساب
-          </Link>
-        ) : null}
-      </section>
+    <div className="t-page t-order-page" dir="rtl">
+      <a className="t-skip" href="#t-order-content">انتقل إلى حالة الطلب</a>
+      <ExperienceHeaderWrapper />
+      <main id="t-order-content">
+        <header className="t-order-hero t-shell">
+          <span className="t-index">YOUR ORDER / TUSCANINI</span>
+          <h1>تابع <em>طلبك.</em></h1>
+          <p>هنا آخر حالة سجّلها المطعم لطلبك. الصفحة بتتحدّث تلقائيًا وهي مفتوحة.</p>
+        </header>
+        <div className="t-shell t-order-page__content">
+          {valid && <CustomerJourney stage="tracking" />}
+          {valid ? <RebirthOrderTracking orderId={orderId} /> :
+            <section className="t-order-missing" role="status">
+              <span className="t-index">ORDER LINK / TUSCANINI</span>
+              <h2>مفيش رقم<br/>طلب صالح هنا.</h2>
+              <p>افتح رابط المتابعة اللي ظهر لك بعد تسجيل طلبك، أو تواصل مع المطعم لو محتاج مساعدة.</p>
+            </section>}
+          <section className="t-order-next">
+            <div><span className="t-index">CAN WE HELP?</span><h2>محتاج مساعدة؟</h2>
+              <p>{valid
+                ? 'لو عندك سؤال عن الاستلام أو تفاصيل الأوردر، كلم المطعم واذكر مرجع الطلب.'
+                : 'لو رابط المتابعة مش شغال معاك، افتح المنيو أو تواصل مع المطعم.'}</p></div>
+            <div className="t-order-next__links"><Link href="/menu">ارجع للمنيو ↗</Link><Link href="/contact">تواصل مع المطعم ↗</Link></div>
+          </section>
+        </div>
+      </main>
+      <ExperienceFooter />
     </div>
   );
 }
+
+import { ExperienceHeader } from '@/components/rebirth/experience-header';
+function ExperienceHeaderWrapper() { return <ExperienceHeader />; }

@@ -1,0 +1,336 @@
+/* TUSCANINI / THE ORDER PRESS
+   Operational print interface: focus first, queue second, real actions always.
+   Ticket Rail is an independent visual/navigation mode, not four Kanban lanes. */
+.op-page{max-width:1700px;margin:0 auto;padding:clamp(12px,2vw,30px);background:#f3ebdc;min-height:calc(100vh - 90px)}
+.op-root{--ink:#171410;--paper:#f3ebdc;--card:#fffaf0;--red:#a52a20;--yellow:#f6ce45;--line:#b4a48b;
+  font:700 14px/1.55 Tahoma,Arial,sans-serif;color:var(--ink)}
+.op-root *{box-sizing:border-box}
+.op-root button,.op-root input{font:inherit;border-radius:0;min-height:44px}
+.op-root button{cursor:pointer}
+.op-root button:disabled{opacity:.5;cursor:wait}
+.op-root button:focus-visible,.op-root input:focus-visible{outline:3px solid #1473cb;outline-offset:3px}
+.op-toolbar{display:flex;align-items:end;justify-content:space-between;gap:18px;flex-wrap:wrap;padding:10px 0 20px}
+.op-toolbar__identity{display:flex;flex-direction:column;gap:3px}
+.op-toolbar__identity>span{font:900 11px/1.3 Arial,sans-serif;letter-spacing:.18em;direction:ltr;align-self:flex-end;color:var(--red)}
+.op-toolbar__identity strong{font-size:clamp(30px,4vw,59px);line-height:1.17;font-weight:900;letter-spacing:-.035em}
+.op-toolbar__identity small{font:900 10px/1.4 Arial,sans-serif;letter-spacing:.14em;direction:ltr;align-self:flex-end;color:#7a6e5d}
+.op-toolbar__tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.op-view{display:flex;background:var(--ink);padding:4px;gap:3px}
+.op-view button{min-height:45px;background:none;color:#e7ddc9;padding:11px 17px;border:0;font-size:13px;font-weight:900}
+.op-view button[aria-pressed="true"]{background:var(--yellow);color:var(--ink)}
+.op-preview{border:2px solid var(--ink);background:transparent;padding:9px 14px;font-size:13px;font-weight:900}
+.op-preview[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:white}
+.op-health{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-block:1px solid var(--line);
+  padding:11px 0;margin-bottom:14px;min-height:70px}
+.op-health__key{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:800}
+.op-health__key input{width:clamp(180px,26vw,320px);background:#fffaf1;border:1px solid var(--ink);
+  padding:10px 13px;font:700 14px Tahoma,Arial,sans-serif;color:var(--ink)}
+.op-health__sync{padding:9px 15px;border:1px solid var(--ink);background:var(--ink);color:white;font-size:12px;font-weight:900}
+.op-health__link{font-size:12px;color:#5d5143;font-weight:750;margin-inline-start:auto}
+.op-health__link--error{color:var(--red)}
+.op-health__mark{display:inline-flex;align-items:center;background:var(--yellow);border:1px solid var(--ink);
+  padding:9px 13px;font-size:13px;font-weight:900}
+.op-pulse{display:grid;grid-template-columns:1.25fr repeat(3,1fr);border:2px solid var(--ink);background:var(--card);
+  margin-bottom:13px}
+.op-pulse>div{padding:13px 20px;min-width:0;display:flex;flex-direction:column;align-items:start;
+  border-inline-end:1px solid var(--line)}
+.op-pulse>div:last-child{border-inline-end:0}
+.op-pulse__live{background:var(--yellow)}
+.op-pulse b{font:900 10px/1.2 Arial,sans-serif;letter-spacing:.08em;direction:ltr;align-self:flex-end}
+.op-pulse strong{font:900 clamp(32px,4vw,58px)/1.1 Impact,Arial,sans-serif;direction:ltr}
+.op-pulse span{font-size:13px;font-weight:900}
+.op-filters{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.op-filters__tabs{display:flex;flex-wrap:wrap;gap:5px}
+.op-filters__tabs button{background:transparent;border:1px solid var(--line);padding:8px 11px;
+  font-size:13px;font-weight:900;display:flex;align-items:center;gap:9px}
+.op-filters__tabs button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:white}
+.op-filters__tabs button span{font:900 14px/1 Impact,Arial,sans-serif;direction:ltr}
+.op-filters>input{max-width:100%;width:min(235px,100%);background:#fffaf1;border:1px solid var(--ink);padding:10px 12px}
+.op-nokey{border:1px dashed var(--line);padding:45px 18px;background:#fffaf0;font-size:18px;font-weight:850}
+.op-stage{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(278px,.82fr);gap:12px;align-items:stretch}
+.op-stage__focus,.op-stage__queue,.op-rail{min-width:0;position:relative}
+.op-stage__focus{background:var(--ink);padding:clamp(12px,2vw,24px);color:#f4eddc}
+.op-stage__queue{background:#e8d9bf;padding:clamp(12px,1.8vw,20px);border-top:6px solid var(--red)}
+.op-section-title{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;
+  padding:0 3px 13px;border-bottom:1px solid currentColor;margin-bottom:16px}
+.op-section-title>span{font:900 11px Arial,sans-serif;letter-spacing:.08em;direction:ltr}
+.op-section-title>strong{font-size:clamp(17px,2.2vw,27px);line-height:1.3}
+.op-section-title em{font-style:normal;font:900 19px Impact,Arial,sans-serif}
+.op-ticket{background:var(--card);color:var(--ink);border:0;border-top:9px solid var(--yellow);padding:clamp(18px,2.4vw,34px);
+  margin:0;min-width:0;position:relative;box-shadow:7px 8px 0 #08070648}
+.op-ticket--compact{border:1px solid #a59680;border-top:7px solid var(--red);padding:17px;box-shadow:none}
+.op-ticket--compact[data-order-state="received"]{border-top-color:var(--yellow)}
+.op-ticket__masthead{display:flex;justify-content:space-between;align-items:center;gap:12px;
+  border-bottom:2px dashed #9a8b74;padding-bottom:14px;flex-wrap:wrap}
+.op-ticket__masthead>strong{font:900 clamp(25px,3.4vw,46px)/1 Impact,Arial,sans-serif;direction:ltr;letter-spacing:.015em}
+.op-ticket__stage{background:var(--ink);color:#fff1d8;padding:6px 10px;font:850 12px/1.5 Tahoma,Arial,sans-serif}
+.op-ticket__stage[data-phase="received"]{background:var(--red);color:white}
+.op-ticket__stage[data-phase="ready"]{background:#316043;color:white}
+.op-ticket__stage[data-phase="delivered"]{background:#d7cdb9;color:var(--ink)}
+.op-ticket__meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:#665746;
+  padding:12px 0;font-size:12px;border-bottom:1px dashed #c6b89e}
+.op-ticket__name{font-size:clamp(17px,2.2vw,24px);font-weight:900;margin:15px 0}
+.op-ticket__warning{padding:10px 12px;background:#ffdfa8;border-inline-start:4px solid var(--red);
+  color:#281c14;font-weight:850;margin:9px 0}
+.op-lines{list-style:none;padding:0;margin:0;display:grid;gap:0}
+.op-lines>li{display:flex;gap:12px;padding:12px 0;border-bottom:1px dashed #bdb098;min-width:0}
+.op-lines__qty{font:900 21px/1 Impact,Arial,sans-serif;direction:ltr;white-space:nowrap}
+.op-lines__details{display:flex;flex-direction:column;gap:5px;min-width:0}
+.op-lines__details>strong{font-size:clamp(16px,2.1vw,24px);line-height:1.4}
+.op-lines__mods{display:flex;flex-wrap:wrap;gap:5px}
+.op-lines__mods span{display:inline-flex;font-size:11px;font-weight:850;background:#e9d7b8;padding:3px 7px}
+.op-lines__details em{font-size:12px;font-style:normal;color:var(--red);font-weight:850}
+.op-ticket__details{display:flex;flex-wrap:wrap;gap:12px;color:#5c4e40;font-size:12px;padding:13px 0}
+.op-ticket__bottom{display:flex;justify-content:space-between;align-items:end;gap:18px;flex-wrap:wrap;margin-top:16px}
+.op-ticket__bottom>strong{font:900 clamp(24px,3vw,39px)/1.15 Impact,Arial,sans-serif;direction:ltr}
+.op-actions{display:flex;gap:8px;flex-wrap:wrap}
+.op-actions button{padding:10px 14px;min-height:49px;border:2px solid var(--ink);display:flex;align-items:center;
+  justify-content:space-between;gap:20px;font-weight:900;font-size:14px}
+.op-actions button span{font:900 18px Impact,Arial,sans-serif;direction:ltr}
+.op-actions__primary{background:var(--yellow);color:var(--ink)}
+.op-actions__alt{background:none;color:var(--ink)}
+.op-actions button:hover:not(:disabled){background:var(--ink);color:white}
+.op-finished{font-size:13px;font-weight:900;color:#615647}
+.op-queue-list{height:clamp(350px,54vh,690px);overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;
+  scrollbar-color:#857561 #e7d9be;display:grid;gap:6px;align-content:start}
+.op-queue-row{background:#fbf1de;border:1px solid #ab9981;color:var(--ink);padding:12px 13px;text-align:start;
+  display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:baseline;min-width:0}
+.op-queue-row:hover{border-color:var(--red);background:#fff9e9}
+.op-queue-row__id{font:900 20px/1.2 Impact,Arial,sans-serif;direction:ltr;justify-self:end}
+.op-queue-row>strong{font-size:14px;line-height:1.35}
+.op-queue-row__details{font-size:11px;color:#716352}
+.op-queue-row>small{font-size:11px;font-weight:900;justify-self:end}
+.op-queue-row>small[data-phase="received"]{color:var(--red)}
+.op-queue-row>small[data-phase="ready"]{color:#2f6245}
+.op-rail{background:var(--ink);color:var(--paper);padding:clamp(16px,2.4vw,28px)}
+.op-rail__track{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(290px,32%);gap:10px;align-items:start;
+  overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-inline:contain;
+  scroll-padding-inline:8px;padding:5px 4px 21px;scrollbar-color:var(--yellow) #4c4135}
+.op-rail__track>.op-ticket{scroll-snap-align:start;min-height:390px}
+.op-ticket--compact .op-ticket__masthead>strong{font-size:27px}
+.op-ticket--compact .op-ticket__name{font-size:18px;margin:12px 0}
+.op-ticket--compact .op-lines__details>strong{font-size:17px}
+.op-ticket--compact .op-lines>li{padding:9px 0}
+.op-ticket--compact .op-actions button{font-size:12px;min-height:44px;padding:9px}
+.op-ticket--compact .op-ticket__bottom>strong{font-size:25px}
+.op-allday{display:flex;gap:12px;align-items:stretch;background:var(--yellow);border-block:3px solid var(--ink);
+  margin-top:13px;padding:13px 17px;flex-wrap:wrap}
+.op-allday__label{display:flex;flex-direction:column;justify-content:center;padding-inline-end:18px;border-inline-end:2px solid var(--ink)}
+.op-allday__label b{font:900 24px Impact,Arial,sans-serif;direction:ltr}
+.op-allday__label span{font-size:12px;font-weight:900}
+.op-allday__counts{display:flex;flex:1;gap:13px;align-items:center;flex-wrap:wrap}
+.op-allday__counts>div{display:flex;align-items:center;gap:7px;border-inline-end:1px solid #948339;padding-inline-end:13px}
+.op-allday__counts strong{font:900 29px Impact,Arial,sans-serif;direction:ltr}
+.op-allday__counts span{font-size:12px;font-weight:900;max-width:145px}
+.op-allday>small{font-size:10px;color:#5e512d;align-self:center}
+.op-foot{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;border-top:1px solid #ab9a82;
+  margin-top:13px;padding:12px 0 22px;font-size:11px;color:#6f5f4e}
+.op-foot span[lang="en"]{font:900 11px Arial,sans-serif;direction:ltr}
+@media(max-width:1090px){
+  .op-page{padding:12px}
+  .op-stage{grid-template-columns:minmax(0,1.35fr) minmax(270px,.8fr)}
+  .op-pulse>div{padding:12px}
+  .op-rail__track{grid-auto-columns:minmax(280px,42%)}
+}
+@media(max-width:780px){
+  .op-toolbar__identity strong{font-size:35px}
+  .op-stage{grid-template-columns:1fr}
+  .op-queue-list{height:auto;max-height:345px}
+  .op-rail__track{grid-auto-columns:minmax(260px,74%)}
+  .op-health__link{margin-inline-start:0}
+  .op-filters__tabs{width:100%}
+  .op-filters__tabs button{flex:1;justify-content:center}
+  .op-pulse>div{padding:10px}
+  .op-pulse strong{font-size:32px}
+  .op-pulse b{font-size:9px}
+  .op-allday{padding:10px}
+}
+@media(max-width:500px){
+  .op-page{padding:9px}
+  .op-toolbar{padding:10px 0}
+  .op-toolbar__tools,.op-view{width:100%}
+  .op-view button{flex:1;padding:9px}
+  .op-pulse{grid-template-columns:repeat(2,1fr)}
+  .op-pulse>div:nth-child(2){border-inline-end:0}
+  .op-pulse>div:nth-child(-n+2){border-bottom:1px solid var(--line)}
+  .op-filters>input{width:100%}
+  .op-stage__focus,.op-stage__queue,.op-rail{padding:12px}
+  .op-rail__track{grid-auto-columns:minmax(275px,92%)}
+  .op-ticket{padding:15px}
+  .op-ticket__masthead>strong{font-size:26px}
+  .op-pulse strong{font-size:37px}
+}
+@media(prefers-reduced-motion:no-preference){
+  .op-ticket{animation:op-ticket-enter .28s ease-out both}
+  .op-queue-row{transition:background .15s ease,border-color .15s ease}
+  @keyframes op-ticket-enter{from{opacity:.6;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+}
+@media(prefers-reduced-motion:reduce){.op-ticket,.op-queue-row{animation:none!important;transition:none!important}}
+
+/* Tablet focus: one actionable ticket and one independent queue viewport.
+   Keep action controls visible as long orders overflow their own paper surface. */
+@media(min-width:781px){
+  .op-stage__focus,.op-stage__queue{height:clamp(425px,58vh,660px);display:flex;flex-direction:column}
+  .op-stage__focus>.op-ticket{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+    scrollbar-color:#a38e72 #fdf6e8;scrollbar-width:thin;display:flex;flex-direction:column}
+  .op-stage__focus .op-ticket__bottom{position:sticky;bottom:-1px;background:var(--card);
+    padding:12px 0 4px;margin-top:auto;box-shadow:0 -10px 15px -9px #49392a2a}
+  .op-queue-list{height:auto;max-height:none;flex:1;min-height:0}
+}
+
+/* A cashier's landscape tablet is short. Bring the first decision above fold
+   at 1024×768 instead of spending that height on dashboard introductions. */
+@media(min-width:781px) and (max-height:850px){
+  .op-page{padding-block:8px}
+  .op-toolbar{padding:3px 0 11px}
+  .op-toolbar__identity strong{font-size:clamp(30px,3.3vw,42px)}
+  .op-toolbar__identity>span,.op-toolbar__identity small{font-size:10px}
+  .op-health{min-height:54px;padding:5px 0;margin-bottom:8px}
+  .op-health__key input{min-height:42px;padding:8px 10px}
+  .op-pulse{margin-bottom:7px}
+  .op-pulse>div{padding:7px 13px}
+  .op-pulse strong{font-size:clamp(31px,3.4vw,43px)}
+  .op-pulse span{font-size:11px}
+  .op-filters{margin-bottom:8px}
+  .op-filters__tabs button,.op-filters>input{min-height:40px}
+  .op-stage__focus,.op-stage__queue{padding:12px;height:clamp(390px,53vh,510px)}
+  .op-section-title{padding-bottom:8px;margin-bottom:8px}
+  .op-section-title>strong{font-size:20px}
+  .op-stage__focus>.op-ticket{padding:15px}
+  .op-stage__focus .op-ticket__masthead{padding-bottom:8px}
+  .op-stage__focus .op-ticket__meta{padding:8px 0}
+  .op-stage__focus .op-ticket__name{margin:9px 0}
+  .op-stage__focus .op-lines>li{padding:7px 0}
+  .op-stage__focus .op-ticket__details{padding:6px 0}
+  .op-stage__focus .op-ticket__bottom{margin-top:auto;padding:8px 0 0}
+}
+
+/* Twenty-order visual QA caught row compression in the queue at 1024px:
+   each ticket needs its intrinsic two-row height while the queue scrolls. */
+.op-queue-list{grid-auto-rows:minmax(80px,max-content)}
+.op-queue-row{min-height:80px;align-content:center}
+
+/* PASS 38 / Ticket attention and dense touch surfaces.
+   One glance should reach the actionable receipt, not a stack of reports. */
+.op-health__sound{padding:8px 13px;background:#fffaf0;border:1px solid var(--ink);font-size:12px;font-weight:900}
+.op-health__sound[aria-pressed="true"]{background:#316043;border-color:#316043;color:white}
+.op-health__arrival{background:var(--red);color:white;padding:7px 11px;font-size:12px;font-weight:900;
+  animation:op-new-order .36s ease-out}
+.op-rail__navigation{display:flex;gap:5px;margin-inline-start:auto}
+.op-rail__navigation button{border:1px solid var(--yellow);background:var(--yellow);color:var(--ink);
+  min-width:47px;min-height:42px;font-size:23px;line-height:1;font-weight:900}
+.op-rail__navigation button:hover{background:var(--paper)}
+.op-rail__track:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+@keyframes op-new-order{from{opacity:.6;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.op-health__arrival{animation:none}}
+
+/* 390px: foreground the customer's next order. Still show the total,
+   status filters, search and explicit test-mode state without hiding actions. */
+@media(max-width:500px){
+  .op-toolbar{gap:7px;padding:0 0 8px}
+  .op-toolbar__identity{gap:0}
+  .op-toolbar__identity strong{font-size:27px;line-height:1.18}
+  .op-toolbar__identity>span,.op-toolbar__identity small{display:none}
+  .op-toolbar__tools{gap:5px;flex-wrap:nowrap}
+  .op-view{flex:1;min-width:0;padding:3px;gap:2px}
+  .op-view button{font-size:11px;padding:6px 5px;min-height:38px}
+  .op-preview{flex:0 0 111px;padding:5px 6px;font-size:10px;min-height:44px}
+  .op-health{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:5px;
+    margin-bottom:8px;min-height:0;padding:6px 0}
+  .op-health__mark,.op-health__key,.op-health__link,.op-health__arrival{grid-column:1/-1}
+  .op-health__mark{min-height:0;padding:4px 8px;font-size:11px;justify-content:center}
+  .op-health__sync,.op-health__sound{min-height:37px;padding:4px 5px;font-size:11px}
+  .op-health__key{flex-wrap:wrap}
+  .op-health__key input{width:100%}
+  .op-health__link{margin-inline-start:0}
+  .op-root[data-preview="true"] .op-health__link{display:none}
+  .op-pulse{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:8px}
+  .op-pulse>div{min-height:65px;padding:6px 5px;border-bottom:0!important;
+    border-inline-end:1px solid var(--line)!important}
+  .op-pulse>div:last-child{border-inline-end:0!important}
+  .op-pulse b{display:none}
+  .op-pulse strong{font-size:29px;line-height:1.05}
+  .op-pulse span{font-size:10px;line-height:1.25}
+  .op-filters{gap:6px;margin-bottom:8px}
+  .op-filters__tabs{display:flex;flex-wrap:nowrap;gap:3px}
+  .op-filters__tabs button{min-width:0;min-height:36px;padding:5px 3px;
+    font-size:10px;gap:3px;flex:1;justify-content:center}
+  .op-filters__tabs button span{font-size:12px}
+  .op-filters>input{min-height:37px;padding:6px 10px}
+  .op-section-title{margin-bottom:8px;padding-bottom:7px}
+  .op-section-title>strong{font-size:18px}
+  .op-ticket__name{margin:9px 0}
+  .op-ticket__meta{padding:8px 0}
+  .op-ticket__bottom{gap:10px}
+  .op-actions{flex:1}
+  .op-actions button{flex:1;justify-content:center;gap:9px;padding:7px 9px;min-height:47px}
+  .op-rail__navigation{width:100%;justify-content:flex-end}
+  .op-rail__navigation button{min-height:38px}
+}
+
+/* Open demonstration of the real Order Press interface. Synthetic orders
+   are editable locally; no production order database is attached here. */
+.op-remote-preview{
+  display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline;
+  max-width:1450px;margin:4px auto 17px;padding:13px 18px;
+  border:2px solid var(--ink);border-inline-start:7px solid var(--red);
+  background:var(--yellow);color:var(--ink);
+  font-size:13px;font-weight:720;line-height:1.85
+}
+.op-remote-preview strong{font-weight:950}
+@media(max-width:500px){
+  .op-remote-preview{padding:10px 12px;margin:4px 0 12px;font-size:12px}
+}
+
+/* One-time, explicitly staff-authorized import of historical menu data.
+   Separate from customer checkout; never implies merchant-approved prices. */
+.op-health__catalog{
+  padding:9px 13px;min-height:42px;border:1px dashed var(--red);
+  background:#fff1d7;color:var(--ink);font-size:12px;font-weight:900;cursor:pointer
+}
+.op-health__catalog:disabled{opacity:.45;cursor:not-allowed}
+.op-health__catalog:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+@media(max-width:500px){.op-health__catalog{grid-column:1/-1;font-size:11px}}
+
+/* The same real ticket is viewable from the customer's existing order-tracking screen.
+   Never offer a public tracking link for local synthetic display orders. */
+.op-ticket__customer-view{
+  display:inline-flex;align-items:center;min-height:40px;margin-top:11px;
+  padding:6px 1px;color:var(--ink);border-bottom:2px solid var(--red);
+  font-size:12px;font-weight:900;text-decoration:none
+}
+.op-ticket__customer-view:hover{color:var(--red)}
+.op-ticket__customer-view:focus-visible{outline:3px solid #287bd6;outline-offset:3px}
+
+/* Protected real-operator surface when no order service has been enabled. */
+.op-unavailable{max-width:750px;margin:clamp(30px,7vw,90px) auto;
+  background:#fff8e8;color:#171511;border-top:7px solid #d92e24;
+  padding:clamp(28px,5vw,58px);box-shadow:0 12px 40px #0001}
+.op-unavailable>span{font:600 12px Anton,Impact,sans-serif;letter-spacing:.1em;color:#9a1b16}
+.op-unavailable h1{font:850 clamp(33px,5.5vw,60px)/1.22 Changa,Tahoma,sans-serif;margin:18px 0}
+.op-unavailable p{font:650 16px/1.9 "IBM Plex Sans Arabic",Tahoma,sans-serif}
+.op-unavailable>div{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+.op-unavailable a{min-height:46px;padding:12px 18px;display:inline-flex;align-items:center;
+  background:#171511;color:#fff8e8;font-weight:850;text-decoration:none}
+.op-unavailable a:hover{background:#d92e24}
+.op-unavailable a:focus-visible{outline:3px solid #287bd6;outline-offset:3px}
+
+
+/* Customer's confirmed drop-off is a cashier action, not hidden in the note. */
+.op-ticket__delivery-map{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:42px;padding:9px 14px;
+  border:1px solid #171511;border-radius:10px;
+  background:#f5cd4e;color:#171511;
+  text-decoration:none;
+  font:800 13px/1.4 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+}
+.op-ticket__delivery-map:hover{background:#171511;color:#fff9ee}
+.op-ticket__delivery-map:focus-visible{outline:3px solid #247bea;outline-offset:2px}
+
+.op-ticket__payment{
+  display:block;padding:8px 11px;margin:10px 0;
+  background:#fff2d6;border-inline-start:3px solid #e0aa12;
+  border-radius:6px;color:#443527;
+  font:750 12px/1.6 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+}

@@ -1,0 +1,245 @@
+/* Tuscanini Rebirth / CONTACT — a street-level placard, not a second gallery.
+ * Role: fast wayfinding and direct communication; existing site_settings data. */
+.t-contact-page{background:var(--paper)}
+.t-contact-hero{background:var(--ink);color:var(--paper)}
+.t-contact-hero__grid{
+  max-width:1600px;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);
+  gap:0;min-height:clamp(520px,50vw,730px);
+}
+.t-contact-hero__main{display:flex;flex-direction:column;justify-content:space-between;gap:30px;padding:clamp(24px,4vw,56px) clamp(20px,5vw,78px) clamp(36px,5vw,82px) 24px;min-width:0}
+.t-contact-hero__overline{display:flex;justify-content:space-between;gap:12px;padding-bottom:15px;border-bottom:1px solid #fff5;font-size:12px;font-weight:800}
+.t-contact-hero__overline [lang=en]{direction:ltr;font:14px/1.2 "Anton",Impact,sans-serif;letter-spacing:.06em}
+.t-contact-hero__main .t-index{color:var(--yellow);font-size:12px}
+.t-contact-hero h1{font:800 clamp(72px,9vw,143px)/1.07 "Changa",Tahoma,sans-serif;margin-top:clamp(15px,3vw,44px)}
+.t-contact-hero h1 em{color:var(--yellow)}
+.t-contact-hero__main p{font:650 clamp(16px,1.6vw,21px)/1.8 "IBM Plex Sans Arabic",Tahoma,sans-serif;max-width:490px;margin-top:24px}
+.t-contact-hero__jump{align-self:start;padding:13px 0;display:inline-flex;gap:30px;align-items:center;border-bottom:2px solid var(--yellow);font-size:15px;font-weight:850;color:var(--yellow)!important}
+.t-contact-hero__place{
+  position:relative;isolation:isolate;overflow:hidden;background:var(--yellow);color:var(--ink);
+  padding:clamp(34px,5vw,78px) clamp(24px,5vw,75px);display:flex;flex-direction:column;justify-content:space-between;gap:30px
+}
+.t-contact-hero__placemark{align-self:flex-start;font:20px/1.1 "Anton",Impact,sans-serif;direction:ltr;letter-spacing:.07em;padding-bottom:10px;border-bottom:2px solid var(--ink)}
+.t-contact-hero__place-copy{position:relative;z-index:2}
+.t-contact-hero__place-copy .t-index{font-family:"Anton",Impact,sans-serif;letter-spacing:.07em}
+.t-contact-hero__place h2{font:800 clamp(72px,9vw,143px)/.99 "Changa",Tahoma,sans-serif;margin:26px 0 29px}
+.t-contact-hero__place-copy>p{font:850 clamp(21px,2.3vw,31px)/1.7 "IBM Plex Sans Arabic",Tahoma,sans-serif;max-width:570px}
+.t-contact-hero__place-foot{position:relative;z-index:2;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:20px}
+.t-contact-hero__place-foot>span{max-width:330px;font:650 12px/1.8 "IBM Plex Sans Arabic",Tahoma,sans-serif}
+.t-contact-hero__place-foot a{display:inline-flex;align-items:center;gap:18px;border-bottom:2px solid currentColor;padding-bottom:9px;white-space:nowrap;font-weight:850;font-size:13px}
+.t-contact-hero__mark{position:absolute;direction:ltr;left:-5%;bottom:20%;color:#17151112;transform:rotate(-14deg);font:400 clamp(250px,32vw,520px)/.7 "Anton",Impact,sans-serif;pointer-events:none;z-index:0}
+.t-contact-methods{padding-block:clamp(70px,9vw,135px) clamp(90px,11vw,160px)}
+.t-contact-methods__head{display:grid;grid-template-columns:minmax(150px,.4fr) minmax(0,1fr);gap:clamp(20px,4vw,66px);align-items:start;margin-bottom:clamp(35px,6vw,80px)}
+.t-contact-methods__head h2{font:800 clamp(44px,6.9vw,96px)/1.18 "Changa",Tahoma,sans-serif}
+.t-contact-methods__head h2 em{color:var(--red)}
+.t-contact-methods__head p{font:650 clamp(16px,1.5vw,20px)/1.85 "IBM Plex Sans Arabic",Tahoma,sans-serif;max-width:600px;margin-top:16px}
+.t-contact-methods__rows{border-top:3px solid var(--ink)}
+.t-contact-method{display:grid;grid-template-columns:minmax(150px,.48fr) minmax(0,1fr);gap:25px;border-bottom:1px solid var(--line);padding:clamp(27px,4vw,57px) 0}
+.t-contact-method__index{font:16px "Anton",Impact,sans-serif;letter-spacing:.06em;direction:ltr;display:block;text-align:right}
+.t-contact-method h3{font:800 clamp(26px,3.8vw,50px)/1.3 "Changa",Tahoma,sans-serif;margin-top:13px}
+.t-contact-method__links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
+.t-contact-method__links a{
+  display:flex;align-items:center;justify-content:space-between;gap:18px;min-width:0;
+  background:var(--cream);border:1px solid #c6b9a4;padding:clamp(15px,2vw,24px);
+  font:850 clamp(14px,1.45vw,18px)/1.6 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  min-height:74px;overflow-wrap:anywhere
+}
+.t-contact-method__links a:first-child{background:var(--yellow);border-color:var(--ink)}
+.t-contact-method__links a:hover{background:var(--ink);color:var(--paper)}
+.t-contact-method__links a span[aria-hidden]{font-size:22px}
+.t-contact-method__links>p{font-size:15px;font-weight:650;grid-column:1/-1}
+.t-contact-unknown{background:var(--cream);padding-block:clamp(45px,6vw,85px)}
+.t-contact-unknown__inner{display:grid;grid-template-columns:1fr .8fr;gap:35px;align-items:center}
+.t-contact-unknown h2{font:800 clamp(38px,5vw,74px)/1.2 "Changa",Tahoma,sans-serif;margin-top:15px}
+.t-contact-unknown p{max-width:670px;font:650 16px/1.95 "IBM Plex Sans Arabic",Tahoma,sans-serif;margin-top:15px}
+.t-contact-unknown__links{display:grid;gap:5px}
+.t-contact-unknown__links a{display:flex;justify-content:space-between;gap:20px;padding:17px 0;border-bottom:1px solid #8a7b61;font:850 17px "IBM Plex Sans Arabic",Tahoma,sans-serif}
+.t-contact-unknown__links a:hover{color:var(--red)}
+@media(max-width:980px){
+ .t-contact-hero h1{font-size:clamp(65px,9vw,100px)}
+ .t-contact-hero__place h2{font-size:clamp(68px,10vw,112px)}
+ .t-contact-hero__main{padding-right:23px}
+ .t-contact-hero__place{padding:30px}
+ .t-contact-method__links{grid-template-columns:1fr}
+}
+@media(max-width:720px){
+ .t-contact-hero__grid{display:flex;flex-direction:column;padding-inline:0;min-height:0}
+ .t-contact-hero__main{gap:29px;padding:23px 22px 34px}
+ .t-contact-hero__overline{font-size:11px}
+ .t-contact-hero__overline [lang=en]{font-size:11px}
+ .t-contact-hero__main .t-index{font-size:10px}
+ .t-contact-hero h1{font-size:clamp(64px,13.5vw,95px);margin-top:21px}
+ .t-contact-hero__main p{font-size:15px;margin-top:20px}
+ .t-contact-hero__jump{font-size:14px;padding:8px 0}
+ .t-contact-hero__place{padding:24px 22px 30px;min-height:330px;gap:23px}
+ .t-contact-hero__placemark{font-size:15px}
+ .t-contact-hero__place h2{font-size:clamp(65px,13vw,90px);margin:11px 0 14px}
+ .t-contact-hero__place-copy>p{font-size:19px;max-width:450px}
+ .t-contact-hero__mark{font-size:240px;bottom:3%}
+ .t-contact-methods{padding-block:63px 75px}
+ .t-contact-methods__head{grid-template-columns:1fr;gap:13px;margin-bottom:27px}
+ .t-contact-methods__head h2{font-size:clamp(43px,11vw,72px)}
+ .t-contact-methods__head p{font-size:15px}
+ .t-contact-method{grid-template-columns:1fr;gap:17px;padding:27px 0}
+ .t-contact-method h3{font-size:33px;margin-top:4px}
+ .t-contact-method__links{gap:9px}
+ .t-contact-method__links a{min-height:61px;font-size:15px}
+ .t-contact-unknown__inner{grid-template-columns:1fr}
+ .t-contact-unknown h2{font-size:43px}
+ .t-contact-unknown p{font-size:15px}
+ .t-contact-unknown__links a{font-size:16px}
+}
+@media(max-width:370px){
+ .t-contact-hero h1{font-size:59px}
+ .t-contact-hero__place h2{font-size:65px}
+ .t-contact-hero__place-copy>p{font-size:17px}
+ .t-contact-hero__place-foot a{font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){
+ .t-contact-page *{scroll-behavior:auto}
+}
+
+/* Navigation is part of the product: a real interactive address map,
+   obvious directions, and zero competing footer-brand decoration. */
+.t-contact-hero__wayfinding{display:flex;flex-wrap:wrap;gap:12px 26px}
+.t-contact-map-section{
+  padding-block:clamp(40px,6vw,84px) clamp(50px,7vw,95px);
+  scroll-margin-top:95px;
+}
+.t-contact-map-section__head{
+  display:flex;justify-content:space-between;align-items:end;
+  flex-wrap:wrap;gap:22px 35px;margin-bottom:25px;
+}
+.t-contact-map-section__head .t-index{
+  font:800 12px/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  letter-spacing:0;color:var(--red);
+}
+.t-contact-map-section__head h2{
+  font:800 clamp(45px,7vw,95px)/1.16 "Changa",Tahoma,sans-serif;
+  margin-top:12px;
+}
+.t-contact-map-section__head h2 em{color:var(--red)}
+.t-contact-map-section__head p{
+  margin-top:12px;max-width:620px;
+  font:700 clamp(14px,1.55vw,20px)/1.75 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+}
+.t-contact-map-section__actions{display:flex;gap:10px;flex-wrap:wrap}
+.t-contact-map-section__actions a{
+  display:inline-flex;justify-content:space-between;align-items:center;gap:19px;
+  min-height:52px;min-width:175px;padding:11px 17px;
+  border:2px solid var(--ink);font-weight:850;
+  transition:background .15s,color .15s;
+}
+.t-contact-map-section__actions a:first-child{
+  background:var(--ink);color:var(--paper);
+}
+.t-contact-map-section__actions a:hover,
+.t-contact-map-section__actions a:focus-visible{
+  background:var(--red);color:var(--paper);border-color:var(--red);
+}
+.t-contact-map-section__canvas{
+  min-height:clamp(300px,39vw,540px);
+  background:var(--cream);border:8px solid var(--ink);
+  box-shadow:-10px 10px 0 var(--yellow);overflow:hidden;
+}
+.t-contact-map-section__canvas iframe{
+  display:block;width:100%;height:clamp(300px,39vw,540px);border:0;
+}
+.t-contact-map-section__note{
+  margin-top:18px;
+  font:650 13px/1.6 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  color:#5b4935;
+}
+@media(max-width:720px){
+  .t-contact-hero__wayfinding{gap:10px 22px}
+  .t-contact-map-section{padding-block:37px 53px;scroll-margin-top:76px}
+  .t-contact-map-section__head h2{font-size:clamp(45px,11vw,70px)}
+  .t-contact-map-section__head{gap:16px;margin-bottom:20px}
+  .t-contact-map-section__actions{width:100%;gap:8px}
+  .t-contact-map-section__actions a{flex:1;min-width:140px;font-size:12px;padding-inline:10px}
+  .t-contact-map-section__canvas{min-height:330px;border-width:5px;box-shadow:-6px 6px 0 var(--yellow)}
+  .t-contact-map-section__canvas iframe{height:330px}
+}
+@media(max-width:370px){
+  .t-contact-map-section__actions a{min-width:100%}
+}
+@media(prefers-reduced-motion:reduce){
+  .t-contact-map-section__actions a{transition:none}
+}
+
+.t-contact-map-section__foot{
+  display:flex;justify-content:space-between;align-items:baseline;
+  gap:9px 20px;flex-wrap:wrap;
+}
+.t-contact-map-section__foot>a{
+  margin-top:16px;font:600 11px/1.4 Arial,sans-serif;
+  direction:ltr;opacity:.75;border-bottom:1px solid currentColor;
+}
+
+
+/* First paint is a purposeful wayfinding panel; map tiles load only on
+   interaction so a blocked third-party iframe never becomes an empty hero. */
+.t-contact-map-section__canvas{position:relative;isolation:isolate}
+.t-contact-map-section__reveal{
+  width:100%;min-height:inherit;height:clamp(300px,39vw,540px);
+  display:flex;flex-direction:column;align-items:stretch;
+  justify-content:space-between;gap:14px;
+  padding:clamp(18px,3vw,38px);border:0;border-radius:0;
+  background:var(--yellow);color:var(--ink);
+  position:relative;overflow:hidden;isolation:isolate;cursor:pointer;
+  text-align:right;
+}
+.t-contact-map-section__reveal::before{
+  content:"";position:absolute;z-index:-1;inset:-45% -15%;
+  background:repeating-linear-gradient(-34deg,transparent 0 56px,
+    rgba(23,21,17,.08) 57px 61px,transparent 62px 104px);
+  transform:rotate(-3deg);pointer-events:none;
+}
+.t-contact-map-section__reveal::after{
+  content:"";position:absolute;z-index:-1;
+  width:clamp(210px,36vw,520px);aspect-ratio:1;
+  border:15px solid rgba(217,46,36,.85);border-radius:50%;
+  bottom:-48%;left:-7%;transform:rotate(-17deg);pointer-events:none;
+}
+.t-contact-map-section__reveal-top,
+.t-contact-map-section__reveal-bottom{
+  display:flex;justify-content:space-between;gap:16px;align-items:center;
+  flex-wrap:wrap;font:800 13px/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+}
+.t-contact-map-section__reveal-top span:first-child{
+  direction:ltr;font:400 15px/1.4 "Anton",Impact,sans-serif;letter-spacing:.07em;
+}
+.t-contact-map-section__reveal-symbol{
+  position:absolute;left:clamp(16px,3vw,38px);top:32%;
+  width:clamp(62px,10vw,120px);aspect-ratio:1;
+  display:grid;place-items:center;border:3px solid var(--ink);
+  border-radius:50%;font-size:clamp(29px,4.5vw,65px);
+  transform:rotate(-20deg);
+}
+.t-contact-map-section__reveal strong{
+  display:block;align-self:flex-start;position:relative;
+  margin-block:auto;padding-block:14px;
+  font:800 clamp(58px,7vw,110px)/1.08 "Changa",Tahoma,sans-serif;
+}
+.t-contact-map-section__reveal strong em{color:var(--red)}
+.t-contact-map-section__reveal-bottom{
+  align-items:flex-end;border-top:2px solid var(--ink);padding-top:14px;
+}
+.t-contact-map-section__reveal-bottom>span:last-child{
+  display:inline-flex;align-items:center;gap:15px;
+  padding:9px 13px;background:var(--ink);color:var(--paper);
+}
+.t-contact-map-section__reveal:hover .t-contact-map-section__reveal-bottom>span:last-child,
+.t-contact-map-section__reveal:focus-visible .t-contact-map-section__reveal-bottom>span:last-child{
+  background:var(--red);
+}
+.t-contact-map-section__reveal:focus-visible{
+  outline:4px solid #267fe2;outline-offset:-4px;
+}
+@media(max-width:720px){
+  .t-contact-map-section__reveal{height:330px;padding:15px;gap:8px}
+  .t-contact-map-section__reveal strong{font-size:clamp(50px,12vw,72px)}
+  .t-contact-map-section__reveal-top,.t-contact-map-section__reveal-bottom{font-size:11px;gap:8px}
+  .t-contact-map-section__reveal-top span:first-child{font-size:12px}
+  .t-contact-map-section__reveal-symbol{left:15px;top:32%;width:68px;font-size:34px}
+  .t-contact-map-section__reveal-bottom>span:last-child{padding:7px 9px}
+}

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>حدّد مكان التوصيل | توسكانيني</title>
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@6.15.0/dist/maplibre-gl.css"/>
+<style>
+*{box-sizing:border-box}
+:root{font-family:Tahoma,Arial,sans-serif;color:#171511}
+body{margin:0;background:#fff9ee;height:100dvh;display:flex;flex-direction:column}
+header{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 1px 8px #0001}
+header strong{font-size:17px}
+header span{color:#6b5b4d;font-size:12px}
+#map{position:relative;flex:1;min-height:240px;background:#efe2ce}
+#pin-message{position:absolute;z-index:3;left:12px;right:12px;top:12px;pointer-events:none;display:flex;justify-content:center}
+#pin-message span{padding:10px 14px;background:#fff9ee;border-radius:13px;box-shadow:0 4px 15px #0002;font:700 13px/1.6 Tahoma,sans-serif}
+footer{padding:12px 16px calc(14px + env(safe-area-inset-bottom));display:grid;gap:10px;background:#fff9ee;box-shadow:0 -3px 18px #0001}
+#actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+button{border:1px solid #171511;min-height:49px;padding:10px 12px;font:700 14px Tahoma,sans-serif;cursor:pointer;border-radius:12px}
+#locate{background:#fff9ee;color:#171511}
+#confirm{background:#171511;color:#fff9ee}
+#confirm:disabled{opacity:.43;cursor:not-allowed}
+#coordinates{color:#64594b;font:700 12px/1.6 Tahoma,sans-serif;min-height:18px}
+#message{color:#b52220;font-size:12px;line-height:1.5;min-height:0;margin:0}
+.maplibregl-ctrl-attrib{direction:ltr;font-size:10px!important}
+@media(max-width:340px){header strong{font-size:14px}button{font-size:12px}}
+</style>
+</head>
+<body>
+<header><strong>فين نوصّل طلبك؟</strong><span>حرّك الدبوس أو اختار مكانك</span></header>
+<div id="map">
+  <div id="pin-message"><span>اضغط على المكان أو اسحب الدبوس</span></div>
+</div>
+<footer>
+ <div id="coordinates" role="status" aria-live="polite">حدد مكان التوصيل على الخريطة</div>
+ <p id="message" aria-live="polite"></p>
+ <div id="actions"><button id="locate" type="button">موقعي الحالي</button><button id="confirm" type="button" disabled>اعتمد المكان</button></div>
+</footer>
+<script src="https://unpkg.com/maplibre-gl@6.15.0/dist/maplibre-gl.js"></script>
+<script>
+(function(){
+  'use strict';
+  var marker=null, map=null, selected=null;
+  var message=document.getElementById('message'),coord=document.getElementById('coordinates');
+  var confirm=document.getElementById('confirm');
+  function valid(lat,lng){return Number.isFinite(lat)&&Number.isFinite(lng)&&lat>=22&&lat<=32&&lng>=24&&lng<=37;}
+  function setPoint(lng,lat){
+    if(!valid(lat,lng)){message.textContent='اختار مكان داخل مصر.';return;}
+    selected={lat:+lat.toFixed(6),lng:+lng.toFixed(6)};
+    if(marker) marker.setLngLat([selected.lng,selected.lat]);
+    coord.textContent='تم اختيار الدبوس — تقدر تحرّكه لضبط المدخل';
+    confirm.disabled=false;message.textContent='';
+  }
+  try {
+    if(!window.maplibregl)throw new Error('map-library-unavailable');
+    map=new maplibregl.Map({
+      container:'map',style:'https://tiles.openfreemap.org/styles/liberty',
+      center:[31.099,29.072],zoom:13,attributionControl:true
+    });
+    marker=new maplibregl.Marker({color:'#d72e26',draggable:true})
+      .setLngLat([31.099,29.072]).addTo(map);
+    var markerElement=marker.getElement();
+    markerElement.setAttribute('aria-label','دبوس التوصيل؛ استخدم الأسهم لتحريكه، أو اسحبه باللمس');
+    markerElement.setAttribute('tabindex','0');
+    markerElement.setAttribute('role','button');
+    markerElement.addEventListener('keydown',function(event){
+      var steps={ArrowUp:[0,1],ArrowDown:[0,-1],ArrowLeft:[-1,0],ArrowRight:[1,0]};
+      var direction=steps[event.key];
+      if(!direction)return;
+      event.preventDefault();
+      var current=marker.getLngLat(), step=event.shiftKey?0.001:0.00015;
+      var lng=current.lng+direction[0]*step,lat=current.lat+direction[1]*step;
+      setPoint(lng,lat);
+      map.easeTo({center:[lng,lat],duration:0});
+    });
+    marker.on('dragend',function(){var pos=marker.getLngLat();setPoint(pos.lng,pos.lat);});
+    map.on('click',function(e){setPoint(e.lngLat.lng,e.lngLat.lat);});
+    map.on('error',function(){ if(!selected) message.textContent='لو الخريطة مش ظاهرة، تقدر تكتب العنوان في الطلب.'; });
+    new maplibregl.NavigationControl({showCompass:false}).addTo(map,'top-left');
+  }catch(e){message.textContent='تعذر عرض الخريطة هنا. اكتب عنوان التوصيل في الطلب.';document.getElementById('locate').disabled=true;}
+  document.getElementById('locate').addEventListener('click',function(){
+    if(!navigator.geolocation){message.textContent='تحديد الموقع غير مدعوم على الجهاز.';return;}
+    message.textContent='بنحدد مكانك...';
+    navigator.geolocation.getCurrentPosition(function(p){
+      var lat=p.coords.latitude,lng=p.coords.longitude;
+      if(!valid(lat,lng)){message.textContent='الموقع خارج نطاق الخريطة.';return;}
+      if(map)map.flyTo({center:[lng,lat],zoom:17,essential:false});
+      setPoint(lng,lat);
+    },function(){message.textContent='مش قادرين نحدد مكانك. اختاره بإيدك على الخريطة.';},
+    {enableHighAccuracy:true,timeout:12000,maximumAge:0});
+  });
+  confirm.addEventListener('click',function(){
+    if(!selected||!valid(selected.lat,selected.lng))return;
+    if(window.parent!==window)window.parent.postMessage({
+      type:'tuscanini:delivery-pin:selected',version:1,
+      lat:selected.lat,lng:selected.lng
+    },window.location.origin);
+  });
+})();
+</script>
+</body>
+</html>
