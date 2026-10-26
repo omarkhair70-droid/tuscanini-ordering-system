@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { ExperienceHeader } from '@/components/rebirth/experience-header';
 import { RebirthOfferAction } from '@/components/rebirth/rebirth-offer-action';
 import { getActivePublicOffers } from '@/lib/offers-runtime';
+import { oracleOrdersEnabled } from '@/lib/oracle-order-api';
 import type { PublicOffer } from '@/types/offers';
 import '../rebirth-home.css';
 import '../rebirth-offers.css';
@@ -14,6 +15,7 @@ export const revalidate=0;
 export const metadata:Metadata={title:'العروض | توسكانيني',description:'العروض الرسمية المتاحة حاليًا من توسكانيني، وشروطها وأسعارها.'};
 
 export default async function OffersPage() {
+  const oracleMode=oracleOrdersEnabled();
   let offers:PublicOffer[]=[];
   let sourceError=false;
   try{offers=await getActivePublicOffers(undefined, { throwOnError: true })}catch{sourceError=true}
@@ -50,7 +52,10 @@ export default async function OffersPage() {
                 {offer.descriptionAr&&<p className="t-offers-card__description">{offer.descriptionAr}</p>}
                 {typeof offer.offerPrice==='number' ? <div className="t-offers-card__buy">
                   <div><small>سعر العرض الحالي</small><strong>{offer.offerPrice.toLocaleString('ar-EG')} ج.م</strong></div>
-                  <RebirthOfferAction id={offer.id} title={offer.titleAr} price={offer.offerPrice}/>
+                  {oracleMode
+                    ? <Link href="/contact" className="t-offers-card__contact-offer">اسأل المطعم عن العرض ↗</Link>
+                    : <RebirthOfferAction id={offer.id} title={offer.titleAr} price={offer.offerPrice}/>}
+                  
                 </div> : <p className="t-offers-card__terms">للتفاصيل والسعر النهائي، اسأل المطعم قبل الطلب. {offer.priceText??''}</p>}
               </article>
             ))}</div>
