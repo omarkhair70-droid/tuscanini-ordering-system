@@ -44,9 +44,20 @@ try {
       await accountIcon.locator('svg').count()===1 &&
       (profileIconBounds?.width??0)>=40 && (profileIconBounds?.height??0)>=40,
       `${width}px Account has visible, active, touch-sized profile access`);
-    if(width===320||width===390)await accountPage.screenshot({
-      path:`artifacts/screenshots/customer-account-${width}.png`,
-      fullPage:true,animations:'disabled'});
+    if(width===320||width===390){
+      // Static UI fixture only: signed-out Google entry is visually reviewed
+      // while real OAuth credentials remain deliberately absent from CI.
+      await accountPage.route('**/api/customer/oracle?resource=session',route=>route.fulfill({
+        status:401,contentType:'application/json',body:'{"error":"Sign-in required."}',
+      }));
+      await accountPage.reload({waitUntil:'domcontentloaded'});
+      await accountPage.getByRole('link',{name:'المتابعة باستخدام Google'}).waitFor({timeout:9000});
+      await check(await accountPage.getByRole('link',{name:'المتابعة باستخدام Google'}).isVisible(),
+        `${width}px mobile customer account exposes real Google sign-in action`);
+      await accountPage.screenshot({
+        path:`artifacts/screenshots/customer-account-${width}.png`,
+        fullPage:true,animations:'disabled'});
+    }
     const privateHistory=await context.request.get(baseUrl+'/api/customer/orders',{failOnStatusCode:false});
     const privateBody=await privateHistory.json();
     await check([401,503].includes(privateHistory.status()) &&
