@@ -269,7 +269,7 @@ export function RebirthCheckout() {
                     <p className="t-checkout-service-note" id="t-checkout-service-note" role="status">
                       {customer.orderType==='pickup'
                         ? (settings?.isOrderingOpen?'هتستلم بنفسك من المطعم. مش محتاجين عنوان توصيل.':'تقدر تجهز اختيار الاستلام أو عنوان الدليفري، وإرسال الطلبات متوقف حاليًا.')
-                        : 'اختار موقعك على الخريطة واكتب الشارع ورقم العمارة والمدخل عشان الدليفري يوصل بدقة.'}
+                        : 'حدّد الدبوس أولًا؛ هنقترح المنطقة عند استخدام موقع الجهاز، وبعدها كمّل الشارع ورقم العمارة والمدخل.'}
                     </p>
                     {customer.orderType==='delivery' && <>
                   <CustomerDeliveryPin onSelect={(point, area) => {
