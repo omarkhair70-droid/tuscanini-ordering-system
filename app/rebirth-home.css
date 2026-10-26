@@ -331,3 +331,27 @@
 .t-hero__voice+.t-hero__sub{margin-top:clamp(16px,2.2vw,29px)!important}
 @media(max-width:720px){.t-hero__voice{font-size:clamp(17px,5.1vw,23px);margin-top:12px;gap:6px 10px}
  .t-hero__voice+.t-hero__sub{margin-top:12px!important}}
+
+/* Release: profile access remains visible even on a narrow phone.
+   Preserve the existing four-tab dock, keeping thumb targets clear. */
+.t-header__account{display:inline-flex;align-items:center;gap:8px;min-height:44px;
+ padding:4px 11px 4px 5px;border:1px solid transparent;border-radius:999px;text-decoration:none}
+.t-header__account-glyph{display:inline-flex;align-items:center;justify-content:center;
+ width:34px;height:34px;border-radius:50%;border:1px solid currentColor;flex:0 0 34px}
+.t-header__account[aria-current="page"]{border-color:var(--ink);background:var(--yellow)}
+.t-header__account:hover{background:var(--yellow)}
+@media(max-width:720px){
+ .t-header__account{display:inline-flex;min-width:44px;width:44px;height:44px;padding:4px;
+  align-items:center;justify-content:center;margin:0}
+ .t-header__account-glyph{width:37px;height:37px;flex-basis:37px}
+ .t-header__account-label{position:absolute;width:1px;height:1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap}
+ .t-header__actions{gap:4px}
+ .t-header__cart{min-width:43px}
+ .t-mobile-menu__toggle{min-width:43px}
+}
+@media(max-width:365px){
+ .t-page .t-logo__latin{font-size:21px}
+ .t-header__inner{padding-inline:12px}
+ .t-header__actions{gap:2px}
+}
