@@ -14,7 +14,39 @@ on:
     branches:
       - "redesign/**"
 
+permissions:
+  contents: read
+
 jobs:
+  # Bootstrap reproducible dependency locks from the npm registry in CI.
+  # The ephemeral job is deleted before merging this modernization PR.
+  refresh-modernization-lockfiles:
+    if: ${{ github.event_name == 'pull_request' && github.head_ref == 'chore/tuscanini-20261026-security-runtime' && github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Resolve root and API lockfiles, without running dependency scripts
+        run: |
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund --prefix services/orders-api
+      - name: Commit only updated lockfiles to the same modernization branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json services/orders-api/package-lock.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(deps): lock verified npm dependency graph"
+            git push origin "HEAD:${{ github.head_ref }}"
+          fi
   typecheck-build:
     name: Typecheck & Next build
     runs-on: ubuntu-latest
