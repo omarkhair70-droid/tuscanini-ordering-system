@@ -1,4 +1,4 @@
-import ts from 'typescript';
+import ts from 'typescript-compat';
 import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
