@@ -7,6 +7,7 @@ import {useCart} from '@/components/cart/cart-provider';
 type Person={id:string;email:string};
 type Address={id:string;label:string;formatted_address:string;latitude:number;longitude:number;is_default:boolean};
 type OwnOrder={id:string;status:string;order_type:'pickup'|'delivery';subtotal_cents:string;created_at:string};
+const orderStatus:Record<string,string>={received:'مستني قبول المطعم',accepted:'اتقبل',preparing:'بيتحضّر',ready:'جاهز',delivered:'اتسلّم',rejected:'اترفض'};
 type Reply={customer?:Person;addresses?:Address[];orders?:OwnOrder[];error?:string;ok?:boolean};
 
 async function read(resource:string):Promise<{status:number;data:Reply}>{
@@ -105,13 +106,24 @@ export function CustomerAccount(){
 
   return <div className="t-account-grid">
     <section className="t-account-panel">
-      <h2>{user?'أهلًا بيك.':'ادخل حسابك.'}</h2>
+      <div className="t-account-identity">
+        <span className="t-account-avatar" aria-hidden="true">{user?user.email.charAt(0).toUpperCase():'◯'}</span>
+        <div><span className="t-account-kicker">{user?'حسابك في توسكانيني':'حسابك وطلباتك'}</span>
+          <h2>{user?'أهلًا بيك.':'أهلًا بيك في توسكانيني.'}</h2></div>
+      </div>
       {user?<><p className="t-account-email" dir="ltr">{user.email}</p>
-        <p>عناوينك وطلباتك مرتبطة بحسابك هنا.</p>
+        <div className="t-account-overview" aria-label="ملخص حسابك">
+          <div><strong>{addresses.length.toLocaleString('ar-EG')}</strong><span>عنوان محفوظ</span></div>
+          <div><strong>{orders.length.toLocaleString('ar-EG')}</strong><span>طلب في حسابك</span></div>
+        </div>
+        <p>عناوينك وطلباتك محفوظة بشكل خاص هنا.</p>
         <button type="button" className="t-account-button t-account-button--outline"
           disabled={busy} onClick={()=>void logout()}>تسجيل الخروج</button></>:<>
         <p>سجّل بحساب Google في خطوة واحدة، واحتفظ بعناوينك وطلباتك.</p>
-        <a className="t-account-button" href="/api/customer/google/start">المتابعة باستخدام Google</a>
+        <a className="t-account-button t-account-google" href="/api/customer/google/start">
+          <span className="t-account-google__mark" aria-hidden="true">G</span>
+          <span>المتابعة باستخدام Google</span>
+        </a>
         <p>مش حابب تسجل؟ كمل كضيف عادي.</p>
         <Link className="t-account-minor-link" href="/menu">كمّل كضيف من المنيو</Link>
       </>}
@@ -141,7 +153,7 @@ export function CustomerAccount(){
         <div className="t-account-panel__head"><h2>طلباتك.</h2><span>{orders.length} طلب</span></div>
         {historyError?<p role="status">{historyError}</p>:
           orders.length?orders.map(order=><article key={order.id} className="t-account-order">
-            <div><strong>طلب #{order.id.slice(0,8)}</strong><span>{order.status}</span></div>
+            <div><strong>طلب #{order.id.slice(0,8)}</strong><span>{orderStatus[order.status]??'قيد المتابعة'}</span></div>
             <p>{new Date(order.created_at).toLocaleDateString('ar-EG')} · {order.order_type==='delivery'?'دليفري':'استلام'} · {Number(order.subtotal_cents)/100} ج.م</p>
             <Link href={'/order-success?orderId='+encodeURIComponent(order.id)}>شوف حالة الطلب</Link>
           </article>):<p>لسه مفيش طلبات في حسابك.</p>}
