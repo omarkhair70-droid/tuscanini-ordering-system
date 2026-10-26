@@ -228,7 +228,7 @@ export default async function AdminKitchenPage() {
 
                 {columnOrders.length === 0 ? (
                   <p className="rounded-xl border-2 border-dashed border-slate-300 bg-white px-3 py-8 text-center text-sm font-black text-slate-500">
-                    لا توجد طلبات حالياً في مرحلة "{column.title}".
+                    لا توجد طلبات حالياً في مرحلة «{column.title}».
                   </p>
                 ) : (
                   <div className="space-y-3">
