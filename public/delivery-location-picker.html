@@ -114,7 +114,7 @@ button{border:1px solid #171511;min-height:49px;padding:10px 12px;font:700 14px 
     L.control.zoom({position:'topleft'}).addTo(map);
     var tiles=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
       attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>',
-      maxZoom:19,subdomains:[''],crossOrigin:true,updateWhenIdle:true
+      maxZoom:19,updateWhenIdle:true
     }).addTo(map);
     tiles.on('tileload',tilesVisible);
     tiles.on('tileerror',function(){
