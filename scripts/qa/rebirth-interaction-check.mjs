@@ -762,6 +762,12 @@ try {
       submittedChoices.push(route.request().postDataJSON());
       return route.fulfill({status:409,contentType:'application/json',body:JSON.stringify({ok:false,code:'ORDERING_CLOSED',error:'الطلبات متوقفة الآن'}),});
     });
+    // Never hammer community map tiles in CI. Deterministic viewport-only
+    // raster mocks prove image rendering without prefetching OpenStreetMap.
+    await fixtureContext.route('https://tile.openstreetmap.org/**',route=>route.fulfill({
+      status:200,contentType:'image/svg+xml',headers:{'access-control-allow-origin':'*'},
+      body:'<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect width="256" height="256" fill="#e6ebed"/><path d="M0 80H256M0 175H256M70 0V256M180 0V256" stroke="#fff" stroke-width="14"/></svg>',
+    }));
     const cart=await fixtureContext.newPage();
     await cart.goto(baseUrl+'/cart',{waitUntil:'networkidle',timeout:30000});
     await check(await cart.locator('.t-checkout-availability').count()===0 &&
@@ -774,6 +780,21 @@ try {
       await check(await cart.locator('dialog.t-checkout-delivery-pin__dialog[open] iframe[src="/delivery-location-picker.html"]').count()===1,
         '390px precise address uses an interactive same-origin map rather than restaurant location iframe');
       await cart.frameLocator('iframe[src="/delivery-location-picker.html"]').locator('body').waitFor({timeout:10000});
+      const tiles=cart.frameLocator('iframe[src="/delivery-location-picker.html"]');
+      await tiles.locator('.leaflet-tile-pane img.leaflet-tile').first().waitFor({timeout:12000});
+      await cart.waitForFunction(()=>{
+        const frame=document.querySelector('iframe[src="/delivery-location-picker.html"]');
+        const doc=frame?.contentDocument;
+        return doc?.querySelector('.leaflet-container .delivery-marker') &&
+          [...(doc.querySelectorAll('.leaflet-tile-pane img.leaflet-tile')??[])]
+            .some(image=>image.complete&&image.naturalWidth>0);
+      },null,{timeout:12000});
+      await check(await tiles.locator('.leaflet-container .delivery-marker').count()===1,
+        '390px delivery map visibly renders raster street tiles and a draggable pin without WebGL');
+      await cart.screenshot({
+        path:'artifacts/screenshots/delivery-map-raster-390.png',
+        animations:'disabled'});
+
       // Simulate a denied browser permission. This may NEVER block manual
       // location selection or close the customer's editable checkout.
       await cart.evaluate(()=>{
