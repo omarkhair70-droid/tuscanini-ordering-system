@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import {assertMerchantMutationOrigin} from '@/lib/admin/native-admin-origin';
 
 import { parseOfferMutationPayloadOrThrow } from '@/lib/admin/offers-admin-validation';
 import { createOfferOrThrow } from '@/lib/admin/offers-admin-writes';
@@ -11,6 +12,7 @@ function redirectWithMessage(request: Request, message: string, isError: boolean
 
 export async function POST(request: Request) {
   try {
+    assertMerchantMutationOrigin(request);
     const form = await request.formData();
     const payload = parseOfferMutationPayloadOrThrow({
       title_ar: form.get('title_ar'),
