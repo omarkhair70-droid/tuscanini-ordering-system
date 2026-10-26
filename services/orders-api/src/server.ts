@@ -64,7 +64,7 @@ export function createOrderApi(pool:Pool,settings:Settings) {
 
       // Password-protected release truth, no customer details or secrets.
       if(method==='GET'&&pathname==='/v1/operator/readiness'){
-        const count=await pool.query<{n:string}>('SELECT count(*)::text AS n FROM tuscanini.menu_products WHERE available=true');
+        const count=await pool.query<{n:string}>('SELECT count(*)::text AS n FROM tuscanini.menu_catalog WHERE available=true');
         return send(res,200,{ok:true,acceptingOrders:settings.acceptOrders,
           availableProducts:Number(count.rows[0]?.n??0)});
       }
