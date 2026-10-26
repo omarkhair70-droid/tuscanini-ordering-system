@@ -136,6 +136,7 @@ if(!destinationSettings||
    destinationSettings.phone_primary!==settings.phone_primary||
    (destinationSettings.phone_secondary??null)!==(settings.phone_secondary??null)||
    destinationSettings.address_ar!==settings.address_ar||
+   (destinationSettings.facebook_url??null)!==(settings.facebook_url??null)||
    destinationSettings.is_ordering_open!==settings.is_ordering_open)
   throw Error('Settings mismatch after import. Do not enable native content.');
 console.log(JSON.stringify({importedSettings:true,exactOfferParity:true,verifiedOfferCount:after.total_offers,
