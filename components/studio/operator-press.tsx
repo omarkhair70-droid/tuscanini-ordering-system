@@ -206,12 +206,20 @@ function OrderTicket({order,preview,pending,onAction,compact=false}:{
 }
 function AllDay({orders}:{orders:Order[]}){
   const active=orders.filter(o=>o.status==='accepted'||o.status==='preparing');
-  const count=new Map<string,number>();
-  active.forEach(o=>o.items.forEach(line=>count.set(line.name,(count.get(line.name)??0)+line.qty)));
-  const sorted=[...count].sort((a,b)=>b[1]-a[1]).slice(0,5);
+  // Group by stable SKU + recipe choices; two distinct products both called
+  // "شاورما لحم" (crepe vs pizza) must NEVER collapse into one kitchen count.
+  const count=new Map<string,{name:string;qty:number}>();
+  active.forEach(o=>o.items.forEach(line=>{
+    const label=[lineName(line),lineVariant(line)].filter(Boolean).join(' · ');
+    const key=[line.sku,line.selection?.size?.label??'',
+      ...(line.selection?.addons??[]).map(a=>a.label).sort()].join('|');
+    const previous=count.get(key);
+    count.set(key,{name:label,qty:(previous?.qty??0)+line.qty});
+  }));
+  const sorted=[...count.values()].sort((a,b)=>b.qty-a.qty).slice(0,5);
   return <div className="op-allday" aria-label="تجميع الأصناف المطلوب تجهيزها">
     <div className="op-allday__label"><b>ALL DAY</b><span>على النار دلوقتي</span></div>
-    <div className="op-allday__counts">{sorted.length?sorted.map(([name,qty])=>
+    <div className="op-allday__counts">{sorted.length?sorted.map(({name,qty})=>
       <div key={name}><strong>{qty.toLocaleString('ar-EG')}</strong><span>{name}</span></div>):
       <p>مفيش أصناف قيد التحضير</p>}</div>
     <small>تجميع من الأوردرات المقبولة أو قيد التحضير فقط</small>
