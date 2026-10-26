@@ -1,4 +1,4 @@
-import ts from 'typescript';
+import ts from 'typescript-compat';
 import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { Script, createContext } from 'node:vm';
 
