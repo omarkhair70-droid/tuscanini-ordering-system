@@ -147,7 +147,15 @@ button{border:1px solid #171511;min-height:49px;padding:10px 12px;font:700 14px 
     fallbackTimer=window.setTimeout(showMapFallback,10000);
     // The iframe starts inside a <dialog> (initially hidden). Recompute tile
     // dimensions whenever modal becomes visible or GPS shifts the viewpoint.
-    map.whenReady(function(){window.setTimeout(function(){map.invalidateSize();},100);});
+    map.whenReady(function(){
+      // The map is mounted in a dialog which may still be closed. Observe
+      // the first visible viewport size, not just document readiness.
+      if('ResizeObserver' in window){
+        new ResizeObserver(function(){map.invalidateSize({animate:false});})
+          .observe(document.getElementById('map'));
+      }
+      window.setTimeout(function(){map.invalidateSize({animate:false});},100);
+    });
   }catch(e){
     if(mapLoader)mapLoader.textContent='الخريطة مش متاحة على جهازك. استخدم الدبوس من GPS وراجع النقطة في خرائط جوجل.';
     message.textContent='تعذر عرض شبكة الشوارع هنا. ممكن تكمل بالدبوس والعنوان المكتوب، بعد مراجعة المكان في خرائط جوجل.';
