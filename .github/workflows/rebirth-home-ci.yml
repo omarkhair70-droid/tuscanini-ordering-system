@@ -35,7 +35,7 @@ jobs:
           node-version: "24"
       - name: Patch vulnerable transitive dependencies without changing direct versions
         run: |
-          npm audit fix --package-lock-only --ignore-scripts --no-fund --no-audit
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
           npm audit --omit=dev --audit-level=high
       - name: Commit audited lockfile only
         run: |
