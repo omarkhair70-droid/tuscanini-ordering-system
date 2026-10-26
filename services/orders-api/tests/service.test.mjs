@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
-import {randomUUID} from 'node:crypto';
+import {randomUUID,generateKeyPairSync,sign} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {once} from 'node:events';
 import test from 'node:test';
 import {createPool} from '../dist/db.js';
 import {createOrderApi} from '../dist/server.js';
 import {listOwnedCustomerOrders} from '../dist/customer-orders.js';
+import {googleCustomerSession,verifyGoogleIdToken} from '../dist/google-auth.js';
 
 test('dedicated Tuscanini service has authenticated intake, durable orders and staff transitions',async()=>{
   assert.equal(process.env.PGDATABASE,'tuscanini_orders_ci','Run only on disposable CI database.');
@@ -217,4 +218,51 @@ test('Oracle OTP session, owned addresses and history stay private; guest preser
     assert.equal((await req('/v1/customer/auth/logout','POST',{},token)).status,200);
     assert.equal((await req('/v1/customer/auth/session','GET',undefined,token)).status,401);
   }finally{await new Promise((resolve,reject)=>api.close(e=>e?reject(e):resolve()));await pool.end();}
+});
+
+test('Google OpenID signed identity creates one private Oracle owner; forged and mismatched claims rejected',async()=>{
+  assert.equal(process.env.PGDATABASE,'tuscanini_orders_ci');
+  const pool=createPool();
+  const clientId='tuscanini-ci-test.apps.googleusercontent.com';
+  const nonce='ci-nonce-'+randomUUID().replaceAll('-','');
+  const subject='google-sub-'+randomUUID();
+  const email='google-'+randomUUID()+'@example.invalid';
+  const {publicKey,privateKey}=generateKeyPairSync('rsa',{modulusLength:2048});
+  const jwk=publicKey.export({format:'jwk'});
+  const kid='ci-key-01';
+  const keyFetch=async()=>new Response(JSON.stringify({keys:[{...jwk,kid,use:'sig',alg:'RS256'}]}),
+    {status:200,headers:{'Content-Type':'application/json'}});
+  const issue=(claims,signing=privateKey)=>{
+    const header=Buffer.from(JSON.stringify({alg:'RS256',kid,typ:'JWT'})).toString('base64url');
+    const payload=Buffer.from(JSON.stringify({iss:'https://accounts.google.com',aud:clientId,
+      sub:subject,email,email_verified:true,nonce,
+      exp:Math.floor(Date.now()/1000)+3500,iat:Math.floor(Date.now()/1000),...claims})).toString('base64url');
+    const part=header+'.'+payload;
+    return part+'.'+sign('RSA-SHA256',Buffer.from(part),signing).toString('base64url');
+  };
+  try{
+    const settings={enabled:true,clientId};
+    const login=await googleCustomerSession(pool,settings,issue({}),nonce,keyFetch);
+    assert.ok(login.customer.id);
+    assert.equal(login.customer.email,email);
+    assert.match(login.token,/^[A-Za-z0-9_-]{43}$/);
+    const again=await googleCustomerSession(pool,settings,issue({}),nonce,keyFetch);
+    assert.equal(again.customer.id,login.customer.id,'stable subject returns same Oracle owner');
+    const count=await pool.query('SELECT count(*)::int AS n FROM tuscanini.customer_google_identities WHERE google_subject=$1',[subject]);
+    assert.equal(count.rows[0].n,1,'identity unique by Google sub');
+    await assert.rejects(()=>verifyGoogleIdToken(issue({aud:'malicious.apps.googleusercontent.com'}),clientId,nonce,keyFetch),/Invalid Google sign-in/);
+    await assert.rejects(()=>verifyGoogleIdToken(issue({exp:1}),clientId,nonce,keyFetch),/Invalid Google sign-in/);
+    await assert.rejects(()=>verifyGoogleIdToken(issue({email_verified:false}),clientId,nonce,keyFetch),/Invalid Google sign-in/);
+    await assert.rejects(()=>verifyGoogleIdToken(issue({nonce:'other-nonce'}),clientId,nonce,keyFetch),/Invalid Google sign-in/);
+    await assert.rejects(()=>verifyGoogleIdToken(issue({}),clientId,'different-nonce-'+randomUUID(),keyFetch),/Invalid Google sign-in/);
+    const forged=issue({}).split('.');
+    forged[1]=Buffer.from(JSON.stringify({email:'evil@example.invalid'})).toString('base64url');
+    await assert.rejects(()=>verifyGoogleIdToken(forged.join('.'),clientId,nonce,keyFetch),/Invalid Google sign-in/);
+    // No silent takeover of a previously owned, unlinked email.
+    const existingEmail='existing-'+randomUUID()+'@example.invalid';
+    await pool.query('INSERT INTO tuscanini.customer_accounts(email) VALUES($1)',[existingEmail]);
+    await assert.rejects(()=>googleCustomerSession(pool,settings,issue({
+      sub:'new-google-sub-'+randomUUID(),email:existingEmail}),nonce,keyFetch),
+      e=>e.status===409,'Google must not silently claim pre-existing OTP accounts by email');
+  }finally{await pool.end()}
 });

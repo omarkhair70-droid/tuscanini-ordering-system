@@ -37,6 +37,11 @@ export function CustomerAccount(){
   const [label,setLabel]=useState('البيت');
 
   useEffect(()=>{
+    const reason=new URLSearchParams(window.location.search).get('google');
+    if(reason==='failed')setError('تسجيل الدخول بجوجل مكملش. جرّب تاني.');
+    if(reason==='unavailable')setError('تسجيل الدخول بجوجل مش جاهز دلوقتي.');
+  },[]);
+  useEffect(()=>{
     let active=true;
     void read('session').then(({status,data})=>{
       if(!active)return;

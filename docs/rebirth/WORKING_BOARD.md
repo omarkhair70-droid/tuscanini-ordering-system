@@ -1,3 +1,8 @@
+### 26 Oct — Google Sign-In replaces email OTP for new accounts
+
+- Implemented Google OpenID Connect authorization-code + PKCE+state+nonce flow on the Next server, with independently verified Google-signed ID token on Oracle using Google's public JWKS and a stable Google subject to avoid email-based account takeovers. Existing Oracle session, owned address/history and guest checkout paths remain. OTP code remains dormant as a legacy fallback only; no Resend configuration required for Google-only login.
+- Added additive Google identity schema, explicit gates and signed-JWT security regression tests. New Google Cloud OAuth web client/approved redirect URI and env settings are **not yet provisioned**. No live deployment of this change, order activation or main merge. See doc 44.
+
 ### 26 Oct — First Oracle-owned sign-in and account UI path (draft / dormant)
 
 - Implemented Oracle PostgreSQL OTP challenges, sessions, server-side email transport, verified owner-bound order creation, saved address create/list/delete and private order history. The Next API holds an HttpOnly cookie and uses the Oracle account route; browser no longer sends a Supabase token to checkout. Customer sign-in must still be activated through independent production readiness flags and verified real email delivery.
