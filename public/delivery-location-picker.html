@@ -128,6 +128,12 @@ button{border:1px solid #171511;min-height:49px;padding:10px 12px;font:700 14px 
     new maplibregl.NavigationControl({showCompass:false}).addTo(map,'top-left');
   }catch(e){message.textContent='تعذر عرض الخريطة هنا. اكتب عنوان التوصيل في الطلب.';document.getElementById('locate').disabled=true;}
   var locateButton=document.getElementById('locate');
+  if(window.parent!==window){
+    // The parent has a prominent GPS button, so the map footer should focus
+    // on the ONE final action rather than repeating the same location CTA.
+    locateButton.hidden=true;
+    document.getElementById('actions').style.gridTemplateColumns='1fr';
+  }
   var pendingLocationRequest=null;
   function showPosition(result){
     if(!result||result.status==='retrying'){
