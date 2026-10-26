@@ -40,6 +40,8 @@ services:
       CATALOG_SYNC_ENABLED: ${TUSCANINI_CATALOG_SYNC:-no}
       # One-time owner-reviewed Supabase content transfer only. OFF by default.
       CONTENT_IMPORT_ENABLED: ${TUSCANINI_CONTENT_IMPORT_ENABLED:-no}
+      # Only after the merchant admin UI and migrated offers/settings are QA-approved.
+      CONTENT_ADMIN_ENABLED: ${TUSCANINI_CONTENT_ADMIN_ENABLED:-no}
       # New Oracle-owned identity is deliberately off until OTP/email and the
       # separate customer migrations are verified in staging.
       CUSTOMER_AUTH_ENABLED: ${TUSCANINI_CUSTOMER_AUTH_ENABLED:-no}
