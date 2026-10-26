@@ -24,6 +24,7 @@ button{border:1px solid #171511;min-height:49px;padding:10px 12px;font:700 14px 
 #coordinates{color:#64594b;font:700 12px/1.6 Tahoma,sans-serif;min-height:18px}
 #external-map-link{color:#8f2420;font-weight:900;text-decoration:underline;text-underline-offset:3px}
 #message{color:#b52220;font-size:12px;line-height:1.5;min-height:0;margin:0}
+.location-privacy{font-size:10px;color:#695c4e;line-height:1.6;margin:0}
 .maplibregl-ctrl-attrib{direction:ltr;font-size:10px!important}
 @media(max-width:340px){header strong{font-size:14px}button{font-size:12px}}
 </style>
@@ -37,6 +38,7 @@ button{border:1px solid #171511;min-height:49px;padding:10px 12px;font:700 14px 
  <div id="coordinates" role="status" aria-live="polite">حدد مكان التوصيل على الخريطة</div>
  <p id="message" aria-live="polite"></p>
  <div id="actions"><button id="locate" type="button">موقعي الحالي</button><button id="confirm" type="button" disabled>اعتمد المكان</button></div>
+ <p class="location-privacy">«موقعي الحالي» يطلب إذن الموقع ويستخدم خدمة خارجية لمعرفة المنطقة التقريبية فقط. عنوان الشارع والمدخل تكتبه بنفسك.</p>
 </footer>
 <script src="https://unpkg.com/maplibre-gl@6.15.0/dist/maplibre-gl.js"></script>
 <script>
