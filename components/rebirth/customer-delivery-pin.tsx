@@ -61,9 +61,25 @@ export function CustomerDeliveryPin({ onSelect }: Props) {
                 if(data&&typeof data==='object'&&!Array.isArray(data)){
                   const obj=data as Record<string,unknown>;
                   if(obj.countryCode==='EG'){
+                    // The provider may return "بني سويف" as locality+city
+                    // and "محافظة بني سويف" as province. Preserve a useful
+                    // locality when distinct, but never echo the same city twice.
                     const parts=[obj.locality,obj.city,obj.principalSubdivision].filter(
                       (value):value is string=>typeof value==='string'&&value.trim().length>0);
-                    area=[...new Set(parts.map(x=>x.trim()))].slice(0,2).join('، ').slice(0,130);
+                    const picked:string[]=[];
+                    const comparable=(value:string)=>value.toLocaleLowerCase('ar-EG')
+                      .replace(/^(?:محافظة|مدينة|governorate of|governorate|city of)\s+/i,'')
+                      .replace(/\s+governorate$/i,'').trim();
+                    for(const part of parts){
+                      const name=part.trim(), normalized=comparable(name);
+                      if(!normalized || picked.some(prev=>{
+                        const other=comparable(prev);
+                        return other===normalized||other.includes(normalized)||normalized.includes(other);
+                      }))continue;
+                      picked.push(name);
+                      if(picked.length===2)break;
+                    }
+                    area=picked.join('، ').slice(0,130);
                   }
                 }
               }
