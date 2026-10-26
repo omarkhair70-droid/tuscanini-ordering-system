@@ -33,13 +33,15 @@ export function operatorPasskeyAllowed(request:Request):boolean{
   return timingSafeEqual(createHash('sha256').update(expected).digest(),
     createHash('sha256').update(actual).digest());
 }
-async function call(path:string,method:'GET'|'POST'='GET',payload?:unknown):Promise<Record<string,unknown>>{
+async function call(path:string,method:'GET'|'POST'|'DELETE'='GET',payload?:unknown,
+  customerSession?:string):Promise<Record<string,unknown>>{
   const {url,serviceKey}=connection();
   const destination=new URL(path.replace(/^\//,''),url);
   let reply:Response;
   try{
     reply=await fetch(destination,{method,cache:'no-store',
-      headers:{'x-tuscanini-service-key':serviceKey,...(payload===undefined?{}:{'content-type':'application/json'})},
+      headers:{'x-tuscanini-service-key':serviceKey,...(customerSession?{'x-tuscanini-customer-session':customerSession}:{}),
+        ...(payload===undefined?{}:{'content-type':'application/json'})},
       body:payload===undefined?undefined:JSON.stringify(payload),signal:AbortSignal.timeout(10000)});
   }catch{
     throw new OracleOrderError('خدمة الطلبات مش متاحة دلوقتي.',503);
@@ -57,7 +59,7 @@ async function call(path:string,method:'GET'|'POST'='GET',payload?:unknown):Prom
   }
   return response;
 }
-export async function submitOracleOrder(requestKey:string,payload:ValidatedOrderPayload){
+export async function submitOracleOrder(requestKey:string,payload:ValidatedOrderPayload,customerSession?:string){
   if(!/^studio-[a-z0-9-]{12,70}$/i.test(requestKey))throw new OracleOrderError('مفتاح تسجيل الطلب غير صالح.',400);
   if(payload.items.some(item=>item.kind==='offer'))throw new OracleOrderError(
     'العروض مش مفعّلة في نظام الطلبات الجديد لسه.',409);
@@ -69,7 +71,7 @@ export async function submitOracleOrder(requestKey:string,payload:ValidatedOrder
   const data=await call('/v1/orders','POST',{
     requestKey,items,customer:payload.customer,tableReference:payload.tableReference,
     expectedSubtotalCents:Math.round(payload.subtotal*100),
-  });
+  },customerSession);
   if(typeof data.id!=='string'||typeof data.subtotal_cents!=='string')
     throw new OracleOrderError('تعذّر تأكيد حفظ الطلب.',502);
   return {id:data.id,subtotal:Number(data.subtotal_cents)/100};
@@ -119,4 +121,14 @@ export async function publishCurrentCatalogToOracle(){
   }));
   const response=await call('/v1/catalog/sync','POST',{products});
   return {count:response.count};
+}
+
+export const ORACLE_CUSTOMER_COOKIE=process.env.NODE_ENV==='production'?'__Host-tuscanini_customer':'tuscanini_customer';
+export function oracleAccountsEnabled(){
+  return oracleOrdersEnabled()&&process.env.TUSCANINI_ORACLE_CUSTOMER_ACCOUNTS_READY==='yes';
+}
+export async function callOracleCustomer(path:string,method:'GET'|'POST'|'DELETE'='GET',
+  payload?:unknown,customerSession?:string):Promise<Record<string,unknown>>{
+  if(!oracleAccountsEnabled())throw new OracleOrderError('حسابات العملاء مش متاحة دلوقتي.',503);
+  return call('/v1/customer/'+path,method,payload,customerSession);
 }
