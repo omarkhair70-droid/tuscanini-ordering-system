@@ -34,18 +34,26 @@ There is no browser-facing anonymous content-import route.
    owner-controlled backup *outside* the public repository.
 2. Compare exported rows with restaurant owner expectations and confirm the
    current public phone, WhatsApp, address, FB, schedule and real offer prices.
-3. Deploy the existing Coolify API from a verified commit; apply additive
+3. Run the new private, *read-only by default* migration check from a trusted
+   shell (never commit, print or paste secrets):
+   `node scripts/migrations/export-and-import-native-content.mjs`.
+   It compares legacy row counts and target status without changing either
+   database. The --apply path is separately protected by
+   `TUSCANINI_NATIVE_CONTENT_IMPORT_CONFIRMED=yes` and a check that the
+   destination has no preexisting imported content. This tool is NOT executed
+   automatically in Vercel or GitHub Actions.
+4. Deploy the existing Coolify API from a verified commit; apply additive
    migrations with service DB backup; enable CONTENT_IMPORT_ENABLED=yes
    only for a short supervised import window. Use service-key-authenticated
    imports. Offers import expects `offer_price_cents` integer; multiply
    verified price in EGP by 100. An unverified discount stays unpublished.
-4. Compare /v1/content/status, /v1/content/site-settings and /v1/content/offers
+5. Compare /v1/content/status, /v1/content/site-settings and /v1/content/offers
    with exported data. Test time boundaries, no active offers, private auth,
    and public site/settings + /offers in Vercel Preview.
-5. Disable CONTENT_IMPORT_ENABLED again. Set Vercel
+6. Disable CONTENT_IMPORT_ENABLED again. Set Vercel
    `TUSCANINI_NATIVE_CONTENT_ENABLED=yes` **only after verification**.
    With the switch on, fallback to Supabase is intentionally prohibited.
-6. Migrate/rebuild legacy /admin/products,/admin/orders,/admin/offers,/admin/settings
+7. Migrate/rebuild legacy /admin/products,/admin/orders,/admin/offers,/admin/settings
    to this API or retire them as appropriate. Then remove Supabase runtime,
    old migrations/code, and Vercel secrets in a separately tested PR.
    **Do not remove credentials or disable the database before this.**
