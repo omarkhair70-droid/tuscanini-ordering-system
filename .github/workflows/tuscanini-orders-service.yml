@@ -7,7 +7,7 @@ on:
       - "infra/oracle/postgres.compose.yaml"
       - ".github/workflows/tuscanini-orders-service.yml"
   push:
-    branches: ["redesign/**"]
+    branches: ["main", "redesign/**"]
     paths:
       - "services/orders-api/**"
       - "infra/oracle/postgres.compose.yaml"
@@ -46,10 +46,10 @@ jobs:
       PGUSER: tuscanini_app
       PGPASSWORD: ci-ephemeral-orders-only
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
       - name: Install scoped standalone service dependencies
