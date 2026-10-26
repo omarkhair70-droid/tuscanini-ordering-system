@@ -12,6 +12,7 @@ on:
       - ".github/workflows/rebirth-home-ci.yml"
   push:
     branches:
+      - "main"
       - "redesign/**"
 
 permissions:
@@ -27,12 +28,14 @@ jobs:
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-only-public-placeholder
       SUPABASE_SERVICE_ROLE_KEY: ci-only-service-placeholder
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "22"
           cache: "npm"
       - run: npm ci
+      - name: Fail on high/critical production dependency advisories
+        run: npm run audit:prod
       - name: Test concurrent admin order updates without a live database
         run: node scripts/qa/rebirth-order-concurrency-smoke.mjs
       - run: npx tsc --noEmit
