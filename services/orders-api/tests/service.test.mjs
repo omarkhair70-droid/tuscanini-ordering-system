@@ -66,6 +66,12 @@ test('dedicated Tuscanini service has authenticated intake, durable orders and s
     const allAdminOffers=await req('/v1/content/admin/offers');
     assert.equal(allAdminOffers.status,200);
     assert.equal(allAdminOffers.body.offers.length,2,'Admin sees inactive offers');
+    const audit=await req('/v1/content/audit/offers');
+    assert.equal(audit.status,200);
+    assert.deepEqual(
+      audit.body.offers.map(row=>[row.id,row.is_active,row.offer_price_cents]),
+      allAdminOffers.body.offers.map(row=>[row.id,row.is_active,row.offer_price_cents]),
+      'Supervised transfer audits active and inactive offers with exact pricing');
     const changedSettings={...settings,address_ar:'مدخل جديد'};
     assert.equal((await req('/v1/content/admin/site-settings','POST',changedSettings)).status,200);
     assert.equal((await req('/v1/content/site-settings')).body.settings.address_ar,'مدخل جديد');
