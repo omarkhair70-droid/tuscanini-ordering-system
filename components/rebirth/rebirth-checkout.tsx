@@ -10,6 +10,8 @@ import { ActiveOrderBanner } from '@/components/shared/active-order-banner';
 import { CustomerJourney } from '@/components/rebirth/customer-journey';
 import { CustomerDeliveryPin } from '@/components/rebirth/customer-delivery-pin';
 import { saveActiveOrder } from '@/lib/active-order-storage';
+import { productCartIdentity } from '@/lib/rebirth/cart-product-identity';
+import type { CartItem } from '@/types/cart';
 
 type RuntimeSettings = { isOrderingOpen: boolean; deliveryEnabled: boolean; whatsappOrderNumber: string; studioMode?: boolean };
 type ApiResult = { ok: true; orderId: string; reference?: string; orderNumber?: number | null; tableReference?: string | null }
@@ -17,6 +19,8 @@ type ApiResult = { ok: true; orderId: string; reference?: string; orderNumber?: 
 type ErrorField = 'name' | 'phone' | 'address' | 'confirmedAccurateDetails';
 type Errors = Partial<Record<ErrorField, string>>;
 const money = (value: number) => new Intl.NumberFormat('ar-EG', { maximumFractionDigits: 2 }).format(value);
+const cartLineName = (line: CartItem) =>
+  line.kind === 'offer' ? 'عرض: '+line.offerTitle : productCartIdentity(line).name;
 
 export function RebirthCheckout() {
   const router = useRouter();
@@ -213,20 +217,27 @@ export function RebirthCheckout() {
                     <article key={line.lineId} className="t-checkout-item">
                       <div className="t-checkout-item__number" lang="en">{String(index+1).padStart(2, '0')}</div>
                       <div className="t-checkout-item__details">
-                        <h3>{line.kind === 'offer' ? `عرض: ${line.offerTitle}` : line.productName}</h3>
+                        {line.kind==='product' && productCartIdentity(line).category &&
+                           <span className="t-checkout-item__category">{productCartIdentity(line).category}</span>}
+                        <h3>{cartLineName(line)}</h3>
                         {line.kind === 'product' && (
-                          <p>الحجم: {line.selectedSize?.label ?? 'بدون حجم'} · الإضافات: {line.selectedAddons.length ? line.selectedAddons.map(a=>a.label).join('، ') : 'بدون إضافات'}</p>
+                          <div className="t-checkout-item__choices" aria-label={'اختيارات '+cartLineName(line)}>
+                            {line.selectedSize?.label && <span><b>الحجم</b> {line.selectedSize.label}</span>}
+                            {line.selectedAddons.length ?
+                              line.selectedAddons.map(addon=><span key={addon.id}><b>إضافة</b> {addon.label}</span>)
+                              : <span className="t-checkout-item__no-addons">بدون إضافات</span>}
+                          </div>
                         )}
-                        {line.itemNotes && <p>ملاحظات: {line.itemNotes}</p>}
+                        {line.itemNotes && <p className="t-checkout-item__notes">ملاحظات للمطعم: {line.itemNotes}</p>}
                         <strong>{money(line.totalItemPrice)} ج.م</strong>
                         <div className="t-checkout-item__controls">
                           {line.kind==='product'&&<Link
                             className="t-checkout-edit"
                             href={`/menu?editLine=${encodeURIComponent(line.lineId)}`}
-                            aria-label={`تعديل الحجم والإضافات وملاحظات ${line.productName}`}>
+                            aria-label={`تعديل الحجم والإضافات وملاحظات ${cartLineName(line)}`}>
                             تعديل التفاصيل ↗
                           </Link>}
-                          <div className="t-checkout-stepper" role="group" aria-label={`كمية ${line.kind === 'offer' ? line.offerTitle : line.productName}`}>
+                          <div className="t-checkout-stepper" role="group" aria-label={`كمية ${cartLineName(line)}`}>
                             <button type="button" aria-label="تقليل الكمية" disabled={line.quantity<=1 || sending || uncertain} onClick={()=>updateItemQuantity(line.lineId,Math.max(1,line.quantity-1))}>−</button>
                             <output aria-live="polite">{line.quantity}</output>
                             <button type="button" aria-label="زيادة الكمية" disabled={line.quantity>=50 || sending || uncertain} onClick={()=>updateItemQuantity(line.lineId,Math.min(50,line.quantity+1))}>+</button>
