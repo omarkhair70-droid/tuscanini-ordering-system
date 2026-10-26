@@ -154,6 +154,17 @@ export async function fetchNativePublicOffers():Promise<Record<string,unknown>[]
   return result.offers as Record<string,unknown>[];
 }
 
+/** The admin UI is protected by the existing signed, httpOnly admin
+ * session; API requests use a separate backend-side mutation gate. */
+export async function callNativeContentAdmin(
+  path:string,method:'GET'|'POST'='GET',payload?:unknown
+):Promise<Record<string,unknown>>{
+  if(!nativeContentEnabled())throw new OracleOrderError('نقل بيانات الموقع مش مكتمل.',503);
+  if(!/^offers(?:\/[a-zA-Z0-9_-]{4,80}(?:\/active)?)?$/.test(path) &&
+    path!=='site-settings')throw new OracleOrderError('Invalid content admin path.',400);
+  return call('/v1/content/admin/'+path,method,payload);
+}
+
 export const ORACLE_CUSTOMER_COOKIE=process.env.NODE_ENV==='production'?'__Host-tuscanini_customer':'tuscanini_customer';
 export function oracleAccountsEnabled(){
   return oracleOrdersEnabled()&&process.env.TUSCANINI_ORACLE_CUSTOMER_ACCOUNTS_READY==='yes';
