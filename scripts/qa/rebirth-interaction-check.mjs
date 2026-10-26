@@ -37,6 +37,16 @@ try {
       accountHeading.includes('أكلك') && accountHeading.includes('على حسابك') &&
       await accountPage.locator('main#t-account-main').count()===1,
       `${width}px native account route uses authored customer shell without invented saved orders`);
+    const accountIcon=accountPage.locator('.t-header__account');
+    const profileIconBounds=await accountIcon.boundingBox();
+    await check(await accountIcon.isVisible() &&
+      await accountIcon.getAttribute('aria-current')==='page' &&
+      await accountIcon.locator('svg').count()===1 &&
+      (profileIconBounds?.width??0)>=40 && (profileIconBounds?.height??0)>=40,
+      `${width}px Account has visible, active, touch-sized profile access`);
+    if(width===320||width===390)await accountPage.screenshot({
+      path:`artifacts/screenshots/customer-account-${width}.png`,
+      fullPage:true,animations:'disabled'});
     const privateHistory=await context.request.get(baseUrl+'/api/customer/orders',{failOnStatusCode:false});
     const privateBody=await privateHistory.json();
     await check([401,503].includes(privateHistory.status()) &&
