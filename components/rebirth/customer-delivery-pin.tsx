@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 export type DeliveryPin = { lat: number; lng: number };
 
 type Props = {
-  onSelect: (point: DeliveryPin) => void;
+  onSelect: (point: DeliveryPin, suggestedArea?: string) => void;
 };
 
 /** Exact drop-off location selected by the customer on an interactive map.
@@ -42,6 +42,42 @@ export function CustomerDeliveryPin({ onSelect }: Props) {
         status === 'outside' ? 'الموقع الراجع خارج نطاق مصر. اختار عنوان التوصيل على الخريطة.' :
         'تعذر تحديد الموقع تلقائيًا. اختار المكان من الخريطة بإيدك.');
       reply(result);
+      // Free client-side locality lookup is only used immediately after a
+      // user-consented device geolocation result. It is NOT a street-address
+      // geocoder, and no requests are sent for manual map coordinates.
+      if(status==='ok'&&typeof result.lat==='number'&&typeof result.lng==='number'){
+        void (async()=>{
+          try{
+            const controller=new AbortController();
+            const timeout=window.setTimeout(()=>controller.abort(),6000);
+            let area='';
+            try{
+              const url='https://api.bigdatacloud.net/data/reverse-geocode-client?'+
+                new URLSearchParams({latitude:String(result.lat),longitude:String(result.lng),
+                  localityLanguage:'ar'});
+              const response=await fetch(url,{credentials:'omit',signal:controller.signal});
+              if(response.ok){
+                const data:unknown=await response.json();
+                if(data&&typeof data==='object'&&!Array.isArray(data)){
+                  const obj=data as Record<string,unknown>;
+                  if(obj.countryCode==='EG'){
+                    const parts=[obj.locality,obj.city,obj.principalSubdivision].filter(
+                      (value):value is string=>typeof value==='string'&&value.trim().length>0);
+                    area=[...new Set(parts.map(x=>x.trim()))].slice(0,2).join('، ').slice(0,130);
+                  }
+                }
+              }
+            }finally{window.clearTimeout(timeout)}
+            if(area && dialogRef.current?.open){
+              reply({status:'area',lat:result.lat,lng:result.lng,area});
+              setGeoMessage('عرفنا المنطقة التقريبية: '+area+' — راجع الشارع ورقم العمارة.');
+            }
+          }catch{
+            // Reverse geocoding is best-effort. The pin and manually entered
+            // doorstep directions continue to work without this provider.
+          }
+        })();
+      }
     };
     if (!navigator.geolocation || !window.isSecureContext) {
       finish({status:'unsupported'});
@@ -102,7 +138,8 @@ export function CustomerDeliveryPin({ onSelect }: Props) {
       const lat = Number(data.lat), lng = Number(data.lng);
       if (!Number.isFinite(lat) || !Number.isFinite(lng) ||
           lat < 22 || lat > 32 || lng < 24 || lng > 37) return;
-      callbackRef.current({lat: Number(lat.toFixed(6)), lng: Number(lng.toFixed(6))});
+      const area=typeof data.area==='string' ? data.area.trim().slice(0,130) : '';
+      callbackRef.current({lat: Number(lat.toFixed(6)), lng: Number(lng.toFixed(6))},area);
       dialogRef.current?.close();
     };
     window.addEventListener('message', receive);

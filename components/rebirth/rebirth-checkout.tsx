@@ -66,7 +66,10 @@ export function RebirthCheckout() {
     const next: Errors = {};
     if (!customer.name.trim()) next.name = 'اكتب اسمك عشان المطعم يقدر يتواصل معاك.';
     if (!/^01\d{9}$/.test(customer.phone.replace(/\D/g, ''))) next.phone = 'اكتب رقم موبايل مصري من 11 رقم يبدأ بـ 01.';
-    if (customer.orderType === 'delivery' && !customer.address.trim()) next.address = 'العنوان مطلوب للدليفري.';
+    if (customer.orderType === 'delivery' && !customer.address.trim()) next.address = 'حدد المنطقة واكتب الشارع ورقم العمارة والمدخل.';
+    if (customer.orderType === 'delivery' && customer.deliveryArea?.trim() &&
+        customer.address.trim()===customer.deliveryArea.trim())
+      next.address = 'عرفنا المنطقة تقريبًا. كمّل اسم الشارع ورقم العمارة والمدخل عشان الدليفري يوصل.';
     if (customer.orderType === 'delivery' && customer.deliveryLocation &&
         customer.address.length > 230) next.address = 'اختصر وصف العنوان عشان نضيف موقع الدبوس.';
     if (customer.orderType === 'delivery' && customer.deliveryLocation &&
@@ -266,30 +269,41 @@ export function RebirthCheckout() {
                     <p className="t-checkout-service-note" id="t-checkout-service-note" role="status">
                       {customer.orderType==='pickup'
                         ? (settings?.isOrderingOpen?'هتستلم بنفسك من المطعم. مش محتاجين عنوان توصيل.':'تقدر تجهز اختيار الاستلام أو عنوان الدليفري، وإرسال الطلبات متوقف حاليًا.')
-                        : 'اختار موقعك على الخريطة واكتب الشارع ورقم العمارة والمدخل عشان الدليفري يوصل بدقة.'}
+                        : 'حدّد الدبوس أولًا؛ هنقترح المنطقة عند استخدام موقع الجهاز، وبعدها كمّل الشارع ورقم العمارة والمدخل.'}
                     </p>
                     {customer.orderType==='delivery' && <>
-                  <CustomerDeliveryPin onSelect={point => {
-                    // The form owns plain directions; the server adds the
-                    // canonical map URL to the merchant-facing order snapshot.
-                    const street=customer.address.split('\nموقع التوصيل:')[0].trim();
-                    if(street.length>230){
+                  <CustomerDeliveryPin onSelect={(point, area) => {
+                    // GPS gives coordinates, and the optional reverse lookup
+                    // suggests a neighborhood only. It cannot identify a
+                    // building, apartment or doorstep without customer input.
+                    const typed=customer.address.split('\nموقع التوصيل:')[0].trim();
+                    const previouslySuggested=customer.deliveryArea?.trim()??'';
+                    const safeArea=(area??'').trim().slice(0,130);
+                    const address=(!typed || (previouslySuggested && typed===previouslySuggested))
+                      ? safeArea : typed;
+                    if(address.length>230){
                       setErrors(x=>({...x,address:'اختصر تفاصيل العنوان شوية عشان نحفظ الدبوس.'}));
                       return;
                     }
-                    updateCustomer({address:street,deliveryLocation:point});
+                    updateCustomer({address,deliveryLocation:point,deliveryArea:safeArea});
                     setErrors(x=>({...x,address:undefined}));
                   }} />
                   {customer.deliveryLocation && (
                     <div className="t-checkout-delivery-pin__selected" role="status">
                       <span aria-hidden="true">✓</span>
-                      <span>الدبوس محفوظ. تقدر تغيّره لو مكان الاستلام مش مضبوط.</span>
+                      <span><strong>تم تثبيت نقطة التوصيل على الخريطة.</strong> الدليفري هيشوف الدبوس، وراجع العنوان المكتوب تحت.</span>
                       <a href={'https://www.google.com/maps/search/?api=1&query='+customer.deliveryLocation.lat+','+customer.deliveryLocation.lng}
                         target="_blank" rel="noopener noreferrer">شوف المكان ↗</a>
                     </div>
                   )}
+                  {customer.deliveryArea && (
+                    <div className="t-checkout-delivery-area" role="status">
+                      <strong>الموقع التقريبي: {customer.deliveryArea}</strong>
+                      <span>دي المنطقة المقترحة من الموقع، مش عنوان العمارة. كمّل بيانات المدخل.</span>
+                    </div>
+                  )}
                   <label>عنوان التوصيل <textarea id="t-checkout-address" rows={3} value={customer.address} aria-invalid={!!errors.address} aria-describedby={errors.address?'t-error-address':undefined}
-                      onChange={e=>{updateCustomer({address:e.target.value});setErrors(x=>({...x,address:undefined}))}} placeholder="الشارع، رقم العمارة، الدور والشقة أو علامة مميزة" maxLength={customer.deliveryLocation?230:300}/></label>
+                      onChange={e=>{updateCustomer({address:e.target.value});setErrors(x=>({...x,address:undefined}))}} placeholder="اسم الشارع، رقم العمارة، الدور والشقة، وأقرب علامة مميزة" maxLength={customer.deliveryLocation?230:300}/></label>
                       {errors.address && <p id="t-error-address" className="t-checkout-error">{errors.address}</p>}</>}
                     <label>ملاحظات عامة (اختياري) <textarea rows={2} value={customer.generalNotes} onChange={e=>updateCustomer({generalNotes:e.target.value})} maxLength={500} placeholder="أي تفاصيل تساعد المطعم"/></label>
                   </div>
