@@ -73,9 +73,9 @@ export async function getRuntimePublicSiteSettings(): Promise<PublicSiteSettings
       const content=await fetchNativeSiteSettings();
       return normalizeSettingsWithFallback(content);
     }catch{
-      // Explicit fail-closed behavior if the first-party data was not imported.
-      // Never switch back to old Supabase automatically in native-only mode.
-      return normalizeSettingsWithFallback(null);
+      // Native content is explicitly enabled, but its verified data is missing.
+      // Neither silently read old Supabase nor present checkout as healthy.
+      return {...normalizeSettingsWithFallback(null),isOrderingOpen:false};
     }
   }
   try {
