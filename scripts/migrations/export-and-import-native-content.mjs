@@ -95,6 +95,10 @@ const offers=legacyOffers.map(value=>{
     starts_at:value.starts_at??null,ends_at:value.ends_at??null,
   };
 });
+// Backend imports and owner audit are capped at 200 rows. Fail before the
+// first settings write, rather than leaving a partially migrated destination.
+if(offers.length>200)
+  throw Error('Source exceeds verified native offer import limit (200); no writes performed.');
 const status=await native('status');
 console.log(JSON.stringify({mode:apply?'apply':'dry-run',sourceSiteRows:legacySettings.length,
   sourceOffers:offers.length,targetSettingsReady:status.settings_ready,
