@@ -18,33 +18,6 @@ permissions:
   contents: read
 
 jobs:
-  regenerate-v4-and-ts7-locks-once:
-    if: ${{ github.event_name == 'pull_request' && github.head_ref == 'chore/tuscanini-20261026-tailwind4-typescript7' && github.event.pull_request.head.repo.full_name == github.repository }}
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    timeout-minutes: 12
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
-          persist-credentials: true
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-      - name: Generate V4 and TS7 lockfiles without running package scripts
-        run: |
-          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
-          npm install --prefix services/orders-api --package-lock-only --ignore-scripts --no-audit --no-fund
-      - name: Commit only npm lockfiles
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add package-lock.json services/orders-api/package-lock.json
-          if ! git diff --cached --quiet; then
-            git commit -m "chore(deps): lock Tailwind 4 and TypeScript 7"
-            git push origin "HEAD:${{ github.head_ref }}"
-          fi
   typecheck-build:
     name: Typecheck & Next build
     runs-on: ubuntu-latest
