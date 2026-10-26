@@ -26,7 +26,13 @@ try {
     const accountResponse=await accountPage.goto(baseUrl+'/account',{
       waitUntil:'domcontentloaded',timeout:30000,
     });
-    const accountHeading=await accountPage.locator('.t-account-heading h1').textContent()??'';
+    const accountHeading=await accountPage.locator('.t-account-heading h1')
+      .textContent({timeout:1800}).catch(()=>null);
+    if(!accountHeading){
+      const excerpt=await accountPage.locator('body').innerText({timeout:1200}).catch(()=>'<no body>');
+      console.log('Account route QA: status='+accountResponse?.status()+
+        ', URL='+accountPage.url()+', response='+excerpt.slice(0,260));
+    }
     await check(accountResponse?.status()===200 &&
       accountHeading.includes('أكلك') && accountHeading.includes('على حسابك') &&
       await accountPage.locator('main#t-account-main').count()===1,
