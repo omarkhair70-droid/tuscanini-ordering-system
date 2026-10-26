@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 
 import { createOrderInSupabase } from '@/lib/orders/create-order';
 import { verifiedCustomerId } from '@/lib/orders/customer-auth';
@@ -6,7 +7,7 @@ import { isLocalStudioRequest } from '@/lib/studio-bridge';
 import { submitStagedRebirthOrder, StudioMenuError } from '@/lib/studio-menu-orders';
 import { parseCreateOrderPayloadOrThrow } from '@/lib/orders/order-validation';
 import { getRuntimePublicSiteSettings } from '@/lib/site-settings-runtime';
-import { oracleOrdersEnabled, submitOracleOrder, OracleOrderError } from '@/lib/oracle-order-api';
+import { oracleOrdersEnabled, oracleAccountsEnabled, ORACLE_CUSTOMER_COOKIE, submitOracleOrder, OracleOrderError } from '@/lib/oracle-order-api';
 
 export async function POST(request: Request) {
   try {
@@ -37,7 +38,9 @@ export async function POST(request: Request) {
           error:'الطلبات متوقفة حاليًا. برجاء المحاولة لاحقًا.'},{status:409});
       }
       const key=typeof body.requestKey==='string'?body.requestKey:'';
-      const saved=await submitOracleOrder(key,payload);
+      const session=oracleAccountsEnabled()
+        ?(await cookies()).get(ORACLE_CUSTOMER_COOKIE)?.value:undefined;
+      const saved=await submitOracleOrder(key,payload,session);
       return NextResponse.json({ok:true,orderId:saved.id,orderNumber:null,
         reference:'#'+saved.id.slice(0,8).toUpperCase(),tableReference:payload.tableReference,
         subtotal:saved.subtotal});
