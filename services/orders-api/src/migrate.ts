@@ -7,7 +7,7 @@ try {
   try {
     await client.query('SELECT pg_advisory_lock(770001, 2026)');
     try {
-      for (const name of ['schema.sql','schema-menu.sql']) {
+      for (const name of ['schema.sql','schema-menu.sql','schema-customer.sql']) {
         const sql=await readFile(new URL('../migrations/'+name,import.meta.url),'utf8');
         await client.query(sql);
       }

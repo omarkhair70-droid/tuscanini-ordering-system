@@ -5,6 +5,7 @@ import {once} from 'node:events';
 import test from 'node:test';
 import {createPool} from '../dist/db.js';
 import {createOrderApi} from '../dist/server.js';
+import {listOwnedCustomerOrders} from '../dist/customer-orders.js';
 
 test('dedicated Tuscanini service has authenticated intake, durable orders and staff transitions',async()=>{
   assert.equal(process.env.PGDATABASE,'tuscanini_orders_ci','Run only on disposable CI database.');
@@ -137,4 +138,38 @@ test('intake and catalog switches fail closed',async()=>{
     await new Promise((resolve,reject)=>server.close(e=>e?reject(e):resolve()));
     await pool.end();
   }
+});
+
+
+test('Oracle customer data keeps verified owners isolated from guests and contact matches',async()=>{
+  assert.equal(process.env.PGDATABASE,'tuscanini_orders_ci');
+  const pool=createPool();
+  const alice=randomUUID(),bob=randomUUID(),suffix=randomUUID();
+  try{
+    await pool.query('INSERT INTO tuscanini.customer_accounts (id,email) VALUES ($1,$2),($3,$4)',
+      [alice,'alice-'+suffix+'@example.invalid',bob,'bob-'+suffix+'@example.invalid']);
+    const address=[alice,'البيت','شارع النيل، عمارة ٧',29.0743,31.0981];
+    await pool.query('INSERT INTO tuscanini.customer_addresses(customer_id,label,formatted_address,latitude,longitude,is_default) VALUES ($1,$2,$3,$4,$5,true)',address);
+    const otherAddress=await pool.query('SELECT count(*)::int AS n FROM tuscanini.customer_addresses WHERE customer_id=$1',[bob]);
+    assert.equal(otherAddress.rows[0].n,0,'saved address belongs only to its verified owner');
+    await assert.rejects(()=>pool.query('INSERT INTO tuscanini.customer_addresses(customer_id,label,formatted_address,latitude,longitude,is_default) VALUES ($1,$2,$3,$4,$5,true)',address),
+      e=>e.code==='23505','one default address per customer');
+    await assert.rejects(()=>pool.query('INSERT INTO tuscanini.customer_addresses(customer_id,label,formatted_address,latitude,longitude) VALUES ($1,$2,$3,$4,$5)',
+      [bob,'شغل','شارع طويل',99,31.0981]),e=>e.code==='23514','reject invalid delivery GPS');
+    // Matching phone in an order snapshot is deliberately NOT account proof.
+    for(const owner of [alice,bob,null]){
+      await pool.query(`INSERT INTO tuscanini.orders
+        (request_key,payload_sha256,subtotal_cents,status,customer_snapshot,customer_account_id)
+        VALUES ($1,$2,$3,'received',$4::jsonb,$5)`,
+        ['owner-'+randomUUID(),'a'.repeat(64),12500,JSON.stringify({phone:'01012345678'}),owner]);
+    }
+    const own=await listOwnedCustomerOrders(pool,alice);
+    assert.equal(own.length,1,'owner gets neither other account nor guest orders');
+    assert.equal(own[0].subtotal_cents,'12500');
+    assert.equal((await listOwnedCustomerOrders(pool,bob)).length,1);
+    assert.equal((await listOwnedCustomerOrders(pool,alice,200)).length,1,'history limit bounded');
+    await assert.rejects(()=>listOwnedCustomerOrders(pool,'01012345678'),/Verified customer ID required/);
+    const guests=await pool.query('SELECT count(*)::int AS n FROM tuscanini.orders WHERE customer_account_id IS NULL');
+    assert.ok(guests.rows[0].n>=1,'existing guest orders remain anonymous');
+  }finally{await pool.end()}
 });

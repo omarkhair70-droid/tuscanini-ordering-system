@@ -26,8 +26,9 @@ try {
     const accountResponse=await accountPage.goto(baseUrl+'/account',{
       waitUntil:'domcontentloaded',timeout:30000,
     });
+    const accountHeading=await accountPage.locator('.t-account-heading h1').textContent()??'';
     await check(accountResponse?.status()===200 &&
-      await accountPage.getByRole('heading',{name:/أكلك.*على حسابك/}).count()===1 &&
+      accountHeading.includes('أكلك') && accountHeading.includes('على حسابك') &&
       await accountPage.locator('main#t-account-main').count()===1,
       `${width}px native account route uses authored customer shell without invented saved orders`);
     const privateHistory=await context.request.get(baseUrl+'/api/customer/orders',{failOnStatusCode:false});

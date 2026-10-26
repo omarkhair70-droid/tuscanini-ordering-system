@@ -1,3 +1,9 @@
+### 26 Oct — Oracle-first all-backend decision / additive ownership foundation
+
+- Confirmed architecture: Vercel UI, isolated Oracle Cloud API + PostgreSQL for all Tuscanini backend domains. Supabase is transitional, not the final customer/order split. See `docs/rebirth/43_ORACLE_FIRST_BACKEND_CUTOVER_2026-10-26.md`.
+- Added dormant additive Oracle customer/account/address schema, nullable verified owner FK on orders, indexed owner query helper and PostgreSQL CI isolation checks. Guest orders are never claimed from matching phone/email. Auth/session transport, addresses API, data migration and actual production deployment are **not** completed by these files.
+- Adjusted account visual QA to test the actual heading content instead of one fragile combined accessibility-name regex across a line break. Run CI for final HEAD before calling the visual pass green. No runtime gates, Supabase secrets, merchant order settings or main branch changed.
+
 ### 26 Oct — Customer account + owned addresses + private history implementation
 
 - Continued on the **existing** PR #59 from HEAD `dee7f75e`. Browser QA at that HEAD had five failed expectations for *new* closed-intake/pickup copy (not a failed PostgreSQL order transaction). Updated the checks to recognize the current stopped-submit text and disabled delivery message; verify with the newest CI run, do not reuse old green results.
