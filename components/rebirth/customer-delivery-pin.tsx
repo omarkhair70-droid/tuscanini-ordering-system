@@ -96,8 +96,6 @@ export function CustomerDeliveryPin({ onSelect }: Props) {
         };
         locateHandlerRef.current(reply);
         return;
-        }
-        return;
       }
       if (data.type !== 'tuscanini:delivery-pin:selected') return;
       const lat = Number(data.lat), lng = Number(data.lng);
