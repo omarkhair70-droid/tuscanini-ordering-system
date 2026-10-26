@@ -109,6 +109,34 @@ await native('site-settings/import','POST',settings);
 await native('offers/import','POST',{offers});
 const after=await native('status');
 if(!after.settings_ready||after.total_offers!==offers.length)
-  throw Error('Native content parity failed. Do not enable public cutover.');
-console.log(JSON.stringify({importedSettings:true,verifiedOfferCount:after.total_offers,
+  throw Error('Native content count parity failed. Do not enable public cutover.');
+// Compare every published and unpublished offer. Counts alone are NOT parity:
+// wrong discounts and stale is_active flags would be dangerous for customers.
+const audited=await native('audit/offers');
+if(!Array.isArray(audited.offers)||audited.offers.length!==offers.length)
+  throw Error('Native offer audit missing rows. Never enable public content.');
+const stableTime=value=>value?new Date(value).toISOString():null;
+const expected=new Map(offers.map(o=>[o.id,o]));
+for(const row of audited.offers){
+  const source=expected.get(row.id);
+  if(!source||source.title_ar!==row.title_ar||
+     source.description_ar!==row.description_ar||
+     source.badge_ar!==row.badge_ar||source.price_text!==row.price_text||
+     source.offer_price_cents!==row.offer_price_cents||
+     source.is_active!==row.is_active||source.sort_order!==row.sort_order||
+     stableTime(source.starts_at)!==stableTime(row.starts_at)||
+     stableTime(source.ends_at)!==stableTime(row.ends_at))
+    throw Error('Offer data differs from verified source. Do not cut over.');
+  expected.delete(row.id);
+}
+if(expected.size)throw Error('Offer IDs missing after migration.');
+const destinationSettings=(await native('site-settings')).settings;
+if(!destinationSettings||
+   destinationSettings.whatsapp_order_number!==settings.whatsapp_order_number||
+   destinationSettings.phone_primary!==settings.phone_primary||
+   (destinationSettings.phone_secondary??null)!==(settings.phone_secondary??null)||
+   destinationSettings.address_ar!==settings.address_ar||
+   destinationSettings.is_ordering_open!==settings.is_ordering_open)
+  throw Error('Settings mismatch after import. Do not enable native content.');
+console.log(JSON.stringify({importedSettings:true,exactOfferParity:true,verifiedOfferCount:after.total_offers,
   nextAction:'Review owner-facing offers and switch TUSCANINI_NATIVE_CONTENT_ENABLED in preview only.'},null,2));
