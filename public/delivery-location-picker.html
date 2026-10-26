@@ -79,16 +79,69 @@ button{border:1px solid #171511;min-height:49px;padding:10px 12px;font:700 14px 
     map.on('error',function(){ if(!selected) message.textContent='لو الخريطة مش ظاهرة، تقدر تكتب العنوان في الطلب.'; });
     new maplibregl.NavigationControl({showCompass:false}).addTo(map,'top-left');
   }catch(e){message.textContent='تعذر عرض الخريطة هنا. اكتب عنوان التوصيل في الطلب.';document.getElementById('locate').disabled=true;}
-  document.getElementById('locate').addEventListener('click',function(){
-    if(!navigator.geolocation){message.textContent='تحديد الموقع غير مدعوم على الجهاز.';return;}
-    message.textContent='بنحدد مكانك...';
-    navigator.geolocation.getCurrentPosition(function(p){
-      var lat=p.coords.latitude,lng=p.coords.longitude;
-      if(!valid(lat,lng)){message.textContent='الموقع خارج نطاق الخريطة.';return;}
-      if(map)map.flyTo({center:[lng,lat],zoom:17,essential:false});
+  var locateButton=document.getElementById('locate');
+  var pendingLocationRequest=null;
+  function showPosition(result){
+    if(!result||result.status==='retrying'){
+      message.textContent='بنجرّب نحدد مكانك عن طريق الشبكة…';
+      return;
+    }
+    locateButton.disabled=false;
+    pendingLocationRequest=null;
+    if(result.status==='ok'){
+      var lat=Number(result.lat),lng=Number(result.lng),accuracy=Number(result.accuracy);
+      if(!valid(lat,lng)){message.textContent='الموقع خارج نطاق مصر؛ حدّد المكان بإيدك.';return;}
       setPoint(lng,lat);
-    },function(){message.textContent='مش قادرين نحدد مكانك. اختاره بإيدك على الخريطة.';},
-    {enableHighAccuracy:true,timeout:12000,maximumAge:0});
+      if(map)map.flyTo({center:[lng,lat],zoom:17,essential:false});
+      if(Number.isFinite(accuracy)&&accuracy>100){
+        message.textContent='الموقع التقريبي دقته حوالي '+Math.ceil(accuracy)+' متر؛ حرّك الدبوس لمدخل العمارة قبل الاعتماد.';
+      }else{
+        message.textContent='حددنا مكانك. راجع الدبوس على مدخل العمارة قبل اعتماده.';
+      }
+      return;
+    }
+    var errors={
+      denied:'إذن الموقع مقفول في المتصفح أو الجهاز. فعّله من علامة القفل في شريط العنوان، أو اضغط على الخريطة وحدد الدبوس بنفسك.',
+      timeout:'تحديد موقعك استغرق وقتًا طويلًا. جرّب من جديد أو اختر الدبوس بنفسك.',
+      outside:'الموقع المحدد خارج نطاق مصر. اختار نقطة داخل مصر من الخريطة.',
+      unsupported:'الجهاز أو المتصفح لا يسمح بالتحديد التلقائي. استخدم الدبوس على الخريطة.',
+      unavailable:'تعذر الوصول إلى خدمة تحديد الموقع. حرّك الدبوس واضغط «اعتمد المكان».'
+    };
+    message.textContent=errors[result.status]||'تحديد الموقع التلقائي غير متاح حاليًا. استخدم دبوس الخريطة.';
+  }
+  // Only trust the same-origin parent checkout; this protects user location
+  // against arbitrary messages from other windows.
+  window.addEventListener('message',function(event){
+    if(event.origin!==window.location.origin||event.source!==window.parent)return;
+    var data=event.data;
+    if(!data||data.version!==1||data.type!=='tuscanini:delivery-location:result')return;
+    if(data.requestId!=='parent'&&data.requestId!==pendingLocationRequest)return;
+    showPosition(data);
+  });
+  locateButton.addEventListener('click',function(){
+    if(pendingLocationRequest)return;
+    locateButton.disabled=true;
+    message.textContent='بنطلب موقعك من المتصفح…';
+    if(window.parent!==window){
+      pendingLocationRequest='gps_'+Math.random().toString(36).slice(2)+Date.now().toString(36);
+      window.parent.postMessage({
+        type:'tuscanini:delivery-location:request',version:1,
+        requestId:pendingLocationRequest
+      },window.location.origin);
+      // If a parent is not listening, do not trap the customer in a spinner.
+      window.setTimeout(function(){
+        if(!pendingLocationRequest)return;
+        pendingLocationRequest=null;locateButton.disabled=false;
+        message.textContent='تعذر الاتصال بخدمة الموقع؛ اضغط على الخريطة وحدد دبوس التوصيل بنفسك.';
+      },27000);
+      return;
+    }
+    // Standalone picker can still be used directly in a tab.
+    if(!navigator.geolocation){showPosition({status:'unsupported'});return;}
+    navigator.geolocation.getCurrentPosition(function(p){
+      showPosition({status:'ok',lat:p.coords.latitude,lng:p.coords.longitude,accuracy:p.coords.accuracy});
+    },function(e){showPosition({status:e.code===1?'denied':e.code===3?'timeout':'unavailable'});},
+    {enableHighAccuracy:false,timeout:14000,maximumAge:30000});
   });
   confirm.addEventListener('click',function(){
     if(!selected||!valid(selected.lat,selected.lng))return;

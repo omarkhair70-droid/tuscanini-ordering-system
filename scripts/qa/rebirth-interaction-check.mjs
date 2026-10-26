@@ -705,6 +705,18 @@ try {
       await check(await cart.locator('dialog.t-checkout-delivery-pin__dialog[open] iframe[src="/delivery-location-picker.html"]').count()===1,
         '390px precise address uses an interactive same-origin map rather than restaurant location iframe');
       await cart.frameLocator('iframe[src="/delivery-location-picker.html"]').locator('body').waitFor({timeout:10000});
+      // Simulate a denied browser permission. This may NEVER block manual
+      // location selection or close the customer's editable checkout.
+      await cart.evaluate(()=>{
+        Object.defineProperty(navigator,'geolocation',{configurable:true,value:{
+          getCurrentPosition(_success,fail){fail({code:1,message:'denied'});}
+        }});
+      });
+      await cart.locator('.t-checkout-delivery-pin__gps').click();
+      await cart.locator('.t-checkout-delivery-pin__gps-status')
+        .getByText(/إذن الموقع مرفوض/).waitFor({timeout:5000});
+      await check(await cart.locator('dialog.t-checkout-delivery-pin__dialog[open]').count()===1,
+        '390px denied device GPS leaves delivery map open and selectable');
       const pinFrame = cart.frame({url:/delivery-location-picker\.html/});
       if (!pinFrame) throw new Error('Delivery location iframe did not initialize');
       await pinFrame.evaluate(() => window.parent.postMessage({

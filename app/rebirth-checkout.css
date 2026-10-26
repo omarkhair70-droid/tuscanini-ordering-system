@@ -337,3 +337,25 @@
 .t-checkout-payment-method__copy strong{font:800 15px/1.4 "IBM Plex Sans Arabic",Tahoma,sans-serif}
 .t-checkout-payment-method__copy small{font:500 12px/1.6 "IBM Plex Sans Arabic",Tahoma,sans-serif;color:#605748}
 @media(max-width:720px){.t-checkout-payment-method{min-height:58px}}
+
+/* Live delivery geolocation: browser permission belongs to the top-level
+   checkout, never a fragile nested iframe permission prompt. */
+.t-checkout-delivery-pin__header-actions{display:flex;align-items:center;gap:8px;min-width:0}
+.t-checkout-delivery-pin__surface>header .t-checkout-delivery-pin__gps{
+  font:750 12px/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  padding:8px 12px;min-width:0;white-space:nowrap;background:#fff9ee;color:#171511;
+  border-color:#fff9ee
+}
+.t-checkout-delivery-pin__surface>header .t-checkout-delivery-pin__gps:disabled{
+  opacity:.65;cursor:progress
+}
+.t-checkout-delivery-pin__gps-status{
+  margin:0;padding:9px 15px;background:#fff1ce;color:#40311c;
+  font:650 12px/1.6 "IBM Plex Sans Arabic",Tahoma,sans-serif
+}
+@media(max-width:360px){
+  .t-checkout-delivery-pin__surface>header{gap:6px;padding-inline:9px}
+  .t-checkout-delivery-pin__surface>header strong{font-size:15px}
+  .t-checkout-delivery-pin__surface>header .t-checkout-delivery-pin__gps{font-size:11px;padding-inline:7px}
+  .t-checkout-delivery-pin__header-actions{gap:5px}
+}
