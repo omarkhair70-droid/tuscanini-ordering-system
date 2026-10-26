@@ -62,6 +62,12 @@ export function createOrderApi(pool:Pool,settings:Settings) {
       // All order endpoints, including tracking and catalog, are server-to-server.
       if(!authenticated(req,settings.serviceKey))return send(res,403,{error:'Forbidden'});
 
+      // Password-protected release truth, no customer details or secrets.
+      if(method==='GET'&&pathname==='/v1/operator/readiness'){
+        const count=await pool.query<{n:string}>('SELECT count(*)::text AS n FROM tuscanini.menu_products WHERE available=true');
+        return send(res,200,{ok:true,acceptingOrders:settings.acceptOrders,
+          availableProducts:Number(count.rows[0]?.n??0)});
+      }
       const auth=settings.customerAuth;
       const customerPath=pathname.startsWith('/v1/customer/');
       const otpReady=!!(auth?.enabled&&auth.pepper.length>=32&&auth.sendOtp);
