@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
 
 const requireTs = createRequire(import.meta.url);
-const ts = requireTs('typescript-compat');
+const ts = requireTs('typescript');
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const orderId = 'b2dd412e-d3c9-4e4e-9909-aa99e2de4720';
 
