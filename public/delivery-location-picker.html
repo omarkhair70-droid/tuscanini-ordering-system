@@ -4,7 +4,10 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <title>حدّد مكان التوصيل | توسكانيني</title>
-<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@6.15.0/dist/maplibre-gl.css"/>
+<!-- Leaflet renders HTML image tiles; unlike WebGL2-based MapLibre it works
+     even when Android hardware acceleration / WebGL contexts are unavailable. -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+ integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 <style>
 *{box-sizing:border-box}
 :root{font-family:Tahoma,Arial,sans-serif;color:#171511}
@@ -25,7 +28,20 @@ button{border:1px solid #171511;min-height:49px;padding:10px 12px;font:700 14px 
 #external-map-link{color:#8f2420;font-weight:900;text-decoration:underline;text-underline-offset:3px}
 #message{color:#b52220;font-size:12px;line-height:1.5;min-height:0;margin:0}
 .location-privacy{font-size:10px;color:#695c4e;line-height:1.6;margin:0}
-.maplibregl-ctrl-attrib{direction:ltr;font-size:10px!important}
+.leaflet-control-attribution{direction:ltr;font-size:10px!important}
+.leaflet-container{font-family:Tahoma,Arial,sans-serif;background:#efe2ce}
+.delivery-marker{width:34px;height:45px;position:relative;filter:drop-shadow(0 3px 3px #0006)}
+.delivery-marker::before{content:"";position:absolute;top:3px;left:6px;width:24px;height:24px;
+ background:#d72e26;border:3px solid #fff;border-radius:50% 50% 50% 0;transform:rotate(-45deg)}
+.delivery-marker::after{content:"";position:absolute;top:12px;left:17px;width:7px;height:7px;
+ background:#fff;border-radius:50%;transform:translateX(-50%)}
+#pin-message{z-index:750}
+#map:not(.leaflet-container){background:#efe2ce}
+#map-loader{position:absolute;z-index:740;bottom:14px;left:12px;right:12px;
+ background:#fff9ee;color:#46372d;padding:9px 12px;border-radius:10px;
+ box-shadow:0 3px 18px #0002;text-align:center;font:700 12px/1.6 Tahoma,sans-serif}
+#map-loader[hidden]{display:none}
+
 @media(max-width:340px){header strong{font-size:14px}button{font-size:12px}}
 </style>
 </head>
@@ -33,6 +49,7 @@ button{border:1px solid #171511;min-height:49px;padding:10px 12px;font:700 14px 
 <header><strong>فين نوصّل طلبك؟</strong><span>حرّك الدبوس أو اختار مكانك</span></header>
 <div id="map">
   <div id="pin-message"><span>اضغط على المكان أو اسحب الدبوس</span></div>
+  <div id="map-loader" role="status">بنحمّل الشوارع والمباني…</div>
 </div>
 <footer>
  <div id="coordinates" role="status" aria-live="polite">حدد مكان التوصيل على الخريطة</div>
@@ -40,12 +57,14 @@ button{border:1px solid #171511;min-height:49px;padding:10px 12px;font:700 14px 
  <div id="actions"><button id="locate" type="button">موقعي الحالي</button><button id="confirm" type="button" disabled>اعتمد المكان</button></div>
  <p class="location-privacy">«موقعي الحالي» يطلب إذن الموقع ويستخدم خدمة خارجية لمعرفة المنطقة التقريبية فقط. عنوان الشارع والمدخل تكتبه بنفسك.</p>
 </footer>
-<script src="https://unpkg.com/maplibre-gl@6.15.0/dist/maplibre-gl.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+ integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
 (function(){
   'use strict';
   var marker=null, map=null, selected=null, suggestedArea='';
-  var tilesReady=false, fallbackStarted=false, fallbackTimer=null;
+  var tilesReady=false, tileErrors=0, fallbackTimer=null;
+  var mapLoader=document.getElementById('map-loader');
   var message=document.getElementById('message'),coord=document.getElementById('coordinates');
   var confirm=document.getElementById('confirm');
   function valid(lat,lng){return Number.isFinite(lat)&&Number.isFinite(lng)&&lat>=22&&lat<=32&&lng>=24&&lng<=37;}
@@ -53,7 +72,7 @@ button{border:1px solid #171511;min-height:49px;padding:10px 12px;font:700 14px 
     if(!valid(lat,lng)){message.textContent='اختار مكان داخل مصر.';return;}
     selected={lat:+lat.toFixed(6),lng:+lng.toFixed(6)};
     if(!isGps)suggestedArea='';
-    if(marker)marker.setLngLat([selected.lng,selected.lat]);
+    if(marker)marker.setLatLng([selected.lat,selected.lng]);
     coord.textContent=isGps?'✓ تم تحديد موقعك بالجهاز — راجع الدبوس واضبط المدخل':
       '✓ تم اختيار نقطة التوصيل — تأكد من المدخل قبل الاعتماد';
     confirm.disabled=false;
@@ -72,62 +91,68 @@ button{border:1px solid #171511;min-height:49px;padding:10px 12px;font:700 14px 
     document.getElementById('coordinates').appendChild(document.createTextNode(' · '));
     document.getElementById('coordinates').appendChild(link);
   }
-  function fallbackMap(){
-    if(fallbackStarted||!map||tilesReady)return;
-    fallbackStarted=true;
-    message.textContent='الخريطة الأساسية اتأخرت. بنفتح خريطة بديلة…';
-    // MapLibre already displays the user's exact marker. Only switch tiles.
-    // OSM standard tiles are used solely for a human's current viewport;
-    // retain native browser cache and visible OSM attribution.
-    map.setStyle({
-      version:8,
-      sources:{osm:{type:'raster',tileSize:256,
-        tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
-        attribution:'© OpenStreetMap contributors'}},
-      layers:[{id:'osm',type:'raster',source:'osm'}]
-    });
-    window.setTimeout(function(){
-      if(!tilesReady){
-        message.textContent='الخريطة مش بتظهر على الجهاز. راجع النقطة عبر خرائط جوجل أو اكتب عنوانك بالتفصيل.';
-      }
-    },11000);
+  function tilesVisible(){
+    if(tilesReady)return;
+    tilesReady=true;
+    if(fallbackTimer)window.clearTimeout(fallbackTimer);
+    if(mapLoader)mapLoader.hidden=true;
+    if(!selected)message.textContent='';
   }
-
+  function showMapFallback(){
+    if(tilesReady)return;
+    if(mapLoader)mapLoader.textContent='شبكة الشوارع مش بتتحمّل على الجهاز. تقدر تراجع نقطة GPS في خرائط جوجل من الرابط تحت.';
+    message.textContent='عرض الشوارع غير متاح دلوقتي. لو النقطة اتحددت، افتحها على خرائط جوجل واضبط مكان المدخل.';
+  }
   try {
-    if(!window.maplibregl)throw new Error('map-library-unavailable');
-    map=new maplibregl.Map({
-      container:'map',style:'https://tiles.openfreemap.org/styles/liberty',
-      center:[31.099,29.072],zoom:13,attributionControl:true
+    if(!window.L)throw new Error('leaflet-library-unavailable');
+    map=L.map('map',{
+      center:[29.072,31.099],zoom:13,
+      zoomControl:false,scrollWheelZoom:false,
+      attributionControl:true,preferCanvas:false,
+      maxZoom:19
     });
-    marker=new maplibregl.Marker({color:'#d72e26',draggable:true})
-      .setLngLat([31.099,29.072]).addTo(map);
+    L.control.zoom({position:'topleft'}).addTo(map);
+    var tiles=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
+      attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>',
+      maxZoom:19,subdomains:[''],crossOrigin:true,updateWhenIdle:true
+    }).addTo(map);
+    tiles.on('tileload',tilesVisible);
+    tiles.on('tileerror',function(){
+      tileErrors++;
+      if(tileErrors>=4&&!tilesReady)showMapFallback();
+    });
+    // The HTML marker needs no external PNG assets and stays draggable on
+    // Android even when the CDN cannot fetch icon graphics.
+    marker=L.marker([29.072,31.099],{
+      draggable:true,keyboard:true,autoPan:true,
+      icon:L.divIcon({className:'delivery-marker',iconSize:[36,47],iconAnchor:[18,47]})
+    }).addTo(map);
     var markerElement=marker.getElement();
-    markerElement.setAttribute('aria-label','دبوس التوصيل؛ استخدم الأسهم لتحريكه، أو اسحبه باللمس');
-    markerElement.setAttribute('tabindex','0');
-    markerElement.setAttribute('role','button');
-    markerElement.addEventListener('keydown',function(event){
-      var steps={ArrowUp:[0,1],ArrowDown:[0,-1],ArrowLeft:[-1,0],ArrowRight:[1,0]};
-      var direction=steps[event.key];
-      if(!direction)return;
-      event.preventDefault();
-      var current=marker.getLngLat(), step=event.shiftKey?0.001:0.00015;
-      var lng=current.lng+direction[0]*step,lat=current.lat+direction[1]*step;
-      setPoint(lng,lat);
-      map.easeTo({center:[lng,lat],duration:0});
-    });
-    marker.on('dragend',function(){var pos=marker.getLngLat();setPoint(pos.lng,pos.lat);});
-    map.on('click',function(e){setPoint(e.lngLat.lng,e.lngLat.lat);});
-    map.on('error',function(){fallbackMap();});
-    map.on('idle',function(){
-      if(map.areTilesLoaded()){
-        tilesReady=true;
-        if(fallbackTimer)clearTimeout(fallbackTimer);
-        if(!selected)message.textContent='';
-      }
-    });
-    fallbackTimer=window.setTimeout(function(){if(!tilesReady)fallbackMap();},8500);
-    new maplibregl.NavigationControl({showCompass:false}).addTo(map,'top-left');
-  }catch(e){message.textContent='تعذر عرض الخريطة هنا. اكتب عنوان التوصيل في الطلب.';document.getElementById('locate').disabled=true;}
+    if(markerElement){
+      markerElement.setAttribute('aria-label','دبوس التوصيل؛ استخدم الأسهم لتحريكه، أو اسحبه باللمس');
+      markerElement.setAttribute('role','button');
+      markerElement.addEventListener('keydown',function(event){
+        var steps={ArrowUp:[0,1],ArrowDown:[0,-1],ArrowLeft:[-1,0],ArrowRight:[1,0]};
+        var direction=steps[event.key];
+        if(!direction)return;
+        event.preventDefault();
+        var current=marker.getLatLng(),step=event.shiftKey?0.001:0.00015;
+        var lng=current.lng+direction[0]*step,lat=current.lat+direction[1]*step;
+        setPoint(lng,lat);
+        map.panTo([lat,lng],{animate:false});
+      });
+    }
+    marker.on('dragend',function(){var pos=marker.getLatLng();setPoint(pos.lng,pos.lat);});
+    map.on('click',function(e){setPoint(e.latlng.lng,e.latlng.lat);});
+    fallbackTimer=window.setTimeout(showMapFallback,10000);
+    // The iframe starts inside a <dialog> (initially hidden). Recompute tile
+    // dimensions whenever modal becomes visible or GPS shifts the viewpoint.
+    map.whenReady(function(){window.setTimeout(function(){map.invalidateSize();},100);});
+  }catch(e){
+    if(mapLoader)mapLoader.textContent='الخريطة مش متاحة على جهازك. استخدم الدبوس من GPS وراجع النقطة في خرائط جوجل.';
+    message.textContent='تعذر عرض شبكة الشوارع هنا. ممكن تكمل بالدبوس والعنوان المكتوب، بعد مراجعة المكان في خرائط جوجل.';
+    map=null;
+  }
   var locateButton=document.getElementById('locate');
   if(window.parent!==window){
     // The parent has a prominent GPS button, so the map footer should focus
@@ -158,7 +183,7 @@ button{border:1px solid #171511;min-height:49px;padding:10px 12px;font:700 14px 
       var lat=Number(result.lat),lng=Number(result.lng),accuracy=Number(result.accuracy);
       if(!valid(lat,lng)){message.textContent='الموقع خارج نطاق مصر؛ حدّد المكان بإيدك.';return;}
       setPoint(lng,lat,true);
-      if(map)map.flyTo({center:[lng,lat],zoom:17,essential:false});
+      if(map){map.invalidateSize();map.setView([lat,lng],17,{animate:false});}
       if(Number.isFinite(accuracy)&&accuracy>100){
         message.textContent='الموقع التقريبي دقته حوالي '+Math.ceil(accuracy)+' متر؛ حرّك الدبوس لمدخل العمارة قبل الاعتماد.';
       }else{
