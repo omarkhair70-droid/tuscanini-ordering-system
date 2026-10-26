@@ -1,5 +1,6 @@
 import { PageHero } from '@/components/shared/page-hero';
 import { getSiteSettingsSingletonOrThrow } from '@/lib/admin/site-settings-queries';
+import { nativeContentEnabled } from '@/lib/oracle-order-api';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -48,6 +49,7 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
   }
 
   const settings = result.data;
+  const nativeMode = nativeContentEnabled();
 
   return (
     <div className="space-y-6" dir="rtl">
@@ -75,9 +77,13 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
         <form action="/admin/settings/api" method="post" className="space-y-5">
           <section className="space-y-3 rounded-2xl border border-slate-200 p-4">
             <h2 className="text-base font-black text-slate-900">حالة الطلبات</h2>
-            <p className="text-xs text-slate-600">يمكن إغلاق استقبال الطلبات مؤقتًا عند الحاجة.</p>
+            <p className="text-xs text-slate-600">{nativeMode
+              ? 'استقبال الطلبات الحقيقية بيتحكم فيه نظام Oracle المستقل، مش مفتاح إعدادات المحتوى.'
+              : 'تسجيل حالة الموقع في قاعدة البيانات القديمة.'}</p>
+            {nativeMode && <input type="hidden" name="is_ordering_open"
+              value={String(settings.is_ordering_open)} />}
 
-            <div className="grid gap-2 sm:grid-cols-2">
+            {!nativeMode && <div className="grid gap-2 sm:grid-cols-2">
               <label className="flex cursor-pointer items-start gap-2 rounded-xl border border-slate-300 p-3 text-sm">
                 <input
                   type="radio"
@@ -105,7 +111,7 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
                   <span className="text-slate-600">إيقاف استقبال الطلبات مؤقتًا.</span>
                 </span>
               </label>
-            </div>
+            </div>}
           </section>
 
           <section className="space-y-3 rounded-2xl border border-slate-200 p-4">
