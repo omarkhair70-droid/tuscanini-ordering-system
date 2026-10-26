@@ -605,7 +605,7 @@ try {
     if(!checkoutClosed) await shopPage.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).check();
     else await check(await shopPage.getByRole('button',{name:/إرسال الطلب متوقف حاليًا/}).isDisabled(),
       `${width}px closed checkout safely prevents order POST while saved fields remain available`);
-    await shopPage.getByRole('link',{name:/تعديل الحجم والإضافات وملاحظات تشيكن فاير/}).click();
+    await shopPage.getByRole('link',{name:/تعديل الحجم والإضافات وملاحظات كريب تشيكن فاير/}).click();
     await shopPage.locator('.t-product-dialog[open]').waitFor({timeout:8000});
     await check(await shopPage.getByRole('button',{name:/احفظ التعديلات/}).count()===1,
       `${width}px cart edit opens same source product in explicit editing mode`);
