@@ -12,7 +12,7 @@ test('dedicated Tuscanini service has authenticated intake, durable orders and s
   assert.equal(process.env.PGDATABASE,'tuscanini_orders_ci','Run only on disposable CI database.');
   const pool=createPool();
   const key='ci-only-long-test-service-key-000000000000';
-  const server=createOrderApi(pool,{serviceKey:key,acceptOrders:true,syncCatalog:true});
+  const server=createOrderApi(pool,{serviceKey:key,acceptOrders:true,syncCatalog:true,contentImport:true});
   server.listen(0,'127.0.0.1');
   await once(server,'listening');
   const base='http://127.0.0.1:'+server.address().port;
@@ -27,6 +27,42 @@ test('dedicated Tuscanini service has authenticated intake, durable orders and s
     assert.equal((await req('/readyz','GET',undefined,false)).status,200);
     assert.equal((await req('/v1/operator/orders','GET',undefined,false)).status,403,
       'No anonymous staff data');
+    assert.equal((await req('/v1/content/status','GET',undefined,false)).status,403,
+      'No unauthenticated native-content or operator metadata');
+    assert.equal((await req('/v1/content/site-settings','GET')).status,404,
+      'Never return invented settings before the content import');
+    const initialContent=await req('/v1/content/status');
+    assert.equal(initialContent.body.settings_ready,false);
+    const settings={
+      is_ordering_open:true,whatsapp_order_number:'01001234567',
+      phone_primary:'01101234567',phone_secondary:null,
+      address_ar:'شارع اختبار، بني سويف',facebook_url:'https://facebook.com/example'
+    };
+    assert.equal((await req('/v1/content/site-settings/import','POST',{
+      ...settings,nonexistent_field:'unsafe',
+    })).status,400,'Site settings reject unexpected parameters');
+    const savedSettings=await req('/v1/content/site-settings/import','POST',settings);
+    assert.equal(savedSettings.status,200,JSON.stringify(savedSettings.body));
+    assert.equal(savedSettings.body.settings.phone_primary,settings.phone_primary);
+    assert.equal((await req('/v1/content/site-settings')).body.settings.address_ar,settings.address_ar);
+    const offerA={id:'native-content-001',title_ar:'عرض تحقق',description_ar:'اختبار داخلي',
+      badge_ar:'خاص',price_text:null,offer_price_cents:15000,is_active:true,
+      sort_order:1,starts_at:null,ends_at:null};
+    const offerB={...offerA,id:'native-content-002',title_ar:'عرض غير نشط',is_active:false};
+    assert.equal((await req('/v1/content/offers/import','POST',{
+      offers:[offerA,offerA],
+    })).status,400,'Duplicate offers must be rejected atomically');
+    const importedOffers=await req('/v1/content/offers/import','POST',{offers:[offerA,offerB]});
+    assert.equal(importedOffers.status,200,JSON.stringify(importedOffers.body));
+    const publishedOffers=await req('/v1/content/offers');
+    assert.equal(publishedOffers.body.offers.length,1);
+    assert.equal(publishedOffers.body.offers[0].offer_price_cents,15000);
+    const nativeStatus=await req('/v1/content/status');
+    assert.equal(nativeStatus.body.settings_ready,true);
+    assert.equal(nativeStatus.body.total_offers,2);
+    assert.equal(nativeStatus.body.active_offers,1);
+    // Updating display content never mutates order rows or site intake flags.
+    assert.equal((await pool.query('SELECT count(*)::int AS n FROM tuscanini.orders')).rows[0].n,0);
     assert.equal((await req('/v1/catalog/sync','POST',{
       products:[{productId:'TUSC_CI_01',name:'تجربة حقيقية آمنة',categorySlug:'qa',priceFromCents:12500,
         available:true,sizes:[],addons:[]}],
