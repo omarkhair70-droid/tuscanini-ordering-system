@@ -70,3 +70,36 @@ There is no browser-facing anonymous content-import route.
   version change, no destructive SQL.
 - Existing PR #65/#66 update libraries and are deliberately separate. After
   the final cutover, remove the temporary Supabase dependency from them.
+
+## Native merchant admin cutover (additional default-off gate)
+The existing authenticated `/admin/settings` and `/admin/offers` UI can
+read and mutate Tuscanini PostgreSQL when:
+- an **audited, complete** data export has been imported and verified
+- `TUSCANINI_NATIVE_CONTENT_ENABLED=yes` in Vercel
+- `TUSCANINI_CONTENT_ADMIN_ENABLED=yes` in Coolify
+- the existing admin access cookie is present, and the browser POST is
+  same-origin, protected by `proxy.ts`
+
+Offers GET includes active AND inactive records for the merchant. Creation,
+editing and activation do not delete old IDs or order history. Backend writes
+are protected by the 32+ char service key and a separate content admin switch.
+The public consumer GET only shows in-window active records.
+
+IMPORTANT: the current Oracle order API does not accept `kind:'offer'` cart
+lines. Merchant-facing offer creation/activation is **editorial display only**
+until the canonical server-side offer checkout pricing and kitchen line support
+have been added and validated. Do not claim an offer card is buyable merely
+because its public content was imported.
+
+The feature switch never substitutes the legacy Supabase admin silently if
+native PostgreSQL fails. If a migrated endpoint fails, report the error and
+leave data untouched.
+
+## Remaining true "zero Supabase" release gates
+- Verify ALL Supabase datasets actually used by pages, not only `offers`
+  and `site_settings`, and back up them under merchant control.
+- Complete native menu, offer ordering, settings, and any retained legacy admin
+  pages before package removal.
+- Delete Supabase secrets from Vercel **only after** deploying/test-driving the
+  package-free bundle with the native feature flags and end-to-end checkout.
+- Never drop/decommission the old Supabase project during the same deploy.
