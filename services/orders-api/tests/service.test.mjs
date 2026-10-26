@@ -173,3 +173,48 @@ test('Oracle customer data keeps verified owners isolated from guests and contac
     assert.ok(guests.rows[0].n>=1,'existing guest orders remain anonymous');
   }finally{await pool.end()}
 });
+
+test('Oracle OTP session, owned addresses and history stay private; guest preserved',async()=>{
+  assert.equal(process.env.PGDATABASE,'tuscanini_orders_ci');
+  const pool=createPool(),sent=[];
+  const key='ci-only-long-test-service-key-000000000000';
+  const api=createOrderApi(pool,{serviceKey:key,acceptOrders:true,syncCatalog:true,
+    customerAuth:{enabled:true,pepper:'testing-pepper-with-more-than-thirty-two-characters',
+      sendOtp:async(email,code)=>{sent.push({email,code})}}});
+  api.listen(0,'127.0.0.1'); await once(api,'listening');
+  const base='http://127.0.0.1:'+api.address().port;
+  const req=async(path,method='GET',input,token)=>{
+    const r=await fetch(base+path,{method,headers:{'x-tuscanini-service-key':key,
+      ...(input?{'content-type':'application/json'}:{}),
+      ...(token?{'x-tuscanini-customer-session':token}:{})},
+      body:input?JSON.stringify(input):undefined});
+    return {status:r.status,body:await r.json()};
+  };
+  try{
+    const email='buyer-'+randomUUID()+'@example.invalid';
+    assert.equal((await req('/v1/customer/orders')).status,401);
+    assert.equal((await req('/v1/customer/auth/verify','POST',{email,code:'000000'})).status,401);
+    assert.equal((await req('/v1/customer/auth/request','POST',{email})).status,200);
+    assert.equal(sent.length,1);
+    assert.equal((await req('/v1/customer/auth/request','POST',{email})).status,200);
+    assert.equal(sent.length,1,'resend cooldown');
+    assert.equal((await req('/v1/customer/auth/verify','POST',{email,code:'111111'})).status,401);
+    const signIn=await req('/v1/customer/auth/verify','POST',{email,code:sent[0].code});
+    assert.equal(signIn.status,200,JSON.stringify(signIn.body));
+    assert.equal(signIn.body.customer.email,email);
+    const token=signIn.body.token;
+    assert.equal((await req('/v1/customer/auth/session','GET',undefined,token)).status,200);
+    assert.equal((await req('/v1/customer/addresses','GET',undefined,'bad')).status,401);
+    const addr={label:'البيت',formatted_address:'شارع الجيش، بني سويف',latitude:29.07,longitude:31.09};
+    const saved=await req('/v1/customer/addresses','POST',addr,token);
+    assert.equal(saved.status,201,JSON.stringify(saved.body));
+    assert.equal((await req('/v1/customer/addresses','GET',undefined,token)).body.addresses.length,1);
+    assert.equal((await req('/v1/customer/orders','GET',undefined,token)).body.orders.length,0);
+    assert.equal((await req('/v1/customer/addresses','DELETE',undefined,'invalid')).status,401);
+    const del=await req('/v1/customer/addresses/'+saved.body.address.id,'DELETE',undefined,token);
+    assert.equal(del.body.ok,true);
+    assert.equal((await req('/v1/customer/addresses','GET',undefined,token)).body.addresses.length,0);
+    assert.equal((await req('/v1/customer/auth/logout','POST',{},token)).status,200);
+    assert.equal((await req('/v1/customer/auth/session','GET',undefined,token)).status,401);
+  }finally{await new Promise((resolve,reject)=>api.close(e=>e?reject(e):resolve()));await pool.end();}
+});

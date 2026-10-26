@@ -117,11 +117,12 @@ async function existing(pool:Pool,key:string,hash:string):Promise<RecordedOrder|
   if(r.rows[0]&&r.rows[0].payload_sha256!==hash)throw new RequestKeyCollision();
   return r.rows[0]??null;
 }
-export async function submitMenuOrder(pool:Pool,input:unknown):Promise<RecordedOrder>{
+export async function submitMenuOrder(pool:Pool,input:unknown,verifiedCustomerId:string|null=null):Promise<RecordedOrder>{
   const order=parsePayload(input);
   // Canonical payload binds contact, notes, sizes, add-ons AND quantities to the retry key.
   const canonical={
     customer:order.customer,tableReference:order.tableReference,expectedSubtotalCents:order.expectedSubtotalCents,
+    verifiedCustomerId,
     items:order.items.map(v=>({...v,addonIds:[...v.addonIds].sort()})),
   };
   const hash=createHash('sha256').update(JSON.stringify(canonical)).digest('hex');
@@ -156,10 +157,10 @@ export async function submitMenuOrder(pool:Pool,input:unknown):Promise<RecordedO
     // higher/lower server-calculated total when the historical menu changed.
     if(total!==order.expectedSubtotalCents)bad('Cart subtotal changed; review the menu again');
     const head=await client.query<RecordedOrder>(`INSERT INTO tuscanini.orders
-       (request_key,payload_sha256,status,subtotal_cents,customer_snapshot,order_type,table_reference)
-       VALUES ($1,$2,'received',$3,$4::jsonb,$5,$6)
+       (request_key,payload_sha256,status,subtotal_cents,customer_snapshot,order_type,table_reference,customer_account_id)
+       VALUES ($1,$2,'received',$3,$4::jsonb,$5,$6,$7)
        RETURNING id,request_key,payload_sha256,status,subtotal_cents`,
-       [order.requestKey,hash,total,JSON.stringify(order.customer),order.customer.orderType,order.tableReference]);
+       [order.requestKey,hash,total,JSON.stringify(order.customer),order.customer.orderType,order.tableReference,verifiedCustomerId]);
     const created=head.rows[0];if(!created)throw Error('Missing saved order');
     for(const line of lines){
       await client.query(`INSERT INTO tuscanini.order_line

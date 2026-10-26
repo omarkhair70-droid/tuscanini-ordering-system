@@ -4,13 +4,18 @@ import type {Pool} from 'pg';
 import {RequestKeyCollision} from './orders.js';
 import {OperationalError,advanceOrder,listOperatorOrders} from './operations.js';
 import {syncMenuCatalog,submitMenuOrder} from './menu-orders.js';
+import {CustomerAuthError,requestCustomerOtp,verifyCustomerOtp,sessionCustomer,revokeCustomerSession,sendResendOtp,type CustomerAuthConfig} from './customer-auth.js';
+import {readCustomerAddresses,saveCustomerAddress,deleteCustomerAddress} from './customer-addresses.js';
+import {listOwnedCustomerOrders} from './customer-orders.js';
 
-type Settings={serviceKey:string;acceptOrders:boolean;syncCatalog:boolean};
+type Settings={serviceKey:string;acceptOrders:boolean;syncCatalog:boolean;customerAuth?:CustomerAuthConfig};
 export function serviceSettingsFromEnvironment():Settings {
   const serviceKey=process.env.ORDER_API_SERVICE_KEY??'';
   if(serviceKey.length<32)throw new Error('ORDER_API_SERVICE_KEY must be a separate 32+ character server-only secret.');
   return {serviceKey,acceptOrders:process.env.ORDER_API_ACCEPT_ORDERS==='yes',
-    syncCatalog:process.env.CATALOG_SYNC_ENABLED==='yes'};
+    syncCatalog:process.env.CATALOG_SYNC_ENABLED==='yes',
+    customerAuth:{enabled:process.env.CUSTOMER_AUTH_ENABLED==='yes',
+      pepper:process.env.CUSTOMER_OTP_PEPPER??'',sendOtp:sendResendOtp}};
 }
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 function send(res:ServerResponse,status:number,body:unknown) {
@@ -53,6 +58,37 @@ export function createOrderApi(pool:Pool,settings:Settings) {
       }
       // All order endpoints, including tracking and catalog, are server-to-server.
       if(!authenticated(req,settings.serviceKey))return send(res,403,{error:'Forbidden'});
+
+      const auth=settings.customerAuth;
+      const customerPath=pathname.startsWith('/v1/customer/');
+      if(customerPath&&(!auth?.enabled||auth.pepper.length<32||!auth.sendOtp))
+        return send(res,503,{error:'Customer accounts unavailable.'});
+      if(customerPath&&method==='POST'&&pathname==='/v1/customer/auth/request'){
+        const d=await body(req,1200);
+        return send(res,200,await requestCustomerOtp(pool,auth!,d.email));
+      }
+      if(customerPath&&method==='POST'&&pathname==='/v1/customer/auth/verify'){
+        const d=await body(req,1200);
+        return send(res,200,{ok:true,...await verifyCustomerOtp(pool,auth!,d.email,d.code)});
+      }
+      const sessionToken=req.headers['x-tuscanini-customer-session'];
+      const customer=customerPath||pathname==='/v1/orders'
+        ?await sessionCustomer(pool,sessionToken):null;
+      if(customerPath&&pathname==='/v1/customer/auth/logout'&&method==='POST'){
+        await revokeCustomerSession(pool,sessionToken);return send(res,200,{ok:true});
+      }
+      if(customerPath&&pathname==='/v1/customer/auth/session'&&method==='GET')
+        return customer?send(res,200,{customer}):send(res,401,{error:'Sign-in required.'});
+      if(customerPath&&!customer)return send(res,401,{error:'Sign-in required.'});
+      if(method==='GET'&&pathname==='/v1/customer/orders')
+        return send(res,200,{orders:await listOwnedCustomerOrders(pool,customer!.id)});
+      if(method==='GET'&&pathname==='/v1/customer/addresses')
+        return send(res,200,{addresses:await readCustomerAddresses(pool,customer!.id)});
+      if(method==='POST'&&pathname==='/v1/customer/addresses')
+        return send(res,201,{address:await saveCustomerAddress(pool,customer!.id,await body(req,1500))});
+      const addressId=/^\/v1\/customer\/addresses\/([0-9a-f-]+)$/i.exec(pathname);
+      if(method==='DELETE'&&addressId)
+        return send(res,200,await deleteCustomerAddress(pool,customer!.id,addressId[1]));
       if(method==='POST'&&pathname==='/v1/catalog/sync'){
         if(!settings.syncCatalog)return send(res,503,{error:'Catalog synchronization disabled.'});
         const data=await body(req,150000);
@@ -62,7 +98,8 @@ export function createOrderApi(pool:Pool,settings:Settings) {
       if(method==='POST'&&pathname==='/v1/orders'){
         if(!settings.acceptOrders)return send(res,503,{error:'Order intake disabled.'});
         const data=await body(req,32000);
-        const order=await submitMenuOrder(pool,data);
+        if(sessionToken&&!customer)return send(res,401,{error:'Invalid customer session.'});
+        const order=await submitMenuOrder(pool,data,customer?.id??null);
         return send(res,200,{ok:true,id:order.id,subtotal_cents:String(order.subtotal_cents),status:order.status});
       }
       const tracking=/^\/v1\/orders\/([0-9a-f-]+)\/track$/i.exec(pathname);
@@ -96,7 +133,8 @@ export function createOrderApi(pool:Pool,settings:Settings) {
       }
       return send(res,404,{error:'Unknown route.'});
     }catch(error){
-      const code=error instanceof OperationalError?error.httpStatus:
+      const code=error instanceof CustomerAuthError?error.status:
+        error instanceof OperationalError?error.httpStatus:
         error instanceof RequestKeyCollision?409:
         error instanceof SyntaxError||error instanceof TypeError?400:
         error instanceof Error&&/Invalid menu choice|Request key format|Unavailable|Unknown addon/.test(error.message)?400:500;
