@@ -1,5 +1,6 @@
 import { PageHero } from '@/components/shared/page-hero';
 import { getAdminOffersOrThrow } from '@/lib/admin/offers-admin-queries';
+import {nativeContentEnabled} from '@/lib/oracle-order-api';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -15,6 +16,7 @@ function toDatetimeLocal(value: string | null): string {
 }
 
 export default async function AdminOffersPage({ searchParams }: { searchParams: SearchParams }) {
+  const nativeMode=nativeContentEnabled();
   const params = await searchParams;
   const success = typeof params.action_success === 'string' ? params.action_success : '';
   const error = typeof params.action_error === 'string' ? params.action_error : '';
@@ -34,6 +36,9 @@ export default async function AdminOffersPage({ searchParams }: { searchParams: 
       {error ? <p className="rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-900">{error}</p> : null}
       {result.error ? <p className="rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-900">{result.error}</p> : null}
 
+      {nativeMode&&<p className="rounded-2xl border border-amber-300 bg-amber-50 p-3 text-sm font-bold text-amber-900">
+        إدارة العروض هنا للعرض التحريري فقط حاليًا. الشراء المباشر للعروض من السلة محتاج تفعيل نظام عروض Oracle بعد مراجعة سعر ومحتوى كل عرض.
+      </p>}
       <section className="rounded-2xl border border-slate-200 bg-white p-4">
         <h2 className="mb-3 text-lg font-black text-slate-900">إضافة عرض جديد</h2>
         <form action="/admin/offers/api/offers" method="post" className="grid gap-3 md:grid-cols-2">
@@ -57,7 +62,7 @@ export default async function AdminOffersPage({ searchParams }: { searchParams: 
         {result.data.length === 0 ? <p className="surface-card-soft">لا توجد عروض بعد.</p> : null}
         {result.data.map((offer) => (
           <article key={offer.id} className="rounded-2xl border border-slate-200 bg-white p-4">
-            <p className="mb-2 text-xs font-bold text-slate-600">مباع اليوم: {offer.soldToday ?? 0} | مبيعات اليوم: {offer.salesToday ?? 0} ج.م | إجمالي مباع: {offer.totalSold ?? 0}</p>
+            {!nativeMode&&<p className="mb-2 text-xs font-bold text-slate-600">مباع اليوم: {offer.soldToday ?? 0} | مبيعات اليوم: {offer.salesToday ?? 0} ج.م | إجمالي مباع: {offer.totalSold ?? 0}</p>}
             <form action={`/admin/offers/api/offers/${offer.id}`} method="post" className="grid gap-3 md:grid-cols-2">
               <input name="intent" type="hidden" value="update" />
               <input name="title_ar" defaultValue={offer.titleAr} required className="rounded-xl border border-slate-300 px-3 py-2" />

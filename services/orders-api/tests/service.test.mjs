@@ -12,7 +12,7 @@ test('dedicated Tuscanini service has authenticated intake, durable orders and s
   assert.equal(process.env.PGDATABASE,'tuscanini_orders_ci','Run only on disposable CI database.');
   const pool=createPool();
   const key='ci-only-long-test-service-key-000000000000';
-  const server=createOrderApi(pool,{serviceKey:key,acceptOrders:true,syncCatalog:true,contentImport:true});
+  const server=createOrderApi(pool,{serviceKey:key,acceptOrders:true,syncCatalog:true,contentImport:true,contentAdmin:true});
   server.listen(0,'127.0.0.1');
   await once(server,'listening');
   const base='http://127.0.0.1:'+server.address().port;
@@ -61,6 +61,48 @@ test('dedicated Tuscanini service has authenticated intake, durable orders and s
     assert.equal(nativeStatus.body.settings_ready,true);
     assert.equal(nativeStatus.body.total_offers,2);
     assert.equal(nativeStatus.body.active_offers,1);
+    assert.equal((await req('/v1/content/admin/offers','GET',undefined,false)).status,403,
+      'Unauthenticated browsers can never read merchant editing data');
+    const allAdminOffers=await req('/v1/content/admin/offers');
+    assert.equal(allAdminOffers.status,200);
+    assert.equal(allAdminOffers.body.offers.length,2,'Admin sees inactive offers');
+    const audit=await req('/v1/content/audit/offers');
+    assert.equal(audit.status,200);
+    assert.deepEqual(
+      audit.body.offers.map(row=>[row.id,row.is_active,row.offer_price_cents]),
+      allAdminOffers.body.offers.map(row=>[row.id,row.is_active,row.offer_price_cents]),
+      'Supervised transfer audits active and inactive offers with exact pricing');
+    const changedSettings={...settings,address_ar:'مدخل جديد'};
+    assert.equal((await req('/v1/content/admin/site-settings','POST',changedSettings)).status,200);
+    assert.equal((await req('/v1/content/site-settings')).body.settings.address_ar,'مدخل جديد');
+    const invalid=await req('/v1/content/admin/offers','POST',
+      {title_ar:'سعر غير صالح',description_ar:null,badge_ar:null,price_text:null,
+        offer_price_cents:-2,is_active:true,sort_order:1,starts_at:null,ends_at:null});
+    assert.equal(invalid.status,400,'Merchant must not publish invalid amount');
+    const createPayload={
+      title_ar:'عرض جديد',description_ar:'وصف',badge_ar:'محدود',price_text:null,
+      offer_price_cents:4999,is_active:false,sort_order:10,starts_at:null,ends_at:null,
+    };
+    const newOffer=await req('/v1/content/admin/offers','POST',createPayload);
+    assert.equal(newOffer.status,201,JSON.stringify(newOffer.body));
+    const id=newOffer.body.id;
+    assert.match(id,/^[0-9a-f-]{36}$/);
+    assert.equal((await req('/v1/content/offers')).body.offers.length,1,
+      'Saving draft cannot secretly publish it');
+    assert.equal((await req('/v1/content/admin/offers/'+id+'/active','POST',
+      {is_active:true})).status,200);
+    const edited=await req('/v1/content/admin/offers/'+id,'POST',{
+      ...createPayload,title_ar:'عرض معدل',is_active:true,
+    });
+    assert.equal(edited.status,200);
+    assert.equal((await req('/v1/content/offers')).body.offers.length,2);
+    assert.equal((await req('/v1/content/admin/offers/'+id+'/active','POST',
+      {is_active:false,extra:'unsafe'})).status,400);
+    assert.equal((await req('/v1/content/admin/offers/'+id+'/active','POST',
+      {is_active:false})).status,200);
+    assert.equal((await req('/v1/content/offers')).body.offers.length,1);
+    assert.equal((await req('/v1/content/admin/offers')).body.offers.length,3,
+      'Never delete offer history just by disabling a promotion');
     // Updating display content never mutates order rows or site intake flags.
     assert.equal((await pool.query('SELECT count(*)::int AS n FROM tuscanini.orders')).rows[0].n,0);
     assert.equal((await req('/v1/catalog/sync','POST',{

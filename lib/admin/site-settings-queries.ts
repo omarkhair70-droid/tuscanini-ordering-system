@@ -1,6 +1,7 @@
 import 'server-only';
 
 import { getSupabaseServerAdminClient } from '@/lib/supabase/server-admin';
+import {nativeContentEnabled,fetchNativeSiteSettings} from '@/lib/oracle-order-api';
 
 export type SiteSettingsView = {
   is_ordering_open: boolean;
@@ -13,6 +14,20 @@ export type SiteSettingsView = {
 };
 
 export async function getSiteSettingsSingletonOrThrow(): Promise<SiteSettingsView> {
+  if(nativeContentEnabled()){
+    const native=await fetchNativeSiteSettings();
+    if(typeof native.phone_primary!=='string' || typeof native.address_ar!=='string')
+      throw new Error('إعدادات المطعم لم يتم نقلها بشكل صحيح.');
+    return {
+      is_ordering_open:native.is_ordering_open===true,
+      whatsapp_order_number:String(native.whatsapp_order_number??''),
+      phone_primary:native.phone_primary,
+      phone_secondary:typeof native.phone_secondary==='string'?native.phone_secondary:'',
+      address_ar:native.address_ar,
+      facebook_url:typeof native.facebook_url==='string'?native.facebook_url:'',
+      updated_at:String(native.updated_at??''),
+    };
+  }
   const supabase = getSupabaseServerAdminClient();
 
   const { data, error } = await supabase

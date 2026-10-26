@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import {assertMerchantMutationOrigin} from '@/lib/admin/native-admin-origin';
 
 import { parseSiteSettingsUpdatePayloadOrThrow } from '@/lib/admin/site-settings-validation';
 import { updateSiteSettingsSingletonOrThrow } from '@/lib/admin/site-settings-writes';
@@ -66,6 +67,7 @@ async function parsePayloadFromRequest(request: Request): Promise<Record<string,
 
 export async function POST(request: Request) {
   try {
+    assertMerchantMutationOrigin(request);
     const rawPayload = await parsePayloadFromRequest(request);
     const payload = parseSiteSettingsUpdatePayloadOrThrow(rawPayload);
 
@@ -82,6 +84,7 @@ export async function POST(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
+    assertMerchantMutationOrigin(request);
     const rawPayload = await parsePayloadFromRequest(request);
     const payload = parseSiteSettingsUpdatePayloadOrThrow(rawPayload);
 

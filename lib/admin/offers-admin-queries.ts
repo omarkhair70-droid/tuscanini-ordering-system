@@ -2,6 +2,7 @@ import 'server-only';
 
 import { getSupabaseServerAdminClient } from '@/lib/supabase/server-admin';
 import type { AdminOffer } from '@/types/offers';
+import {nativeContentEnabled,callNativeContentAdmin} from '@/lib/oracle-order-api';
 
 type OfferRow = {
   id: string;
@@ -43,6 +44,31 @@ function mapOffer(row: OfferRow): AdminOffer {
 }
 
 export async function getAdminOffersOrThrow(): Promise<AdminOffer[]> {
+  if(nativeContentEnabled()){
+    const response=await callNativeContentAdmin('offers');
+    if(!Array.isArray(response.offers))throw new Error('تعذرت قراءة عروض المطعم.');
+    return response.offers.map(raw=>{
+      const row=raw as Record<string,unknown>;
+      if(typeof row.id!=='string'||typeof row.title_ar!=='string'||
+         typeof row.is_active!=='boolean')
+        throw new Error('عرض غير صالح في قاعدة بيانات المطعم.');
+      const cents=row.offer_price_cents;
+      const money=typeof cents==='number'&&Number.isInteger(cents)&&cents>=0?cents/100:null;
+      return {
+        id:row.id,titleAr:row.title_ar,
+        descriptionAr:typeof row.description_ar==='string'?row.description_ar:null,
+        badgeAr:typeof row.badge_ar==='string'?row.badge_ar:null,
+        priceText:typeof row.price_text==='string'?row.price_text:null,
+        offerPrice:money,startsAt:typeof row.starts_at==='string'?row.starts_at:null,
+        endsAt:typeof row.ends_at==='string'?row.ends_at:null,
+        isActive:row.is_active,sortOrder:typeof row.sort_order==='number'?row.sort_order:0,
+        createdAt:String(row.created_at??''),updatedAt:String(row.updated_at??''),
+        // The Oracle ordering engine currently rejects purchasable offer cart
+        // lines, so do not invent corresponding sales records.
+        soldToday:0,salesToday:0,totalSold:0,
+      } satisfies AdminOffer;
+    });
+  }
   const supabase = getSupabaseServerAdminClient();
   const { data, error } = await supabase
     .from('offers')

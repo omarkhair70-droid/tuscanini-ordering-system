@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import {assertMerchantMutationOrigin} from '@/lib/admin/native-admin-origin';
 
 import { parseOfferMutationPayloadOrThrow, validateOfferIdOrThrow } from '@/lib/admin/offers-admin-validation';
 import { setOfferActiveStateOrThrow, updateOfferOrThrow } from '@/lib/admin/offers-admin-writes';
@@ -13,6 +14,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   const { id } = await context.params;
 
   try {
+    assertMerchantMutationOrigin(request);
     validateOfferIdOrThrow(id);
     const form = await request.formData();
     const intent = String(form.get('intent') ?? 'update');

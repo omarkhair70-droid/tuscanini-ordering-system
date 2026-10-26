@@ -181,3 +181,48 @@ export async function readNativeContentStatus(pool:Pool){
       AS active_offers`);
   return result.rows[0];
 }
+
+/** Admin editing routes use a separate default-off feature switch, in addition
+ * to the existing 32+ char service key and the Next.js admin session guard. */
+export async function readNativeAdminOffers(pool:Pool):Promise<NativeOffer[]>{
+  const data=await pool.query<NativeOffer>(`SELECT id,title_ar,description_ar,badge_ar,
+    price_text,offer_price_cents,is_active,sort_order,starts_at,ends_at,created_at,updated_at
+    FROM tuscanini.offers ORDER BY sort_order ASC,created_at DESC,id ASC LIMIT 200`);
+  return data.rows;
+}
+export async function saveNativeOffer(pool:Pool,id:string,payload:unknown,create:boolean){
+  if(!/^[a-zA-Z0-9_-]{4,80}$/.test(id))throw new ContentError('Invalid offer ID.',400);
+  const data=object(payload);
+  strict(data,['title_ar','description_ar','badge_ar','price_text',
+    'offer_price_cents','is_active','sort_order','starts_at','ends_at']);
+  const candidate=offer({id,...data});
+  const params=[
+    candidate.title_ar,candidate.description_ar,candidate.badge_ar,
+    candidate.price_text,candidate.offer_price_cents,candidate.is_active,
+    candidate.sort_order,candidate.starts_at,candidate.ends_at
+  ];
+  let result;
+  if(create){
+    result=await pool.query<NativeOffer>(`INSERT INTO tuscanini.offers(
+      id,title_ar,description_ar,badge_ar,price_text,offer_price_cents,is_active,
+      sort_order,starts_at,ends_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+      ON CONFLICT (id) DO NOTHING RETURNING id`,[id,...params]);
+    if(!result.rows[0])throw new ContentError('Offer already exists.',409);
+  }else{
+    result=await pool.query<NativeOffer>(`UPDATE tuscanini.offers SET
+      title_ar=$2,description_ar=$3,badge_ar=$4,price_text=$5,
+      offer_price_cents=$6,is_active=$7,sort_order=$8,
+      starts_at=$9,ends_at=$10,updated_at=now()
+      WHERE id=$1 RETURNING id`,[id,...params]);
+    if(!result.rows[0])throw new ContentError('Offer not found.',404);
+  }
+  return {ok:true,id};
+}
+export async function setNativeOfferActive(pool:Pool,id:string,isActive:unknown){
+  if(!/^[a-zA-Z0-9_-]{4,80}$/.test(id)||typeof isActive!=='boolean')
+    throw new ContentError('Invalid activation request.',400);
+  const result=await pool.query<{id:string}>(`UPDATE tuscanini.offers
+    SET is_active=$2,updated_at=now() WHERE id=$1 RETURNING id`,[id,isActive]);
+  if(!result.rows[0])throw new ContentError('Offer not found.',404);
+  return {ok:true,id,is_active:isActive};
+}
