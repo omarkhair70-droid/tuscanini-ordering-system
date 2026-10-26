@@ -166,6 +166,7 @@ export function ProductCustomizationModal({ item, isOpen, onClose }: ProductCust
             addItem({
               productId: item.id,
               productName: item.name,
+              categorySlug: item.categorySlug,
               selectedSize: selectedSizeData,
               selectedAddons: selectedAddonData,
               quantity,

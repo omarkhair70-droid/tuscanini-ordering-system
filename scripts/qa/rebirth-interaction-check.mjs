@@ -670,6 +670,64 @@ try {
        await page.locator('.t-order-tracking').count()===0, `${width}px direct tracking URL does not falsely confirm an order`);
     const trackingOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
     await check(trackingOverflow<=3, `${width}px Tracking no significant horizontal overflow (${trackingOverflow}px)`);
+    // Customer cart regression: older localStorage lines had NO categorySlug.
+    // The same short food name can represent different actual restaurant recipes.
+    // This test is entirely in-browser and must never submit a real order.
+    if([320,390,1440].includes(width)){
+      const identityCtx=await browser.newContext({viewport:{width,height:844},reducedMotion:'reduce'});
+      await identityCtx.addInitScript(()=>{
+        localStorage.setItem('tuscanini-cart-v1',JSON.stringify({
+          items:[
+            {lineId:'legacy-kofte',kind:'product',productId:'cm5',productName:'كفتة',
+              selectedSize:{id:'large',label:'كبير',price:75},
+              selectedAddons:[{id:'test-cheese',label:'موتزاريلا',price:10}],
+              itemNotes:'بدون بصل',quantity:1,unitPrice:85,totalItemPrice:85},
+            {lineId:'pizza-shawarma',kind:'product',productId:'pm4',productName:'شاورما لحم',
+              categorySlug:'pizza-meat',selectedSize:{id:'medium',label:'وسط',price:185},
+              selectedAddons:[],itemNotes:'',quantity:1,unitPrice:185,totalItemPrice:185},
+            {lineId:'crepe-shawarma',kind:'product',productId:'cm7',productName:'شاورما لحم',
+              categorySlug:'crepe-meat',selectedSize:{id:'large',label:'كبير',price:85},
+              selectedAddons:[],itemNotes:'',quantity:1,unitPrice:85,totalItemPrice:85}
+          ],
+          customer:{name:'',phone:'',address:'',orderType:'pickup',paymentMethod:'cash',
+            generalNotes:'',confirmedAccurateDetails:false},tableReference:null,
+        }));
+      });
+      await identityCtx.route('**/api/public/site-settings',route=>route.fulfill({
+        status:200,contentType:'application/json',
+        body:JSON.stringify({ok:true,settings:{isOrderingOpen:true,deliveryEnabled:false,
+          whatsappOrderNumber:''}}),
+      }));
+      const identityPage=await identityCtx.newPage();
+      await identityPage.goto(baseUrl+'/cart',{waitUntil:'networkidle',timeout:30000});
+      await identityPage.locator('.t-checkout-item').first().waitFor({timeout:9000});
+      const labels=await identityPage.locator('.t-checkout-item h3').allInnerTexts();
+      const families=await identityPage.locator('.t-checkout-item__category').allInnerTexts();
+      await check(JSON.stringify(labels)===JSON.stringify([
+        'كريب كفتة','بيتزا شاورما لحم','كريب شاورما لحم'
+      ]) && JSON.stringify(families)===JSON.stringify([
+        'كريب لحوم','بيتزا لحوم','كريب لحوم'
+      ]),`${width}px cart disambiguates existing saved crepe and pizza lines`);
+      await check(await identityPage.locator('.t-checkout-item').first()
+        .getByText('موتزاريلا').count()===1 &&
+        await identityPage.locator('.t-checkout-item').first()
+          .getByText('بدون بصل').count()===1 &&
+        await identityPage.getByRole('link',{name:/تعديل الحجم والإضافات وملاحظات كريب كفتة/}).count()===1,
+        `${width}px cart retains real item selections and accessible edit action`);
+      await check((await identityPage.evaluate(()=>document.documentElement.scrollWidth-
+        document.documentElement.clientWidth))<=3,
+        `${width}px detailed cart does not overflow viewport`);
+      if(width===320||width===390)await identityPage.screenshot({
+        path:`artifacts/screenshots/customer-cart-menu-identity-${width}.png`,
+        fullPage:true,animations:'disabled'});
+      const legacyLine=await identityPage.evaluate(()=>{
+        const c=JSON.parse(localStorage.getItem('tuscanini-cart-v1')||'{}');
+        return c.items?.find(x=>x.lineId==='legacy-kofte');
+      });
+      await check(legacyLine?.productId==='cm5'&&legacyLine?.totalItemPrice===85,
+        `${width}px cart name correction never mutates existing item ids, prices or orders`);
+      await identityCtx.close();
+    }
     // Isolated browser fixture: checks form behavior without contacting the restaurant DB.
     if(width===390){
       const motionContext=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'no-preference'});

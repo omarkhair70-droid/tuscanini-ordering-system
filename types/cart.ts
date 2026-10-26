@@ -1,3 +1,5 @@
+import type {MenuCategorySlug} from '@/types/menu';
+
 export type CartItemAddon = {
   id: string;
   label: string;
@@ -15,6 +17,8 @@ export type ProductCartItem = {
   kind: 'product';
   productId: string;
   productName: string;
+  /** Optional only for legacy saved baskets; new additions always capture it. */
+  categorySlug?: MenuCategorySlug;
   selectedSize: CartItemSize | null;
   selectedAddons: CartItemAddon[];
   quantity: number;
@@ -39,6 +43,7 @@ export type CartItem = ProductCartItem | OfferCartItem;
 export type CartDraftItemInput = {
   productId: string;
   productName: string;
+  categorySlug: MenuCategorySlug;
   selectedSize: CartItemSize | null;
   selectedAddons: CartItemAddon[];
   quantity: number;
