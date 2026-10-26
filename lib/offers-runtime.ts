@@ -1,6 +1,7 @@
 import 'server-only';
 
 import { getSupabaseServerAdminClient } from '@/lib/supabase/server-admin';
+import {nativeContentEnabled,fetchNativePublicOffers} from '@/lib/oracle-order-api';
 import type { PublicOffer } from '@/types/offers';
 
 type OfferRow = {
@@ -42,6 +43,27 @@ function isOfferInActiveWindow(nowMs: number, startsAt: string | null, endsAt: s
 }
 
 export async function getActivePublicOffers(limit?: number, options?: { throwOnError?: boolean }): Promise<PublicOffer[]> {
+  if(nativeContentEnabled()){
+    try{
+      const content=await fetchNativePublicOffers();
+      const items=content.map(o=>{
+        if(typeof o.id!=='string'||typeof o.title_ar!=='string')
+          throw new Error('Invalid native offer.');
+        const cents=o.offer_price_cents;
+        return {
+          id:o.id,titleAr:o.title_ar,
+          descriptionAr:typeof o.description_ar==='string'?o.description_ar:null,
+          badgeAr:typeof o.badge_ar==='string'?o.badge_ar:null,
+          priceText:typeof o.price_text==='string'?o.price_text:null,
+          offerPrice:typeof cents==='number'&&Number.isInteger(cents)&&cents>=0?cents/100:null,
+        } satisfies PublicOffer;
+      });
+      return typeof limit==='number'&&limit>0?items.slice(0,limit):items;
+    }catch(error){
+      if(options?.throwOnError)throw error;
+      return [];
+    }
+  }
   const supabase = getSupabaseServerAdminClient();
   const { data, error } = await supabase
     .from('offers')
