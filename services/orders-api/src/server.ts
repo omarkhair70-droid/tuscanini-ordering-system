@@ -1,4 +1,4 @@
-import {createHash, timingSafeEqual} from 'node:crypto';
+import {createHash, randomUUID, timingSafeEqual} from 'node:crypto';
 import {createServer, type IncomingMessage, type ServerResponse} from 'node:http';
 import type {Pool} from 'pg';
 import {RequestKeyCollision} from './orders.js';
@@ -9,15 +9,17 @@ import {readCustomerAddresses,saveCustomerAddress,deleteCustomerAddress} from '.
 import {listOwnedCustomerOrders} from './customer-orders.js';
 import {googleCustomerSession,type GoogleAuthConfig} from './google-auth.js';
 import {ContentError,readNativeSiteSettings,upsertNativeSiteSettings,
-  importNativeOffers,readNativePublicOffers,readNativeContentStatus} from './content.js';
+  importNativeOffers,readNativePublicOffers,readNativeContentStatus,
+  readNativeAdminOffers,saveNativeOffer,setNativeOfferActive} from './content.js';
 
-type Settings={serviceKey:string;acceptOrders:boolean;syncCatalog:boolean;contentImport?:boolean;customerAuth?:CustomerAuthConfig;googleAuth?:GoogleAuthConfig};
+type Settings={serviceKey:string;acceptOrders:boolean;syncCatalog:boolean;contentImport?:boolean;contentAdmin?:boolean;customerAuth?:CustomerAuthConfig;googleAuth?:GoogleAuthConfig};
 export function serviceSettingsFromEnvironment():Settings {
   const serviceKey=process.env.ORDER_API_SERVICE_KEY??'';
   if(serviceKey.length<32)throw new Error('ORDER_API_SERVICE_KEY must be a separate 32+ character server-only secret.');
   return {serviceKey,acceptOrders:process.env.ORDER_API_ACCEPT_ORDERS==='yes',
     syncCatalog:process.env.CATALOG_SYNC_ENABLED==='yes',
     contentImport:process.env.CONTENT_IMPORT_ENABLED==='yes',
+    contentAdmin:process.env.CONTENT_ADMIN_ENABLED==='yes',
     customerAuth:{enabled:process.env.CUSTOMER_AUTH_ENABLED==='yes',
       pepper:process.env.CUSTOMER_OTP_PEPPER??'',sendOtp:sendResendOtp},
     googleAuth:{enabled:process.env.CUSTOMER_GOOGLE_AUTH_ENABLED==='yes',
@@ -87,6 +89,32 @@ export function createOrderApi(pool:Pool,settings:Settings) {
         if(!settings.contentImport)return send(res,403,{error:'Content imports disabled.'});
         const count=await importNativeOffers(pool,await body(req,120000));
         return send(res,200,{ok:true,count});
+      }
+      // A second, default-off gate covers merchant content mutation. Public
+      // site reads NEVER enable writes, and this is still service-key-only.
+      if(pathname.startsWith('/v1/content/admin/')){
+        if(!settings.contentAdmin)return send(res,403,{error:'Native content admin disabled.'});
+        if(method==='GET'&&pathname==='/v1/content/admin/offers'){
+          return send(res,200,{ok:true,offers:await readNativeAdminOffers(pool)});
+        }
+        if(method==='POST'&&pathname==='/v1/content/admin/site-settings'){
+          return send(res,200,{ok:true,settings:await upsertNativeSiteSettings(pool,await body(req,5000))});
+        }
+        if(method==='POST'&&pathname==='/v1/content/admin/offers'){
+          const payload=await body(req,15000);
+          return send(res,201,await saveNativeOffer(pool,randomUUID(),payload,true));
+        }
+        const toggle=/^\/v1\/content\/admin\/offers\/([a-zA-Z0-9_-]{4,80})\/active$/.exec(pathname);
+        if(method==='POST'&&toggle){
+          const payload=await body(req,500);
+          if(Object.keys(payload).length!==1||!Object.hasOwn(payload,'is_active'))
+            return send(res,400,{error:'Invalid activation payload.'});
+          return send(res,200,await setNativeOfferActive(pool,toggle[1],payload.is_active));
+        }
+        const edit=/^\/v1\/content\/admin\/offers\/([a-zA-Z0-9_-]{4,80})$/.exec(pathname);
+        if(method==='POST'&&edit){
+          return send(res,200,await saveNativeOffer(pool,edit[1],await body(req,15000),false));
+        }
       }
       const auth=settings.customerAuth;
       const customerPath=pathname.startsWith('/v1/customer/');
