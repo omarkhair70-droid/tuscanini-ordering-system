@@ -93,7 +93,7 @@ export function CustomerAccount(){
       await refresh();setNotice('اتحذف العنوان.');}
     catch(e){showError(e)}finally{setBusy(false)}
   }
-  function useAddress(a:Address){
+  function applySavedAddress(a:Address){
     updateCustomer({orderType:'delivery',address:a.formatted_address,
       deliveryLocation:{lat:Number(a.latitude),lng:Number(a.longitude)}});
     router.push('/cart');
@@ -136,7 +136,7 @@ export function CustomerAccount(){
         {addresses.map(a=><article key={a.id} className="t-account-address">
           <strong>{a.label}</strong><p>{a.formatted_address}</p>
           <div className="t-account-actions">
-            <button type="button" disabled={busy} onClick={()=>useAddress(a)}>استخدمه في الطلب</button>
+            <button type="button" disabled={busy} onClick={()=>applySavedAddress(a)}>استخدمه في الطلب</button>
             <button type="button" disabled={busy} onClick={()=>void deleteAddress(a.id)}>احذف</button>
           </div>
         </article>)}
