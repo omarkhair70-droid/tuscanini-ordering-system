@@ -2,7 +2,7 @@ import 'server-only';
 
 import { siteConfig } from '@/lib/site-config';
 import { getSupabaseServerAdminClient } from '@/lib/supabase/server-admin';
-import { oracleOrdersEnabled } from '@/lib/oracle-order-api';
+import { oracleOrdersEnabled, nativeContentEnabled, fetchNativeSiteSettings } from '@/lib/oracle-order-api';
 
 export type PublicSiteSettings = {
   isOrderingOpen: boolean;
@@ -68,6 +68,16 @@ function normalizeSettingsWithFallback(raw: Record<string, unknown> | null | und
 }
 
 export async function getRuntimePublicSiteSettings(): Promise<PublicSiteSettings> {
+  if(nativeContentEnabled()){
+    try{
+      const content=await fetchNativeSiteSettings();
+      return normalizeSettingsWithFallback(content);
+    }catch{
+      // Explicit fail-closed behavior if the first-party data was not imported.
+      // Never switch back to old Supabase automatically in native-only mode.
+      return normalizeSettingsWithFallback(null);
+    }
+  }
   try {
     const supabase = getSupabaseServerAdminClient();
     const { data, error } = await supabase
