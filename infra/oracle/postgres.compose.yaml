@@ -38,6 +38,8 @@ services:
       ORDER_API_SERVICE_KEY: ${TUSCANINI_ORDER_API_SERVICE_KEY:?Configure a dedicated 32+ character API key in Coolify}
       ORDER_API_ACCEPT_ORDERS: ${TUSCANINI_ACCEPT_ORDERS:-no}
       CATALOG_SYNC_ENABLED: ${TUSCANINI_CATALOG_SYNC:-no}
+      # One-time owner-reviewed Supabase content transfer only. OFF by default.
+      CONTENT_IMPORT_ENABLED: ${TUSCANINI_CONTENT_IMPORT_ENABLED:-no}
       # New Oracle-owned identity is deliberately off until OTP/email and the
       # separate customer migrations are verified in staging.
       CUSTOMER_AUTH_ENABLED: ${TUSCANINI_CUSTOMER_AUTH_ENABLED:-no}

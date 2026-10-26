@@ -2,7 +2,7 @@ import 'server-only';
 
 import { siteConfig } from '@/lib/site-config';
 import { getSupabaseServerAdminClient } from '@/lib/supabase/server-admin';
-import { oracleOrdersEnabled } from '@/lib/oracle-order-api';
+import { oracleOrdersEnabled, nativeContentEnabled, fetchNativeSiteSettings } from '@/lib/oracle-order-api';
 
 export type PublicSiteSettings = {
   isOrderingOpen: boolean;
@@ -68,6 +68,16 @@ function normalizeSettingsWithFallback(raw: Record<string, unknown> | null | und
 }
 
 export async function getRuntimePublicSiteSettings(): Promise<PublicSiteSettings> {
+  if(nativeContentEnabled()){
+    try{
+      const content=await fetchNativeSiteSettings();
+      return normalizeSettingsWithFallback(content);
+    }catch{
+      // Native content is explicitly enabled, but its verified data is missing.
+      // Neither silently read old Supabase nor present checkout as healthy.
+      return {...normalizeSettingsWithFallback(null),isOrderingOpen:false};
+    }
+  }
   try {
     const supabase = getSupabaseServerAdminClient();
     const { data, error } = await supabase

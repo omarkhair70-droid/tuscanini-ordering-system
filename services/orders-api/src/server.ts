@@ -8,13 +8,16 @@ import {CustomerAuthError,requestCustomerOtp,verifyCustomerOtp,sessionCustomer,r
 import {readCustomerAddresses,saveCustomerAddress,deleteCustomerAddress} from './customer-addresses.js';
 import {listOwnedCustomerOrders} from './customer-orders.js';
 import {googleCustomerSession,type GoogleAuthConfig} from './google-auth.js';
+import {ContentError,readNativeSiteSettings,upsertNativeSiteSettings,
+  importNativeOffers,readNativePublicOffers,readNativeContentStatus} from './content.js';
 
-type Settings={serviceKey:string;acceptOrders:boolean;syncCatalog:boolean;customerAuth?:CustomerAuthConfig;googleAuth?:GoogleAuthConfig};
+type Settings={serviceKey:string;acceptOrders:boolean;syncCatalog:boolean;contentImport?:boolean;customerAuth?:CustomerAuthConfig;googleAuth?:GoogleAuthConfig};
 export function serviceSettingsFromEnvironment():Settings {
   const serviceKey=process.env.ORDER_API_SERVICE_KEY??'';
   if(serviceKey.length<32)throw new Error('ORDER_API_SERVICE_KEY must be a separate 32+ character server-only secret.');
   return {serviceKey,acceptOrders:process.env.ORDER_API_ACCEPT_ORDERS==='yes',
     syncCatalog:process.env.CATALOG_SYNC_ENABLED==='yes',
+    contentImport:process.env.CONTENT_IMPORT_ENABLED==='yes',
     customerAuth:{enabled:process.env.CUSTOMER_AUTH_ENABLED==='yes',
       pepper:process.env.CUSTOMER_OTP_PEPPER??'',sendOtp:sendResendOtp},
     googleAuth:{enabled:process.env.CUSTOMER_GOOGLE_AUTH_ENABLED==='yes',
@@ -67,6 +70,23 @@ export function createOrderApi(pool:Pool,settings:Settings) {
         const count=await pool.query<{n:string}>('SELECT count(*)::text AS n FROM tuscanini.menu_catalog WHERE available=true');
         return send(res,200,{ok:true,acceptingOrders:settings.acceptOrders,
           availableProducts:Number(count.rows[0]?.n??0)});
+      }
+      // Content reads and explicit migrations share the existing 32+ character
+      // service key; they are never anonymously exposed by this Node service.
+      if(method==='GET'&&pathname==='/v1/content/status')
+        return send(res,200,{ok:true,...await readNativeContentStatus(pool)});
+      if(method==='GET'&&pathname==='/v1/content/site-settings')
+        return send(res,200,{ok:true,settings:await readNativeSiteSettings(pool)});
+      if(method==='GET'&&pathname==='/v1/content/offers')
+        return send(res,200,{ok:true,offers:await readNativePublicOffers(pool)});
+      if(method==='POST'&&pathname==='/v1/content/site-settings/import'){
+        if(!settings.contentImport)return send(res,403,{error:'Content imports disabled.'});
+        return send(res,200,{ok:true,settings:await upsertNativeSiteSettings(pool,await body(req,5000))});
+      }
+      if(method==='POST'&&pathname==='/v1/content/offers/import'){
+        if(!settings.contentImport)return send(res,403,{error:'Content imports disabled.'});
+        const count=await importNativeOffers(pool,await body(req,120000));
+        return send(res,200,{ok:true,count});
       }
       const auth=settings.customerAuth;
       const customerPath=pathname.startsWith('/v1/customer/');
@@ -154,7 +174,8 @@ export function createOrderApi(pool:Pool,settings:Settings) {
       }
       return send(res,404,{error:'Unknown route.'});
     }catch(error){
-      const code=error instanceof CustomerAuthError?error.status:
+      const code=error instanceof ContentError?error.status:
+        error instanceof CustomerAuthError?error.status:
         error instanceof OperationalError?error.httpStatus:
         error instanceof RequestKeyCollision?409:
         error instanceof SyntaxError||error instanceof TypeError?400:

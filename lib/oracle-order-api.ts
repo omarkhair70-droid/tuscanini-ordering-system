@@ -128,6 +128,32 @@ export async function publishCurrentCatalogToOracle(){
   return {count:response.count};
 }
 
+/** The feature flag is explicitly enabled only after transferring and
+ * auditing the legacy live settings and promotions into Tuscanini Postgres.
+ * It MUST NOT be auto-enabled just because API credentials are present. */
+export const nativeContentEnabled=()=>oracleOrdersEnabled()&&
+  process.env.TUSCANINI_NATIVE_CONTENT_ENABLED==='yes';
+
+export async function fetchNativeContentStatus(){
+  if(!nativeContentEnabled())throw new OracleOrderError('Native content not enabled.',503);
+  return call('/v1/content/status');
+}
+export async function fetchNativeSiteSettings():Promise<Record<string,unknown>>{
+  if(!nativeContentEnabled())throw new OracleOrderError('Native content not enabled.',503);
+  const result=await call('/v1/content/site-settings');
+  if(!result.settings||typeof result.settings!=='object'||Array.isArray(result.settings))
+    throw new OracleOrderError('Native settings incomplete.',503);
+  return result.settings as Record<string,unknown>;
+}
+export async function fetchNativePublicOffers():Promise<Record<string,unknown>[]>{
+  if(!nativeContentEnabled())throw new OracleOrderError('Native content not enabled.',503);
+  const result=await call('/v1/content/offers');
+  if(!Array.isArray(result.offers)||
+    !result.offers.every(v=>v&&typeof v==='object'&&!Array.isArray(v)))
+    throw new OracleOrderError('Native offers response invalid.',502);
+  return result.offers as Record<string,unknown>[];
+}
+
 export const ORACLE_CUSTOMER_COOKIE=process.env.NODE_ENV==='production'?'__Host-tuscanini_customer':'tuscanini_customer';
 export function oracleAccountsEnabled(){
   return oracleOrdersEnabled()&&process.env.TUSCANINI_ORACLE_CUSTOMER_ACCOUNTS_READY==='yes';
