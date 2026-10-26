@@ -1,3 +1,9 @@
+### 26 Oct — First Oracle-owned sign-in and account UI path (draft / dormant)
+
+- Implemented Oracle PostgreSQL OTP challenges, sessions, server-side email transport, verified owner-bound order creation, saved address create/list/delete and private order history. The Next API holds an HttpOnly cookie and uses the Oracle account route; browser no longer sends a Supabase token to checkout. Customer sign-in must still be activated through independent production readiness flags and verified real email delivery.
+- Oracle API PostgreSQL tests and Next Home builds are tracked under exact-sha GitHub Actions; prior browser QA account route had a missing-heading timeout, now recorded with HTTP diagnostics rather than masking the rest of the smoke suite. Full QA, operational email and production deployment remain distinct.
+- Exact setup / remaining Supabase catalog+settings dependencies: `docs/rebirth/43_ORACLE_FIRST_BACKEND_CUTOVER_2026-10-26.md`. No migration, real data writes, customer activation, price changes or `main` merge performed.
+
 ### 26 Oct — Oracle-first all-backend decision / additive ownership foundation
 
 - Confirmed architecture: Vercel UI, isolated Oracle Cloud API + PostgreSQL for all Tuscanini backend domains. Supabase is transitional, not the final customer/order split. See `docs/rebirth/43_ORACLE_FIRST_BACKEND_CUTOVER_2026-10-26.md`.
