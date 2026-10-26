@@ -1,5 +1,5 @@
 'use client';
-import {useEffect,useState,type FormEvent} from 'react';
+import {useEffect,useState} from 'react';
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
 import {useCart} from '@/components/cart/cart-provider';
@@ -28,9 +28,6 @@ export function CustomerAccount(){
   const [user,setUser]=useState<Person|null>(null);
   const [loading,setLoading]=useState(true);
   const [available,setAvailable]=useState(true);
-  const [email,setEmail]=useState('');
-  const [code,setCode]=useState('');
-  const [sent,setSent]=useState(false);
   const [busy,setBusy]=useState(false);
   const [error,setError]=useState('');
   const [notice,setNotice]=useState('');
@@ -68,22 +65,9 @@ export function CustomerAccount(){
     setHistoryError('');
   }
   const showError=(e:unknown)=>setError(e instanceof Error?e.message:'حصلت مشكلة في الاتصال.');
-  async function requestCode(event:FormEvent<HTMLFormElement>){
-    event.preventDefault();setBusy(true);setError('');setNotice('');
-    try{await send('request',{email:email.trim().toLowerCase()});
-      setSent(true);setNotice('لو البريد صالح ومتاح، هيوصلك رمز الدخول. افحص صندوق الوارد.');}
-    catch(e){showError(e)}finally{setBusy(false)}
-  }
-  async function verify(event:FormEvent<HTMLFormElement>){
-    event.preventDefault();setBusy(true);setError('');
-    try{const d=await send('verify',{email:email.trim().toLowerCase(),code:code.trim()});
-      if(!d.customer)throw Error('تعذّر تأكيد الدخول.');
-      setUser(d.customer);setCode('');setNotice('تم تسجيل الدخول.');}
-    catch(e){showError(e)}finally{setBusy(false)}
-  }
   async function logout(){
     setBusy(true);setError('');
-    try{await send('logout');setUser(null);setAddresses([]);setOrders([]);setSent(false);setNotice('تم تسجيل الخروج.');}
+    try{await send('logout');setUser(null);setAddresses([]);setOrders([]);setNotice('تم تسجيل الخروج.');}
     catch(e){showError(e)}finally{setBusy(false)}
   }
   async function saveAddress(){
@@ -121,21 +105,9 @@ export function CustomerAccount(){
         <p>عناوينك وطلباتك مرتبطة بحسابك هنا.</p>
         <button type="button" className="t-account-button t-account-button--outline"
           disabled={busy} onClick={()=>void logout()}>تسجيل الخروج</button></>:<>
-        <p>سجّل بإيميلك من غير باسورد، أو كمّل كضيف.</p>
-        <form className="t-account-form" onSubmit={requestCode}>
-          <label htmlFor="t-account-email">الإيميل</label>
-          <input id="t-account-email" dir="ltr" type="email" autoComplete="email" required
-            maxLength={254} value={email} onChange={e=>setEmail(e.target.value)}/>
-          <button type="submit" className="t-account-button" disabled={busy||!email.trim()}>
-            {busy?'بنرسل…':'ابعت كود الدخول'}</button>
-        </form>
-        {sent&&<form className="t-account-form" onSubmit={verify}>
-          <label htmlFor="t-account-otp">الكود اللي وصلك</label>
-          <input id="t-account-otp" dir="ltr" inputMode="numeric" autoComplete="one-time-code"
-            maxLength={6} minLength={6} required value={code}
-            onChange={e=>setCode(e.target.value.replace(/\D/g,'').slice(0,6))}/>
-          <button type="submit" className="t-account-button" disabled={busy||code.length!==6}>تأكيد الدخول</button>
-        </form>}
+        <p>سجّل بحساب Google في خطوة واحدة، واحتفظ بعناوينك وطلباتك.</p>
+        <a className="t-account-button" href="/api/customer/google/start">المتابعة باستخدام Google</a>
+        <p>مش حابب تسجل؟ كمل كضيف عادي.</p>
         <Link className="t-account-minor-link" href="/menu">كمّل كضيف من المنيو</Link>
       </>}
       {error&&<p role="alert" className="t-account-error">{error}</p>}
