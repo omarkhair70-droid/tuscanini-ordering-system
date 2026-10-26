@@ -791,7 +791,7 @@ try {
       await pinFrame.evaluate(() => window.parent.postMessage({
         type:'tuscanini:delivery-pin:selected',version:1,lat:29.07344,lng:31.09811
       },window.location.origin));
-      await cart.getByText(/الدبوس محفوظ/).waitFor({timeout:5000});
+      await cart.getByText(/تم تثبيت نقطة التوصيل/).waitFor({timeout:5000});
       await cart.waitForFunction(() => {
         const value=JSON.parse(localStorage.getItem('tuscanini-cart-v1')||'{}');
         return value.customer?.deliveryLocation?.lat===29.07344 &&
