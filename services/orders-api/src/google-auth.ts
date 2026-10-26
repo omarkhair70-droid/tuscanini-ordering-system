@@ -65,7 +65,7 @@ export async function verifyGoogleIdToken(
   if(!jwk)bad();
   let valid=false;
   try{
-    const key=createPublicKey({key:jwk as JsonWebKey,format:'jwk'});
+    const key=createPublicKey({key:jwk as never,format:'jwk'});
     valid=verifySignature('RSA-SHA256',Buffer.from(sections[0]+'.'+sections[1]),
       key,Buffer.from(sections[2],'base64url'));
   }catch{return bad()}
