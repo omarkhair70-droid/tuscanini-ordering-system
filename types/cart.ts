@@ -71,6 +71,8 @@ export type CartCustomerForm = {
   phone: string;
   address: string;
   deliveryLocation?: CustomerDeliveryLocation | null;
+  /** Suggested neighborhood from consented GPS lookup, NOT a confirmed street. */
+  deliveryArea?: string;
   orderType: OrderType;
   paymentMethod: HandoffPaymentMethod;
   generalNotes: string;
