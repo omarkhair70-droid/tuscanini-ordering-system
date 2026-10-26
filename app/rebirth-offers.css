@@ -146,3 +146,11 @@
   .t-offers-page .t-offers-hero__words h1{font-size:61px}
   .t-offers-hero__photo{height:200px}
 }
+
+/* Native Oracle offers currently provide editorial price information only.
+   The merchant contact link is intentionally NOT a cart/checkout CTA. */
+.t-offers-card__contact-offer{display:inline-flex;align-items:center;justify-content:center;
+  max-width:100%;padding:11px 13px;text-decoration:none;
+  border:1px solid currentColor;border-radius:12px;font-weight:850;
+  line-height:1.5;color:#7f1e19;background:#fff7ed}
+.t-offers-card__contact-offer:focus-visible{outline:3px solid #b52a22;outline-offset:3px}
