@@ -69,7 +69,12 @@ export function ExperienceHeader() {
         </nav>
 
         <div className="t-header__actions">
-          <Link href="/account" className="t-header__account">حسابي</Link>
+          <Link href="/account" className="t-header__account"
+            aria-label="حسابي وطلباتي" aria-current={pathname==='/account'?'page':undefined}
+            title="حسابي وطلباتي">
+            <span className="t-header__account-glyph"><MaterialGlyph name="account" size={26}/></span>
+            <span className="t-header__account-label">حسابي</span>
+          </Link>
           <Link href="/cart" className="t-header__cart" aria-label={itemsCount > 0 ? `السلة: ${itemsCount} منتجات` : 'السلة'}>
             السلة{itemsCount > 0 ? <span aria-hidden="true" className="t-header__cart-count">{itemsCount}</span> : null}
           </Link>
