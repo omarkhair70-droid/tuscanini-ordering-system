@@ -38,6 +38,12 @@ services:
       ORDER_API_SERVICE_KEY: ${TUSCANINI_ORDER_API_SERVICE_KEY:?Configure a dedicated 32+ character API key in Coolify}
       ORDER_API_ACCEPT_ORDERS: ${TUSCANINI_ACCEPT_ORDERS:-no}
       CATALOG_SYNC_ENABLED: ${TUSCANINI_CATALOG_SYNC:-no}
+      # New Oracle-owned identity is deliberately off until OTP/email and the
+      # separate customer migrations are verified in staging.
+      CUSTOMER_AUTH_ENABLED: ${TUSCANINI_CUSTOMER_AUTH_ENABLED:-no}
+      CUSTOMER_OTP_PEPPER: ${TUSCANINI_CUSTOMER_OTP_PEPPER:-}
+      TUSCANINI_RESEND_API_KEY: ${TUSCANINI_RESEND_API_KEY:-}
+      TUSCANINI_AUTH_FROM_EMAIL: ${TUSCANINI_AUTH_FROM_EMAIL:-}
     expose:
       - "8080"
     healthcheck:
