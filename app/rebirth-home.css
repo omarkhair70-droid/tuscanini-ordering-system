@@ -355,3 +355,6 @@
  .t-header__inner{padding-inline:12px}
  .t-header__actions{gap:2px}
 }
+
+/* Mobile release: the persistent four-tab dock already owns the Menu action. */
+@media(max-width:720px){.t-header__order{display:none!important}}
