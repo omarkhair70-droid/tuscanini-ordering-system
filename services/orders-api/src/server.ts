@@ -81,6 +81,12 @@ export function createOrderApi(pool:Pool,settings:Settings) {
         return send(res,200,{ok:true,settings:await readNativeSiteSettings(pool)});
       if(method==='GET'&&pathname==='/v1/content/offers')
         return send(res,200,{ok:true,offers:await readNativePublicOffers(pool)});
+      // Owner-controlled one-time parity read; includes unpublished offers.
+      // Available ONLY during supervised imports, never in regular runtime.
+      if(method==='GET'&&pathname==='/v1/content/audit/offers'){
+        if(!settings.contentImport)return send(res,403,{error:'Content audit disabled.'});
+        return send(res,200,{ok:true,offers:await readNativeAdminOffers(pool)});
+      }
       if(method==='POST'&&pathname==='/v1/content/site-settings/import'){
         if(!settings.contentImport)return send(res,403,{error:'Content imports disabled.'});
         return send(res,200,{ok:true,settings:await upsertNativeSiteSettings(pool,await body(req,5000))});
