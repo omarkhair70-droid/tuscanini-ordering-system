@@ -95,6 +95,11 @@ export async function trackOracleOrder(orderId:string){
     totalEstimate:Number(o.subtotal_cents)/100,
   };
 }
+export async function fetchOracleReadiness(){
+  const data=await call('/v1/operator/readiness');
+  return {acceptingOrders:data.acceptingOrders===true,
+    availableProducts:typeof data.availableProducts==='number'?data.availableProducts:0};
+}
 export async function fetchOracleInbox(){
   const data=await call('/v1/operator/orders');
   return {orders:data.orders};
