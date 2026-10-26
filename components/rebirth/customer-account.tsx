@@ -1,258 +1,173 @@
 'use client';
-
-import { useCallback, useEffect, useState, type FormEvent } from 'react';
+import {useEffect,useState,type FormEvent} from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import type { User } from '@supabase/supabase-js';
-import { useCart } from '@/components/cart/cart-provider';
-import { getSupabaseBrowserClient } from '@/lib/supabase/client';
+import {useRouter} from 'next/navigation';
+import {useCart} from '@/components/cart/cart-provider';
 
-type SavedAddress = {
-  id: string;
-  label: string;
-  formatted_address: string;
-  latitude: number;
-  longitude: number;
-  is_default: boolean;
-};
-type OwnOrder = {
-  id: string;
-  order_number: number | null;
-  placed_at: string;
-  status: string;
-  order_type: 'pickup' | 'delivery';
-  total_estimate: number;
-};
+type Person={id:string;email:string};
+type Address={id:string;label:string;formatted_address:string;latitude:number;longitude:number;is_default:boolean};
+type OwnOrder={id:string;status:string;order_type:'pickup'|'delivery';subtotal_cents:string;created_at:string};
+type Reply={customer?:Person;addresses?:Address[];orders?:OwnOrder[];error?:string;ok?:boolean};
 
-function message(error: unknown): string {
-  return error instanceof Error ? error.message : 'حصلت مشكلة في الاتصال. جرّب تاني.';
+async function read(resource:string):Promise<{status:number;data:Reply}>{
+  const response=await fetch('/api/customer/oracle?resource='+resource,{cache:'no-store',credentials:'same-origin'});
+  return {status:response.status,data:await response.json() as Reply};
+}
+async function send(action:string,payload:Record<string,unknown>={}):Promise<Reply>{
+  const response=await fetch('/api/customer/oracle?action='+action,{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    credentials:'same-origin',body:JSON.stringify(payload)});
+  const data=await response.json() as Reply;
+  if(!response.ok)throw new Error(data.error??'تعذّر الاتصال بالحساب.');
+  return data;
 }
 
-export function CustomerAccount() {
-  const router = useRouter();
-  const { customer, updateCustomer } = useCart();
-  const [user, setUser] = useState<User | null>(null);
-  const [initializing, setInitializing] = useState(true);
-  const [email, setEmail] = useState('');
-  const [otp, setOtp] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState('');
-  const [notice, setNotice] = useState('');
-  const [addresses, setAddresses] = useState<SavedAddress[]>([]);
-  const [orders, setOrders] = useState<OwnOrder[]>([]);
-  const [historyMessage, setHistoryMessage] = useState('');
-  const [addressLabel, setAddressLabel] = useState('البيت');
-
-  const loadOwnedData = useCallback(async (verifiedUser: User) => {
-    const supabase = getSupabaseBrowserClient();
-    const {data, error: addressError} = await supabase
-      .from('customer_addresses')
-      .select('id,label,formatted_address,latitude,longitude,is_default')
-      .eq('user_id',verifiedUser.id)
-      .order('created_at',{ascending:false})
-      .limit(30);
-    if (addressError) {
-      setError('العناوين المحفوظة مش متاحة دلوقتي. جرّب تاني بعد شوية.');
-      setAddresses([]);
-    } else {
-      setAddresses((data??[]) as SavedAddress[]);
-    }
-    const { data: session } = await supabase.auth.getSession();
-    if (!session.session?.access_token) return;
-    try {
-      const response = await fetch('/api/customer/orders',{
-        headers:{Authorization:'Bearer '+session.session.access_token},cache:'no-store',
-      });
-      const result = await response.json() as {orders?:OwnOrder[];message?:string};
-      if (!response.ok) {
-        setOrders([]);
-        setHistoryMessage(response.status===503
-          ? 'مش قادرين نعرض طلباتك دلوقتي. جرّب تاني بعد شوية.' : 'تعذّر تحميل طلباتك دلوقتي.');
-      } else {
-        setOrders(result.orders??[]);
-        setHistoryMessage('');
-      }
-    } catch {
-      setHistoryMessage('تعذّر الاتصال بسجل الطلبات.');
-    }
-  },[]);
-
-  useEffect(()=>{
-    if(user)void loadOwnedData(user);
-  },[user,loadOwnedData]);
+export function CustomerAccount(){
+  const router=useRouter();
+  const {customer,updateCustomer}=useCart();
+  const [user,setUser]=useState<Person|null>(null);
+  const [loading,setLoading]=useState(true);
+  const [available,setAvailable]=useState(true);
+  const [email,setEmail]=useState('');
+  const [code,setCode]=useState('');
+  const [sent,setSent]=useState(false);
+  const [busy,setBusy]=useState(false);
+  const [error,setError]=useState('');
+  const [notice,setNotice]=useState('');
+  const [addresses,setAddresses]=useState<Address[]>([]);
+  const [orders,setOrders]=useState<OwnOrder[]>([]);
+  const [historyError,setHistoryError]=useState('');
+  const [label,setLabel]=useState('البيت');
 
   useEffect(()=>{
     let active=true;
-    const supabase=getSupabaseBrowserClient();
-    void supabase.auth.getUser().then(async ({data})=>{
-      if (!active) return;
-      setUser(data.user);
-      setInitializing(false);
-      // The user effect loads owner-scoped data after authentication.
-    }).catch(()=>{
-      if(active){setInitializing(false);setError('تعذّر التحقق من الحساب دلوقتي.');}
-    });
-    const {data:{subscription}}=supabase.auth.onAuthStateChange((_event,session)=>{
+    void read('session').then(({status,data})=>{
       if(!active)return;
-      setUser(session?.user??null);
-      if(!session?.user){setAddresses([]);setOrders([]);setHistoryMessage('');}
-      // Defer data fetch outside auth callback to avoid auth mutex deadlocks.
-    });
-    return ()=>{active=false;subscription.unsubscribe();};
-  },[loadOwnedData]);
-
-  async function requestOtp(event:FormEvent<HTMLFormElement>){
-    event.preventDefault();setBusy(true);setError('');setNotice('');
-    try{
-      const supabase=getSupabaseBrowserClient();
-      const {error:e}=await supabase.auth.signInWithOtp({
-        email:email.trim().toLowerCase(),
-        options:{shouldCreateUser:true,emailRedirectTo:window.location.origin+'/account'},
-      });
-      if(e)throw e;
-      setOtpSent(true);setNotice('بعتنالك رسالة على الإيميل. افتح الرابط أو اكتب الكود.');
-    }catch(e){setError(message(e));}
-    finally{setBusy(false);}
-  }
-
-  async function verifyOtp(event:FormEvent<HTMLFormElement>){
-    event.preventDefault();setBusy(true);setError('');
-    try{
-      const supabase=getSupabaseBrowserClient();
-      const {data,error:e}=await supabase.auth.verifyOtp({
-        email:email.trim().toLowerCase(),token:otp.trim(),type:'email',
-      });
-      if(e)throw e;
-      if(!data.user)throw new Error('الكود غير صالح أو انتهت صلاحيته.');
-      setUser(data.user);setNotice('دخلت حسابك بنجاح.');setOtp('');
-      // Owner-scoped data loads in the user effect.
-    }catch(e){setError(message(e));}
-    finally{setBusy(false);}
-  }
-
-  async function saveCurrentAddress(){
-    if(!user || !customer.deliveryLocation || !customer.address.trim()) {
-      setError('حدّد دبوس الدليفري واكتب العنوان في السلة الأول.');
-      return;
-    }
-    setBusy(true);setError('');setNotice('');
-    try{
-      const supabase=getSupabaseBrowserClient();
-      const {error:e}=await supabase.from('customer_addresses').insert({
-        user_id:user.id,
-        label:addressLabel.trim().slice(0,40)||'البيت',
-        formatted_address:customer.address.trim(),
-        latitude:customer.deliveryLocation.lat,
-        longitude:customer.deliveryLocation.lng,
-      });
-      if(e)throw e;
-      setNotice('اتحفظ العنوان في حسابك.');
-      await loadOwnedData(user);
-    }catch(e){setError(message(e));}
-    finally{setBusy(false);}
-  }
-
-  async function deleteAddress(address:SavedAddress){
+      if(status===503)setAvailable(false);
+      if(status===200&&data.customer)setUser(data.customer);
+    }).catch(()=>{if(active)setAvailable(false)}).finally(()=>{if(active)setLoading(false)});
+    return()=>{active=false};
+  },[]);
+  useEffect(()=>{
     if(!user)return;
-    setBusy(true);setError('');setNotice('');
-    try{
-      const {error:e}=await getSupabaseBrowserClient().from('customer_addresses')
-        .delete().eq('user_id',user.id).eq('id',address.id);
-      if(e)throw e;
-      setNotice('اتحذف العنوان.');
-      await loadOwnedData(user);
-    }catch(e){setError(message(e));}
-    finally{setBusy(false);}
-  }
+    let active=true;
+    void Promise.all([read('addresses'),read('orders')]).then(([a,o])=>{
+      if(!active)return;
+      setAddresses(a.status===200?a.data.addresses??[]:[]);
+      setOrders(o.status===200?o.data.orders??[]:[]);
+      setHistoryError(o.status===200?'':'تعذّر تحميل طلباتك دلوقتي.');
+      if(a.status!==200)setError('تعذّر تحميل عناوينك دلوقتي.');
+    }).catch(()=>{if(active)setHistoryError('تعذّر تحميل طلباتك دلوقتي.')});
+    return()=>{active=false};
+  },[user]);
 
-  async function signOut(){
-    setBusy(true);
-    const {error:e}=await getSupabaseBrowserClient().auth.signOut();
-    if(e)setError(message(e));
-    else{setUser(null);setAddresses([]);setOrders([]);setNotice('خرجت من حسابك.');}
-    setBusy(false);
+  async function refresh(){
+    const [a,o]=await Promise.all([read('addresses'),read('orders')]);
+    if(a.status!==200||o.status!==200)throw new Error('تعذّر تحديث بيانات حسابك.');
+    setAddresses(a.data.addresses??[]);setOrders(o.data.orders??[]);
+    setHistoryError('');
   }
-
-  function useAddress(address:SavedAddress){
-    updateCustomer({
-      orderType:'delivery',
-      address:address.formatted_address,
-      deliveryLocation:{lat:Number(address.latitude),lng:Number(address.longitude)},
-    });
+  const showError=(e:unknown)=>setError(e instanceof Error?e.message:'حصلت مشكلة في الاتصال.');
+  async function requestCode(event:FormEvent<HTMLFormElement>){
+    event.preventDefault();setBusy(true);setError('');setNotice('');
+    try{await send('request',{email:email.trim().toLowerCase()});
+      setSent(true);setNotice('لو البريد صالح ومتاح، هيوصلك رمز الدخول. افحص صندوق الوارد.');}
+    catch(e){showError(e)}finally{setBusy(false)}
+  }
+  async function verify(event:FormEvent<HTMLFormElement>){
+    event.preventDefault();setBusy(true);setError('');
+    try{const d=await send('verify',{email:email.trim().toLowerCase(),code:code.trim()});
+      if(!d.customer)throw Error('تعذّر تأكيد الدخول.');
+      setUser(d.customer);setCode('');setNotice('تم تسجيل الدخول.');}
+    catch(e){showError(e)}finally{setBusy(false)}
+  }
+  async function logout(){
+    setBusy(true);setError('');
+    try{await send('logout');setUser(null);setAddresses([]);setOrders([]);setSent(false);setNotice('تم تسجيل الخروج.');}
+    catch(e){showError(e)}finally{setBusy(false)}
+  }
+  async function saveAddress(){
+    if(!customer.deliveryLocation||!customer.address.trim()){setError('حدد موقع الدليفري والعنوان من السلة الأول.');return;}
+    setBusy(true);setError('');
+    try{await send('save-address',{
+        label:label.trim()||'البيت',formatted_address:customer.address.trim(),
+        latitude:customer.deliveryLocation.lat,longitude:customer.deliveryLocation.lng,
+      });await refresh();setNotice('اتحفظ العنوان في حسابك.');}
+    catch(e){showError(e)}finally{setBusy(false)}
+  }
+  async function deleteAddress(id:string){
+    setBusy(true);setError('');
+    try{const r=await fetch('/api/customer/oracle?id='+encodeURIComponent(id),{
+      method:'DELETE',credentials:'same-origin'});
+      if(!r.ok)throw Error('تعذّر حذف العنوان.');
+      await refresh();setNotice('اتحذف العنوان.');}
+    catch(e){showError(e)}finally{setBusy(false)}
+  }
+  function useAddress(a:Address){
+    updateCustomer({orderType:'delivery',address:a.formatted_address,
+      deliveryLocation:{lat:Number(a.latitude),lng:Number(a.longitude)}});
     router.push('/cart');
   }
-
-  if(initializing)return <section className="t-account-panel" role="status">بنفتح حسابك…</section>;
+  if(loading)return <section className="t-account-panel" role="status">بنفتح حسابك…</section>;
+  if(!available)return <section className="t-account-panel" role="status">
+    <h2>حسابك.</h2><p>حسابات توسكانيني مش متاحة دلوقتي. تقدر تتفرج على المنيو وتجهّز طلبك كضيف.</p>
+    <Link className="t-account-minor-link" href="/menu">افتح المنيو</Link>
+  </section>;
 
   return <div className="t-account-grid">
-    <section className="t-account-panel" aria-labelledby="account-identity-title">
-      <h2 id="account-identity-title">{user?'أهلًا بيك.':'ادخل حسابك.'}</h2>
-      {user ? <>
-        <p className="t-account-email" dir="ltr">{user.email}</p>
-        <p>العناوين اللي بتحفظها هنا مرتبطة بحسابك، مش بالموبايل اللي بتستخدمه.</p>
-        <button className="t-account-button t-account-button--outline" type="button"
-          onClick={()=>void signOut()} disabled={busy}>تسجيل الخروج</button>
-      </> : <>
-        <p>ادخل بإيميلك من غير باسورد. تقدر تطلب كضيف من غير حساب.</p>
-        <form onSubmit={requestOtp} className="t-account-form">
+    <section className="t-account-panel">
+      <h2>{user?'أهلًا بيك.':'ادخل حسابك.'}</h2>
+      {user?<><p className="t-account-email" dir="ltr">{user.email}</p>
+        <p>عناوينك وطلباتك مرتبطة بحسابك هنا.</p>
+        <button type="button" className="t-account-button t-account-button--outline"
+          disabled={busy} onClick={()=>void logout()}>تسجيل الخروج</button></>:<>
+        <p>سجّل بإيميلك من غير باسورد، أو كمّل كضيف.</p>
+        <form className="t-account-form" onSubmit={requestCode}>
           <label htmlFor="t-account-email">الإيميل</label>
-          <input id="t-account-email" type="email" inputMode="email" autoComplete="email"
-            value={email} onChange={e=>setEmail(e.target.value)} required maxLength={254}
-            placeholder="you@example.com" dir="ltr"/>
-          <button className="t-account-button" type="submit" disabled={busy||!email.trim()}>
-            {busy?'بنرسل…':'ابعت كود الدخول'}
-          </button>
+          <input id="t-account-email" dir="ltr" type="email" autoComplete="email" required
+            maxLength={254} value={email} onChange={e=>setEmail(e.target.value)}/>
+          <button type="submit" className="t-account-button" disabled={busy||!email.trim()}>
+            {busy?'بنرسل…':'ابعت كود الدخول'}</button>
         </form>
-        {otpSent&&<form onSubmit={verifyOtp} className="t-account-form">
+        {sent&&<form className="t-account-form" onSubmit={verify}>
           <label htmlFor="t-account-otp">الكود اللي وصلك</label>
-          <input id="t-account-otp" type="text" inputMode="numeric" autoComplete="one-time-code"
-            value={otp} onChange={e=>setOtp(e.target.value.replace(/\D/g,'').slice(0,8))}
-            minLength={6} required placeholder="000000" dir="ltr"/>
-          <button className="t-account-button" type="submit" disabled={busy||otp.length<6}>
-            تأكيد الدخول
-          </button>
+          <input id="t-account-otp" dir="ltr" inputMode="numeric" autoComplete="one-time-code"
+            maxLength={6} minLength={6} required value={code}
+            onChange={e=>setCode(e.target.value.replace(/\D/g,'').slice(0,6))}/>
+          <button type="submit" className="t-account-button" disabled={busy||code.length!==6}>تأكيد الدخول</button>
         </form>}
-        <Link className="t-account-minor-link" href="/menu">كمّل كضيف من المنيو ↗</Link>
+        <Link className="t-account-minor-link" href="/menu">كمّل كضيف من المنيو</Link>
       </>}
       {error&&<p role="alert" className="t-account-error">{error}</p>}
       {notice&&<p role="status" className="t-account-notice">{notice}</p>}
     </section>
     {user&&<>
-      <section className="t-account-panel" aria-labelledby="account-addresses-title">
-        <div className="t-account-panel__head">
-          <h2 id="account-addresses-title">عناوينك.</h2>
-          <span>{addresses.length} عنوان</span>
-        </div>
-        {addresses.length?addresses.map(address=><article key={address.id} className="t-account-address">
-          <strong>{address.label}</strong><p>{address.formatted_address}</p>
+      <section className="t-account-panel">
+        <div className="t-account-panel__head"><h2>عناوينك.</h2><span>{addresses.length} عنوان</span></div>
+        {addresses.map(a=><article key={a.id} className="t-account-address">
+          <strong>{a.label}</strong><p>{a.formatted_address}</p>
           <div className="t-account-actions">
-            <button type="button" disabled={busy} onClick={()=>useAddress(address)}>استخدمه في الطلب</button>
-            <button type="button" disabled={busy} onClick={()=>void deleteAddress(address)}>احذف</button>
+            <button type="button" disabled={busy} onClick={()=>useAddress(a)}>استخدمه في الطلب</button>
+            <button type="button" disabled={busy} onClick={()=>void deleteAddress(a.id)}>احذف</button>
           </div>
-        </article>):<p>لسه مفيش عناوين محفوظة. اختار دبوس التوصيل في السلة واحفظه هنا.</p>}
+        </article>)}
+        {!addresses.length&&<p>لسه مفيش عناوين محفوظة. اختار موقعك من السلة.</p>}
         <div className="t-account-save">
           <label htmlFor="t-account-label">اسم العنوان</label>
-          <input id="t-account-label" maxLength={40} value={addressLabel}
-            onChange={e=>setAddressLabel(e.target.value)}/>
-          <button className="t-account-button" type="button" disabled={busy||!customer.deliveryLocation||!customer.address.trim()}
-            onClick={()=>void saveCurrentAddress()}>احفظ عنوان السلة الحالي</button>
-          {!customer.deliveryLocation&&<Link href="/cart">حدّد مكان التوصيل من السلة ↗</Link>}
+          <input id="t-account-label" maxLength={40} value={label} onChange={e=>setLabel(e.target.value)}/>
+          <button type="button" className="t-account-button" disabled={busy||!customer.deliveryLocation||!customer.address.trim()}
+            onClick={()=>void saveAddress()}>احفظ عنوان السلة الحالي</button>
+          {!customer.deliveryLocation&&<Link href="/cart">حدّد مكان التوصيل من السلة</Link>}
         </div>
       </section>
-      <section className="t-account-panel t-account-panel--orders" aria-labelledby="account-orders-title">
-        <div className="t-account-panel__head">
-          <h2 id="account-orders-title">طلباتك.</h2>
-          <span>{orders.length} طلب</span>
-        </div>
-        {historyMessage?<p role="status">{historyMessage}</p>:
+      <section className="t-account-panel t-account-panel--orders">
+        <div className="t-account-panel__head"><h2>طلباتك.</h2><span>{orders.length} طلب</span></div>
+        {historyError?<p role="status">{historyError}</p>:
           orders.length?orders.map(order=><article key={order.id} className="t-account-order">
-            <div><strong>طلب #{order.order_number??order.id.slice(0,8)}</strong>
-              <span>{order.status}</span></div>
-            <p>{new Date(order.placed_at).toLocaleDateString('ar-EG')} · {order.order_type==='delivery'?'دليفري':'استلام'} · {order.total_estimate} ج.م</p>
-            <Link href={'/order-success?orderId='+encodeURIComponent(order.id)}>شوف حالة الطلب ↗</Link>
-          </article>):
-          <p>لسه مفيش طلبات في حسابك. افتح المنيو واختار اللي نفسك فيه.</p>}
+            <div><strong>طلب #{order.id.slice(0,8)}</strong><span>{order.status}</span></div>
+            <p>{new Date(order.created_at).toLocaleDateString('ar-EG')} · {order.order_type==='delivery'?'دليفري':'استلام'} · {Number(order.subtotal_cents)/100} ج.م</p>
+            <Link href={'/order-success?orderId='+encodeURIComponent(order.id)}>شوف حالة الطلب</Link>
+          </article>):<p>لسه مفيش طلبات في حسابك.</p>}
       </section>
     </>}
   </div>;
