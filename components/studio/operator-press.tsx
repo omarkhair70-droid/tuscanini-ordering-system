@@ -5,7 +5,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 type Phase='received'|'accepted'|'preparing'|'ready'|'delivered'|'rejected';
 type Variant={label:string;price_cents?:number};
 type Line={sku:string;name:string;qty:number;price_cents:number;
-  selection?:{size?:Variant|null;addons?:Variant[]};notes?:string};
+  category_slug?:string;
+  selection?:{size?:Variant|null;addons?:Variant[];categorySlug?:string};notes?:string};
 type Order={id:string;status:string;subtotal_cents:string;created_at:string;items:Line[];
   order_type?:string;table_reference?:string|null;
   customer_snapshot?:{name?:string;phone?:string;address?:string;generalNotes?:string;
@@ -32,6 +33,43 @@ const ACTIONS:Record<string,Array<{key:string;label:string}>>={
   preparing:[{key:'ready',label:'الطلب جاهز'}],
   ready:[{key:'deliver',label:'تم التسليم'}],
 };
+/** The Oracle order-line snapshot already persists categorySlug. Names on the
+ * source menu are intentionally short ("كفتة", "شاورما لحم"), so a cashier
+ * must NEVER infer crepe vs pizza from name alone. Do not invent an item. */
+const CATEGORY:Record<string,{family:string;full:string}>={
+  'crepe-meat':{family:'كريب',full:'كريب لحوم'},
+  'crepe-chicken':{family:'كريب',full:'كريب فراخ'},
+  'crepe-mixed':{family:'كريب',full:'كريب متنوع'},
+  'crepe-tuscanini':{family:'كريب',full:'كريب توسكانيني'},
+  'crepe-sweet':{family:'كريب',full:'كريب حلو'},
+  'pizza-meat':{family:'بيتزا',full:'بيتزا لحوم'},
+  'pizza-chicken':{family:'بيتزا',full:'بيتزا فراخ'},
+  'pizza-mixed':{family:'بيتزا',full:'بيتزا متنوع'},
+  'pizza-tuscanini':{family:'بيتزا',full:'بيتزا توسكانيني'},
+  'pasta':{family:'باستا',full:'باستا'},
+  'sandwiches-french':{family:'ساندوتش فرنساوي',full:'ساندوتشات فرنساوي'},
+  'sandwiches-kaiser':{family:'ساندوتش كيزر',full:'ساندوتشات كيزر'},
+  'appetizers':{family:'مقبلات',full:'مقبلات'},
+  'drinks':{family:'مشروب',full:'مشروبات'},
+  'waffle':{family:'وافل',full:'وافل'},
+  'crepe-addons':{family:'إضافة كريب',full:'إضافات كريب'},
+};
+function lineCategory(line:Line){
+  const slug=line.selection?.categorySlug||line.category_slug||'';
+  return CATEGORY[slug]??null;
+}
+function lineName(line:Line){
+  const type=lineCategory(line);
+  const name=line.name.trim();
+  if(!type)return name||'صنف غير محدد';
+  return name.startsWith(type.family+' ')||name===type.family ?name:type.family+' '+name;
+}
+function lineVariant(line:Line){
+  return [
+    line.selection?.size?.label??'',
+    ...(line.selection?.addons??[]).map(addon=>'إضافة '+addon.label),
+  ].filter(Boolean).join(' · ');
+}
 const money=(n:number|string)=>new Intl.NumberFormat('ar-EG',{maximumFractionDigits:2}).format(Number(n)/100)+' ج.م';
 const short=(id:string)=>'#'+id.slice(0,8).toUpperCase();
 function handoffLabel(value:Order['customer_snapshot']):string{
@@ -77,7 +115,10 @@ function playOrderCue(context:AudioContext){
   });
 }
 function makePreviewOrders():Order[]{
-  const labels=['تشيكن فاير','كريب برجر','بيتزا تشيكن رانش','كريب مكس جبن','توسكانيني سبيشال','مياه معدنية'];
+  const labels=['كفتة','شاورما لحم','شاورما لحم','شاورما لحم','توسكانيني سبيشال','مياه معدنية'];
+  // All names below appear in the real previous-menu catalog. Identical
+  // "شاورما لحم" is intentional to test crepe/pizza disambiguation.
+  const demoCategory=['crepe-meat','pizza-meat','crepe-meat','pizza-meat','crepe-tuscanini','drinks'];
   const statuses:Phase[]=['received','received','preparing','accepted','ready','received','preparing','delivered','ready','accepted',
     'received','preparing','preparing','received','ready','accepted','delivered','received','rejected','accepted'];
   return statuses.map((status,i)=>{
@@ -92,7 +133,7 @@ function makePreviewOrders():Order[]{
       customer_snapshot:{name:'عميل '+String(i+1).padStart(2,'0'),
         generalNotes:i%7===0?'مهم: من غير بصل':''},
       items:[{sku:'visual-'+i,name:p,qty,price_cents:9500,
-        selection:{size:{label:i%3===0?'كبير':'صغير'},addons:add},notes:i%5===0?'تسوية زيادة':''},
+        selection:{size:{label:i%3===0?'كبير':'صغير'},addons:add,categorySlug:demoCategory[i%demoCategory.length]},notes:i%5===0?'تسوية زيادة':''},
         ...(i%4===0?[{sku:'water',name:'مياه معدنية',qty:1,price_cents:1800,selection:{size:{label:'سعر واحد'}},notes:''}]:[])],
     };
   });
@@ -113,10 +154,12 @@ async function requestAction(key:string,id:string,action:string){
 function LineDetails({lines}:{lines:Line[]}){
   return <ul className="op-lines">{lines.map((line,i)=><li key={i}>
     <span className="op-lines__qty">{line.qty} ×</span>
-    <span className="op-lines__details"><strong>{line.name}</strong>
+    <span className="op-lines__details">
+      <strong>{lineName(line)}</strong>
+      <span className="op-lines__category">{lineCategory(line)?.full??'تنبيه: نوع الصنف غير مسجل — راجع كود الصنف '+line.sku}</span>
       <span className="op-lines__mods">
-        {line.selection?.size?.label&&<span>{line.selection.size.label}</span>}
-        {(line.selection?.addons??[]).map((a,k)=><span key={k}>{a.label}</span>)}
+        {line.selection?.size?.label&&<span>الحجم: {line.selection.size.label}</span>}
+        {(line.selection?.addons??[]).map((a,k)=><span key={k}>إضافة: {a.label}</span>)}
       </span>
       {line.notes&&<em>{line.notes}</em>}
     </span></li>)}</ul>;
@@ -165,12 +208,20 @@ function OrderTicket({order,preview,pending,onAction,compact=false}:{
 }
 function AllDay({orders}:{orders:Order[]}){
   const active=orders.filter(o=>o.status==='accepted'||o.status==='preparing');
-  const count=new Map<string,number>();
-  active.forEach(o=>o.items.forEach(line=>count.set(line.name,(count.get(line.name)??0)+line.qty)));
-  const sorted=[...count].sort((a,b)=>b[1]-a[1]).slice(0,5);
+  // Group by stable SKU + recipe choices; two distinct products both called
+  // "شاورما لحم" (crepe vs pizza) must NEVER collapse into one kitchen count.
+  const count=new Map<string,{name:string;qty:number}>();
+  active.forEach(o=>o.items.forEach(line=>{
+    const label=[lineName(line),lineVariant(line)].filter(Boolean).join(' · ');
+    const key=[line.sku,line.selection?.size?.label??'',
+      ...(line.selection?.addons??[]).map(a=>a.label).sort()].join('|');
+    const previous=count.get(key);
+    count.set(key,{name:label,qty:(previous?.qty??0)+line.qty});
+  }));
+  const sorted=[...count.values()].sort((a,b)=>b.qty-a.qty).slice(0,5);
   return <div className="op-allday" aria-label="تجميع الأصناف المطلوب تجهيزها">
     <div className="op-allday__label"><b>ALL DAY</b><span>على النار دلوقتي</span></div>
-    <div className="op-allday__counts">{sorted.length?sorted.map(([name,qty])=>
+    <div className="op-allday__counts">{sorted.length?sorted.map(({name,qty})=>
       <div key={name}><strong>{qty.toLocaleString('ar-EG')}</strong><span>{name}</span></div>):
       <p>مفيش أصناف قيد التحضير</p>}</div>
     <small>تجميع من الأوردرات المقبولة أو قيد التحضير فقط</small>
@@ -274,7 +325,7 @@ export function OperatorPress({publicDemo=false,canSyncCatalog=false,allowDesign
     ...o,status:demoStatuses[o.id]??o.status,
   })):orders,[orders,preview,clock,demoStatuses]);
   const filtered=useMemo(()=>data.filter(o=>matching(o,filter)&&(
-    !search||[o.id,o.customer_snapshot?.name,...o.items.map(i=>i.name)].join(' ').toLocaleLowerCase().includes(search.toLocaleLowerCase())
+    !search||[o.id,o.customer_snapshot?.name,...o.items.map(i=>lineName(i)+' '+(lineCategory(i)?.full??''))].join(' ').toLocaleLowerCase().includes(search.toLocaleLowerCase())
   )),[data,filter,search]);
   const active=filtered.filter(o=>!['delivered','rejected'].includes(o.status));
   const focus=filtered.find(o=>o.id===selectedId)??active[0]??filtered[0];
@@ -377,7 +428,9 @@ export function OperatorPress({publicDemo=false,canSyncCatalog=false,allowDesign
           <div className="op-section-title"><span>02 / NEXT IN LINE</span><strong>الطابور <em>{queue.length.toLocaleString('ar-EG')}</em></strong></div>
           <div className="op-queue-list">{queue.map(o=><button type="button" key={o.id} className="op-queue-row"
             onClick={()=>setSelectedId(o.id)} aria-label={'افتح أوردر '+short(o.id)}>
-            <span className="op-queue-row__id">{short(o.id)}</span><strong>{o.items[0]?.name??'أوردر'}</strong>
+            <span className="op-queue-row__id">{short(o.id)}</span>
+             <strong>{o.items.length?o.items.slice(0,2).map(lineName).join('، ')+
+               (o.items.length>2?' + '+(o.items.length-2).toLocaleString('ar-EG')+' أصناف':''):'أوردر'}</strong>
             <span className="op-queue-row__details">{o.items.reduce((n,x)=>n+x.qty,0)} قطعة · {age(o.created_at)}</span>
             <small data-phase={o.status}>{STATUS[o.status]?.label??o.status}</small></button>)}</div>
         </div>

@@ -334,3 +334,17 @@
   border-radius:6px;color:#443527;
   font:750 12px/1.6 "IBM Plex Sans Arabic",Tahoma,sans-serif;
 }
+
+/* The kitchen must see recipe identity, not the catalog's short shared name.
+   Product families remain legible on narrow tablet and phone tickets. */
+.op-lines__category{display:inline-flex;align-self:flex-start;padding:3px 8px;
+  color:#433322;background:#f4e0a4;border-inline-start:3px solid #a52c23;
+  font-size:11px;line-height:1.5;font-weight:900}
+.op-lines__details>strong{overflow-wrap:anywhere}
+.op-queue-row>strong{overflow-wrap:anywhere;min-width:0;align-self:center}
+.op-allday__counts span{max-width:210px;overflow-wrap:anywhere;line-height:1.5}
+@media(max-width:500px){
+  .op-lines__category{font-size:10px;padding:3px 6px}
+  .op-queue-row{gap:5px 9px}
+  .op-queue-row>strong{font-size:13px}
+}

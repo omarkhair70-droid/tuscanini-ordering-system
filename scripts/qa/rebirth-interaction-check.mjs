@@ -84,6 +84,17 @@ try {
       await demo.locator('.op-stage .op-ticket').count()===1 &&
       await demo.locator('.op-queue-row').count()===19,
       `${width}px public operator page immediately opens the full 20-order interactive design`);
+    // The restaurant's real catalog uses short names shared by categories.
+    // The kitchen must see "كريب كفتة", "بيتزا شاورما لحم" etc.
+    const focusedRecipe=await demo.locator('.op-stage .op-lines__details>strong').first().innerText();
+    const queueRecipe=await demo.locator('.op-queue-row>strong').first().innerText();
+    const activeRecipes=await demo.locator('.op-allday__counts span').allInnerTexts();
+    await check(focusedRecipe==='كريب كفتة' &&
+      queueRecipe.includes('بيتزا شاورما لحم') &&
+      activeRecipes.some(x=>x.includes('كريب شاورما لحم')) &&
+      activeRecipes.some(x=>x.includes('بيتزا شاورما لحم')) &&
+      await demo.locator('.op-stage .op-lines__category').first().innerText()==='كريب لحوم',
+      `${width}px cashier identifies crepe vs pizza in focus, queue and ALL DAY`);
     await demo.getByRole('button',{name:'اقبل الأوردر'}).click();
     await demo.getByRole('button',{name:'ابدأ التحضير'}).waitFor({timeout:5000});
     await demo.getByRole('button',{name:'ابدأ التحضير'}).click();
