@@ -72,7 +72,8 @@ export function createOrderApi(pool:Pool,settings:Settings) {
         return send(res,200,{ok:true,...await verifyCustomerOtp(pool,auth!,d.email,d.code)});
       }
       const sessionToken=req.headers['x-tuscanini-customer-session'];
-      const customer=customerPath||pathname==='/v1/orders'
+      // No auth-table reads while identity is disabled or migration is pending.
+      const customer=auth?.enabled && typeof sessionToken==='string'
         ?await sessionCustomer(pool,sessionToken):null;
       if(customerPath&&pathname==='/v1/customer/auth/logout'&&method==='POST'){
         await revokeCustomerSession(pool,sessionToken);return send(res,200,{ok:true});
