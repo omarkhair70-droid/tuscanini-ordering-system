@@ -359,3 +359,28 @@
   .t-checkout-delivery-pin__surface>header .t-checkout-delivery-pin__gps{font-size:11px;padding-inline:7px}
   .t-checkout-delivery-pin__header-actions{gap:5px}
 }
+
+/* Checkout — full menu identity, never a bare filling name on the receipt. */
+.t-checkout-item__category{display:inline-flex;align-items:center;background:#f8e4b1;
+  color:#3d2b20;border-inline-start:3px solid var(--red);
+  font:850 12px/1.45 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  padding:5px 9px;margin:0 0 9px;max-width:100%}
+.t-checkout-item__details{min-width:0}
+.t-checkout-item__details h3{overflow-wrap:anywhere}
+.t-checkout-item__choices{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 5px}
+.t-checkout-item__choices span{display:inline-flex;gap:5px;align-items:center;
+  padding:6px 10px;border:1px solid #d9c6a7;background:#fdf8ee;
+  font:750 12px/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif;max-width:100%;overflow-wrap:anywhere}
+.t-checkout-item__choices b{font-weight:900;color:#a72c25}
+.t-checkout-item__choices .t-checkout-item__no-addons{color:#706252;background:transparent;
+  border-style:dashed}
+.t-checkout-item__details .t-checkout-item__notes{background:#fff0d1;border-inline-start:3px solid #b23729;
+  color:#453322;padding:7px 10px;margin-top:9px;font-weight:750}
+@media(max-width:480px){
+  .t-checkout-item{grid-template-columns:23px minmax(0,1fr);gap:11px;padding:18px 0}
+  .t-checkout-item__details h3{font-size:clamp(20px,6vw,26px)}
+  .t-checkout-item__category{font-size:11px}
+  .t-checkout-item__choices{gap:6px}
+  .t-checkout-item__choices span{font-size:11px;padding:5px 7px}
+  .t-checkout-item__controls{gap:10px}
+}
