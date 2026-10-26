@@ -7,15 +7,18 @@ import {syncMenuCatalog,submitMenuOrder} from './menu-orders.js';
 import {CustomerAuthError,requestCustomerOtp,verifyCustomerOtp,sessionCustomer,revokeCustomerSession,sendResendOtp,type CustomerAuthConfig} from './customer-auth.js';
 import {readCustomerAddresses,saveCustomerAddress,deleteCustomerAddress} from './customer-addresses.js';
 import {listOwnedCustomerOrders} from './customer-orders.js';
+import {googleCustomerSession,type GoogleAuthConfig} from './google-auth.js';
 
-type Settings={serviceKey:string;acceptOrders:boolean;syncCatalog:boolean;customerAuth?:CustomerAuthConfig};
+type Settings={serviceKey:string;acceptOrders:boolean;syncCatalog:boolean;customerAuth?:CustomerAuthConfig;googleAuth?:GoogleAuthConfig};
 export function serviceSettingsFromEnvironment():Settings {
   const serviceKey=process.env.ORDER_API_SERVICE_KEY??'';
   if(serviceKey.length<32)throw new Error('ORDER_API_SERVICE_KEY must be a separate 32+ character server-only secret.');
   return {serviceKey,acceptOrders:process.env.ORDER_API_ACCEPT_ORDERS==='yes',
     syncCatalog:process.env.CATALOG_SYNC_ENABLED==='yes',
     customerAuth:{enabled:process.env.CUSTOMER_AUTH_ENABLED==='yes',
-      pepper:process.env.CUSTOMER_OTP_PEPPER??'',sendOtp:sendResendOtp}};
+      pepper:process.env.CUSTOMER_OTP_PEPPER??'',sendOtp:sendResendOtp},
+    googleAuth:{enabled:process.env.CUSTOMER_GOOGLE_AUTH_ENABLED==='yes',
+      clientId:process.env.GOOGLE_OAUTH_CLIENT_ID??''}};
 }
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 function send(res:ServerResponse,status:number,body:unknown) {
@@ -61,8 +64,19 @@ export function createOrderApi(pool:Pool,settings:Settings) {
 
       const auth=settings.customerAuth;
       const customerPath=pathname.startsWith('/v1/customer/');
-      if(customerPath&&(!auth?.enabled||auth.pepper.length<32||!auth.sendOtp))
+      const otpReady=!!(auth?.enabled&&auth.pepper.length>=32&&auth.sendOtp);
+      const googleReady=!!(settings.googleAuth?.enabled &&
+        settings.googleAuth.clientId.endsWith('.apps.googleusercontent.com'));
+      if(customerPath&&!otpReady&&!googleReady)
         return send(res,503,{error:'Customer accounts unavailable.'});
+      if(customerPath&&method==='POST'&&pathname==='/v1/customer/auth/google'){
+        if(!googleReady)return send(res,503,{error:'Google sign-in unavailable.'});
+        const d=await body(req,16000);
+        return send(res,200,{ok:true,...await googleCustomerSession(
+          pool,settings.googleAuth!,d.idToken,d.nonce)});
+      }
+      if(customerPath&&['/v1/customer/auth/request','/v1/customer/auth/verify'].includes(pathname)&&!otpReady)
+        return send(res,503,{error:'Email sign-in unavailable.'});
       if(customerPath&&method==='POST'&&pathname==='/v1/customer/auth/request'){
         const d=await body(req,1200);
         return send(res,200,await requestCustomerOtp(pool,auth!,d.email));
@@ -73,7 +87,7 @@ export function createOrderApi(pool:Pool,settings:Settings) {
       }
       const sessionToken=req.headers['x-tuscanini-customer-session'];
       // No auth-table reads while identity is disabled or migration is pending.
-      const customer=auth?.enabled && typeof sessionToken==='string'
+      const customer=(otpReady||googleReady) && typeof sessionToken==='string'
         ?await sessionCustomer(pool,sessionToken):null;
       if(customerPath&&pathname==='/v1/customer/auth/logout'&&method==='POST'){
         await revokeCustomerSession(pool,sessionToken);return send(res,200,{ok:true});

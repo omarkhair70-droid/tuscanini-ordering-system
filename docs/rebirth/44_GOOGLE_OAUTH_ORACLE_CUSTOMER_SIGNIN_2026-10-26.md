@@ -1,0 +1,9 @@
+# Google sign-in for Tuscanini (draft-only)
+
+Google authenticates the browser. The Next.js callback exchanges an authorization code with Google using a server-side OAuth client secret and PKCE. It passes only the resulting Google ID token + nonce through the existing authenticated internal service API. Oracle independently checks the signed Google JWT against Google's rotating signing keys and validates issuer, audience, expiry, verified email, stable `sub` and nonce. An Oracle-only opaque, hashed-at-rest customer session is then issued as an HttpOnly cookie by Next.js.
+
+No email OTP provider or Resend account is required for Google sign-in. The old email OTP route remains dormant and disabled by default. **Never match Google accounts to previous accounts by email/phone alone.** Unique Google subject is authoritative; attempts to claim an email already held by an unlinked OTP user fail closed rather than silently merge identities.
+
+**Activation is NOT part of this code commit.** On the existing Coolify Dockerfile application, provision `GOOGLE_OAUTH_CLIENT_ID` and `CUSTOMER_GOOGLE_AUTH_ENABLED=yes` only after this migration and staging validation. On Vercel Preview configure `GOOGLE_OAUTH_CLIENT_ID`, `GOOGLE_OAUTH_CLIENT_SECRET`, `GOOGLE_OAUTH_REDIRECT_URI`, and `TUSCANINI_ORACLE_CUSTOMER_ACCOUNTS_READY=yes`. Use a separately registered, exact HTTPS redirect URI `https://YOUR-PREVIEW-HOST/api/customer/google/callback`, Google OAuth client of type **Web application**, scopes `openid email profile`. Production Google client/redirect should be configured separately. Keep `ORDER_API_ACCEPT_ORDERS=no` and `CUSTOMER_AUTH_ENABLED=no` while staging sign-in.
+
+Migrations: add `schema-google.sql` after existing customer/account migrations. Coolify's existing Dockerfile app executes migrations on restart, so confirm backups and staging before redeploy. No need for a second PostgreSQL container or Compose app.
