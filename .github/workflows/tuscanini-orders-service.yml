@@ -19,11 +19,16 @@ permissions:
 
 jobs:
   order-api:
+    name: Order API / PostgreSQL ${{ matrix.postgres }}
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 16
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ["16", "18"]
     services:
       postgres:
-        image: postgres:16
+        image: postgres:${{ matrix.postgres }}
         env:
           POSTGRES_USER: tuscanini_app
           POSTGRES_PASSWORD: ci-ephemeral-orders-only
