@@ -2,6 +2,7 @@ import 'server-only';
 
 import { siteConfig } from '@/lib/site-config';
 import { getSupabaseServerAdminClient } from '@/lib/supabase/server-admin';
+import { oracleOrdersEnabled } from '@/lib/oracle-order-api';
 
 export type PublicSiteSettings = {
   isOrderingOpen: boolean;
@@ -27,19 +28,22 @@ function getStaticFallbackSettings(): PublicSiteSettings {
   };
 }
 
+/** Independent restaurant-site release switch for Oracle order intake.
+ * Supabase's legacy open/closed state cannot override Oracle's order controls. */
+function oracleCustomerIntake():boolean{
+  return process.env.TUSCANINI_ORACLE_LIVE_ORDERS==='yes';
+}
 function normalizeSettingsWithFallback(raw: Record<string, unknown> | null | undefined): PublicSiteSettings {
   const fallback = getStaticFallbackSettings();
 
   if (!raw) {
-    return fallback;
+    return {...fallback,isOrderingOpen:oracleOrdersEnabled()?oracleCustomerIntake():false};
   }
 
   return {
     deliveryEnabled: process.env.TUSCANINI_DELIVERY_ENABLED === 'yes',
-    isOrderingOpen:
-      typeof raw.is_ordering_open === 'boolean'
-        ? raw.is_ordering_open
-        : fallback.isOrderingOpen,
+    isOrderingOpen:oracleOrdersEnabled()?oracleCustomerIntake():
+      (typeof raw.is_ordering_open === 'boolean'?raw.is_ordering_open:fallback.isOrderingOpen),
     whatsappOrderNumber:
       typeof raw.whatsapp_order_number === 'string' && raw.whatsapp_order_number.trim()
         ? raw.whatsapp_order_number
