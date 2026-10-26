@@ -89,8 +89,9 @@ export function CustomerDeliveryPin({ onSelect }: Props) {
             !/^[A-Za-z0-9_-]{8,64}$/.test(requestId) || locatingRef.current ||
             !dialogRef.current?.open) return;
         const reply = (result: Record<string, unknown>) => {
-          if(dialogRef.current?.open && frameRef.current?.contentWindow === event.source)
-            frameRef.current.contentWindow.postMessage({
+          const target=frameRef.current?.contentWindow;
+          if(dialogRef.current?.open && target && target===event.source)
+            target.postMessage({
               type:'tuscanini:delivery-location:result',version:1,requestId,...result,
             },window.location.origin);
         };
