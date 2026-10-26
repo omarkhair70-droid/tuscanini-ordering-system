@@ -871,6 +871,69 @@ try {
     await check(!(await cart.getByRole('checkbox',{name:/راجعت الأصناف وبيانات الطلب/}).isChecked()),
       `${width}px changing pickup back to delivery invalidates previous review`);
     await fixtureContext.close();
+    if(width===390){
+      // GPS-to-address success is tested with browser-provided coordinates
+      // and an explicitly mocked locality provider. No real customer GPS
+      // coordinates or live restaurant order is ever transmitted in CI.
+      const geoCtx=await browser.newContext({
+        viewport:{width:390,height:844},reducedMotion:'reduce',
+        permissions:['geolocation'],
+        geolocation:{latitude:29.07344,longitude:31.09811,accuracy:55},
+      });
+      await geoCtx.addInitScript(()=>{
+        localStorage.setItem('tuscanini-cart-v1',JSON.stringify({
+          items:[{lineId:'geo-line',kind:'offer',offerId:'geo-test',
+            offerTitle:'عرض اختبار GPS',quantity:1,unitPrice:35,
+            totalItemPrice:35,itemNotes:''}],
+          customer:{name:'',phone:'',address:'',deliveryLocation:null,
+            orderType:'delivery',paymentMethod:'cash',generalNotes:'',
+            confirmedAccurateDetails:false},tableReference:null,
+        }));
+      });
+      await geoCtx.route('**/api/public/site-settings',route=>route.fulfill({
+        status:200,contentType:'application/json',
+        body:JSON.stringify({ok:true,settings:{isOrderingOpen:true,
+          deliveryEnabled:true,whatsappOrderNumber:''}}),
+      }));
+      await geoCtx.route('https://api.bigdatacloud.net/data/reverse-geocode-client*',
+        route=>route.fulfill({status:200,contentType:'application/json',
+          body:JSON.stringify({countryCode:'EG',locality:'حي شرق',city:'بني سويف',
+            principalSubdivision:'بني سويف'})}));
+      await geoCtx.route('**/api/orders',route=>route.fulfill({
+        status:409,contentType:'application/json',
+        body:JSON.stringify({ok:false,error:'اختبار مغلق'}),
+      }));
+      const geo=await geoCtx.newPage();
+      await geo.goto(baseUrl+'/cart',{waitUntil:'networkidle',timeout:30000});
+      await geo.getByRole('button',{name:/حدّد مكان التوصيل على الخريطة/}).click();
+      await geo.locator('.t-checkout-delivery-pin__gps').click();
+      await geo.frameLocator('iframe[src="/delivery-location-picker.html"]')
+        .locator('#coordinates').getByText(/تم تحديد موقعك/).waitFor({timeout:15000});
+      await geo.frameLocator('iframe[src="/delivery-location-picker.html"]')
+        .locator('#message').getByText(/المنطقة المقترحة/).waitFor({timeout:12000});
+      await geo.frameLocator('iframe[src="/delivery-location-picker.html"]')
+        .locator('#confirm').click();
+      await geo.waitForFunction(()=>{
+        const customer=JSON.parse(localStorage.getItem('tuscanini-cart-v1')||'{}').customer;
+        return customer?.address==='حي شرق، بني سويف' &&
+          customer.deliveryLocation?.lat===29.07344 &&
+          customer.deliveryLocation?.lng===31.09811;
+      },null,{timeout:7000});
+      await check(await geo.locator('#t-checkout-address').inputValue()==='حي شرق، بني سويف' &&
+        await geo.getByText(/الموقع التقريبي: حي شرق، بني سويف/).count()===1 &&
+        await geo.getByText(/تم تثبيت نقطة التوصيل/).count()===1,
+        '390px GPS provides visible selected map pin and auto-fills only the approximate area');
+      await geo.getByRole('button',{name:/سجّل الطلب للمطعم/}).click();
+      await check(await geo.getByText(/عرفنا المنطقة تقريبًا. كمّل اسم الشارع/).count()===1,
+        '390px locality alone can never be submitted as a complete delivery address');
+      await geo.locator('#t-checkout-address').fill(
+        'حي شرق، بني سويف، شارع الجمهورية، عمارة 15، الدور الثاني، المدخل الرئيسي');
+      await check(await geo.locator('#t-checkout-address').inputValue()!=='حي شرق، بني سويف',
+        '390px customer can complete the address without losing GPS pin');
+      await geo.screenshot({path:'artifacts/screenshots/customer-cart-gps-address-390.png',
+        fullPage:true,animations:'disabled'});
+      await geoCtx.close();
+    }
 
     if(width===390){
       // Closing merchant intake must not close product discovery, edit or GPS
