@@ -182,6 +182,7 @@ export function RebirthProductDialog({ item, onClose, priceSource = 'previous', 
     const line={
       productId: item.id,
       productName: item.name,
+      categorySlug: item.categorySlug,
       selectedSize: selectedSize ? {id:selectedSize.id,label:selectedSize.label,price:selectedSize.price} : null,
       selectedAddons: selectedAddons.map(x=>({id:x.id,label:x.label,price:x.price})),
       quantity,
