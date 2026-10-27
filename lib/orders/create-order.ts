@@ -69,7 +69,16 @@ export async function createOrderInSupabase(payload: ValidatedOrderPayload, veri
   try {
     for (const { item, resolved, lineTotal } of checkedLines) {
       const isOffer = resolved.kind === 'offer';
-      const rowPayload = isOffer ? {
+      // Supabase JS v2's stricter insert typing rejects a union of incompatible
+      // object literals. Keep one full database row shape, including null
+      // snapshots for whichever line kind is not being inserted.
+      const rowPayload: {
+        order_id: string; line_type: 'offer'|'product';
+        offer_id: string|null; product_id: string|null;
+        product_name_snapshot: string; offer_title_snapshot: string|null;
+        selected_size_label: string|null; unit_price: number;
+        quantity: number; item_notes: string|null; line_total: number;
+      } = isOffer ? {
         order_id: orderRow.id,
         line_type: 'offer',
         offer_id: resolved.offerId,
@@ -87,6 +96,7 @@ export async function createOrderInSupabase(payload: ValidatedOrderPayload, veri
         offer_id: null,
         product_id: resolved.productId,
         product_name_snapshot: resolved.productName,
+        offer_title_snapshot: null,
         selected_size_label: resolved.sizeLabel,
         unit_price: resolved.unitPrice,
         quantity: item.quantity,

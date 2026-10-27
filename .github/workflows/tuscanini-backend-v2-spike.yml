@@ -12,6 +12,7 @@ on:
       - ".github/workflows/tuscanini-backend-v2-spike.yml"
   push:
     branches:
+      - "main"
       - "redesign/**"
     paths:
       - "experiments/backend-v2/**"
@@ -49,7 +50,7 @@ jobs:
       POSTGRES_USER: spike
       POSTGRES_PASSWORD: only-for-ephemeral-ci-tests
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -86,8 +87,8 @@ jobs:
       POSTGRES_USER: spike
       POSTGRES_PASSWORD: only-for-ephemeral-ci-tests
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "22"
       - name: Install isolated TypeScript/Postgres dependencies (no root project changes)
@@ -129,8 +130,8 @@ jobs:
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-only-public-placeholder
       SUPABASE_SERVICE_ROLE_KEY: ci-only-service-placeholder
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "22"
           cache: npm

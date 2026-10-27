@@ -7,7 +7,7 @@ on:
       - "infra/oracle/postgres.compose.yaml"
       - ".github/workflows/tuscanini-orders-service.yml"
   push:
-    branches: ["redesign/**"]
+    branches: ["main", "redesign/**"]
     paths:
       - "services/orders-api/**"
       - "infra/oracle/postgres.compose.yaml"
@@ -19,11 +19,16 @@ permissions:
 
 jobs:
   order-api:
+    name: Order API / PostgreSQL ${{ matrix.postgres }}
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 16
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ["16", "18"]
     services:
       postgres:
-        image: postgres:16
+        image: postgres:${{ matrix.postgres }}
         env:
           POSTGRES_USER: tuscanini_app
           POSTGRES_PASSWORD: ci-ephemeral-orders-only
@@ -41,14 +46,14 @@ jobs:
       PGUSER: tuscanini_app
       PGPASSWORD: ci-ephemeral-orders-only
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: "22"
+          node-version: "24"
       - name: Install scoped standalone service dependencies
-        run: npm install --prefix services/orders-api --no-audit --no-fund --no-package-lock
+        run: npm ci --prefix services/orders-api --no-audit --no-fund
       - name: Typecheck and compile standalone runtime
         run: |
           npm run typecheck --prefix services/orders-api
