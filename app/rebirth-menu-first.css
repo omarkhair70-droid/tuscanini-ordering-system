@@ -196,3 +196,169 @@
 @media(prefers-reduced-motion:reduce){
   .t-menu-page--first .t-menu-search__inputrow{transition:none}
 }
+
+
+/* CHAPTER 02 — THE MENU HAS A VOICE.
+   The production menu uses photographic *representations*, not verified named
+   SKU photographs. A flatter two-column editorial spread gives name and price
+   priority; product dialog and commerce state remain exactly the same. */
+.t-menu-page--first .t-menu-items__heading .t-index{display:none}
+.t-menu-page--first .t-menu-items__grid--photo{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  column-gap:clamp(22px,3.2vw,52px);
+  row-gap:0;
+  border-top:1px solid var(--ink);
+}
+.t-menu-page--first .t-menu-items__grid--photo .t-menu-product,
+.t-menu-page--first .t-menu-items__grid--photo .t-menu-product:nth-child(6n+2),
+.t-menu-page--first .t-menu-items__grid--photo .t-menu-product:nth-child(6n+5){
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(118px,.29fr);
+  grid-template-rows:auto 1fr;
+  gap:0 clamp(13px,1.8vw,24px);
+  min-height:159px;
+  padding:16px 0 17px;
+  background:transparent;
+  border:0;
+  border-bottom:1px solid var(--line);
+  border-radius:0;
+  box-shadow:none;
+  align-items:center;
+  transition:background-color .14s ease;
+}
+.t-menu-page--first .t-menu-items__grid--photo .t-menu-product:hover{
+  background:transparent;
+}
+.t-menu-page--first .t-menu-items__grid--photo .t-menu-product__top{
+  grid-column:1/-1;grid-row:1;
+  display:flex;justify-content:flex-start;
+  padding-bottom:6px;
+}
+.t-menu-page--first .t-menu-items__grid--photo .t-menu-product__family{
+  display:inline-flex;align-items:center;
+  font:650 11px/1.4 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  color:#766758;
+}
+.t-menu-page--first .t-menu-items__grid--photo .t-menu-product__family svg{display:none}
+.t-menu-page--first .t-menu-items__grid--photo .t-menu-product__identity{
+  grid-column:1;grid-row:2;
+  display:grid;
+  grid-template-columns:clamp(94px,7.8vw,118px) minmax(0,1fr);
+  min-width:0;gap:clamp(11px,1.5vw,20px);
+  align-items:center;
+  flex:none;
+}
+.t-menu-page--first .t-menu-items__grid--photo .t-menu-product__art-trigger{
+  display:block;width:100%;height:auto;align-self:center;
+}
+.t-menu-page--first .t-menu-items__grid--photo .t-product-art--compact{
+  width:100%;height:auto;
+  aspect-ratio:1.08/1;
+  border:0;border-radius:3px;
+}
+.t-menu-page--first .t-menu-items__grid--photo .t-menu-product__text h3{
+  font:800 clamp(22px,2vw,29px)/1.23 "Changa",Tahoma,sans-serif;
+  letter-spacing:0;
+}
+.t-menu-page--first .t-menu-items__grid--photo .t-menu-product__text p{
+  display:none; /* family on eyebrow; do not repeat it under every dish */
+}
+.t-menu-page--first .t-menu-items__grid--photo .t-menu-product__bottom{
+  grid-column:2;grid-row:2;
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:stretch;
+  gap:11px;margin:0;padding:0;border:0;
+  align-self:center;width:100%;
+}
+.t-menu-page--first .t-menu-items__grid--photo .t-menu-product__price{
+  display:flex;flex-direction:column;align-items:flex-start;
+  gap:1px;white-space:normal;
+}
+.t-menu-page--first .t-menu-items__grid--photo .t-menu-product__price span{
+  font-size:11px;line-height:1.4;
+}
+.t-menu-page--first .t-menu-items__grid--photo .t-menu-product__price strong{
+  font:800 20px/1.3 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  white-space:nowrap;
+}
+.t-menu-page--first .t-menu-items__grid--photo .t-menu-product__bottom button{
+  width:100%;min-width:0;
+  min-height:44px;
+  font:750 12px/1.4 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  padding:10px 7px;border-radius:0;
+}
+@media(hover:hover){
+  .t-menu-page--first .t-menu-items__grid--photo .t-menu-product:focus-within,
+  .t-menu-page--first .t-menu-items__grid--photo .t-menu-product:hover{
+    background:#efe7da;
+  }
+}
+@media(max-width:1050px){
+  .t-menu-page--first .t-menu-items__grid--photo{
+    grid-template-columns:minmax(0,1fr);
+  }
+  .t-menu-page--first .t-menu-items__grid--photo .t-menu-product__identity{
+    grid-template-columns:clamp(92px,13vw,120px) minmax(0,1fr);
+  }
+}
+@media(max-width:720px){
+  .t-menu-page--first .t-menu-items__grid--photo{
+    grid-template-columns:minmax(0,1fr);
+    row-gap:0;
+  }
+  .t-menu-page--first .t-menu-items__grid--photo .t-menu-product,
+  .t-menu-page--first .t-menu-items__grid--photo .t-menu-product:nth-child(6n+2),
+  .t-menu-page--first .t-menu-items__grid--photo .t-menu-product:nth-child(6n+5){
+    display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto;
+    min-height:0;gap:0;
+    padding:13px 0 15px;
+    background:transparent;
+    border:0;border-bottom:1px solid var(--line);
+    border-radius:0;
+    box-shadow:none;
+  }
+  .t-menu-page--first .t-menu-items__grid--photo .t-menu-product__top{
+    padding-bottom:5px;
+  }
+  .t-menu-page--first .t-menu-items__grid--photo .t-menu-product__identity{
+    grid-column:1;grid-row:2;
+    display:grid;grid-template-columns:clamp(96px,26vw,118px) minmax(0,1fr);
+    gap:13px;align-items:center;
+  }
+  .t-menu-page--first .t-menu-items__grid--photo .t-product-art--compact{
+    width:100%;aspect-ratio:1.06/1;border-radius:3px;
+  }
+  .t-menu-page--first .t-menu-items__grid--photo .t-menu-product__text h3{
+    font-size:clamp(21px,5.45vw,27px);
+    line-height:1.24;
+  }
+  .t-menu-page--first .t-menu-items__grid--photo .t-menu-product__bottom{
+    grid-column:1;grid-row:3;
+    display:flex;flex-direction:row;
+    justify-content:space-between;align-items:center;
+    gap:11px;margin-top:10px;
+    padding-top:10px;border-top:1px solid #ddd1c1;
+  }
+  .t-menu-page--first .t-menu-items__grid--photo .t-menu-product__price{
+    flex-direction:row;align-items:baseline;flex-wrap:wrap;gap:4px;
+  }
+  .t-menu-page--first .t-menu-items__grid--photo .t-menu-product__price strong{
+    font-size:19px;
+  }
+  .t-menu-page--first .t-menu-items__grid--photo .t-menu-product__bottom button{
+    width:auto;min-width:110px;min-height:44px;
+    border-radius:3px;
+    padding:10px 13px;
+  }
+}
+@media(max-width:350px){
+  .t-menu-page--first .t-menu-items__grid--photo .t-menu-product__identity{
+    grid-template-columns:93px minmax(0,1fr);gap:10px;
+  }
+  .t-menu-page--first .t-menu-items__grid--photo .t-menu-product__bottom button{
+    min-width:105px;padding-inline:9px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .t-menu-page--first .t-menu-items__grid--photo .t-menu-product{transition:none}
+}
