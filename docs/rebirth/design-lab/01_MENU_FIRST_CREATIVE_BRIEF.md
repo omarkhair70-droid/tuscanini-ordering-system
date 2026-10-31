@@ -35,4 +35,6 @@ At the 22 October working-board snapshot: 113 historical menu items / 16 categor
 - Consistent physical/digital food brand system: https://www.studio24.se/work-fabro
 
 ## Scope of this branch
-Design **documentation only**. No public route changes, no backend/database mutation, no production deploy, no order-opening flags. A separately shared standalone HTML UX study covers click-through behavior without transmitting orders. Any later Next.js implementation must be separately tested and reviewed before proposing changes to the original draft PR #59.
+**Implementation now lives in the actual Next.js project, not in standalone HTML:** both `/` and `/menu` render `MenuFirstEntry` → existing `RebirthMenu`, with a `presentation="menu-first"` variant. Search, category selection, product details and cart use the current restaurant project components; 16 historical categories are grouped into simple visible families. The earlier standalone HTML is an exploratory throwaway and NOT a production source.
+
+Scope of this PR: **working branch frontend + design docs only**. It changes public route UI on this isolated branch but does not touch main, production deployment, live restaurant order intake flags, backend/database, prices or operations. Visual review, CI, actual mobile/browser QA and the merchant catalog/brand signoff remain **open acceptance gates**. Do not merge from a code-only or build-only claim.
