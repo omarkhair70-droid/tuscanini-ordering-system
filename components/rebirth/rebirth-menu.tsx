@@ -3,7 +3,7 @@
 import { ExperienceFooter } from '@/components/rebirth/experience-footer';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/components/cart/cart-provider';
 import { FloatingCartCta } from '@/components/cart/floating-cart-cta';
@@ -14,6 +14,8 @@ import type { ProductCartItem } from '@/types/cart';
 import { MaterialGlyph, categoryMaterialGlyph } from '@/components/rebirth/material-glyph';
 import { ProductArtwork } from '@/components/rebirth/product-artwork';
 import { getCategoryContextPhoto } from '@/lib/rebirth/verified-menu-photographs';
+import { getMenuEditorialPhotograph } from '@/lib/rebirth/editorial-photo-selection';
+import { MenuEditorialPhoto } from '@/components/rebirth/menu-editorial-photo';
 import { trackCustomerInsight } from '@/lib/rebirth/customer-insights';
 import type { RebirthCatalog } from '@/lib/rebirth/previous-menu-catalog';
 
@@ -108,6 +110,11 @@ export function RebirthMenu({ categories, items, initialTableReference, source, 
 
   const displayed = filtered.slice(0, limit);
   const contextPhoto = presentation === 'menu-first' || category==='all' ? null : getCategoryContextPhoto(category as MenuItem['categorySlug']);
+  // Do not interrupt searching, short categories, or the first visible food.
+  // Photographs are actual restaurant documentation, never a named SKU match.
+  const editorialPhoto = presentation === 'menu-first' && !query.trim() && displayed.length >= 9
+    ? getMenuEditorialPhotograph(category)
+    : null;
   function openProduct(item:MenuItem,trigger:HTMLElement){
     const art=trigger.querySelector<HTMLElement>('.t-product-art')??trigger.closest('.t-menu-product')?.querySelector<HTMLElement>('.t-product-art');
     const rect=art?.getBoundingClientRect();
@@ -250,7 +257,8 @@ export function RebirthMenu({ categories, items, initialTableReference, source, 
                     const available = item.availability !== 'unavailable';
                     const familyName = categories.find(c=>c.slug===item.categorySlug)?.name;
                     return (
-                      <article className="t-menu-product" key={item.id}>
+                      <Fragment key={item.id}>
+                      <article className="t-menu-product">
                         <div className="t-menu-product__top">
                           <span>{String(index+1).padStart(2,'0')}</span>
                           <span className="t-menu-product__family"><MaterialGlyph name={categoryMaterialGlyph(item.categorySlug)} size={22}/>{familyName}</span>
@@ -273,6 +281,8 @@ export function RebirthMenu({ categories, items, initialTableReference, source, 
                           </button>
                         </div>
                       </article>
+                      {editorialPhoto && index === 5 ? <MenuEditorialPhoto photo={editorialPhoto} /> : null}
+                      </Fragment>
                     );
                   })}
                 </div>
