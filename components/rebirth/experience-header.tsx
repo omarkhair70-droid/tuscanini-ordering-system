@@ -84,7 +84,7 @@ export function ExperienceHeader() {
           <Link href="/cart" className="t-header__cart" aria-label={itemsCount > 0 ? `السلة: ${itemsCount} منتجات` : 'السلة'}>
             السلة{itemsCount > 0 ? <span aria-hidden="true" className="t-header__cart-count">{itemsCount}</span> : null}
           </Link>
-          <Link className="t-header__order" href="/menu">افتح المنيو <span aria-hidden="true">↗</span></Link>
+          {!isMenuFirstEntry && <Link className="t-header__order" href="/menu">افتح المنيو <span aria-hidden="true">↗</span></Link>}
           <div className="t-mobile-menu">
             <button
               type="button"
