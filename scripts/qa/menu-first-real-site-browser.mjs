@@ -62,6 +62,28 @@ try {
         assert.equal(await dock.locator('a[href="/menu"][aria-current="page"]').count(),1,
           'Menu is current even at /');
       }
+      const editorial=page.locator('.t-menu-photo-break');
+      assert.equal(await editorial.count(),1,'One authentic contextual photo after initial food choices');
+      assert.equal(await editorial.getAttribute('data-editorial-photo-id'),'TSC-07',
+        'All family uses restaurant original TSC-07, never a SKU photograph');
+      const placement=await page.locator('.t-menu-items__grid--photo').evaluate(grid=>{
+        const nodes=[...grid.children];
+        const at=nodes.findIndex(node=>node.classList.contains('t-menu-photo-break'));
+        return {at, precededByFood:nodes.slice(0,at).filter(node=>node.classList.contains('t-menu-product')).length};
+      });
+      assert.equal(placement.precededByFood,6,
+        'Editorial photo must appear only after six real food choices');
+      await editorial.scrollIntoViewIfNeeded();
+      const imageIsReal=await editorial.locator('img').evaluate(async img=>{
+        await img.decode();
+        return img.naturalWidth>0;
+      });
+      assert(imageIsReal,'Authentic restaurant original decodes as a real image');
+      if([390,1440].includes(width)) await editorial.screenshot({
+        path:`artifacts/screenshots/menu-first-editorial-photo-${width}.png`,
+        animations:'disabled',
+      });
+      await page.evaluate(()=>window.scrollTo(0,0));
       await page.screenshot({
         path:`artifacts/screenshots/menu-first-home-${width}.png`,
         fullPage:true,animations:'disabled',timeout:45000,
@@ -72,10 +94,14 @@ try {
       assert((await all.count())>0,'Pizza group actually filters products');
       assert((await page.locator('.t-menu-product__family').first().textContent()).includes('بيتزا'),
         'Pizza results are actual pizza items');
+      assert.equal(await page.locator('.t-menu-photo-break').getAttribute('data-editorial-photo-id'),
+        'TSC-10','Pizza category uses source-backed pizza photo, never a named dish image');
 
       await search.fill('شاورما فراخ');
       assert((await all.count())>=2,
         'Search automatically crosses category boundaries, distinguishing crepe and pizza');
+      assert.equal(await page.locator('.t-menu-photo-break').count(),0,
+        'Search stays strictly utilitarian with no editorial photo interlude');
       assert(await page.locator('#t-menu-categories button[aria-pressed="true"]')
         .getByText('كل الأصناف').isVisible(),
         'Search leaves category filter and searches whole catalog');
