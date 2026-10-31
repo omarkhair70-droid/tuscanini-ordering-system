@@ -68,11 +68,13 @@ try {
       if (media.missing.length) {
         throw new Error(`Broken content images ${path} ${width}px: ${media.missing.join(', ')}`);
       }
-      if (!route && !media.hero) {
-        throw new Error(`Both genuine hero photos must decode on Home at ${width}px`);
-      }
-      if (!route && !media.packaging) {
-        throw new Error(`Real packaging photo did not decode on Home at ${width}px`);
+      if (!route) {
+        // Menu-first Home intentionally has no former oversized Hero or
+        // packaging chapter. The catalog must be the actual entry content.
+        const menu=page.locator('.t-menu-page--first .t-menu-items__grid .t-menu-product');
+        if(await menu.count()===0) {
+          throw new Error(`Home must show actual historical menu items at ${width}px`);
+        }
       }
       // The unactivated map must be a designed, accessible wayfinding panel,
       // not an empty third-party iframe; browser interactions open the real map.
