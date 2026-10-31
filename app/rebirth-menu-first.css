@@ -1,0 +1,198 @@
+/*
+ * Tuscanini Design Lab 01 — menu-first editorial direction.
+ * These rules apply only to the shared / and /menu presentation.
+ * The original Rebirth interface and operational routes are untouched.
+ * Provisional art-direction tokens, not final identity approval.
+ */
+.t-menu-page--first{
+  --paper:#f6f2ea;
+  --cream:#efe8dc;
+  --ink:#231e1a;
+  --red:#b73c2f;
+  --yellow:#e9c986;
+  --line:#d6ccbc;
+  background:var(--paper);
+  color:var(--ink);
+}
+.t-menu-page--first .t-menu-intro{
+  background:var(--paper);
+  color:var(--ink);
+  padding:clamp(16px,2.5vw,36px) clamp(20px,4vw,64px) clamp(10px,2vw,22px);
+}
+.t-menu-page--first .t-menu-first__entry{
+  display:grid;
+  grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);
+  gap:clamp(20px,4vw,60px);
+  align-items:end;
+  max-width:1280px;
+  margin-inline:auto;
+}
+.t-menu-page--first .t-menu-first__title{display:grid;gap:3px;align-content:center}
+.t-menu-page--first .t-menu-first__overline{
+  font:700 11px/1.6 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  color:#695f54;
+  letter-spacing:.015em;
+}
+.t-menu-page--first .t-menu-first__title h1{
+  margin:0;
+  font:800 clamp(40px,6vw,74px)/1.06 "Changa",Tahoma,sans-serif;
+  letter-spacing:0;
+}
+.t-menu-page--first .t-menu-first__title h1 span{color:var(--red)}
+.t-menu-page--first .t-menu-first__title p{
+  margin:1px 0 0;font:600 14px/1.6 "IBM Plex Sans Arabic",Tahoma,sans-serif;color:#695f54;
+}
+.t-menu-page--first .t-menu-intro .t-menu-search{
+  margin:0;
+  max-width:none;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:var(--ink);
+}
+.t-menu-page--first .t-menu-intro .t-menu-search label{
+  font:650 12px/1.6 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  margin-bottom:7px;
+  color:#554b43;
+}
+.t-menu-page--first .t-menu-search__inputrow{
+  background:#fffcf6;
+  border:1px solid #aba091;
+  padding-inline:14px;
+  min-height:54px;
+  transition:border-color .15s ease;
+}
+.t-menu-page--first .t-menu-search__inputrow:focus-within{border-color:var(--ink)}
+.t-menu-page--first .t-menu-intro .t-menu-search input{
+  min-height:50px;
+  padding:10px 0;
+  background:transparent;
+  font:650 15px/1.6 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+}
+.t-menu-page--first .t-menu-search input:focus-visible{outline:0}
+.t-menu-page--first .t-menu-search__inputrow button{
+  color:var(--ink);background:transparent;min-height:44px;
+  font:700 12px "IBM Plex Sans Arabic",Tahoma,sans-serif;
+}
+.t-menu-page--first .t-menu-content{
+  max-width:1280px;
+  padding-top:0;
+  padding-bottom:70px;
+}
+.t-menu-page--first .t-menu-source-note{
+  margin:0;
+  padding:7px 0 5px;
+  border:0;
+  background:transparent;
+  color:#645c51;
+  font:600 11px/1.7 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  min-height:0;
+}
+.t-menu-page--first .t-menu-source-note:before{display:none}
+.t-menu-page--first .t-menu-categories{padding-top:12px}
+.t-menu-page--first .t-menu-categories__heading{
+  border:0;
+  padding:0;
+  color:#675e53;
+  font-size:11px;
+  font-weight:650;
+}
+.t-menu-page--first .t-menu-categories__scroller{
+  gap:clamp(4px,1.5vw,13px);
+  padding:9px 0 12px;
+  scrollbar-width:none;
+}
+.t-menu-page--first .t-menu-categories__scroller::-webkit-scrollbar{display:none}
+.t-menu-page--first .t-menu-categories__scroller button{
+  min-height:44px;
+  padding:9px 12px;
+  background:transparent;
+  border:0;
+  border-bottom:2px solid transparent;
+  color:#62584d;
+  font:750 13px/1.5 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  border-radius:0;
+  gap:6px;
+}
+.t-menu-page--first .t-menu-categories__scroller button[aria-pressed=true]{
+  background:transparent;
+  border-color:var(--red);
+  color:var(--ink);
+}
+.t-menu-page--first .t-menu-categories__scroller button[aria-pressed=true] .t-menu-category-glyph{color:var(--red)}
+.t-menu-page--first .t-menu-items{padding-top:10px}
+.t-menu-page--first .t-menu-items__heading{
+  margin-bottom:12px;
+  align-items:center;
+}
+.t-menu-page--first .t-menu-items__heading h2{
+  margin-top:0;
+  font:800 clamp(27px,3.8vw,42px)/1.2 "Changa",Tahoma,sans-serif;
+}
+.t-menu-page--first .t-menu-items__heading>span{
+  font:650 11px/1.6 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  color:#695f54;
+}
+.t-menu-page--first .t-menu-items__heading:after{display:none}
+.t-menu-page--first .t-menu-items__grid{border-top:1px solid var(--ink)}
+.t-menu-page--first .t-menu-product,
+.t-menu-page--first .t-menu-product:nth-child(6n+2),
+.t-menu-page--first .t-menu-product:nth-child(6n+5){
+  border-color:var(--line);
+  min-height:128px;
+  padding:16px 0;
+}
+.t-menu-page--first .t-menu-product__top span:first-child{display:none}
+.t-menu-page--first .t-menu-product__top{padding-bottom:5px}
+.t-menu-page--first .t-menu-product__family{font-size:11px;color:#6c5e4d}
+.t-menu-page--first .t-menu-product__bottom button{
+  background:var(--ink);
+  color:#fffcf6;
+  border:1px solid var(--ink);
+  font-weight:700;
+  min-height:44px;
+}
+.t-menu-page--first .t-menu-product__bottom button:hover:not(:disabled){background:var(--red);border-color:var(--red)}
+.t-menu-page--first .t-menu-product__price span{font-size:11px;color:#685c4d}
+.t-menu-page--first .t-menu-product__price strong{color:var(--ink)}
+.t-menu-page--first .t-menu-product__text h3{
+  font:800 clamp(20px,2.4vw,27px)/1.28 "Changa",Tahoma,sans-serif;
+}
+.t-menu-page--first .t-menu-product__art-trigger .t-product-art{
+  border:1px solid #aca092;
+}
+.t-menu-page--first .t-menu-footer{margin-top:50px}
+@media(max-width:720px){
+  .t-menu-page--first .t-menu-intro{
+    padding:13px 20px 10px;
+  }
+  .t-menu-page--first .t-menu-first__entry{grid-template-columns:minmax(0,1fr);gap:10px}
+  .t-menu-page--first .t-menu-first__title{
+    display:flex;align-items:baseline;justify-content:space-between;gap:9px;
+  }
+  .t-menu-page--first .t-menu-first__title h1{font-size:38px;white-space:nowrap}
+  .t-menu-page--first .t-menu-first__title p{font-size:11px;white-space:nowrap}
+  .t-menu-page--first .t-menu-first__overline{display:none}
+  .t-menu-page--first .t-menu-intro .t-menu-search{margin:0;padding:0}
+  .t-menu-page--first .t-menu-intro .t-menu-search label{font-size:11px;margin-bottom:4px}
+  .t-menu-page--first .t-menu-intro .t-menu-search input{min-height:43px;font-size:14px}
+  .t-menu-page--first .t-menu-search__inputrow{min-height:48px}
+  .t-menu-page--first .t-menu-content{padding-top:0}
+  .t-menu-page--first .t-menu-source-note{font-size:10px;line-height:1.5}
+  .t-menu-page--first .t-menu-categories{padding-top:8px}
+  .t-menu-page--first .t-menu-categories__scroller{margin-inline:-20px;padding-inline:20px;padding-block:5px 10px}
+  .t-menu-page--first .t-menu-categories__scroller button{min-height:44px;padding-inline:10px}
+  .t-menu-page--first .t-menu-items{padding-top:4px}
+  .t-menu-page--first .t-menu-items__heading{margin-bottom:10px;gap:8px}
+  .t-menu-page--first .t-menu-items__heading h2{font-size:27px}
+  .t-menu-page--first .t-menu-items__heading>span{font-size:10px}
+  .t-menu-page--first .t-menu-product__bottom button{min-height:44px;font-size:11px}
+}
+@media(max-width:350px){
+  .t-menu-page--first .t-menu-first__title h1{font-size:33px}
+  .t-menu-page--first .t-menu-first__title p{font-size:10px}
+  .t-menu-page--first .t-menu-product__text h3{font-size:19px}
+}
+@media(prefers-reduced-motion:reduce){
+  .t-menu-page--first .t-menu-search__inputrow{transition:none}
+}
