@@ -362,3 +362,89 @@
 @media(prefers-reduced-motion:reduce){
   .t-menu-page--first .t-menu-items__grid--photo .t-menu-product{transition:none}
 }
+
+
+/* CHAPTER 03 — FOOD, NOT DECORATION.
+   A single documentary photograph between rows, never a full-screen hero.
+   All product names, starting prices and actions precede the image. */
+.t-menu-page--first .t-menu-items__grid--photo .t-menu-photo-break{
+  grid-column:1/-1;
+  display:grid;
+  grid-template-columns:minmax(0,1.18fr) minmax(0,.82fr);
+  min-height:228px;
+  margin:24px 0 27px;
+  overflow:hidden;
+  background:#24201d;
+  color:#f8f0e4;
+  border:0;
+  box-shadow:none;
+  isolation:isolate;
+}
+.t-menu-page--first .t-menu-photo-break__image{
+  position:relative;
+  min-width:0;
+  min-height:228px;
+  overflow:hidden;
+  background:#6b3b27;
+}
+.t-menu-page--first .t-menu-photo-break__image img{
+  object-fit:cover;
+  object-position:center 48%;
+}
+.t-menu-page--first .t-menu-photo-break__caption{
+  display:flex;
+  flex-direction:column;
+  gap:11px;
+  justify-content:center;
+  align-items:flex-start;
+  padding:clamp(22px,4vw,58px);
+  min-width:0;
+}
+.t-menu-page--first .t-menu-photo-break__eyebrow{
+  font:700 12px/1.6 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  color:#e2c5aa;
+}
+.t-menu-page--first .t-menu-photo-break__caption strong{
+  display:block;
+  margin:0;
+  font:800 clamp(30px,4.8vw,62px)/1.1 "Changa",Tahoma,sans-serif;
+  letter-spacing:0;
+  color:#fff5e7;
+}
+.t-menu-page--first .t-menu-photo-break__source{
+  margin-top:clamp(3px,2vw,19px);
+  font:600 11px/1.7 "IBM Plex Sans Arabic",Tahoma,sans-serif;
+  color:#d3c0af;
+}
+@media(max-width:720px){
+  .t-menu-page--first .t-menu-items__grid--photo .t-menu-photo-break{
+    grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);
+    min-height:165px;
+    margin:18px 0 23px;
+  }
+  .t-menu-page--first .t-menu-photo-break__image{min-height:165px}
+  .t-menu-page--first .t-menu-photo-break__caption{
+    padding:15px 15px 16px;
+    gap:7px;
+  }
+  .t-menu-page--first .t-menu-photo-break__eyebrow{
+    font-size:10px;
+  }
+  .t-menu-page--first .t-menu-photo-break__caption strong{
+    font-size:clamp(23px,6vw,34px);
+  }
+  .t-menu-page--first .t-menu-photo-break__source{
+    margin-top:4px;
+    font-size:10px;
+    line-height:1.5;
+  }
+}
+@media(max-width:350px){
+  .t-menu-page--first .t-menu-items__grid--photo .t-menu-photo-break{
+    min-height:150px;
+  }
+  .t-menu-page--first .t-menu-photo-break__image{min-height:150px}
+  .t-menu-page--first .t-menu-photo-break__caption{padding:11px}
+  .t-menu-page--first .t-menu-photo-break__caption strong{font-size:22px}
+  .t-menu-page--first .t-menu-photo-break__source{font-size:9px}
+}
