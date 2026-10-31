@@ -1,85 +1,76 @@
-# TUSCANINI / SOCIAL CREATIVE CAMPAIGN — STAGE 01
-**Brand Truth → Attention Problem → Human Insight**  
-Date: 2026-11-01 · Research/strategy **completed as a working brief** · No artwork approved.  
-Companion to the menu-first site, but **not a site change**.
+# TUSCANINI / SOCIAL CAMPAIGN — STAGE 01 RESET
+**1 Nov 2026 · Strategic discovery OPEN · Replaces earlier premature “Show the Inside” creative thesis**
 
-## The problem
-A feed is crowded with the same food-ad grammar: idealized sandwich or crepe, huge title, red/beige background, generic “طعم على أصوله” message. We tested versions of that visual formula and rejected it because it could belong to almost any restaurant, even when the logo is swapped.
+> Correction after user critique: the earlier "food cross-section vs staff member" binary was **image selection**, not strategy. Neither is a differentiating consumer insight. `اللي جوّه باين` is **retired as a working campaign idea**; a descriptive photo caption is not a brand proposition. No poster, headline, format, moodboard or aesthetic territory is approved.
 
-The first campaign image should stop a glance through a **specific visual fact about Tuscanini** rather than decoration. People should recognize *Tuscanini* and a distinctive physical detail, not just hunger.
+## 01 — The actual business problem
+Tuscanini competes for occasions and memory in a crowded Beni Suef quick-food market. A post showing “large filling, fresh food, tasty cheese” can be attractive but is likely interchangeable with many nearby restaurants. The creative problem is **not** “how to photograph a crepe better.” It is:
 
-## Brand truths (observed, not invented)
-Original source photography catalog: `lib/rebirth/food-media.ts` (12 actual restaurant/social pictures, each 640px; product-SKU matches not verified).
-- `TSC-06`: real staff member in black branded uniform holding multiple opened crepes in front of him. **Human scale**, real restaurant context, abundance, several cross-sections.
-- `TSC-02` / `TSC-04`: one opened crepe held by staff; visible *inside* of food. **Clearer singular composition**, authentic texture.
-- `TSC-07` / `TSC-09`: three crepes stacked, interior fillings facing camera; **bold macro repetition**.
-- `TSC-08`: sandwiches alongside real red packaging. Strongest **physical brand cues**.
-- `TSC-03` / `TSC-10`: restaurant pizza with brand packaging or overhead food shot. Clear **pizza category**.
-- Authentic logo asset: `public/images/brand/tuscanini-logo-ar-red.jpeg`; do not redraw it, invent a brand registration symbol, or treat a text-only TUSCANINI lockup as official.
-- Actual menu, offers, SKU-specific ingredients, portion comparisons, pricing and image rights **need merchant confirmation**; don't claim highest filling, largest portion, freshness/quality certifications or cheapest prices.
+**In which specific moments of people's lives should they think of Tuscanini first, and what experience or point of view can the brand credibly own?**
 
-## The audience
-**Hypotheses requiring validation**, not customer research results:
-1. A local first-time feed viewer, who has seen dozens of nearly identical food ads and needs one distinctive reason to look.
-2. An existing restaurant customer who could recognize the uniform, branded box or cross-section of a familiar food category.
-3. The restaurant's owner/team judging whether the campaign resembles their actual place and could sustain a recognisable series.
+The post must connect a restaurant-specific **point of view** to a recognizable **consumer moment** and a measurable **brand/action goal**. It should still work conceptually when the food photograph is removed, while being visibly associated with Tuscanini when published.
 
-## Desired response (psychological strategy / untested)
-- **Attention**: an unusually readable cross-section held in human hands / human scale. Use a deliberate visual interruption, not splash effects or typography shouting.
-- **Appetite**: visible actual textures, folds, sauces and irregularities, NOT digital exaggeration or invented cheese pulls.
-- **Credibility**: branded clothing/packaging and documentary imperfections provide verifiable context. A photo is *evidence of photographed food*, not proof of an exact recipe or portion.
-- **Recognition**: preserve the actual Arabic logo and repeat one ownable visual idea over a set of posts.
-- **Action**: an accurate menu link or genuine in-app clickthrough can appear in caption or future paid CTA; no unsupported prices/promotions or urgency.
+## 02 — Evidence gathered (separate observations from interpretation)
+**Tuscanini owned/project evidence**
+- Actual 12 source photographs; branded uniform, physical red packaging and varied food. These show materials, not audience motive or why people choose the restaurant. Source: `lib/rebirth/food-media.ts`.
+- The historic menu and Talabat listing include many mixed-ingredient signature crepe names (e.g. `لولي بووم`, `تشيكن فاير`, `ميكس بيف`) alongside conventional crepe/pizza/sandwich items. This could signal an exploration/combination territory but **is not proof of culinary uniqueness or popularity**. External source: https://www.talabat.com/ar/egypt/restaurant/1127599/toscanini-corniche-el-nile?aid=7489
+- Physical identity: red boxes, Arabic restaurant mark and English brand lettering. An ownable code might exist, but **brand recognition has not been tested**.
+- Official positioning, founders' story, repeated customer rituals, consumer motivation, top-selling SKUs, reason for name, campaign budget, active offers and approval authority remain **unknown**.
 
-## Creative thesis for Stage 02 to test
-**SHOW THE INSIDE. DON'T DESCRIBE IT.**  
-Provisional Arabic verbal route: **«اللي جوّه باين.»**  
-This is **not yet the final slogan** and must not falsely imply every product is as pictured.
+**Local competitor communications — observational sampling, not comprehensive market census**
+- `كريب و فريب` social posts include price-led offers, football match predictions and engagement giveaways: https://www.foodyas.com/EG/Beni-Suef/346498341879960/
+- `العز السوري` social posts include free drinks, bundle giveaways and ingredient praise: https://www.foodyas.com/EG/Beni-Suef/104156729285327/
+- `شاورما الشام` social posts emphasize late-night mood, novelty descriptions, product and delivery: https://www.foodyas.com/EG/Beni-Suef/108349228549068/
+**Category pattern observed from this sample:** deal, quantity, exaggerated sensory copy, emoji and immediate call to buy. An elegant image in the same cultural code is not enough. No claim that all competitors do this or that these ads are ineffective.
 
-The meaningful physical gesture is *reveal*, not “big food” for its own sake. A strong poster might show a person holding real open crepes, with typography positioned to amplify a single truthful fact — not obscure it.
+**Brand building research**
+- WARC, 17 Feb 2026, System1/Effie synthesis: repeated *distinctive* assets can help people attribute an ad to a brand: https://prod1.warc.com/content/feed/distinctive-brand-assets-increase-advertising-impact/11291
+- WARC, creative effectiveness: emotion **and** distinctive attribution outperform unbranded visual emotion in broader research; this is general principle, not measured Tuscanini performance: https://www.warc.com/en/article/distinctive-and-emotion-driven-campaigns-drive-greater-profitability-6c9f6d4d70f3477f939c51da9e59810d
+- IPA, creative consistency: repeat a coherent distinctive idea, not the exact same composition endlessly: https://ipa.co.uk/news/creative-consistency/
 
-What we **will not** do:
-- Invent food/portion in AI, plasticky cheese, unsupported offers or specific dish captions.
-- Recycle the same textured red/cream post across every food category.
-- Put decorative tape and distressed paper on images because they look “editorial”.
-- Make a poster before establishing a visible idea, compositional hierarchy and a source-photo asset decision.
+## 03 — The missing research: the life outside the restaurant
+Investigate consumer **occasions**, **social behaviors**, **cultural codes**, and **trade-offs** before drawing.
 
-## Research references — transfer mechanisms, not visual templates
-**01 / McDonald's real-food styling — Jessie Jacobson**  
-https://www.jessiejacobson.com/mcdonalds  
-Observed: crumbs, drips, believable imperfection embraced to connect with skeptical food audiences.  
-Transfer: don't clean away all natural food texture; trust documentary details.  
-Don't copy McDonald's palette, macro framing or styling.
+### A / Occasion map
+Ask actual customers to recall their **last** order, not just describe an ideal customer:
+- What was happening before the decision — friends' meetup, after class or work, family night, boredom, hunger, match viewing, solo reward?
+- Who proposed the restaurant? Who chose the dishes? Who paid? What almost changed the choice?
+- How did they order (delivery, pickup, dine-in), share, photograph or talk about it afterward?
+- What exact alternatives did they consider and what made the decision feel easy/hard?
 
-**02 / KFC Big Kentaaky — TBWA\RAAD**  
-https://tbwaraad.com/work/kfc-big-kentaaky/  
-Observed: regional creative idea built from a locally resonant tendency toward 'big' and purposely less polished presentation.  
-Transfer: make the campaign culturally specific to its actual audience.  
-Don't infer that Beni Suef customers share KFC campaign's insight; no goofy exaggerations or unverified product dimensions.
+### B / Tuscanini point-of-view
+Ask the owner/team:
+- Why the name Tuscanini, and what would the restaurant refuse to become?
+- Which product or ritual is genuinely distinctive, *repeatably* so?
+- Which actual customer comment/review do they repeat because it represents them?
+- Which brand promises can we **demonstrate**, rather than write?
+- Which image, phrase, color, personality or physical detail would people recognize with the name covered?
 
-**03 / McDonald's photography direction — Morse Studio**  
-https://morsestudio.com/projects/mcdonalds-photography/  
-Observed: a systematic image library with people and produce, not just isolated product thumbnails.  
-Transfer: photo roles across a **system**, with real person, packaged item, opened section and category portrait.  
-Don't copy the photo compositions.
+### C / Category language audit
+Archive 20–30 recent competitor and own posts (with publish dates, link, placement and observed wording). Code each by: occasion, offer, product close-up, humor, group ritual, local context, claim, distinctive brand cue, CTA. Look for an **underused cultural territory**, not simply an unused art style.
 
-**04 / KFC Fingerprints — 2025 Applied Arts Award**  
-https://www.appliedartsmag.com/winners/advertising/fingerprints-w522/?year=2025  
-Observed: highly specific sensory brand cue transformed into a graphic photographic campaign.  
-Transfer: one ownable physical food cue can unite a series.  
-Don't copy the fingerprint device or promise comparative taste.
+## 04 — Strategic hypotheses to research, NOT final creative routes
+1. **A decision made together:** food can be the excuse for initiating or extending a group moment. *Evidence missing:* do guests actually use Tuscanini in groups? It may be mostly solo delivery.
+2. **Unexpected combinations / personal taste:** menu naming and mix ingredients could speak to playful personal choice. *Evidence missing:* do people seek those unique combinations, or simply order familiar chicken crepes?
+3. **A truly local ritual in Beni Suef:** Tuscanini could be connected to a distinct street/time/occasion familiar to its real audience. *Evidence missing:* what actual ritual exists, beyond just writing “من قلب بني سويف”?
+4. **The pause in an ordinary day:** the restaurant as a recurring moment of reward and relief. *Evidence missing:* this territory is generic unless tied to distinct behavior, language, or memory.
 
-## Creative output stages and acceptance gates
-| Gate | Deliverable | Decision before proceeding |
-|---|---|---|
-| **01 — Truth & Insight (this stage)** | Evidence map + psychological hypotheses + provisional thesis | Is **show the inside, not fake food glamour** the right creative territory? |
-| **02 — Concept Territories** | Three genuinely distinct concepts, one-line intent, headline explorations, why each wins/loses | Choose **one** concept, not merge all three |
-| **03 — Art Direction System** | Photo choice, crops, type roles, color logic, negative space, authentic branding and 4:5 visual grid | Approve actual visual hierarchy |
-| **04 — Key Visual** | One 1080×1350 master design, real-source imagery and approved copy, responsive feed crop | Critique at phone size; accept/reject |
-| **05 — Campaign Family** | 3–5 campaign posters with distinct propositions, not color swaps | Consistency and variety, no repetition |
-| **06 — Real-world Review** | 3-second comprehension and recognition test, merchant factual signoff, revision and handoff | Publish only when claims/rights verified |
+Do not vote based on vibes. Choose after interviews, comments and some purchase evidence.
 
-## Test design; targets not evidence
-Run a small blind 3-second feed preview of **old generic food ad vs our concept** with 5 people (local customers if possible). Ask unaided: what food/brand was it? What did you remember? Did it seem like a real restaurant image? Measure right recall and preference; the goal is to learn, not pretend any invented conversion uplift. Separately ask merchant to confirm photo usage, identity and any copy claim.
+## 05 — Proper outcome hierarchy
+- **Business objective:** agreed with owner — e.g. first-time consideration, trial of a category, repeat order, visit to the actual menu; never invent current uplift/ROI.
+- **Communications job:** make Tuscanini mentally available for **one specific buying occasion**, with recognisable assets.
+- **Emotional target:** name one credible feeling *specific to that occasion*, not generic “appetite.”
+- **Consumer tension:** the contradiction or unsatisfied desire the creative solves; grounded in actual voice.
+- **Brand response:** a behavior or belief Tuscanini can credibly claim.
+- **Proposition:** one sentence the campaign dramatizes, not explanatory copy.
+- **Executional asset:** photography, gesture, type, visual rhythm, narrative/film **selected last**.
 
-**Stage 01 status:** initial desk study complete; owner reaction to creative thesis still needed. No actual user study completed. No production/social ad published.
+## 06 — Minimum research/validation gate before Stage 02
+- 1 substantive owner/team interview; 4–6 customers covering both new and repeat diners; 2 short firsthand observation windows if possible.
+- 20 recent own/competitor social posts encoded, not just saved moodboard images.
+- Confirm whether the Talabat profile, social page and photographed branch all refer to the intended current entity before publishing claims.
+- Three **consumer tensions** supported by notes/quotes + two **rejectable strategic territories**.
+- Pick one business objective and one occasion; then Stage 02 can propose distinct creative concepts and only later slogan/art direction.
+
+**Status:** desk-based category scan complete; interviews/observations and owner validation outstanding. **Stage 01 NOT finished.** This document is not approval for publication.
