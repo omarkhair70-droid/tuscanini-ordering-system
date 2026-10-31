@@ -127,13 +127,20 @@ export function ExperienceHeader() {
       <ActiveOrderStatusStrip />
     </header>
     <nav className="t-app-dock" aria-label="التنقل السريع على الموبايل">
-      {[
-        {href:'/', label:'الرئيسية'},
-        {href:'/menu', label:'المنيو'},
-        {href:'/offers', label:'العروض'},
-        {href:'/cart', label:'السلة'},
-      ].map(link => {
-        const active=pathname===link.href;
+      {(pathname === '/' || pathname === '/menu'
+        ? [
+            {href:'/menu', label:'المنيو'},
+            {href:'/offers', label:'العروض'},
+            {href:'/account', label:'حسابي'},
+            {href:'/cart', label:'السلة'},
+          ]
+        : [
+            {href:'/', label:'الرئيسية'},
+            {href:'/menu', label:'المنيو'},
+            {href:'/offers', label:'العروض'},
+            {href:'/cart', label:'السلة'},
+          ]).map(link => {
+        const active=pathname===link.href || (link.href==='/menu' && pathname==='/');
         return (
           <Link key={link.href} href={link.href} className="t-app-dock__link"
             aria-current={active?'page':undefined} onClick={()=>setOpen(false)}>
