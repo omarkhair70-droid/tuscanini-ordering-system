@@ -17,6 +17,12 @@ import { ActiveOrderStatusStrip } from '@/components/rebirth/active-order-status
 export function ExperienceHeader() {
   const pathname = usePathname();
   const { itemsCount } = useCart();
+  const isMenuFirstEntry = pathname === '/' || pathname === '/menu';
+  // Brand navigates home, and Home itself is the Menu: no duplicated
+  // Home/Menu destinations in either desktop nav or mobile drawer.
+  const entryNavigation = isMenuFirstEntry
+    ? primaryExperienceNavigation.filter(link => link.href !== '/')
+    : primaryExperienceNavigation;
   const [open, setOpen] = useState(false);
   const menuToggle = useRef<HTMLButtonElement>(null);
 
@@ -61,8 +67,8 @@ export function ExperienceHeader() {
         </Link>
 
         <nav aria-label="التنقل الرئيسي" className="t-header__links">
-          {primaryExperienceNavigation.map((link) => (
-            <Link key={link.href} href={link.href} aria-current={pathname === link.href ? 'page' : undefined}>
+          {entryNavigation.map((link) => (
+            <Link key={link.href} href={link.href} aria-current={(pathname === link.href || (isMenuFirstEntry && link.href === '/menu')) ? 'page' : undefined}>
               {link.label}
             </Link>
           ))}
@@ -101,8 +107,8 @@ export function ExperienceHeader() {
                     <div><span lang="en">TUSCANINI / BENI SUEF</span><strong>افتح اللي نفسك فيه.</strong></div>
                   </div>
                   <div className="t-mobile-menu__group" aria-label="أقسام الموقع">
-                    {primaryExperienceNavigation.map((link, i) => (
-                      <Link key={link.href} href={link.href} aria-current={pathname === link.href ? 'page' : undefined} onClick={() => setOpen(false)}>
+                    {entryNavigation.map((link, i) => (
+                      <Link key={link.href} href={link.href} aria-current={(pathname === link.href || (isMenuFirstEntry && link.href === '/menu')) ? 'page' : undefined} onClick={() => setOpen(false)}>
                         <MaterialGlyph name={routeMaterialGlyph(link.href)} size={29}/>
                         <span>{link.label}</span>
                         <small lang="en">{String(i+1).padStart(2,'0')}</small>
